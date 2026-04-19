@@ -1,10 +1,21 @@
-## Descripción
-(Explicar la tarea)
+---
+name: Tarea
+about: Crear una nueva tarea del proyecto
+title: ''
+labels: ''
+assignees: ''
+---
 
-## Objetivo
-(Qué se busca lograr)
+## 📝 Descripción
+Explicar la tarea
 
-## Checklist
+## 🎯 Objetivo
+Qué se busca lograr
+
+## ✅ Checklist
 - [ ] Paso 1
 - [ ] Paso 2
 - [ ] Paso 3
+
+## 📌 Notas
+Información adicional
