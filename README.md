@@ -1,10 +1,10 @@
-# 🚀 Proyecto UTU 2026
+# Proyecto UTU 2026
 
 ## Sistema de Gestión de Reclamos Ciudadanos
 
 ---
 
-## 📌 Descripción
+## Descripción
 
 Este proyecto consiste en el desarrollo de un sistema para gestionar reclamos ciudadanos relacionados con problemas urbanos (baches, alumbrado, etc.).
 
@@ -16,7 +16,7 @@ El objetivo es crear una solución que permita:
 
 ---
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```bash
 .
@@ -34,7 +34,7 @@ El objetivo es crear una solución que permita:
 └── tests
 ```
 
-### 📂 Descripción de carpetas
+### Descripción de carpetas
 
 * `docs/` → documentación del proyecto
 
@@ -49,7 +49,7 @@ El objetivo es crear una solución que permita:
 
 ---
 
-## 🌿 Flujo de trabajo (Git)
+## Flujo de trabajo (Git)
 
 Se trabaja con ramas:
 
@@ -57,7 +57,7 @@ Se trabaja con ramas:
 * `develop` → integración de cambios
 * `feature/*` → nuevas funcionalidades
 
-### 📌 Proceso de trabajo
+### Proceso de trabajo
 
 1. Crear una rama desde `develop`
 2. Realizar cambios
@@ -67,7 +67,7 @@ Se trabaja con ramas:
 
 ---
 
-## 📋 Organización (Kanban)
+## Organización (Kanban)
 
 El proyecto se organiza con un tablero:
 
@@ -79,7 +79,7 @@ El proyecto se organiza con un tablero:
 
 ---
 
-## 🏷️ Etiquetas (Issues)
+## Etiquetas (Issues)
 
 Se utilizan labels para organizar tareas:
 
@@ -105,7 +105,7 @@ Roles del equipo:
 
 ---
 
-## 🎯 Estado actual
+## Estado actual
 
 Actualmente el proyecto se encuentra en fase de:
 
@@ -115,7 +115,7 @@ Actualmente el proyecto se encuentra en fase de:
 
 ---
 
-## ⚠️ Reglas del equipo
+## Reglas del equipo
 
 * No trabajar directamente en `main`
 * Usar siempre Pull Requests
@@ -124,7 +124,7 @@ Actualmente el proyecto se encuentra en fase de:
 
 ---
 
-## 📌 Notas
+## Notas
 
 * Existe una carpeta `.github/` con templates para:
 
