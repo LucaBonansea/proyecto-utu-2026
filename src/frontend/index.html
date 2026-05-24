@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Portal de Gesti&oacute;n Comunitaria - Reclamos Ciudadanos</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/src/frontend/style.css">
+        <link rel="icon" href="/src/frontend/assets/imgs/logo_reclamos.png">
+    </head>
+
+    <body>
+
+        <!-- HEADER UNICO CON TODO CENTRADO VERTICALMENTE -->
+        <div class="header">
+            <div class="header-inner">
+
+                <!-- Arriba: Logo Intendencia de San Jose -->
+                <div class="logo-left">
+                    <div class="logo-intendencia"></div>
+                </div>
+
+                <!-- En el medio: Logo Comunitario -->
+                <div class="logo-center">
+                    <div class="logo-reclamos"></div>
+                </div>
+
+                <!-- Abajo: Texto Reclamos Ciudadanos -->
+                <div class="header-text">
+                    <div class="subtitle">Portal de Gesti&oacute;n Comunitaria</div>
+                    <h1>Reclamos Ciudadanos</h1>
+                    <div class="institution">Intendencia de San Jos&eacute;</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MAIN CARD -->
+        <div class="main-container">
+            <div class="card">
+                <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();">
+
+                    <div class="form-group">
+                        <label for="cedula">C&eacute;dula de Identidad:</label>
+                        <div class="input-wrapper">
+                            <input
+                                type="text"
+                                id="cedula"
+                                placeholder=" Ej: 1.234.567-8"
+                                maxlength="12"
+                                autocomplete="off"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Contrase&ntilde;a:</label>
+                        <div class="input-wrapper">
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder=""
+                                autocomplete="current-password"
+                            >
+                            <span class="password-toggle" id="togglePassword" onclick="togglePassword()">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 640 640"
+                                    width="20px"
+                                    height="20px"
+                                    fill="currentColor"
+                                >
+                                    <path d="M73 39.1C63.6 29.7 48.4 29.7 39.1 39.1C29.8 48.5 29.7 63.7 39 73.1L567 601.1C576.4 610.5 591.6 610.5 600.9 601.1C610.2 591.7 610.3 576.5 600.9 567.2L504.5 470.8C507.2 468.4 509.9 466 512.5 463.6C559.3 420.1 590.6 368.2 605.5 332.5C608.8 324.6 608.8 315.8 605.5 307.9C590.6 272.2 559.3 220.2 512.5 176.8C465.4 133.1 400.7 96.2 319.9 96.2C263.1 96.2 214.3 114.4 173.9 140.4L73 39.1zM236.5 202.7C260 185.9 288.9 176 320 176C399.5 176 464 240.5 464 320C464 351.1 454.1 379.9 437.3 403.5L402.6 368.8C415.3 347.4 419.6 321.1 412.7 295.1C399 243.9 346.3 213.5 295.1 227.2C286.5 229.5 278.4 232.9 271.1 237.2L236.4 202.5zM357.3 459.1C345.4 462.3 332.9 464 320 464C240.5 464 176 399.5 176 320C176 307.1 177.7 294.6 180.9 282.7L101.4 203.2C68.8 240 46.4 279 34.5 307.7C31.2 315.6 31.2 324.4 34.5 332.3C49.4 368 80.7 420 127.5 463.4C174.6 507.1 239.3 544 320.1 544C357.4 544 391.3 536.1 421.6 523.4L357.4 459.2z"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Ingresar</button>
+
+                </form>
+
+                <div class="forgot-password">
+                    <a href="#">&iquest;Olvidaste tu contrase&ntilde;a?</a>
+                </div>
+
+                <div class="divider">
+                    <span>&iquest;Nuevo usuario?</span>
+                </div>
+
+                <button class="btn-register" onclick="handleRegister()">Registrate aqu&iacute;</button>
+
+                <!-- Contacto y Soporte -->
+                <div class="contact-section">
+                    <div class="contact-title">Contacto y Soporte</div>
+                    <div class="contact-subtitle">&iquest;Necesitas ayuda?</div>
+
+                    <div class="contact-item">
+                        <span class="icon">&#128222;</span>
+                        <span>Tel&eacute;fono: 4342 9000</span>
+                    </div>
+
+                    <div class="contact-item">
+                        <span class="icon">&#9993;&#65039;</span>
+                        <span>Correo: atencion@sanjose.gub.uy</span>
+                    </div>
+
+                    <div class="contact-item">
+                        <span class="icon">&#128205;</span>
+                        <span>Direcci&oacute;n: Asamblea 496, San Jos&eacute; de Mayo</span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <script src="script.js" type="text/javascript"></script>
+
+    </body>
+</html>
