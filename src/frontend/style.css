@@ -30,7 +30,6 @@ body {
     max-width: 900px;
     margin: 0 auto;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 0 30px;
@@ -41,10 +40,9 @@ body {
 /* Logo Izquierdo: Intendencia de San José */
 .logo-left {
     display: flex;
-    align-items: center;
     background: white;
-    border-radius: 18px;
     padding: 12px 20px 16px 20px;
+    border-radius: 18px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -326,7 +324,7 @@ body {
 @media (max-width: 768px) {
     .header {
         border-radius: 0 0 30px 30px;
-        padding: 20px 0 28px 0;
+        padding: 10px 0 10px 0;
     }
 
     .header-inner {
@@ -335,14 +333,11 @@ body {
     }
 
     .logo-left {
-        padding: 10px 16px 14px 16px;
+        padding: 12px 20px 16px 20px;
         border-radius: 16px;
     }
 
-    .logo-left svg {
-        width: 42px;
-        height: 42px;
-    }
+
 
     .logo-left-text .line1,
     .logo-left-text .line2 {
@@ -381,23 +376,18 @@ body {
 @media (max-width: 480px) {
     .header {
         border-radius: 0 0 25px 25px;
-        padding: 15px 0 22px 0;
+        padding: 10px 0 10px 0;
     }
+
 
     .header-inner {
         padding: 0 15px;
         gap: 10px;
     }
 
-    .logo-left {
-        padding: 8px 14px 12px 14px;
-        border-radius: 14px;
-    }
-
-    .logo-left svg {
-        width: 38px;
-        height: 38px;
-        margin-right: 8px;
+    .logo-left .logo-intendencia{
+        width: 100px;
+        height: 100px;
     }
 
     .logo-left-text .line1,
@@ -455,7 +445,7 @@ body {
         font-size: 16px;
     }
 
-    .logo-center svg {
+    .logo-left .logo-intendencia {
         width: 60px;
         height: 60px;
     }
