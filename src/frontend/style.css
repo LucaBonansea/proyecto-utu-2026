@@ -20,6 +20,7 @@ body {
     align-items: center;
     overflow-x: hidden;
     overscroll-behavior: none;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 
@@ -260,15 +261,26 @@ body {
 }
 
 .btn-support {
+    -webkit-appearance: none;
+    appearance: none;
     width: 100%;
+    min-height: 42px;
     padding: 11px;
     background: transparent;
     color: #0047AB;
     border: 1px solid #c5d4e8;
     border-radius: 8px;
+    font-family: inherit;
     font-size: 14px;
     font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    touch-action: manipulation;
     transition: all 0.2s ease;
 }
 
@@ -301,6 +313,8 @@ body {
     margin-bottom: 7px;
     font-size: 13px;
     color: #555;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
 .contact-item .icon {
@@ -440,6 +454,7 @@ body {
     }
 
     .btn-support {
+        min-height: 38px;
         padding: 9px;
         font-size: 12px;
     }
