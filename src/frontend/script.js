@@ -74,3 +74,14 @@ function handleLogin() {
 function handleRegister() {
     alert('Redirigiendo al formulario de registro...');
 }
+
+// Toggle support details
+function toggleSupport() {
+    const supportPanel = document.getElementById('supportPanel');
+    const supportToggle = document.getElementById('supportToggle');
+    const isOpen = !supportPanel.hidden;
+
+    supportPanel.hidden = isOpen;
+    supportToggle.setAttribute('aria-expanded', String(!isOpen));
+    supportToggle.textContent = isOpen ? 'Contacto y soporte' : 'Ocultar soporte';
+}
