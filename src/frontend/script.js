@@ -1,4 +1,4 @@
-// Toggle password visibility
+
 function togglePassword() {
     const passwordInput = document.getElementById('password');
     const toggleBtn = document.getElementById('togglePassword');
@@ -32,7 +32,7 @@ function togglePassword() {
     }
 }
 
-// Format cedula as user types
+
 document.getElementById('cedula').addEventListener('input', function(e) {
     let value = e.target.value.replace(/\D/g, '');
 
