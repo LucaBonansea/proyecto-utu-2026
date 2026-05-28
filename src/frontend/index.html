@@ -2,7 +2,7 @@
 <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
         <title>Portal de Gesti&oacute;n Comunitaria - Reclamos Ciudadanos</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/style.css">
@@ -13,17 +13,13 @@
 
         <!-- HEADER UNICO CON TODO CENTRADO VERTICALMENTE -->
         <div class="header">
-            <div class="header-inner">
-
-                <!-- Arriba: Logo Intendencia de San Jose -->
-                <div class="logo-left">
-                    <div class="logo-intendencia">
-                    </div>
-                </div>
+            <div class="header-inner d-flex flex-column flex-md-row align-items-center justify-content-center text-center gap-4" >
 
                 <!-- En el medio: Logo Comunitario -->
                 <div class="logo-center">
-                    <div class="logo-reclamos"></div>
+                    <img src="./assets/imgs/logo_reclamos.png" 
+                    class="logo-reclamos img-fluid"
+                    alt="Logo Reclamos">
                 </div>
 
                 <!-- Abajo: Texto Reclamos Ciudadanos -->
@@ -91,26 +87,37 @@
 
                 <button class="btn-register" onclick="handleRegister()">Registrate aqu&iacute;</button>
 
-                <!-- Contacto y Soporte -->
-                <div class="contact-section">
-                    <div class="contact-title">Contacto y Soporte</div>
-                    <div class="contact-subtitle">&iquest;Necesitas ayuda?</div>
+                <div class="support-section">
+                    <button
+                        type="button"
+                        class="btn-support"
+                        id="supportToggle"
+                        aria-expanded="false"
+                        aria-controls="supportPanel"
+                        onclick="toggleSupport()"
+                    >
+                        Contacto y soporte
+                    </button>
 
-                    <div class="contact-item">
-                        <span class="icon">&#128222;</span>
-                        <span>Tel&eacute;fono: 4342 9000</span>
+                    <div class="contact-section" id="supportPanel" hidden>
+                        <div class="contact-title">&iquest;Necesitas ayuda?</div>
+
+                        <div class="contact-item">
+                            <span class="icon">&#128222;</span>
+                            <span>Tel&eacute;fono: 4342 9000</span>
+                        </div>
+
+                        <div class="contact-item">
+                            <span class="icon">&#9993;&#65039;</span>
+                            <span>Correo: atencion@sanjose.gub.uy</span>
+                        </div>
+
+                        <div class="contact-item">
+                            <span class="icon">&#128205;</span>
+                            <span>Direcci&oacute;n: Asamblea 496, San Jos&eacute; de Mayo</span>
+                        </div>
+
                     </div>
-
-                    <div class="contact-item">
-                        <span class="icon">&#9993;&#65039;</span>
-                        <span>Correo: atencion@sanjose.gub.uy</span>
-                    </div>
-
-                    <div class="contact-item">
-                        <span class="icon">&#128205;</span>
-                        <span>Direcci&oacute;n: Asamblea 496, San Jos&eacute; de Mayo</span>
-                    </div>
-
                 </div>
 
             </div>
