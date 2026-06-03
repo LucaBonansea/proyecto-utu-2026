@@ -1,138 +1,258 @@
-# Proyecto UTU 2026
+# Sistema de Gestión de Reclamos Ciudadanos
 
-## Sistema de Gestión de Reclamos Ciudadanos
-
----
+Proyecto académico desarrollado para UTU 2026.
 
 ## Descripción
 
-Este proyecto consiste en el desarrollo de un sistema para gestionar reclamos ciudadanos relacionados con problemas urbanos (baches, alumbrado, etc.).
+El proyecto consiste en desarrollar una plataforma que permita gestionar reclamos ciudadanos relacionados con problemas urbanos, facilitando la comunicación entre ciudadanos, la comuna y los equipos encargados de resolver incidencias.
 
-El objetivo es crear una solución que permita:
+El sistema permitirá:
 
-* A los ciudadanos registrar reclamos
-* A la comuna gestionarlos
-* A los equipos resolverlos
+* Registrar reclamos ciudadanos.
+* Gestionar reclamos desde la comuna.
+* Asignar tareas a equipos o proveedores.
+* Realizar seguimiento del estado de los reclamos.
+* Adjuntar evidencias multimedia.
+* Mantener trazabilidad completa de cada reclamo.
 
 ---
 
-## Estructura del proyecto
+# Objetivos
+
+## Ciudadanía
+
+* Registro e inicio de sesión.
+* Validación de identidad.
+* Creación de reclamos.
+* Adjuntar evidencias.
+* Geolocalización.
+* Seguimiento de estados.
+
+## Comuna
+
+* Visualización de reclamos.
+* Gestión mediante tablero Kanban.
+* Asignación de tareas.
+* Aprobación o rechazo de trabajos.
+* Seguimiento de actividades.
+
+## Equipos / Proveedores
+
+* Visualizar tareas asignadas.
+* Iniciar y finalizar trabajos.
+* Registrar materiales utilizados.
+* Adjuntar evidencias.
+
+---
+
+# Tecnologías
+
+## Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+
+## Backend
+
+* Laravel
+
+## Base de Datos
+
+* MySQL
+
+## Gestión del Proyecto
+
+* Git
+* GitHub
+* GitHub Projects
+* GitHub Issues
+
+---
+
+# Estructura del Proyecto
 
 ```bash
 .
 ├── README.md
 ├── docs
 │   ├── analisis
-│   │   └── analisis.md
 │   ├── diseno
-│   │   └── diseno.md
-│   ├── entregas
-│   │   └── entrega-1.md
-│   └── requisitos
-│       └── requisitos.md
+│   ├── requisitos
+│   └── entregas
 ├── src
-└── tests
+├── tests
+└── .github
 ```
 
-### Descripción de carpetas
+## Carpetas
 
-* `docs/` → documentación del proyecto
+### docs/
 
-  * `analisis/` → análisis del problema y sistema
-  * `diseno/` → diseño (UI, arquitectura, etc.)
-  * `requisitos/` → requerimientos funcionales y no funcionales
-  * `entregas/` → entregas formales del proyecto
+Documentación del proyecto.
 
-* `src/` → código fuente (frontend y backend)
+* análisis del problema
+* requerimientos
+* diseño
+* entregas
 
-* `tests/` → pruebas del sistema
+### src/
 
----
+Código fuente del sistema.
 
-## Flujo de trabajo (Git)
+### tests/
 
-Se trabaja con ramas:
+Pruebas y validaciones.
 
-* `main` → versión estable
-* `develop` → integración de cambios
-* `feature/*` → nuevas funcionalidades
+### .github/
 
-### Proceso de trabajo
-
-1. Crear una rama desde `develop`
-2. Realizar cambios
-3. Subir commits
-4. Crear Pull Request
-5. Revisar y hacer merge
+Templates para Issues y Pull Requests.
 
 ---
 
-## Organización (Kanban)
+# Roles del Sistema
 
-El proyecto se organiza con un tablero:
+## Ciudadano
 
-* **Backlog** → tareas pendientes
-* **En progreso** → tareas en desarrollo
-* **Bloqueado** → tareas detenidas
-* **En revisión** → esperando aprobación
-* **Terminado** → tareas finalizadas
+* Crear reclamos.
+* Consultar estados.
+* Visualizar historial.
 
----
+## Comuna / Administrador
 
-## Etiquetas (Issues)
+* Gestionar reclamos.
+* Asignar tareas.
+* Aprobar o rechazar trabajos.
 
-Se utilizan labels para organizar tareas:
+## Equipo / Proveedor
 
-* `frontend` → interfaz
-* `backend` → lógica
-* `analysis` → análisis
-* `docs` → documentación
-* `design` → diseño visual
-* `feature` → funcionalidad nueva
-* `bloqueado` → tarea detenida
+* Gestionar tareas asignadas.
+* Registrar avances.
+* Adjuntar evidencias.
 
 ---
 
-## 👥 Organización del equipo
+# Estados del Reclamo
 
-Roles del equipo:
+* Ingreso
+* Asignado
+* En proceso
+* Pendiente de aprobación
+* Resuelto
+* Rechazado
 
-* Líder → organización y control
-* Analista → requisitos y documentación
-* Frontend (design) → prototipos
-* Frontend developer → implementación
-* Backend → lógica y API
-
----
-
-## Estado actual
-
-Actualmente el proyecto se encuentra en fase de:
-
-* Definición de requisitos
-* Análisis del sistema
-* Diseño de interfaces (prototipos)
+Todos los cambios de estado serán registrados en el historial del sistema.
 
 ---
 
-## Reglas del equipo
+# Épicas
 
-* No trabajar directamente en `main`
-* Usar siempre Pull Requests
-* Mantener el kanban actualizado
-* Documentar los cambios
+## EP1 - Seguridad
+
+Autenticación, roles, permisos y validaciones.
+
+## EP2 - Reclamos
+
+Creación y gestión de reclamos ciudadanos.
+
+## EP3 - Dashboard
+
+Gestión y visualización de reclamos por la comuna.
+
+## EP4 - Equipos
+
+Gestión de tareas para equipos y proveedores.
+
+## EP5 - Evidencias
+
+Carga y gestión de fotos, videos y archivos.
+
+## EP6 - Historial
+
+Seguimiento de estados y actividades.
+
+## EP7 - Testing y Documentación
+
+Testing, documentación y preparación para la defensa.
 
 ---
 
-## Notas
+# Planificación
 
-* Existe una carpeta `.github/` con templates para:
+## Sprint 0
 
-  * Issues
-  * Pull Requests
+Planificación, análisis, backlog, alcance, arquitectura y diseño.
 
-Esto ayuda a mantener consistencia en el trabajo del equipo.
+## Sprint 1
+
+Seguridad, autenticación, validaciones y gestión de usuarios.
+
+## Sprint 2
+
+Gestión de reclamos ciudadanos.
+
+## Sprint 3
+
+Dashboard de la comuna e historial de estados.
+
+## Sprint 4
+
+Equipos, evidencias, testing y documentación final.
 
 ---
 
-**Proyecto académico – UTU 2026**
+# Flujo de Trabajo
+
+## Ramas
+
+* main → versión estable.
+* develop → integración de cambios.
+* feature/* → nuevas funcionalidades.
+
+## Proceso
+
+1. Crear rama desde develop.
+2. Implementar cambios.
+3. Realizar commits descriptivos.
+4. Crear Pull Request.
+5. Revisar cambios.
+6. Realizar merge.
+
+---
+
+# Kanban
+
+El proyecto se organiza mediante GitHub Projects.
+
+Columnas:
+
+* Backlog
+* Ready
+* In Progress
+* Blocked
+* In Review
+* Done
+
+---
+
+# Reglas del Equipo
+
+* No trabajar directamente sobre main.
+* Utilizar Pull Requests.
+* Mantener actualizado el tablero Kanban.
+* Documentar cambios importantes.
+* Utilizar Issues para nuevas tareas.
+* Comprender el código desarrollado antes de integrarlo.
+* Todos los integrantes deben conocer el funcionamiento general del sistema para la defensa.
+
+---
+
+# Estado Actual
+
+Actualmente el proyecto se encuentra en fase de análisis, planificación y diseño inicial.
+
+---
+
+# Licencia
+
+Proyecto académico desarrollado para UTU 2026.
