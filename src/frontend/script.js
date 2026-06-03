@@ -1,4 +1,4 @@
-// Toggle password visibility
+
 function togglePassword() {
     const passwordInput = document.getElementById('password');
     const toggleBtn = document.getElementById('togglePassword');
@@ -32,7 +32,7 @@ function togglePassword() {
     }
 }
 
-// Format cedula as user types
+
 document.getElementById('cedula').addEventListener('input', function(e) {
     let value = e.target.value.replace(/\D/g, '');
 
@@ -49,7 +49,7 @@ document.getElementById('cedula').addEventListener('input', function(e) {
     e.target.value = value;
 });
 
-// Handle login
+
 function handleLogin() {
     const cedula = document.getElementById('cedula').value;
     const password = document.getElementById('password').value;
@@ -70,12 +70,12 @@ function handleLogin() {
     }, 1500);
 }
 
-// Handle register
+
 function handleRegister() {
     alert('Redirigiendo al formulario de registro...');
 }
 
-// Toggle support details
+
 function toggleSupport() {
     const supportPanel = document.getElementById('supportPanel');
     const supportToggle = document.getElementById('supportToggle');
