@@ -256,3 +256,4 @@ Actualmente el proyecto se encuentra en fase de análisis, planificación y dise
 # Licencia
 
 Proyecto académico desarrollado para UTU 2026.
+CAMBIO
