@@ -1,4 +1,9 @@
+<<<<<<< HEAD
+
+# 🚀 Proyecto UTU 2026
+=======
 # Sistema de Gestión de Reclamos Ciudadanos
+>>>>>>> 937c12a0e429cde3f20b0085e739c605ee29f550
 
 Proyecto académico desarrollado para UTU 2026.
 
