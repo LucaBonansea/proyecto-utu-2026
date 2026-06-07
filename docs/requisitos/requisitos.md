@@ -12,7 +12,6 @@
 • Generación de reportes estadísticos.
 • Auditoría e historial de actividad.
 
-Requerimientos Funcionales
 
 RF1: Autenticación y control de accesos mediante Cédula de Identidad para Ciudadanos y
 Administradores.
