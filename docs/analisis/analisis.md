@@ -12,6 +12,7 @@
 
 # Restricciones tecnicas 
 
+
 Descripción
 
 Identificar las limitaciones técnicas que pueden afectar el desarrollo del Sistema de Gestión de Reclamos Ciudadanos.
