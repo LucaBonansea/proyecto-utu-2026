@@ -1,59 +1,76 @@
-# Acta de Reunión
+# Acta de Reunión — Ingeniería de Software
+**Proyecto 3ro BT — 2026**
 
 **Fecha:** 2026-06-07  
 **Hora de inicio:** 14:00  
 **Hora de finalización:** 19:00  
-**Lugar:** Revisión de documentación de repositorios `ing_software-3ro-bt` y `proyecto-3ro-bt-2026`
+**Lugar / Contexto:** Revisión de documentación de repositorios `ing_software-3ro-bt` y `proyecto-3ro-bt-2026`
+
+---
 
 ## Asistentes
 
-- Ariana Blanco  
-- Thiago Carbajal  
-- Luca Bonansea  
-- Nicolas Perez  
-- Emanuel Trapolini  
+* Ariana Blanco
+* Thiago Carbajal
+* Luca Bonansea
+* Nicolas Perez
+* Emanuel Trapolini
 
-## Objetivo
+---
 
-Trabajar hoy en la revisión de la documentación disponible y definir las tareas inmediatas para organizar el proyecto de Ingeniería de Software.
+## Objetivo de la Reunión
 
-## Actividades realizadas hoy
+Revisar los avances y organizar la documentación del proyecto de Ingeniería de Software, tomando como referencia los materiales y plantillas disponibles en `ing_software-3ro-bt` y la estructura de proyecto de `proyecto-3ro-bt-2026`.
 
-- Revisamos la estructura del repositorio `ing_software-3ro-bt` y confirmamos las plantillas clave: `01_project_charter.md`, `08_requirements.md`, `09_backlog.md`, `10_sprint_plan.md` y `12_test_plan.md`.
-- Consultamos los lineamientos de `proyecto-3ro-bt-2026` y validamos los requisitos de entrega de Ingeniería de Software.
-- Identificamos los documentos que deben estar presentes para el proyecto: acta de constitución, requerimientos, backlog, plan de sprint, plan de pruebas y acta de cierre.
-- Acordamos la forma de trabajo con metodología ágil, apoyada en las guías de `ing_software-3ro-bt`.
+## Documentos Consultados
 
-## Documentos consultados
+* `README.md`
+* `entrevistas.md`
+* `backlog.md`
+* `sprint-planning.md`
+* `01_project_charter.md`
+* `requerimientos_por_asignatura.md`
 
-- `ing_software-3ro-bt/README.md`
-- `ing_software-3ro-bt/Teoricos/entrevistas.md`
-- `ing_software-3ro-bt/Teoricos/backlog.md`
-- `ing_software-3ro-bt/Teoricos/sprint-planning.md`
-- `ing_software-3ro-bt/Templates/01_project_charter.md`
-- `proyecto-3ro-bt-2026/README.md`
-- `proyecto-3ro-bt-2026/Lineamientos/requerimientos_por_asignatura.md`
+---
 
-## Acuerdos de hoy
+## Temas Tratados
 
-- Usar las plantillas de `ing_software-3ro-bt` para documentar cada sección del proyecto.
-- Mantener la estructura de entregables requerida por `proyecto-3ro-bt-2026`.
-- Priorizar la elaboración del backlog y la planificación de la próxima iteración.
+1. **Uso de las plantillas de `ing_software-3ro-bt` para documentar el proyecto:** Adopción de la estructura formal para confeccionar el Acta de constitución (`Project Charter`), relevamiento de requerimientos, backlog de usuario, plan de sprint y plan de pruebas.
+2. **Requisitos críticos de la asignatura:** Análisis de los entregables obligatorios que incluyen historias de usuario, estructura del repositorio, alcances y pautas de cierre.
+3. **Coherencia con la estructura del repositorio `proyecto-3ro-bt-2026`:** Alineación con los lineamientos oficiales de presentación y entregas formales por asignatura.
 
-## Tareas asignadas hoy
+---
 
-- Ariana Blanco: recopilar y organizar los requerimientos principales.
-- Thiago Carbajal: elaborar el backlog inicial.
-- Luca Bonansea: estructurar el Project Charter y definir el alcance.
-- Nicolas Perez: avanzar en el Sprint Plan.
-- Emanuel Trapolini: preparar el plan de pruebas y los entregables de cierre.
+## Acuerdos
 
-## Próximos pasos
+* Se adopta la **metodología ágil** como marco de trabajo conceptual y operativo para el desarrollo del proyecto.
+* Se utilizarán de forma estricta las plantillas de la carpeta `Templates` para asegurar la consistencia institucional de toda la documentación.
+* El ciclo documental obligatorio queda fijado en: Acta de constitución, Requerimientos y análisis, Backlog inicial, Plan de sprint, Arquitectura básica, Plan de pruebas y Documentación de cierre.
 
-- Completar y revisar la documentación base con las plantillas disponibles.
-- Consolidar el backlog y la planificación en la próxima reunión.
-- Preparar el acta de cierre final con los avances concretos.
+---
 
-## Observación
+## Revisión de Avances y Tareas Asignadas
 
-- La reunión concluyó a las 19:00 con las tareas y acuerdos establecidos para continuar hoy mismo.
+| Integrante | Avances Realizados / Tareas Concretadas |
+| :--- | :--- |
+| **Ariana Blanco** | • Definir los requerimientos funcionales del sistema.<br>• Identificar las restricciones técnicas del proyecto.<br>• Crear las historias de usuario iniciales. |
+| **Nicolas Perez** | • Definir el alcance inicial del proyecto.<br>• Definir los requerimientos no funcionales del sistema. |
+| **Thiago Carbajal** | • Crear el Product Backlog inicial.<br>• Identificar los riesgos del proyecto.<br>• Crear el diagrama del flujo del sistema. |
+| **Luca Bonansea** | • Liderar la gestión global del proyecto.<br>• Corregir bugs y resolver incidencias en el repositorio Git de **Nicolas**.<br>• Realizar la redacción del acta de reunión y consolidar la asignación de tareas. |
+| **Emanuel Trapolini** | *Realizará sus respectivas tareas asignadas de manera asíncrona, quedando debidamente asentado su cumplimiento en la próxima acta por falta de coordinación de horarios entre ambas partes.*<br><br>**Compromisos técnicos a desarrollar:**<br>1. Definir la arquitectura general del sistema.<br>2. Definir las reglas de transición entre estados.<br>3. Definir el flujo de estados de los reclamos. |
+
+---
+
+## Próximos Pasos
+
+* Completar la documentación base usando `ing_software-3ro-bt` como guía y `proyecto-3ro-bt-2026` como referencia.
+* Consolidar el backlog y la planificación temporal en la próxima reunión integrando las definiciones técnicas de Emanuel.
+* Revisar el avance general de la documentación y preparar la estructura del acta de cierre final.
+
+---
+
+## Observaciones
+
+* La información base se generó a partir de los materiales disponibles en los repositorios mencionados.
+* **Coordinación Horaria:** Debido a una falta de coordinación en los horarios de disponibilidad entre ambas partes, el trabajo de Emanuel Trapolini se procesará de forma diferida y será validado en el próximo encuentro.
+* Sin más asuntos que tratar, se da por finalizada la sesión a las 19:00 horas con los acuerdos y tareas firmemente asignados.
