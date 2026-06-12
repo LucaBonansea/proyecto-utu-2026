@@ -1,7 +1,186 @@
 # Diseño del sistema
 
 ## Arquitectura
-(A definir)
+Puedes completarlo así:
+
+# Diseño del Sistema
+
+## Arquitectura
+
+El sistema seguirá una arquitectura cliente-servidor compuesta por tres interfaces frontend y un backend centralizado.
+
+### Frontend
+
+**PWA Ciudadanía**
+
+* Registro e inicio de sesión.
+* Creación de reclamos.
+* Consulta de estados.
+* Recepción de notificaciones.
+
+**Dashboard Intendencia**
+
+* Gestión de reclamos mediante tablero Kanban.
+* Asignación de tareas.
+* Aprobación o rechazo de trabajos.
+* Consulta de estadísticas.
+
+**Frontend Equipos/Proveedores**
+
+* Consulta de tareas asignadas.
+* Registro de inicio y finalización de trabajos.
+* Carga de evidencias.
+* Registro de materiales utilizados.
+
+### Backend
+
+El backend centraliza toda la lógica del negocio:
+
+* Autenticación y autorización.
+* Gestión de usuarios.
+* Gestión de reclamos.
+* Gestión de estados.
+* Integración con API de validación de identidad.
+* Gestión de evidencias multimedia.
+* Generación de estadísticas.
+* Registro de historial de actividades.
+
+### Comunicación
+
+Los tres frontends se comunicarán con el backend mediante una API REST. El backend será el único encargado de acceder a la base de datos y a la API externa de validación de identidad.
+
+## Base de Datos
+
+### Tabla: usuarios
+
+| Campo     | Tipo    |
+| --------- | ------- |
+| id        | BIGINT  |
+| nombre    | VARCHAR |
+| apellido  | VARCHAR |
+| documento | VARCHAR |
+| email     | VARCHAR |
+| password  | VARCHAR |
+| rol       | ENUM    |
+| validado  | BOOLEAN |
+
+### Tabla: reclamos
+
+| Campo          | Tipo     |
+| -------------- | -------- |
+| id             | BIGINT   |
+| usuario_id     | BIGINT   |
+| tipo           | VARCHAR  |
+| descripcion    | TEXT     |
+| latitud        | DECIMAL  |
+| longitud       | DECIMAL  |
+| estado         | ENUM     |
+| fecha_creacion | DATETIME |
+
+### Tabla: historial_actividad
+
+| Campo           | Tipo     |
+| --------------- | -------- |
+| id              | BIGINT   |
+| reclamo_id      | BIGINT   |
+| usuario_id      | BIGINT   |
+| estado_anterior | VARCHAR  |
+| estado_nuevo    | VARCHAR  |
+| observaciones   | TEXT     |
+| fecha           | DATETIME |
+
+### Tabla: multimedia
+
+| Campo        | Tipo     |
+| ------------ | -------- |
+| id           | BIGINT   |
+| reclamo_id   | BIGINT   |
+| ruta_archivo | VARCHAR  |
+| tipo_archivo | VARCHAR  |
+| fecha_subida | DATETIME |
+
+### Tabla: proveedores
+
+| Campo    | Tipo    |
+| -------- | ------- |
+| id       | BIGINT  |
+| nombre   | VARCHAR |
+| contacto | VARCHAR |
+| tipo     | VARCHAR |
+
+### Tabla: materiales (opcional)
+
+| Campo       | Tipo    |
+| ----------- | ------- |
+| id          | BIGINT  |
+| nombre      | VARCHAR |
+| descripcion | TEXT    |
+
+## Tecnologías
+
+### Backend
+
+* PHP 8
+* Laravel
+* API REST
+
+### Base de Datos
+
+* MySQL
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+* Bootstrap o Tailwind CSS
+
+### Control de Versiones
+
+* Git
+* GitHub
+
+### Herramientas de Desarrollo
+
+* Visual Studio Code
+* XAMPP
+* Postman
+
+### Servicios Externos
+
+* API docente de validación de identidad
+
+## Diagrama de Arquitectura
+
+┌─────────────────────┐
+│   PWA Ciudadanía    │
+└──────────┬──────────┘
+           │
+           │ API REST
+           ▼
+┌─────────────────────┐
+│  Backend Laravel    │
+│      API REST       │
+└───────┬─────┬───────┘
+        │     │
+        │     │
+        ▼     ▼
+┌───────────┐ ┌─────────────────┐
+│   MySQL   │ │ API Identidad   │
+│ Base Datos│ │ (Docente)       │
+└───────────┘ └─────────────────┘
+        ▲
+        │
+ ┌──────┴──────┐
+ │ Dashboard   │
+ │ Intendencia │
+ └─────────────┘
+        ▲
+        │
+ ┌──────┴──────┐
+ │ Equipos /   │
+ │ Proveedores │
+ └─────────────┘
 
 ## Base de datos
 (A definir)
