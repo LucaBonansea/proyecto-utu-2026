@@ -7,8 +7,24 @@
 (Qué buscan lograr)
 
 ## Actores
-- Usuario
-- Administrador
+Ciudadano Funciones: 
+ • Registrarse y validar identidad. 
+ • Iniciar sesión. 
+ • Crear reclamos.
+ • Adjuntar fotografías y videos como evidencia. 
+ • Consultar el estado de sus reclamos. 
+ • Revisar el historial de reclamos realizados.       Administrador (Comuna) Funciones: 
+ • Gestionar reclamos mediante tablero Kanban. 
+ • Asignar tareas al equipo de trabajo. 
+ • Actualizar estados de los reclamos. 
+ • Aprobar o rechazar reclamos. 
+ • Generar reportes estadísticos. 
+ • Consultar auditorías e historial de actividad. Proveedor / Equipo Funciones: 
+ • Recibir tareas asignadas por el administrador.
+ • Ejecutar trabajos de resolución del incidente. 
+ • Registrar notas técnicas.
+ • Cargar materiales utilizados. 
+ • Adjuntar fotografías de la intervención realizada. • Informar finalización para su validación y cierre.
 
 # Restricciones tecnicas 
 
