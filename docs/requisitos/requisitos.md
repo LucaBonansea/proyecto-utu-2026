@@ -28,6 +28,28 @@ RF9: Aprobación o rechazo definitivo de reclamos con observaciones.
 RF10: Generación automática de reportes estadísticos municipales.
 RF11: Registro inmutable de cada cambio realizado en el sistema
 
+## Reglas de negocio
+
+### Definir reglas de transición entre estados
+
+El sistema controlará qué usuarios pueden cambiar el estado de un reclamo y bajo qué condiciones, garantizando la trazabilidad y evitando modificaciones no autorizadas.
+
+### Reglas de transición
+
+![Reglas de transición](Diagramas/Reglas_transicion/Reglas_de_Transicion.png)
+
+### Restricciones
+
+* Solo los administradores pueden asignar, aprobar o rechazar reclamos.
+* Solo el equipo o proveedor asignado puede iniciar y finalizar tareas.
+* Un reclamo en estado **Resuelto** no podrá volver a modificarse.
+* Todas las transiciones deberán registrarse en el historial de actividad del sistema.
+* No se permitirá avanzar a **Pendiente de aprobación** sin evidencias de finalización.
+
+### Flujo de estados
+
+![Flujo de estados](Diagramas/Flujo_estados/Flujo_de_Estados.png)
+
 ## Requerimientos no funcionales
 
 RNF1: La aplicación deberá desarrollarse como una Progressive Web App (PWA), permitiendo su uso eficiente desde teléfonos móviles, con una interfaz optimizada para pantallas pequeñas y acceso rápido desde el navegador sin necesidad de instalación tradicional.
