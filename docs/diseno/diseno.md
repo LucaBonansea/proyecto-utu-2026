@@ -162,6 +162,8 @@ Los tres frontends se comunicarán con el backend mediante una API REST. El back
 
 ##Diagrama de flujo
 
+![Diagrama de flujo](Diagramas/Diagrama_de_flujo/Diagrama_flujo.png)
+
 1. Registro de ciudadano
 
 El ciudadano accede a la aplicación y crea una cuenta ingresando su número de cédula de identidad y una contraseña.

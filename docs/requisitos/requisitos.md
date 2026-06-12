@@ -46,6 +46,45 @@ El sistema controlará qué usuarios pueden cambiar el estado de un reclamo y ba
 * Todas las transiciones deberán registrarse en el historial de actividad del sistema.
 * No se permitirá avanzar a **Pendiente de aprobación** sin evidencias de finalización.
 
+### Definir flujo de estados de los reclamos
+
+El ciclo de vida de un reclamo seguirá la siguiente secuencia de estados:
+
+**Ingreso → Asignado → En proceso → Pendiente de aprobación → Resuelto**
+
+En caso de que la solución presentada no sea aceptada por la administración, el reclamo pasará al estado:
+
+**Pendiente de aprobación → Rechazado → En proceso**
+
+### Descripción de estados
+
+* **Ingreso:** Reclamo creado por el ciudadano y pendiente de revisión.
+* **Asignado:** Reclamo asignado a un equipo o proveedor responsable.
+* **En proceso:** El equipo o proveedor se encuentra trabajando en la resolución.
+* **Pendiente de aprobación:** El trabajo fue finalizado y espera validación de la administración.
+* **Resuelto:** La solución fue aprobada y el reclamo se considera cerrado.
+* **Rechazado:** La solución presentada no cumple los requisitos y debe corregirse.
+
+### Diagrama de flujo
+
+Ingreso
+↓
+Asignado
+↓
+En proceso
+↓
+Pendiente de aprobación
+↓
+Resuelto
+
+Si es rechazado:
+
+Pendiente de aprobación
+↓
+Rechazado
+↓
+En proceso
+
 ### Flujo de estados
 
 ![Flujo de estados](Diagramas/Flujo_estados/Flujo_de_Estados.png)
