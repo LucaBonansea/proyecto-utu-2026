@@ -152,35 +152,7 @@ Los tres frontends se comunicarán con el backend mediante una API REST. El back
 
 ## Diagrama de Arquitectura
 
-┌─────────────────────┐
-│   PWA Ciudadanía    │
-└──────────┬──────────┘
-           │
-           │ API REST
-           ▼
-┌─────────────────────┐
-│  Backend Laravel    │
-│      API REST       │
-└───────┬─────┬───────┘
-        │     │
-        │     │
-        ▼     ▼
-┌───────────┐ ┌─────────────────┐
-│   MySQL   │ │ API Identidad   │
-│ Base Datos│ │ (Docente)       │
-└───────────┘ └─────────────────┘
-        ▲
-        │
- ┌──────┴──────┐
- │ Dashboard   │
- │ Intendencia │
- └─────────────┘
-        ▲
-        │
- ┌──────┴──────┐
- │ Equipos /   │
- │ Proveedores │
- └─────────────┘
+![Diagrama de Arquitectura](Diagramas/Diagrama_arquitectura/Diagrama_Arquitectura.png)
 
 ## Base de datos
 (A definir)
