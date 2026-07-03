@@ -1,7 +1,44 @@
 # Diseño del sistema
 
 ## Arquitectura
-(A definir)
+Arquitectura basada en API REST con frontend independiente para Ciudadanía, Comuna y Equipos/Proveedores.
+
+- Frontend Web ligero que consume servicios REST.
+- Backend centralizado en PHP/Laravel que expone la API y controla la lógica de negocio.
+- Base de datos MySQL para almacenamiento de usuarios, reclamos, estados, evidencias y trazabilidad.
+- Almacenamiento de archivos multimedia en sistema de archivos o almacenamiento en nube local.
+- Autenticación mediante token seguro (Laravel Sanctum o JWT) y control de acceso por roles: ciudadano, comuna y equipo.
+
+## API REST preliminar
+
+### Autenticación
+| Método | Endpoint | Descripción |
+| --- | --- | --- |
+| POST | /auth/register | Registrar un nuevo ciudadano. |
+| POST | /auth/login | Iniciar sesión en el sistema. |
+| POST | /auth/verify-ci | Validar la identidad del ciudadano mediante la API docente. |
+
+### Gestión de Reclamos
+| Método | Endpoint | Descripción |
+| --- | --- | --- |
+| POST | /reclamos | Crear un nuevo reclamo. |
+| GET | /reclamos/my | Obtener reclamos del usuario autenticado. |
+| GET | /reclamos | Listar todos los reclamos (administrativo). |
+| GET | /reclamos/{id} | Obtener un reclamo específico. |
+| PATCH | /reclamos/{id}/assign | Asignar un reclamo a un equipo o proveedor. |
+| PATCH | /reclamos/{id}/start | Marcar inicio de resolución. |
+| PATCH | /reclamos/{id}/finish | Registrar finalización del trabajo. |
+| PATCH | /reclamos/{id}/approve | Aprobar la resolución realizada. |
+| PATCH | /reclamos/{id}/reject | Rechazar la resolución y devolver el reclamo. |
+
+### Gestión de Evidencias
+| Método | Endpoint | Descripción |
+| --- | --- | --- |
+| POST | /reclamos/{id}/media | Cargar fotografías, videos o documentos asociados al reclamo. |
+| GET | /media/{id} | Obtener una evidencia almacenada. |
+
+### Nota
+Estos endpoints permiten la comunicación clara entre los distintos frontends y el backend centralizado, garantizando trazabilidad, autenticación y control de acceso por roles.
 
 ## Base de datos
 (A definir)
