@@ -1,6 +1,36 @@
 # Diseño del Sistema
 
 ## Arquitectura
+Descripción
+
+Los endpoints principales del sistema definen la comunicación entre los distintos frontends (Ciudadanía, Comuna y Equipos/Proveedores) y el backend centralizado mediante una API REST. Estos endpoints permiten gestionar la autenticación de usuarios, el ciclo de vida de los reclamos y la administración de evidencias asociadas a cada incidencia.
+
+Objetivo
+
+Establecer una interfaz de comunicación clara, segura y estandarizada entre el frontend y el backend, permitiendo el intercambio de datos de forma consistente, garantizando la trazabilidad de los reclamos y el control de acceso según los roles del sistema.
+
+Endpoints principales
+Autenticación
+Método	Endpoint	Descripción
+POST	/auth/register	Registrar un nuevo ciudadano.
+POST	/auth/login	Iniciar sesión en el sistema.
+POST	/auth/verify-ci	Validar la identidad del ciudadano mediante la API docente antes de completar el alta.
+Gestión de Reclamos
+Método	Endpoint	Descripción
+POST	/reclamos	Crear un nuevo reclamo.
+GET	/reclamos/my	Obtener los reclamos del usuario autenticado.
+GET	/reclamos	Listar todos los reclamos (uso administrativo).
+PATCH	/reclamos/{id}/assign	Asignar un reclamo a un equipo o proveedor.
+PATCH	/reclamos/{id}/start	Marcar el inicio de la resolución del reclamo.
+PATCH	/reclamos/{id}/finish	Registrar la finalización del trabajo.
+PATCH	/reclamos/{id}/approve	Aprobar la resolución realizada.
+PATCH	/reclamos/{id}/reject	Rechazar la resolución y devolver el reclamo para corrección.
+Gestión de Evidencias
+Método	Endpoint	Descripción
+POST	/reclamos/{id}/media	Cargar fotografías, videos o documentos asociados al reclamo.
+GET	/media/{id}	Obtener una evidencia almacenada.
+
+Estos endpoints cubren el flujo completo del sistema: registro de usuarios, creación y seguimiento de reclamos, asignación de tareas, resolución de incidencias y gestión de evidencias, permitiendo la interacción entre las tres interfaces del proyecto y el backend centralizado.
 
 El sistema seguirá una arquitectura cliente-servidor compuesta por tres interfaces frontend y un backend centralizado.
 
