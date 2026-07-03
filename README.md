@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-
 # 🚀 Proyecto UTU 2026
-=======
-# Sistema de Gestión de Reclamos Ciudadanos
->>>>>>> 937c12a0e429cde3f20b0085e739c605ee29f550
 
 Proyecto académico desarrollado para UTU 2026.
+
+El proyecto consiste en desarrollar una plataforma que permita gestionar reclamos ciudadanos relacionados con problemas urbanos, facilitando la comunicación entre ciudadanos, la comuna y los equipos encargados de resolver incidencias.
 
 ## Descripción
 
@@ -154,31 +151,43 @@ Todos los cambios de estado serán registrados en el historial del sistema.
 
 ## EP1 - Seguridad
 
-Autenticación, roles, permisos y validaciones.
+Autenticación, control de acceso, roles, permisos y validaciones de identidad.
 
 ## EP2 - Reclamos
 
-Creación y gestión de reclamos ciudadanos.
+Creación, registro, validación y seguimiento de reclamos ciudadanos.
 
 ## EP3 - Dashboard
 
-Gestión y visualización de reclamos por la comuna.
+Visualización, filtro y gestión de reclamos para la comuna y los equipos.
 
 ## EP4 - Equipos
 
-Gestión de tareas para equipos y proveedores.
+Asignación de tareas, control de avance y organización del trabajo en equipos.
 
 ## EP5 - Evidencias
 
-Carga y gestión de fotos, videos y archivos.
+Carga, almacenamiento y gestión de fotos, videos y archivos asociados a reclamos.
 
 ## EP6 - Historial
 
-Seguimiento de estados y actividades.
+Registro de estados, trazabilidad de cambios y consulta del historial de reclamos.
 
 ## EP7 - Testing y Documentación
 
-Testing, documentación y preparación para la defensa.
+Pruebas, documentación, entrega y preparación para defensa.
+
+## Estimación por épicas
+
+| Épica | Descripción | Estimación aproximada (Story Points) |
+| --- | --- | --- |
+| EP1 - Seguridad | Autenticación, roles y permisos. | 10 |
+| EP2 - Reclamos | Gestión completa del ciclo de reclamos. | 45 |
+| EP3 - Dashboard | Visualización y control de reclamos para la comuna. | 30 |
+| EP4 - Equipos | Asignación y seguimiento de tareas. | 25 |
+| EP5 - Evidencias | Manejo de fotografías, videos y archivos. | 20 |
+| EP6 - Historial | Seguimiento de cambios y estados del reclamo. | 15 |
+| EP7 - Testing y Documentación | Pruebas y entrega de documentación. | 8 |
 
 ---
 
@@ -186,23 +195,59 @@ Testing, documentación y preparación para la defensa.
 
 ## Sprint 0
 
-Planificación, análisis, backlog, alcance, arquitectura y diseño.
+Duración estimada: 1 semana.
+- Consolidar requisitos, priorizar el backlog y definir el alcance de la primera versión.
+- Diseñar la arquitectura técnica y el modelo de datos.
+- Configurar el repositorio, ramas principales y el entorno de desarrollo.
+- Preparar plantillas de documentación y criterios de aceptación.
 
 ## Sprint 1
 
-Seguridad, autenticación, validaciones y gestión de usuarios.
+Duración estimada: 2 semanas.
+Objetivo: Entregar la base del sistema con autenticación, roles y gestión inicial de reclamos.
+Historias clave: HU1, HU4 y HU2.
+- Registro y validación de usuarios.
+- Inicio de sesión y control de acceso por roles.
+- Creación de reclamos con descripción, ubicación y evidencia.
+- Visualización de reclamos registrados.
 
 ## Sprint 2
 
-Gestión de reclamos ciudadanos.
+Duración estimada: 2 semanas.
+Objetivo: Implementar la gestión de estados y la coordinación entre comuna y equipos.
+Historias clave: HU5, HU6 y HU2.
+- Asignación de reclamos a equipos de trabajo.
+- Gestión del ciclo de vida del reclamo.
+- Aprobación o rechazo de reclamos resueltos.
+- Seguimiento básico del estado del reclamo.
 
 ## Sprint 3
 
-Dashboard de la comuna e historial de estados.
+Duración estimada: 2 semanas.
+Objetivo: Entregar soporte operativo para los equipos de trabajo.
+Historias clave: HU7, HU8 y HU9.
+- Visualización de tareas asignadas.
+- Registro del inicio de tareas.
+- Registro de finalización con observaciones y evidencias.
+- Historial de actividad asociado a cada reclamo.
 
 ## Sprint 4
 
-Equipos, evidencias, testing y documentación final.
+Duración estimada: 2 semanas.
+Objetivo: Completar mejoras de valor, pruebas y documentación para la entrega final.
+Historias clave: HU3 y actividades de cierre.
+- Notificaciones sobre cambios de estado de reclamos.
+- Reportes estadísticos y auditoría.
+- Pruebas, correcciones y documentación final.
+- Preparar presentación y entregables de cierre.
+
+## Observaciones
+
+- El backlog inicial está validado y ordenado en `docs/requisitos/priorizacion-backlog.md`.
+- Las historias de mayor valor y riesgo se colocan en los primeros sprints.
+- La funcionalidad de notificaciones es un valor agregado que puede quedar para Sprint 4 si hay restricciones de capacidad.
+- Se recomienda una capacidad inicial de 20 puntos por sprint y ajustar según la velocidad real del equipo.
+- Mantener reuniones de Sprint Review y Retrospective para adaptar el plan.
 
 ---
 
