@@ -1,0 +1,47 @@
+Aquí tienes únicamente los requerimientos para la **primera entrega** por asignatura:
+
+---
+
+## Ingeniería de Software
+
+* Project charter
+
+
+* Entrevistas (transcripciones, grabaciones, etc. con notas del equipo pre y post entrevistas)
+
+
+* Documentación de análisis del proyecto (requerimientos, épicas)
+
+
+* Actas de reuniones
+
+
+* Declaración de Ética en el uso de IA
+
+
+
+---
+
+## Adm. SSOO
+
+* Análisis de requerimientos
+
+
+* Arquitectura propuesta
+
+
+
+---
+
+## Electiva Ciberseguridad (Análisis y Diseño Seguro)
+
+* Identificación de al menos 3 amenazas digitales relevantes al tipo de sistema (ej.: phishing, inyección SQL, fuga de datos, XSS, ransomware), con breve explicación del riesgo para el proyecto
+
+
+* Mapa de riesgos: esquema o gráfico que relacione partes del sistema con amenazas, más análisis de impacto técnico y sobre usuarios
+
+
+* Buenas prácticas de seguridad en desarrollo web: investigación y resumen aplicable al proyecto (sin copiar sin análisis), relacionado con las tecnologías usadas
+
+
+Para Prog. Full-stack, la documentación no está dividida formalmente por entregas (a diferencia de otras materias), sino que presenta una lista general de requerimientos técnicos para el proyecto:  Estructura del proyecto organizada en carpetas (frontend y backend separados).  Frontend desarrollado con HTML, CSS y JavaScript (jQuery).
