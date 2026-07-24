@@ -24,100 +24,77 @@ En caso de no llevarse a cabo, la gestión de los reclamos continuará dependien
 **Visión del producto:**
 El producto consiste en un sistema de gestión de reclamos ciudadanos compuesto por una aplicación web para la ciudadanía, un panel administrativo para la Intendencia y una interfaz para los equipos o proveedores encargados de resolver las incidencias. La solución permitirá registrar, asignar, gestionar y dar seguimiento a los reclamos mediante una plataforma centralizada, con control de estados, evidencias multimedia, geolocalización e historial de actividades, facilitando una gestión más eficiente y transparente.
 
-**Alcance incluido (primera versión):**
-El proyecto incluirá las siguientes funcionalidades para la primera versión del sistema:
+## Alcance incluido (Primera versión)
 
-1. **Registro de reclamos con título, descripción, categoría, ubicación geográfica y evidencias fotográficas.**
-   
+La primera versión del sistema incluirá las siguientes funcionalidades:
 
-2. **Inicio de sesión con diferentes roles de usuario (administrador, funcionario, proveedor y moderador).**
-   
-
-3. **Registro de ciudadanos mediante usuario y contraseña, validando formato y dígito verificador de la cédula uruguaya.**
-   
-
-4. **Asignación automática de un nivel de prioridad a cada reclamo según criterios definidos por la Intendencia.**
-   
-
-5. **Asignación automática del reclamo al área o proveedor responsable según su categoría.**
-   
-
-6. **Seguimiento del estado de cada reclamo por parte del ciudadano.**
-   
-
-7. **Gestión interna de los reclamos, visualizando la ubicación exacta únicamente al personal autorizado.**
-   
-
-8. **Notificaciones dentro de la aplicación ante cambios de estado y avisos importantes.**
-   
-
-9. **Moderación manual de los reclamos por parte de la Intendencia antes de hacer visible determinada información.**
-   
-
-10. **Registro de evidencias de resolución (fotografías y observaciones) antes del cierre del reclamo.**
-    
-
-11. **Validación del cierre del reclamo por un funcionario autorizado antes de notificar al ciudadano.**
-    
-
-12. **Posibilidad de reabrir un reclamo cuando el problema vuelva a presentarse, conservando su historial.**
-    
-13. **Registro del historial de cambios realizados sobre cada reclamo.**
-   
-
-14. **Generación de estadísticas e indicadores básicos: reclamos recibidos, resueltos, pendientes y tiempos promedio de resolución.**
-    
+1. Registro de reclamos con descripción, categoría, prioridad, ubicación geográfica y evidencias fotográficas.
+2. Inicio de sesión con diferentes roles de usuario: **Administrador**, **Funcionario**, **Proveedor** y **Moderador**.
+3. Registro de ciudadanos mediante correo electrónico, con validación de identidad desde el backend.
+4. Asignación de prioridad al reclamo en una escala definida.
+5. Asignación automática del reclamo al área o proveedor responsable según su categoría.
+6. Seguimiento del estado de cada reclamo por parte del ciudadano.
+7. Visualización de reclamos públicos con distinto nivel de exposición según su estado.
+8. Gestión interna de los reclamos mediante un dashboard para el personal de la comuna.
+9. Organización de los reclamos mediante un tablero **Kanban**, utilizando los estados:
+   - Ingreso
+   - En proceso
+   - Resuelto
+   - Rechazado
+10. Visualización de evidencias antes y después de la resolución del reclamo por parte del personal autorizado.
+11. Notificaciones dentro de la aplicación ante cambios de estado del reclamo.
+12. Moderación manual de contenido por parte de un funcionario con rol **Moderador**.
+13. Registro de evidencias de resolución, incluyendo fotografías y observaciones, antes del cierre del reclamo.
+14. Validación del cierre del reclamo por un funcionario autorizado.
+15. Consulta de tareas asignadas por parte de equipos internos o proveedores.
 
 
 
-**Alcance excluido (queda para etapas futuras):**
+## Alcance excluido (Etapas futuras)
+
 Las siguientes funcionalidades no serán desarrolladas en la primera versión del sistema:
 
-* **Integración con TuID de Antel para autenticación de usuarios.**
-  *Justificación:* requiere un convenio o acceso formal a la plataforma de identidad digital de Antel (credenciales de aplicación, entorno de pruebas oficial, cumplimiento de sus políticas de integración), algo que un equipo estudiantil no puede gestionar en los tiempos del proyecto. En su lugar se implementa la validación de formato y dígito verificador de cédula (punto 3 del alcance incluido).
+1. **Integración con TuID de Antel para autenticación de usuarios.**  
+   **Justificación:** Requiere un convenio o acceso formal a la plataforma de identidad digital de Antel, credenciales de aplicación, entorno de pruebas oficial y cumplimiento de sus políticas de integración. Esto excede los tiempos y recursos del proyecto. En su lugar, se mantiene una validación de identidad definida para el sistema desde el backend.
 
-* **Moderación automática de reclamos falsos o contenido inapropiado mediante inteligencia artificial.**
-  *Justificación:* implica clasificación de texto e imágenes (NLP / visión por computadora), lo cual requiere lenguajes, librerías y frameworks de IA/ML que no forman parte de las tecnologías permitidas para el proyecto (Laravel/PHP + MySQL) ni de los contenidos vistos en el curso. Se prioriza la moderación manual (punto 9 del alcance incluido), que cumple el mismo objetivo sin esa complejidad técnica.
+2. **Asignación automática inicial de prioridad según el tipo de incidencia.**  
+   **Justificación:** Aunque el sistema permitirá asignar prioridad al reclamo, la automatización de esa decisión requiere definir reglas más complejas, validar criterios con la Intendencia y contemplar excepciones. Para la primera versión se prioriza una gestión más controlada y simple.
 
-* **Detección automática de comportamientos fraudulentos de los usuarios.**
-  *Justificación:* supone construir un modelo de análisis de patrones de comportamiento a partir de datos históricos (analítica de comportamiento / detección de anomalías), disciplina de ciencia de datos que excede tanto las tecnologías permitidas como el tiempo disponible (julio–octubre, equipo de 5 personas). Queda pendiente para una etapa futura con recursos y plazos mayores.
+3. **Registro de intentos fraudulentos cuando falla la validación de identidad.**  
+   **Justificación:** Implica almacenar y gestionar eventos de seguridad adicionales, definir criterios de fraude y posibles acciones posteriores sobre el usuario. Se excluye para limitar el alcance inicial a la validación de identidad necesaria para habilitar el acceso.
 
-* **Análisis automático de fotografías para validar la autenticidad de un reclamo.**
-  *Justificación:* requiere visión por computadora para comparar una imagen con el tipo de incidente reportado, lo cual conlleva lenguajes y modelos de IA que no están contemplados entre las tecnologías permitidas para el desarrollo de la aplicación. En esta versión, esa validación queda a cargo del personal durante la moderación manual.
+4. **Registro completo del historial de cambios realizados sobre cada reclamo.**  
+   **Justificación:** Conservar la trazabilidad completa implica registrar cada modificación, estado anterior, usuario responsable, fecha y detalle del cambio. Esto agrega complejidad al modelo de datos y al backend. En la primera versión se prioriza la gestión operativa del reclamo.
 
-* **Visualización en tiempo real del recorrido del equipo responsable (similar a apps de entrega).**
-  *Justificación:* necesita geolocalización continua del dispositivo del proveedor, actualización en vivo (websockets o polling constante) e infraestructura adicional para sostenerlo, lo que agrega una complejidad y un costo de desarrollo que no son viables en el plazo del proyecto. La propia entrevista con el cliente la plantea como una mejora deseable, no como una necesidad de la primera versión.
+5. **Posibilidad de reabrir un reclamo cerrado conservando su historial.**  
+   **Justificación:** La reapertura depende del historial completo del reclamo y de reglas adicionales para definir cuándo corresponde reabrirlo, quién puede hacerlo y cómo se refleja en el flujo de estados. Al excluirse la trazabilidad completa, esta funcionalidad también queda fuera de la primera versión.
 
-* **Reportes avanzados con análisis estadísticos personalizados para la Intendencia.**
-  *Justificación:* un módulo de indicadores configurables (filtros personalizados, cruces de datos a demanda) implica un desarrollo de reporting adicional al de las estadísticas básicas ya contempladas (punto 14 del alcance incluido), que sí cubren la necesidad principal planteada por el cliente dentro del tiempo disponible.
+6. **Registro del inicio de trabajo por parte de los equipos.**  
+   **Justificación:** La versión inicial permitirá consultar tareas asignadas y registrar su finalización, pero no contemplará un evento separado de inicio. Esto simplifica el flujo de trabajo de equipos y proveedores, reduciendo estados intermedios y operaciones obligatorias.
 
-*Justificación general:* Dado el plazo del proyecto (julio–octubre) y el tamaño del equipo, se prioriza el flujo transaccional completo del reclamo (creación → asignación → resolución → cierre) sobre funcionalidades de automatización inteligente, visibilidad pública y analítica avanzada, que no son bloqueantes para que el sistema cumpla su objetivo principal y pueden incorporarse en una segunda etapa sin rediseñar la arquitectura base.
+7. **Generación de estadísticas e indicadores básicos o avanzados.**  
+   **Justificación:** Aunque los indicadores pueden aportar valor a la Intendencia, requieren consultas, filtros, cálculos y vistas adicionales. Para esta primera versión se prioriza el flujo principal del reclamo por encima del módulo de reportes. Los indicadores podrán incorporarse en una etapa futura.
 
-**Stakeholders principales:**
+8. **Moderación automática de reclamos falsos o contenido inapropiado mediante inteligencia artificial.**  
+   **Justificación:** Implica clasificación de texto e imágenes mediante técnicas de procesamiento de lenguaje natural (NLP) o visión por computadora, lo cual requiere tecnologías de IA/ML que no forman parte de las tecnologías permitidas para el proyecto ni de los contenidos vistos en el curso. Se prioriza la moderación manual.
 
-| Rol | Persona / referente | Responsabilidad |
-|---|---|---|
-| Sponsor | Superior de Andrea (dentro de la Intendencia) | Aprueba el proyecto, define prioridades y autoriza cambios importantes. |
-| Usuario experto | Andrea (referente de la Intendencia) | Explica el proceso actual de gestión de reclamos, brinda los requerimientos y valida el funcionamiento del sistema. |
-| Usuario operativo | Personal de la Intendencia (administradores) | Gestiona los reclamos desde el Dashboard Comuna: asigna, aprueba o rechaza trabajos, administra usuarios y permisos. |
-| Usuario operativo | Proveedores / equipos de trabajo | Reciben los reclamos asignados, registran inicio y finalización de tareas con evidencias, y resuelven las incidencias. |
-| Usuario operativo | Ciudadanos | Cargan reclamos en el sistema (descripción, categoría, evidencias, ubicación) y hacen seguimiento de su estado. |
-| Equipo de desarrollo | Luca Bonansea (Líder/SM), Thiago Carbajal, Ariana Blanco, Nicolas Perez, Emanuel Trapolini | Releva los requerimientos y construye el producto (backend, frontend, documentación, testing). |
+9. **Detección automática de reclamos inválidos.**  
+   **Justificación:** Requiere analizar evidencias, descripciones y posiblemente patrones previos para determinar si un reclamo es válido. Esta lógica automática excede el alcance técnico de la primera versión, por lo que la validación queda a cargo del personal autorizado.
 
-**Riesgos iniciales:**
+10. **Clasificación automática de reclamos inválidos con baja prioridad, eliminación o respuesta automática.**  
+    **Justificación:** Depende de la detección automática de reclamos inválidos y de reglas de decisión que podrían afectar reclamos legítimos si no están correctamente calibradas. Por ello se deja para una etapa futura.
 
-| Riesgo | Impacto posible |
-|---|---|
-| Atraso respecto al cronograma (entrevista recién realizada en julio, entrega fines de octubre) | Entrega incompleta o con funcionalidades del alcance incluido sin terminar. |
-| Dependencia de la API docente para validación de identidad (Apéndice 1) | Si no está disponible a tiempo o cambia su especificación, se bloquea el registro de ciudadanos (RF-01, RF-03, RF-04) y todo lo que depende de un ciudadano validado. |
-| Disponibilidad limitada de Andrea para validar avances y resolver dudas | Decisiones de alcance o prioridad demoradas, reclamos ambiguos sin resolver, retrabajo si se avanza sobre supuestos incorrectos. |
-| Alcance amplio (35 RF) para el tiempo y equipo disponibles | Riesgo de dispersar esfuerzo en funcionalidades secundarias y no llegar con el flujo principal (creación → asignación → resolución → cierre) sólido y probado. |
-| Complejidad técnica de PWA, geolocalización y carga de evidencias multimedia | Curva de aprendizaje mayor a la esperada, atrasando sprints si el equipo no tiene experiencia previa con estas tecnologías. |
-| Compatibilización del proyecto con otras materias/obligaciones académicas del equipo | Menor disponibilidad horaria real que la planificada por sprint, afectando la velocidad del equipo. |
-| Concentración de tareas críticas en pocas personas (ej. backend) | Cuello de botella si esa persona se atrasa o falta; el resto del equipo queda bloqueado. |
-| Ausencia o baja disponibilidad de algún integrante del equipo | Sobrecarga sobre el resto del grupo (equipo de 5) y riesgo de no cubrir todas las funcionalidades asignadas. |
-| Flujo de Git con PRs obligatorios en equipo sin experiencia previa en trabajo colaborativo | Conflictos de merge, demoras en la integración de features, código sin revisar por falta de tiempo. |
-| Falta de manual de identidad institucional (P6) | Retrabajo de diseño/UI si la Intendencia define una imagen institucional a mitad de proyecto. |
+11. **Detección automática de comportamientos fraudulentos de los usuarios.**  
+    **Justificación:** Supone construir un modelo de análisis de patrones de comportamiento a partir de datos históricos, lo cual corresponde a analítica avanzada o ciencia de datos. Esto excede las tecnologías permitidas y el tiempo disponible para el proyecto.
+
+12. **Advertencia, suspensión o bloqueo automático de usuarios con reclamos inválidos reiterados.**  
+    **Justificación:** Esta funcionalidad depende de la detección confiable de reclamos inválidos y de comportamiento fraudulento. Además, requiere definir reglas administrativas y criterios de sanción. Por ese motivo queda fuera de la primera versión.
+
+13. **Análisis automático de fotografías para validar la autenticidad de un reclamo.**  
+    **Justificación:** Requiere técnicas de visión por computadora para comparar una imagen con el tipo de incidente reportado. En esta versión, esa revisión quedará a cargo del personal mediante la moderación manual.
+
+14. **Visualización en tiempo real del recorrido del equipo responsable.**  
+    **Justificación:** Necesita geolocalización continua del dispositivo del proveedor, actualización en tiempo real e infraestructura adicional, como WebSockets o mecanismos de actualización constante. Esto agrega complejidad y costo de desarrollo no viables para el plazo del proyecto.
 
 **Plazo y metodología:**
 Scrum, 6 sprints de 2 semanas (12 semanas totales), con revisión del incremento junto al cliente al final de cada sprint. Fecha aproximada de finalizacion: 29 de octubre
