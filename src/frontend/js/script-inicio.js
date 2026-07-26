@@ -273,27 +273,23 @@ function iniciarReclamo(){
 
         <div class="mapa-container">
 
-            <div class="busqueda">
+    <div class="busqueda">
+        <span class="material-symbols-outlined">search</span>
+        <input
+            type="text"
+            id="buscarDireccion"
+            placeholder="Buscar ubicación..."
+            autocomplete="off">
+            <button id="ubicacion">
+                <span class="material-symbols-outlined">my_location</span>
+            </button>
+    </div>
 
-                <span class="material-symbols-outlined">
-                    search
-                </span>
+    <ul id="sugerencias" class="sugerencias-lista"></ul>
 
-                <input
-                    type="text"
-                    id="buscarDireccion"
-                    placeholder="Buscar ubicación...">
+    <div id="map"></div>
 
-                    <button id="ubicacion">
-                        <span class="material-symbols-outlined">my_location</span>
-                    </button>
-
-            </div>
-
-
-            <div id="map"></div>
-
-        </div>
+</div>
 
 
 
@@ -481,57 +477,145 @@ function iniciarReclamo(){
     // =========================
 
 
-    const input = document.getElementById(
-        "buscarDireccion"
-    );
+    // =========================
+    // BUSCAR DIRECCION (con sugerencias)
+    // =========================
 
+    const input = document.getElementById("buscarDireccion");
+    const listaSugerencias = document.getElementById("sugerencias");
 
-    input.addEventListener(
-        "keydown",
-        async(e)=>{
+    let temporizador = null;
+    let controlador = null;
+    let resultadosActuales = [];
+    let indiceActivo = -1;
 
+    function ocultarSugerencias(){
+        listaSugerencias.innerHTML = "";
+        listaSugerencias.style.display = "none";
+        resultadosActuales = [];
+        indiceActivo = -1;
+    }
 
-            if(e.key !== "Enter") return;
+    function seleccionarLugar(lugar){
+        const lat = lugar.lat;
+        const lon = lugar.lon;
 
+        map.setView([lat, lon], 17);
+        marker.setLatLng([lat, lon]);
 
-            const lugar = input.value;
+        input.value = lugar.display_name;
+        ocultarSugerencias();
+    }
 
+    function pintarSugerencias(){
+        listaSugerencias.innerHTML = "";
 
-            const respuesta = await fetch(
+        resultadosActuales.forEach((lugar, i) => {
+            const item = document.createElement("li");
+            item.classList.add("sugerencia-item");
+            item.textContent = lugar.display_name;
 
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(lugar)}`
-
-            );
-
-
-            const datos = await respuesta.json();
-
-
-
-            if(datos.length){
-
-
-                const lat = datos[0].lat;
-                const lon = datos[0].lon;
-
-
-                map.setView(
-                    [lat,lon],
-                    17
-                );
-
-
-                marker.setLatLng(
-                    [lat,lon]
-                );
-
-
+            if(i === indiceActivo){
+                item.classList.add("activa");
             }
 
+            item.addEventListener("click", () => seleccionarLugar(lugar));
+            listaSugerencias.appendChild(item);
+        });
 
+        listaSugerencias.style.display = resultadosActuales.length ? "block" : "none";
+    }
+
+    async function buscarSugerencias(texto){
+        if(texto.trim().length < 3){
+            ocultarSugerencias();
+            return;
         }
 
-    );
+        if(controlador){
+            controlador.abort();
+        }
+        controlador = new AbortController();
+
+        try{
+            const respuesta = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=uy&q=${encodeURIComponent(texto)}`,
+                { signal: controlador.signal }
+            );
+
+            resultadosActuales = await respuesta.json();
+            indiceActivo = -1;
+            pintarSugerencias();
+
+        }catch(error){
+            if(error.name !== "AbortError"){
+                console.log("Error al buscar dirección:", error);
+            }
+        }
+    }
+
+    input.addEventListener("input", () => {
+        clearTimeout(temporizador);
+        const texto = input.value;
+
+        temporizador = setTimeout(() => {
+            buscarSugerencias(texto);
+        }, 400);
+    });
+
+    input.addEventListener("keydown", (e) => {
+
+        if(e.key === "ArrowDown" && resultadosActuales.length){
+            e.preventDefault();
+            indiceActivo = (indiceActivo + 1) % resultadosActuales.length;
+            pintarSugerencias();
+            return;
+        }
+
+        if(e.key === "ArrowUp" && resultadosActuales.length){
+            e.preventDefault();
+            indiceActivo = (indiceActivo - 1 + resultadosActuales.length) % resultadosActuales.length;
+            pintarSugerencias();
+            return;
+        }
+
+        if(e.key === "Enter"){
+            e.preventDefault();
+            clearTimeout(temporizador);
+
+            if(indiceActivo >= 0 && resultadosActuales[indiceActivo]){
+                seleccionarLugar(resultadosActuales[indiceActivo]);
+                return;
+            }
+
+            if(resultadosActuales.length){
+                seleccionarLugar(resultadosActuales[0]);
+                return;
+            }
+
+            // Si escribió rápido y todavía no llegó ninguna respuesta, buscamos directo
+            const texto = input.value.trim();
+            if(texto.length >= 3){
+                buscarSugerencias(texto).then(() => {
+                    if(resultadosActuales.length){
+                        seleccionarLugar(resultadosActuales[0]);
+                    }
+                });
+            }
+            return;
+        }
+
+        if(e.key === "Escape"){
+            ocultarSugerencias();
+        }
+    });
+
+    // Cerrar la lista al hacer click afuera
+    document.addEventListener("click", (e) => {
+        if(!e.target.closest(".busqueda") && !e.target.closest("#sugerencias")){
+            ocultarSugerencias();
+        }
+    });
 
 }
 
