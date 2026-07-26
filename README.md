@@ -1,49 +1,49 @@
 # 🚀 Proyecto UTU 2026
 
-Proyecto académico desarrollado para UTU 2026.
+Proyecto académico desarrollado para la asignatura de Programación Full-Stack en UTU 2026.
 
-El proyecto consiste en desarrollar una plataforma que permita gestionar reclamos ciudadanos relacionados con problemas urbanos, facilitando la comunicación entre ciudadanos, la comuna y los equipos encargados de resolver incidencias.
+El sistema consiste en una plataforma web para la gestión de reclamos ciudadanos, orientada a centralizar la comunicación entre la ciudadanía, la comuna y los equipos o proveedores responsables de resolver incidencias urbanas.
 
 ## Descripción
 
-El proyecto consiste en desarrollar una plataforma que permita gestionar reclamos ciudadanos relacionados con problemas urbanos, facilitando la comunicación entre ciudadanos, la comuna y los equipos encargados de resolver incidencias.
+El objetivo principal del proyecto es permitir que los ciudadanos registren reclamos, que la comuna los administre mediante un tablero de control y que los equipos puedan resolverlos con trazabilidad completa.
 
-El sistema permitirá:
+El sistema contempla:
 
-* Registrar reclamos ciudadanos.
-* Gestionar reclamos desde la comuna.
-* Asignar tareas a equipos o proveedores.
-* Realizar seguimiento del estado de los reclamos.
-* Adjuntar evidencias multimedia.
-* Mantener trazabilidad completa de cada reclamo.
+- Registro de reclamos ciudadanos.
+- Gestión interna de reclamos desde la comuna.
+- Asignación de tareas a equipos o proveedores.
+- Seguimiento del estado de cada reclamo.
+- Carga de evidencias multimedia.
+- Historial completo de cambios y actividades.
 
 ---
 
-# Objetivos
+# Objetivos del proyecto
 
 ## Ciudadanía
 
-* Registro e inicio de sesión.
-* Validación de identidad.
-* Creación de reclamos.
-* Adjuntar evidencias.
-* Geolocalización.
-* Seguimiento de estados.
+- Registro e inicio de sesión.
+- Validación de identidad.
+- Creación de reclamos.
+- Adjuntar evidencias.
+- Geolocalización.
+- Seguimiento del estado del reclamo.
 
-## Comuna
+## Comuna / Administración
 
-* Visualización de reclamos.
-* Gestión mediante tablero Kanban.
-* Asignación de tareas.
-* Aprobación o rechazo de trabajos.
-* Seguimiento de actividades.
+- Visualización de reclamos.
+- Gestión mediante tablero Kanban.
+- Asignación de tareas.
+- Aprobación o rechazo de trabajos.
+- Seguimiento de actividades y auditoría.
 
 ## Equipos / Proveedores
 
-* Visualizar tareas asignadas.
-* Iniciar y finalizar trabajos.
-* Registrar materiales utilizados.
-* Adjuntar evidencias.
+- Visualizar tareas asignadas.
+- Iniciar y finalizar trabajos.
+- Registrar materiales utilizados.
+- Adjuntar evidencias de resolución.
 
 ---
 
@@ -51,38 +51,42 @@ El sistema permitirá:
 
 ## Frontend
 
-* HTML5
-* CSS3
-* JavaScript
+- HTML5
+- CSS3
+- JavaScript
+- jQuery
 
 ## Backend
 
-* Laravel
+- Laravel
+- PHP
 
-## Base de Datos
+## Base de datos
 
-* MySQL
+- MySQL
 
-## Gestión del Proyecto
+## Gestión del proyecto
 
-* Git
-* GitHub
-* GitHub Projects
-* GitHub Issues
+- Git
+- GitHub
+- GitHub Projects
+- GitHub Issues
 
 ---
 
-# Estructura del Proyecto
+# Estructura del proyecto
 
 ```bash
 .
 ├── README.md
 ├── docs
+│   ├── actas
 │   ├── analisis
 │   ├── diseno
 │   ├── requisitos
 │   └── entregas
 ├── src
+│   └── frontend
 ├── tests
 └── .github
 ```
@@ -91,182 +95,128 @@ El sistema permitirá:
 
 ### docs/
 
-Documentación del proyecto.
-
-* análisis del problema
-* requerimientos
-* diseño
-* entregas
+Documentación del proyecto, incluyendo análisis, requisitos, diseño, actas y entregas.
 
 ### src/
 
-Código fuente del sistema.
+Código fuente del sistema. Actualmente se encuentra organizada la parte frontend en la carpeta src/frontend.
 
 ### tests/
 
-Pruebas y validaciones.
+Pruebas y validaciones del sistema.
 
 ### .github/
 
-Templates para Issues y Pull Requests.
+Plantillas y configuraciones para Issues, Pull Requests y flujo de trabajo del repositorio.
 
 ---
 
-# Roles del Sistema
+# Roles del sistema
 
 ## Ciudadano
 
-* Crear reclamos.
-* Consultar estados.
-* Visualizar historial.
+- Crear reclamos.
+- Consultar estados.
+- Visualizar historial.
 
 ## Comuna / Administrador
 
-* Gestionar reclamos.
-* Asignar tareas.
-* Aprobar o rechazar trabajos.
+- Gestionar reclamos.
+- Asignar tareas.
+- Aprobar o rechazar trabajos.
+- Supervisar trazabilidad y auditoría.
 
 ## Equipo / Proveedor
 
-* Gestionar tareas asignadas.
-* Registrar avances.
-* Adjuntar evidencias.
+- Gestionar tareas asignadas.
+- Registrar avances.
+- Adjuntar evidencias.
 
 ---
 
-# Estados del Reclamo
+# Estados del reclamo
 
-* Ingreso
-* Asignado
-* En proceso
-* Pendiente de aprobación
-* Resuelto
-* Rechazado
+- Ingreso
+- Asignado
+- En proceso
+- Pendiente de aprobación
+- Resuelto
+- Rechazado
 
 Todos los cambios de estado serán registrados en el historial del sistema.
 
 ---
 
-# Épicas
+# Épicas principales
 
-## EP1 - Seguridad
+## EP1 - Identidad y acceso
 
-Autenticación, control de acceso, roles, permisos y validaciones de identidad.
+Registro, autenticación, validación de identidad y control de permisos.
 
-## EP2 - Reclamos
+## EP2 - Creación y configuración de reclamos
 
-Creación, registro, validación y seguimiento de reclamos ciudadanos.
+Registro de ciudadanos, creación de reclamos con evidencias, categoría, prioridad y geolocalización.
 
-## EP3 - Dashboard
+## EP3 - Seguimiento ciudadano
 
-Visualización, filtro y gestión de reclamos para la comuna y los equipos.
+Consulta del estado de reclamos, notificaciones y trazabilidad para la ciudadanía.
 
-## EP4 - Equipos
+## EP4 - Gestión interna de reclamos
 
-Asignación de tareas, control de avance y organización del trabajo en equipos.
+Administración de reclamos desde la comuna, asignación y aprobación de tareas.
 
-## EP5 - Evidencias
+## EP5 - Gestión de equipos y proveedores
 
-Carga, almacenamiento y gestión de fotos, videos y archivos asociados a reclamos.
+Visualización de tareas, inicio y cierre de trabajo, y registro de evidencias.
 
-## EP6 - Historial
+## EP6 - Moderación y prevención de fraude
 
-Registro de estados, trazabilidad de cambios y consulta del historial de reclamos.
+Detección de contenido inválido, riesgos de fraude y comportamiento sospechoso.
 
-## EP7 - Testing y Documentación
+## EP7 - Infraestructura y soporte tecnológico
 
-Pruebas, documentación, entrega y preparación para defensa.
-
-## Estimación por épicas
-
-| Épica | Descripción | Estimación aproximada (Story Points) |
-| --- | --- | --- |
-| EP1 - Seguridad | Autenticación, roles y permisos. | 10 |
-| EP2 - Reclamos | Gestión completa del ciclo de reclamos. | 45 |
-| EP3 - Dashboard | Visualización y control de reclamos para la comuna. | 30 |
-| EP4 - Equipos | Asignación y seguimiento de tareas. | 25 |
-| EP5 - Evidencias | Manejo de fotografías, videos y archivos. | 20 |
-| EP6 - Historial | Seguimiento de cambios y estados del reclamo. | 15 |
-| EP7 - Testing y Documentación | Pruebas y entrega de documentación. | 8 |
+Arquitectura, persistencia, seguridad básica, documentación y gestión del desarrollo.
 
 ---
 
-# Planificación
+# Estado actual
 
-## Sprint 0
+El proyecto se encuentra en una etapa de análisis, planificación y documentación inicial para la primera entrega académica.
 
-Duración estimada: 1 semana.
-- Consolidar requisitos, priorizar el backlog y definir el alcance de la primera versión.
-- Diseñar la arquitectura técnica y el modelo de datos.
-- Configurar el repositorio, ramas principales y el entorno de desarrollo.
-- Preparar plantillas de documentación y criterios de aceptación.
+Actualmente cuentan con:
 
-## Sprint 1
+- requisitos funcionales y no funcionales,
+- épicas y backlog inicial,
+- arquitectura propuesta,
+- acta de reunión,
+- análisis de riesgos y restricciones.
 
-Duración estimada: 2 semanas.
-Objetivo: Entregar la base del sistema con autenticación, roles y gestión inicial de reclamos.
-Historias clave: HU1, HU4 y HU2.
-- Registro y validación de usuarios.
-- Inicio de sesión y control de acceso por roles.
-- Creación de reclamos con descripción, ubicación y evidencia.
-- Visualización de reclamos registrados.
-
-## Sprint 2
-
-Duración estimada: 2 semanas.
-Objetivo: Implementar la gestión de estados y la coordinación entre comuna y equipos.
-Historias clave: HU5, HU6 y HU2.
-- Asignación de reclamos a equipos de trabajo.
-- Gestión del ciclo de vida del reclamo.
-- Aprobación o rechazo de reclamos resueltos.
-- Seguimiento básico del estado del reclamo.
-
-## Sprint 3
-
-Duración estimada: 2 semanas.
-Objetivo: Entregar soporte operativo para los equipos de trabajo.
-Historias clave: HU7, HU8 y HU9.
-- Visualización de tareas asignadas.
-- Registro del inicio de tareas.
-- Registro de finalización con observaciones y evidencias.
-- Historial de actividad asociado a cada reclamo.
-
-## Sprint 4
-
-Duración estimada: 2 semanas.
-Objetivo: Completar mejoras de valor, pruebas y documentación para la entrega final.
-Historias clave: HU3 y actividades de cierre.
-- Notificaciones sobre cambios de estado de reclamos.
-- Reportes estadísticos y auditoría.
-- Pruebas, correcciones y documentación final.
-- Preparar presentación y entregables de cierre.
-
-## Observaciones
-
-- El backlog inicial está validado y ordenado en `docs/requisitos/priorizacion-backlog.md`.
-- Las historias de mayor valor y riesgo se colocan en los primeros sprints.
-- La funcionalidad de notificaciones es un valor agregado que puede quedar para Sprint 4 si hay restricciones de capacidad.
-- Se recomienda una capacidad inicial de 20 puntos por sprint y ajustar según la velocidad real del equipo.
-- Mantener reuniones de Sprint Review y Retrospective para adaptar el plan.
+Se continúa avanzando en la documentación formal y en la base técnica para poder pasar a la implementación.
 
 ---
 
-# Flujo de Trabajo
+# Primera entrega
+
+La primera entrega del proyecto incluye, entre otros aspectos, la documentación formal del proyecto, el análisis de requerimientos, el alcance inicial, el backlog, la arquitectura propuesta, las actas y la base de seguridad y trazabilidad requerida por la asignatura.
+
+---
+
+# Flujo de trabajo
 
 ## Ramas
 
-* main → versión estable.
-* develop → integración de cambios.
-* feature/* → nuevas funcionalidades.
+- main → versión estable.
+- develop → integración de cambios.
+- feature/* → nuevas funcionalidades.
 
 ## Proceso
 
-1. Crear rama desde develop.
-2. Implementar cambios.
+1. Crear una rama a partir de develop.
+2. Desarrollar cambios de forma ordenada.
 3. Realizar commits descriptivos.
 4. Crear Pull Request.
-5. Revisar cambios.
-6. Realizar merge.
+5. Revisar y validar cambios.
+6. Integrar en la rama correspondiente.
 
 ---
 
@@ -274,36 +224,29 @@ Historias clave: HU3 y actividades de cierre.
 
 El proyecto se organiza mediante GitHub Projects.
 
-Columnas:
+Columnas sugeridas:
 
-* Backlog
-* Ready
-* In Progress
-* Blocked
-* In Review
-* Done
-
----
-
-# Reglas del Equipo
-
-* No trabajar directamente sobre main.
-* Utilizar Pull Requests.
-* Mantener actualizado el tablero Kanban.
-* Documentar cambios importantes.
-* Utilizar Issues para nuevas tareas.
-* Comprender el código desarrollado antes de integrarlo.
-* Todos los integrantes deben conocer el funcionamiento general del sistema para la defensa.
+- Backlog
+- Ready
+- In Progress
+- Blocked
+- In Review
+- Done
 
 ---
 
-# Estado Actual
+# Reglas del equipo
 
-Actualmente el proyecto se encuentra en fase de análisis, planificación y diseño inicial.
+- No trabajar directamente sobre main.
+- Utilizar Pull Requests.
+- Mantener actualizado el tablero Kanban.
+- Documentar cambios importantes.
+- Utilizar Issues para nuevas tareas.
+- Comprender el código desarrollado antes de integrarlo.
+- Todos los integrantes deben conocer el funcionamiento general del sistema para la defensa.
 
 ---
 
 # Licencia
 
 Proyecto académico desarrollado para UTU 2026.
-CAMBIO
