@@ -62,8 +62,8 @@ Revisar el estado actual del proyecto, reorganizar las tareas de desarrollo y do
 | **Emanuel Trapolini** | • Identificar las amenazas del sistema.<br>• Elaborar el mapa de riesgos.<br>• Definir e incorporar buenas prácticas de seguridad. |
 | **Thiago Carbajal** | • Programar las nuevas páginas **Inicio**, **Tus Reclamos** y **Nuevo Reclamo** utilizando HTML, CSS y JavaScript.<br>• Desarrollar junto con Luca Bonansea la conversión del proyecto a una **Progressive Web App (PWA)**.<br>• Implementar el despliegue mediante **GitHub Pages** utilizando el protocolo **HTTPS** para la fase de Beta Testing. |
 | **Luca Bonansea** | • Programar las nuevas páginas **Inicio**, **Tus Reclamos** y **Nuevo Reclamo** utilizando HTML, CSS y JavaScript.<br>• Colaborar en la integración de los cambios dentro del repositorio.<br>• Desarrollar junto con Thiago Carbajal la conversión del proyecto a una **Progressive Web App (PWA)**.<br>• Implementar el protocolo **HTTPS** para el despliegue del sistema mediante GitHub Pages. |
-| **Ariana Blanco** | • Desarrollar la interfaz de usuario correspondiente a los diferentes roles del sistema (Administrador, Moderador y demás perfiles). |
-| **Nicolas Perez** | • Desarrollar la interfaz de usuario correspondiente a los diferentes roles del sistema (Administrador, Moderador y demás perfiles). |
+| **Ariana Blanco** | • Desarrollar la interfaz de usuario correspondiente a los diferentes roles del sistema (Administrador, Administrativo y demás perfiles). |
+| **Nicolas Perez** | • Desarrollar la interfaz de usuario correspondiente a los diferentes roles del sistema (Administrador, Administrativo y demás perfiles). |
 
 ---
 
