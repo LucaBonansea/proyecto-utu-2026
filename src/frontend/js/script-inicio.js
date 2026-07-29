@@ -949,6 +949,5 @@ Main.innerHTML = `        <div class="div-inicial">
             iniciarReclamo();
 
 
-
         });
 };
