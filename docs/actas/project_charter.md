@@ -19,20 +19,20 @@ Desarrollar un sistema web para la gestión de reclamos ciudadanos que permita o
 **Justificación del proyecto:**
 La implementación de este proyecto permitirá mejorar la gestión de los reclamos ciudadanos mediante un proceso más organizado, trazable y eficiente. Contar con una plataforma centralizada facilitará la coordinación entre las distintas áreas de la Intendencia, reducirá la dispersión de la información y permitirá realizar un seguimiento adecuado de cada incidencia desde su registro hasta su resolución.
 
-En caso de no llevarse a cabo, la gestión de los reclamos continuará dependiendo de múltiples canales de comunicación y procesos manuales, lo que puede generar demoras, pérdida de información, dificultades pa
+En caso de no llevarse a cabo, la gestión de los reclamos continuará dependiendo de múltiples canales de comunicación y procesos manuales, lo que puede generar demoras, pérdida de información, dificultades para el seguimiento de los reclamos y una menor eficiencia en la gestión interna.
 
 **Visión del producto:**
-El producto consiste en un sistema de gestión de reclamos ciudadanos compuesto por una aplicación web para la ciudadanía, un panel administrativo para la Intendencia y una interfaz para los equipos o proveedores encargados de resolver las incidencias. La solución permitirá registrar, asignar, gestionar y dar seguimiento a los reclamos mediante una plataforma centralizada, con control de estados, evidencias multimedia, geolocalización e historial de actividades, facilitando una gestión más eficiente y transparente.
+El producto consiste en un sistema de gestión de reclamos ciudadanos compuesto por una aplicación web para la ciudadanía, un panel administrativo para la Intendencia y una interfaz para los equipos o proveedores encargados de resolver las incidencias. La solución permitirá registrar, asignar, gestionar y dar seguimiento a los reclamos mediante una plataforma centralizada, con control de estados, evidencias multimedia, geolocalización, facilitando una gestión más eficiente y transparente.
 
 ## Alcance incluido (Primera versión)
 
 La primera versión del sistema incluirá las siguientes funcionalidades:
 
-1. Registro de reclamos con descripción, categoría, prioridad, ubicación geográfica y evidencias fotográficas.
-2. Inicio de sesión con diferentes roles de usuario: **Administrador**, **Funcionario**, **Proveedor** y **Moderador**.
-3. Registro de ciudadanos mediante correo electrónico, con validación de identidad desde el backend.
-4. Asignación de prioridad al reclamo en una escala definida.
-5. Asignación automática del reclamo al área o proveedor responsable según su categoría.
+1. Registro de reclamos con descripción, ubicación geográfica y evidencias fotográficas.
+2. Inicio de sesión con diferentes roles de usuario: **Administrador**, **Administrativo**, **Proveedor** y **Ciudadano**.
+3. Registro de ciudadanos mediante número telefónico, con validación de identidad desde el backend.
+4. Asignación de prioridad al reclamo por parte del Administrativo cuando corresponda.
+5. Asignación automática del reclamo al área o proveedor responsable según la clasificación realizada por el Administrativo.
 6. Seguimiento del estado de cada reclamo por parte del ciudadano.
 7. Visualización de reclamos públicos con distinto nivel de exposición según su estado.
 8. Gestión interna de los reclamos mediante un dashboard para el personal de la comuna.
@@ -43,10 +43,12 @@ La primera versión del sistema incluirá las siguientes funcionalidades:
    - Rechazado
 10. Visualización de evidencias antes y después de la resolución del reclamo por parte del personal autorizado.
 11. Notificaciones dentro de la aplicación ante cambios de estado del reclamo.
-12. Moderación manual de contenido por parte de un funcionario con rol **Moderador**.
+12. Moderación manual de contenido por parte de un funcionario con rol **Administrativo**.
 13. Registro de evidencias de resolución, incluyendo fotografías y observaciones, antes del cierre del reclamo.
 14. Validación del cierre del reclamo por un funcionario autorizado.
 15. Consulta de tareas asignadas por parte de equipos internos o proveedores.
+16. Gestión de clasificaciones: Módulo para que el Administrador o Administrativo pueda crear, editar y administrar las clasificaciones disponibles.
+17. Administración de proveedores: Módulo para que el Administrativo registre, modifique y administre proveedores.
 
 
 
@@ -103,6 +105,6 @@ Scrum, 6 sprints de 2 semanas (12 semanas totales), con revisión del incremento
 72 horas de esfuerzo aproximadas
 
 **Criterios de éxito:**
-El sistema permite gestionar todo el ciclo de vida de un reclamo ciudadano, desde su creación hasta su resolución final. Los ciudadanos pueden registrar sus reclamos incorporando información como categoría, descripción, evidencias fotográficas y ubicación geográfica. Luego, el sistema facilita la asignación automática al área o proveedor correspondiente y realiza el seguimiento de cada etapa del proceso.
+El sistema permite gestionar todo el ciclo de vida de un reclamo ciudadano, desde su creación hasta su resolución final. Los ciudadanos pueden registrar sus reclamos incorporando información como  descripción, evidencias fotográficas y ubicación geográfica. Luego, el sistema facilita la clasificación del reclamo por parte del Administrativo, su asignación al área o proveedor correspondiente y el seguimiento de cada etapa del proceso.
 
-Además, mantiene un historial completo y consultable de todos los cambios de estado, brindando trazabilidad y transparencia durante la gestión. La Intendencia valida la solución mediante la revisión del flujo completo, asegurando que el proceso funcione correctamente de principio a fin antes de aceptar la entrega final.
+Además, la Intendencia valida la solución mediante la revisión del flujo completo, asegurando que el proceso funcione correctamente de principio a fin antes de aceptar la entrega final.
