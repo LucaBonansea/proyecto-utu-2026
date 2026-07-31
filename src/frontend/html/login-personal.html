@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
         <title>Portal Ciudadano</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style.css">
+        <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-login-personal.css">
         <link rel="icon" href="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png">
     </head>
 
@@ -23,10 +23,20 @@
 
         <main>
             <div class="titulos">
-                <h2>Iniciar sesión - Ciudadano</h2>
+                <h2>Iniciar sesión - Personal</h2>
                 <p class="subtitulo">
                     Ingresa tu número de teléfono y pin.
                 </p>
+            </div>
+            
+            <div class="div-user">
+                <p>Tipo de usuario</p>
+                <select class="user-select">
+                    <option value="" selected disabled>Seleccione un tipo de usuario</option>
+                    <option value="administrador">Administrador</option>
+                    <option value="administrativo">Administrativo</option>
+                    <option value="proveedor">Proveedor</option>
+                </select>
             </div>
 
 
@@ -34,13 +44,13 @@
 
                 <div class="div-tel">
                     <p>Numero de telefono</p>
-                    <input class="tel-input" type="text" name="" id="" placeholder="098784392">
+                    <input class="tel-input" type="text" name="" id="" placeholder="098369933">
                 </div>
                 
 
                 <div class="div-pass">
                     <p>Pin</p>
-                    <input class="pass-input" type="password">
+                    <input class="pass-input" type="password" placeholder="0000">
                     <div class="olv-div">
                         <a class="olvidaste" href="">¿Olvidaste tu Pin?</a>
                     </div>
@@ -48,10 +58,12 @@
                 
                 
             </section>
-
             <div class="div-login-btn">
                 <button class="btn-login">Iniciar sesión</button>
             </div>
+            
+
+
 
 
 
