@@ -9,7 +9,7 @@ export class Reclamos{
             <h2>Tus Reclamos</h2>
         </div>
     
-        <div>
+        <div class="reclamos-seccion">
 
             <div class="primerdiv-reclamo">
                 <div class="foto-reclamo">

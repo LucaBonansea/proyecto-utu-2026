@@ -16,26 +16,25 @@ export class Home{
 
     first_view($btn_home, main){
         this.$btn_home.classList.add("active");
-        this.main.innerHTML = `        <div class="div-inicial">
-            <h2>Hola,<span>Thiago</span></h2>
+       this.main.innerHTML = `
+    <div class="div-inicial">
+        <h2>Hola,<span>Thiago</span></h2>
+    </div>
+
+    <button class="new-reclamo-inicial">
+        Nuevo Reclamo
+    </button>
+
+    <div>
+        <div class="reclamos-text">
+            <p>Reclamos ciudadanos</p>
         </div>
 
-        <button class="new-reclamo-inicial">
-            Nuevo Reclamo
-        </button>
+        <section class="reclamos-seccion">
+        </section>
 
-
-        <div>
-            <div class="reclamos-text">
-                <p>Reclamos ciudadanos</p>
-            </div>
-            
-            <section class="reclamos-seccion">
-            
-            <section>
-
-
-        </div>`;
+    </div>
+`;
         this.nuevo_reclamo_inicio();
         this.cargar_reclamos();
     }
@@ -82,6 +81,14 @@ export class Home{
     hora: "16:45",
     estado: "Terminado",
     direccion: "Calle Rivadavia 540"
+  },
+  {
+    titulo: "Cables caídos sobre la vereda",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWLMJI2-PKY2q5A_y5W14PC6H0vD7HSNOvVInlLkY3OqsR21npjVaKqjY&s=10",
+    fecha: "2026-03-01",
+    hora: "08:20",
+    estado: "Terminado",
+    direccion: "Av. Del Libertador 2200"
   },
   {
     titulo: "Cables caídos sobre la vereda",
