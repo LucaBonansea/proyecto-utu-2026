@@ -70,12 +70,13 @@ main{
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
+    background-color: white;
+    box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
     padding: 6px;
     border-radius: 50%;
-    
     border: none;
     cursor: pointer;
+    color: red;
 }
 .notification {
     color: white;
@@ -606,4 +607,21 @@ main{
 .sugerencia-item:hover,
 .sugerencia-item.activa{
     background:#f0f5ff;
+}
+
+
+/*Media querry*/
+
+
+.reclamos-seccion {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+
+@media (max-width: 768px) {
+    .reclamos-seccion {
+        display: block;
+        gap: 0;
+    }
 }
