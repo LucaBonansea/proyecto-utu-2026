@@ -17,15 +17,9 @@ export class Nuevo_reclamos{
 
         <label for="archivo" class="icono-subir">
             <span class="material-symbols-outlined">add_photo_alternate</span>
+            Sube aquí tu evidencia
         </label>
-
-        <input 
-            type="text" 
-            id="otraCategoria"
-            placeholder="Escribe la categoría"
-            style="display:none;">
-
-
+        
         <label class="descripcion">
 
             <span class="material-symbols-outlined">description</span>
