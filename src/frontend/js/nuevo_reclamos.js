@@ -15,15 +15,11 @@ export class Nuevo_reclamos{
 
         <input type="file" id="archivo" hidden>
 
+        <section class="top-new-reclamo">
         <label for="archivo" class="icono-subir">
             <span class="material-symbols-outlined">add_photo_alternate</span>
         </label>
 
-        <input 
-            type="text" 
-            id="otraCategoria"
-            placeholder="Escribe la categoría"
-            style="display:none;">
 
 
         <label class="descripcion">
@@ -40,6 +36,7 @@ export class Nuevo_reclamos{
             </div>
         </label>
 
+        </section>
 
         <div class="mapa-container">
 
