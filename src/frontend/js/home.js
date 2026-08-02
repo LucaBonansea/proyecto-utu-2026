@@ -19,10 +19,6 @@ export class Home{
         this.$btn_home_top.classList.add("active");
         this.$btn_home.classList.add("active");
         this.main.innerHTML = `        
-        
-        <div class="div-inicial">
-            <h2>Hola,<span>Thiago</span></h2>
-        </div>
 
         <button class="new-reclamo-inicial">
             Nuevo Reclamo
@@ -30,15 +26,13 @@ export class Home{
 
 
         <div>
-            <div class="reclamos-text">
-                <p>Reclamos ciudadanos</p>
+            <div class="div-inicial">
+                <h3>Reclamos ciudadanos</h3>
             </div>
             
             <section class="reclamos-seccion">
             
             </section>
-
-
         </div>`;
         this.nuevo_reclamo_inicio();
         this.cargar_reclamos();

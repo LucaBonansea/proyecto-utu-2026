@@ -18,10 +18,9 @@ export class Nuevo_reclamos{
         <section class="top-new-reclamo">
         <label for="archivo" class="icono-subir">
             <span class="material-symbols-outlined">add_photo_alternate</span>
+            Sube aquí tu evidencia
         </label>
-
-
-
+        
         <label class="descripcion">
 
             <span class="material-symbols-outlined">description</span>

@@ -34,21 +34,23 @@ function togglePassword() {
 
 
 document.getElementById('cedula').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
+    let value = e.target.value.replace(/\D/g, '').slice(0, 8); // máx 8 dígitos
 
-    if (value.length > 7) {
-        value = value.slice(0, 7) + '-' + value.slice(7, 8);
-    }
-    if (value.length > 3) {
-        value = value.slice(0, 3) + '.' + value.slice(3);
-    }
-    if (value.length > 7) {
-        value = value.slice(0, 7) + '.' + value.slice(7);
+    let formateado = value;
+
+    if (value.length > 1) {
+        // separa el último dígito (verificador) con guión
+        const cuerpo = value.slice(0, -1);
+        const verificador = value.slice(-1);
+
+        // le pone puntos al cuerpo de derecha a izquierda
+        const cuerpoConPuntos = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        formateado = `${cuerpoConPuntos}-${verificador}`;
     }
 
-    e.target.value = value;
+    e.target.value = formateado;
 });
-
 
 function handleLogin() {
     const cedula = document.getElementById('cedula').value;
