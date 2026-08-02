@@ -5,8 +5,7 @@
 body{
     background-color: #F0F5FF;
     font-family:'Inter', sans-serif;
-    
-    
+    margin: 0px 100px;
 }
 header{
     display: flex;
@@ -88,26 +87,53 @@ main{
         'opsz' 48;
 }
 
-.bottom-nav{
-    position:fixed;
-    bottom: calc( env(safe-area-inset-bottom, 0px));
-    box-sizing: border-box;
-    left:50%;
-    transform:translateX(-50%);
-
-    width:350px;
-    height:60px;
-
-    border-radius:100px;
+.top-nav{
     display:flex;
-    justify-content:space-around;
-    align-items:center;
-
+    gap: 50px;
     background:linear-gradient(180deg,#023ca1cf,#001844e4);
+    height: 60px;
+    padding: 0px 25px;
+    border-radius:100px;
     box-shadow:0 8px 25px rgba(0,0,0,.25);
+    button{
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: white;
+        justify-content: center;
+        padding: 0px 20px;
+        border-radius: 100px;
+        margin: 6px 0px;
+        transition:.25s;
+    }
 
-    z-index:1000;
 }
+
+.top-nav button:hover span{
+    font-size:28px;
+    transition:.25s ease;
+    transform:scale(1.08);
+}
+
+
+
+.top-nav button:hover p{
+    font-size: 15px;
+    transition:.25s ease;
+}
+
+.top-nav button:active{
+    transform:scale(.92);
+}
+
+.top-nav button.active{
+    background:#0a45ac;
+    box-shadow:0 4px 12px rgba(11, 97, 246, 0.588);
+}
+
 
 .bottom-nav button{
     width:45px;
@@ -249,7 +275,6 @@ main{
     width:12px;
     height:12px;
     border-radius:50%;
-
     background:#d1d5db;
     color:white;
 
@@ -259,7 +284,7 @@ main{
 }
 
 .step.active .circle{
-    background:#22c55e;
+    background:#0a45ac;
 }
 
 .line{
@@ -271,11 +296,10 @@ main{
 }
 
 .line.active{
-    background:#22c55e;
+    background:#0a45ac;
 }
 
 .step span{
-    
     top:20px;
     left:50%;
     
@@ -609,6 +633,19 @@ main{
     background:#f0f5ff;
 }
 
+/*Etiquetas*/
+
+.estado-last{
+    background: #0a45ac;
+}
+
+footer{
+    display: none;
+}
+
+
+
+
 
 /*Media querry*/
 
@@ -623,5 +660,46 @@ main{
     .reclamos-seccion {
         display: block;
         gap: 0;
+    }
+
+    body{
+        margin: 0px;
+    }
+
+    .bottom-nav{
+        position:fixed;
+        bottom: calc( env(safe-area-inset-bottom, 0px));
+        box-sizing: border-box;
+        left:50%;
+        transform:translateX(-50%);
+        width:350px;
+        height:60px;
+        border-radius:100px;
+        display:flex;
+        justify-content:space-around;
+        align-items:center;
+        background:linear-gradient(180deg,#023ca1cf,#001844e4);
+        box-shadow:0 8px 25px rgba(0,0,0,.25);
+        z-index:1000;
+    }
+
+    footer{
+        display: block;
+    }
+
+    .top-nav{
+        display: none;
+    }
+
+}
+
+@media(max-width: 1024px){
+    body{
+        margin: 0px;
+    }
+
+    .top-nav{
+        gap:10px;
+        padding: 0px 10px;
     }
 }

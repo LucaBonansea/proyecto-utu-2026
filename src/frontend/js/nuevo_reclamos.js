@@ -1,11 +1,13 @@
 export class Nuevo_reclamos{
-    constructor($btn_home, Main){
+    constructor($btn_home_top, $btn_home, Main){
+        this.$btn_home_top = $btn_home_top;
         this.$btn_home = $btn_home;
         this.Main = Main;
     }
 
     third_view(){
         this.$btn_home.classList.remove("active");
+        this.$btn_home_top.classList.remove("active");
         this.Main.innerHTML = `
         <div class="div-inicial">
             <h2>Nuevo Reclamo</h2>
