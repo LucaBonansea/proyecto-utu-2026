@@ -1,5 +1,6 @@
 export class Home{
-    constructor($btn_home, maim, iniciarReclamo){
+    constructor($btn_home_top, $btn_home, maim, iniciarReclamo){
+        this.$btn_home_top = $btn_home_top;
         this.$btn_home = $btn_home;
         this.main = main;
         this.iniciarReclamo = iniciarReclamo;
@@ -15,26 +16,30 @@ export class Home{
     
 
     first_view($btn_home, main){
+        this.$btn_home_top.classList.add("active");
         this.$btn_home.classList.add("active");
-       this.main.innerHTML = `
-    <div class="div-inicial">
-        <h2>Hola,<span>Thiago</span></h2>
-    </div>
-
-    <button class="new-reclamo-inicial">
-        Nuevo Reclamo
-    </button>
-
-    <div>
-        <div class="reclamos-text">
-            <p>Reclamos ciudadanos</p>
+        this.main.innerHTML = `        
+        
+        <div class="div-inicial">
+            <h2>Hola,<span>Thiago</span></h2>
         </div>
 
-        <section class="reclamos-seccion">
-        </section>
+        <button class="new-reclamo-inicial">
+            Nuevo Reclamo
+        </button>
 
-    </div>
-`;
+
+        <div>
+            <div class="reclamos-text">
+                <p>Reclamos ciudadanos</p>
+            </div>
+            
+            <section class="reclamos-seccion">
+            
+            </section>
+
+
+        </div>`;
         this.nuevo_reclamo_inicio();
         this.cargar_reclamos();
     }
@@ -51,52 +56,44 @@ export class Home{
             // Datos establecidos manualmente ya que no existe la api
            const data = [
   {
+    titulo: "Cables caídos sobre la vereda",
+    direccion: "Av. Del Libertador 2200",
+    fecha: "2026-03-01",
+    hora: "08:20",
+    estado: "Terminado",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWLMJI2-PKY2q5A_y5W14PC6H0vD7HSNOvVInlLkY3OqsR21npjVaKqjY&s=10"
+  },
+  {
     titulo: "Rodillos de asfalto levantados en la calle",
-    img: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
+    direccion: "Av. Corrientes 1450",
     fecha: "2026-03-10",
     hora: "14:30",
     estado: "Aceptado",
-    direccion: "Av. Corrientes 1450"
+    img: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80"
   },
   {
     titulo: "Alumbrado público fuera de servicio",
-    img: "https://www.laprensafederal.com.ar/wp-content/uploads/2026/06/columnas-iluminacion-San-Vicente-1.jpeg",
+    direccion: "Calle San Martín 820",
     fecha: "2026-03-12",
     hora: "09:15",
     estado: "En proceso",
-    direccion: "Calle San Martín 820"
+    img: "https://www.laprensafederal.com.ar/wp-content/uploads/2026/06/columnas-iluminacion-San-Vicente-1.jpeg"
   },
   {
     titulo: "Pérdida de agua importante en vía pública",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-e-5tvU0jW7XpHmS-MzE7I7JNd0--nyJjv2AtQc9Q3B0zI-2fdc5v6o&s=10",
+    direccion: "Av. Belgrano 3120",
     fecha: "2026-03-14",
     hora: "11:00",
     estado: "En proceso",
-    direccion: "Av. Belgrano 3120"
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-e-5tvU0jW7XpHmS-MzE7I7JNd0--nyJjv2AtQc9Q3B0zI-2fdc5v6o&s=10"
   },
   {
     titulo: "Arbolado en peligro de caída por tormenta",
-    img: "https://www.lanacion.com.ar/resizer/v2/en-palermo-la-caida-de-este-arbol-levanto-el-3IV7FTNFLRH3NMDBXQDAL5GGKM.JPG?auth=8b7bbabf89a81c7349483262cec49574dd3799e42ffcf559022eb4ff7d8b3293&width=420&height=280&quality=70&smart=true",
+    direccion: "Calle Rivadavia 540",
     fecha: "2026-03-15",
     hora: "16:45",
     estado: "Terminado",
-    direccion: "Calle Rivadavia 540"
-  },
-  {
-    titulo: "Cables caídos sobre la vereda",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWLMJI2-PKY2q5A_y5W14PC6H0vD7HSNOvVInlLkY3OqsR21npjVaKqjY&s=10",
-    fecha: "2026-03-01",
-    hora: "08:20",
-    estado: "Terminado",
-    direccion: "Av. Del Libertador 2200"
-  },
-  {
-    titulo: "Cables caídos sobre la vereda",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWLMJI2-PKY2q5A_y5W14PC6H0vD7HSNOvVInlLkY3OqsR21npjVaKqjY&s=10",
-    fecha: "2026-03-01",
-    hora: "08:20",
-    estado: "Terminado",
-    direccion: "Av. Del Libertador 2200"
+    img: "https://www.lanacion.com.ar/resizer/v2/en-palermo-la-caida-de-este-arbol-levanto-el-3IV7FTNFLRH3NMDBXQDAL5GGKM.JPG?auth=8b7bbabf89a81c7349483262cec49574dd3799e42ffcf559022eb4ff7d8b3293&width=420&height=280&quality=70&smart=true"
   }
 ];
 
@@ -159,10 +156,10 @@ export class Home{
                                 <span>Aceptado</span>
                             </div>
 
-                            <div class="line active" ></div>
+                            <div class="line active"></div>
 
-                            <div class="step active" >
-                                <div class="circle"></div>
+                            <div class="step active">
+                                <div class="circle" style="background: #0a45ac"></div>
                                 <span>En proceso</span>
                             </div>
 
@@ -243,29 +240,29 @@ export class Home{
                     case "Terminado":
                         estado.innerHTML = `
                             <div class="stepper">
-                            <div class="step active">
-                                <div class="circle"></div>
+                            <div class="step">
+                                <div class="circle" style="background: #22c55e;"></div>
                                 <span>Enviado</span>
                             </div>
 
-                            <div class="line active"></div>
+                            <div class="line" style="background: #22c55e;"></div>
 
-                            <div class="step active">
-                                <div class="circle"></div>
+                            <div class="step">
+                                <div class="circle" style="background: #22c55e;"></div>
                                 <span>Aceptado</span>
                             </div>
 
-                            <div class="line active"></div>
+                            <div class="line" style="background: #22c55e;"></div>
 
-                            <div class="step active" >
-                                <div class="circle"></div>
+                            <div class="step">
+                                <div class="circle" style="background: #22c55e;"></div>
                                 <span>En proceso</span>
                             </div>
 
-                            <div class="line active"></div>
+                            <div class="line" style="background: #22c55e;"></div>
 
-                            <div class="step active">
-                                <div class="circle"></div>
+                            <div class="step">
+                                <div class="circle" style="background: #22c55e;"></div>
                                 <span>Terminado</span>
                             </div>
                         `;
