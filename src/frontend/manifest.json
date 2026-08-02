@@ -1,0 +1,29 @@
+{
+  "name": "Portal Ciudadano",
+  "short_name": "Portal",
+  "description": "Una aplicación web progresiva (PWA) para el Portal Ciudadano de la UTU.",
+  "start_url": "/proyecto-utu-2026/src/frontend/html/inicio.html",
+  "scope": "/proyecto-utu-2026/",
+  "display": "standalone",
+  "background_color": "#023ca1",
+  "theme_color": "#023ca1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
