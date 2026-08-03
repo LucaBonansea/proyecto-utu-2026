@@ -2,6 +2,8 @@
 import { Home } from "./home.js";
 import { Reclamos } from "./reclamos.js";
 import { Nuevo_reclamos } from "./nuevo_reclamos.js";
+import { Cuenta } from "./cuenta.js";
+import { Notificaciones } from "./notifications.js";
 
 // DOM
 const buttons = document.querySelectorAll(".bottom-nav button");
@@ -16,11 +18,17 @@ const $btn_home_top = document.querySelector(".main-button-top");
 const $btn_misreclamos_top = document.querySelector(".mireclamo-top");
 const $btn_newReclamo_top = document.querySelector(".new-reclamo-top");
 const $btn_logout = document.querySelector(".noti");
+const $notificaciones_btn = document.querySelector(".notificaciones-btn");
+const $notificaciones_btn_top = document.querySelector(".notificaciones-btn-top");
+const $user_btn_top = document.querySelector(".user-btn-top");
+const $user_btn = document.querySelector(".user-btn");
 
 // Objetos
 const home = new Home($btn_home_top, $btn_home, Main, iniciarReclamo);
 const reclamos = new Reclamos(Main);
 const nuevo_reclamos = new Nuevo_reclamos($btn_home_top, $btn_home, Main);
+const cuenta = new Cuenta(Main);
+const notificaciones = new Notificaciones(Main);
 
 home.first_view();
 
@@ -107,3 +115,17 @@ $btn_logout.addEventListener("click", () => {
   window.location.href = "/proyecto-utu-2026/src/frontend/html/";
 });
 
+$notificaciones_btn.addEventListener("click", () => {
+    notificaciones.fourth_view();
+});
+
+$notificaciones_btn_top.addEventListener("click", () => {
+    notificaciones.fourth_view();
+});
+
+$user_btn.addEventListener("click", () => {
+    cuenta.fifth_view();
+});
+$user_btn_top.addEventListener("click", () => {
+    cuenta.fifth_view();
+});
