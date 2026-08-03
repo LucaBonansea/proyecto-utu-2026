@@ -68,7 +68,7 @@ export class Home{
     direccion: "Av. Corrientes 1450",
     fecha: "2026-03-10",
     hora: "14:30",
-    estado: "Aceptado",
+    estado: "Terminado",
     img: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80"
   },
   {
@@ -84,7 +84,7 @@ export class Home{
     direccion: "Av. Belgrano 3120",
     fecha: "2026-03-14",
     hora: "11:00",
-    estado: "En proceso",
+    estado: "Terminado",
     img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-e-5tvU0jW7XpHmS-MzE7I7JNd0--nyJjv2AtQc9Q3B0zI-2fdc5v6o&s=10"
   },
   {
@@ -94,7 +94,38 @@ export class Home{
     hora: "16:45",
     estado: "Terminado",
     img: "https://www.lanacion.com.ar/resizer/v2/en-palermo-la-caida-de-este-arbol-levanto-el-3IV7FTNFLRH3NMDBXQDAL5GGKM.JPG?auth=8b7bbabf89a81c7349483262cec49574dd3799e42ffcf559022eb4ff7d8b3293&width=420&height=280&quality=70&smart=true"
-  }
+  },{
+  titulo: "Semáforo averiado en cruce principal",
+  direccion: "Av. Italia 1850",
+  fecha: "2026-03-18",
+  hora: "07:50",
+  estado: "Terminado",
+  img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HcL4LZfibO1m02w7wkZ789KuufbO_rsemm0-fiqU-g&s=100"
+},
+{
+  titulo: "Contenedor de basura desbordado",
+  direccion: "Calle Rivera 930",
+  fecha: "2026-03-19",
+  hora: "13:10",
+  estado: "Terminado",
+  img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS_Cov5itkVvs0SuEv9ejrkZsyk6au2heuoSWaSFNrFA&s=10"
+},
+{
+  titulo: "Bache de gran tamaño en la calzada",
+  direccion: "Bulevar Artigas 4100",
+  fecha: "2026-03-20",
+  hora: "10:40",
+  estado: "En proceso",
+  img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkVicgnDJh0BrgLREswPkrOowgMdf7l2uwdnsoWzbdSQ&s=10"
+},
+{
+  titulo: "Grafitis en edificio público",
+  direccion: "Plaza Independencia 120",
+  fecha: "2026-03-21",
+  hora: "18:25",
+  estado: "Terminado",
+  img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNJ34hpbA7LS_cq-7yqk8Q7vq4dKO99FivfZOQsMKqcw&s=10"
+}
 ];
 
             return data;
