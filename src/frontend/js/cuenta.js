@@ -23,17 +23,6 @@ export class Cuenta {
                 </div>
             </div>
 
-            <div class="perfil-stats">
-                <div class="stat-item">
-                    <p class="stat-numero">12</p>
-                    <p class="stat-label">Reclamos enviados</p>
-                </div>
-                <div class="stat-item">
-                    <p class="stat-numero">8</p>
-                    <p class="stat-label">Resueltos</p>
-                </div>
-            </div>
-
             <button class="cuenta-opcion" id="btnConfiguracion">
                 <span class="material-symbols-outlined">settings</span>
                 Configuración
