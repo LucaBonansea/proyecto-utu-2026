@@ -34,9 +34,6 @@ export class Cuenta {
     }
 
     eventos_cuenta() {
-        document.querySelector(".cerrar-sesion").addEventListener("click", () => {
-            window.location.href = "/proyecto-utu-2026/src/frontend/html/";
-        });
 
         document.querySelector("#btnConfiguracion").addEventListener("click", () => {
             this.sixth_view();
