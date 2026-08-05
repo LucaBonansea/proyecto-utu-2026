@@ -21,13 +21,13 @@ export class Home{
         this.main.innerHTML = `        
 
         <button class="new-reclamo-inicial">
-            Nuevo Reclamo
+           Nuevo Reclamo
         </button>
 
 
         <div>
             <div class="div-inicial">
-                <h3>Reclamos ciudadanos</h3>
+                <h2>Reclamos ciudadanos</h2>
             </div>
             
             <section class="reclamos-seccion">
@@ -51,7 +51,8 @@ export class Home{
            const data = [
   {
     titulo: "Cables caídos sobre la vereda",
-    direccion: "Av. Del Libertador 2200",
+    lat: -34.567123,
+    lng: -58.432100,
     fecha: "2026-03-01",
     hora: "08:20",
     estado: "Terminado",
@@ -59,7 +60,8 @@ export class Home{
   },
   {
     titulo: "Rodillos de asfalto levantados en la calle",
-    direccion: "Av. Corrientes 1450",
+    lat: -34.567123,
+    lng: -58.432100,
     fecha: "2026-03-10",
     hora: "14:30",
     estado: "Terminado",
@@ -67,7 +69,8 @@ export class Home{
   },
   {
     titulo: "Alumbrado público fuera de servicio",
-    direccion: "Calle San Martín 820",
+    lat: -34.567123,
+    lng: -58.432100,
     fecha: "2026-03-12",
     hora: "09:15",
     estado: "En proceso",
@@ -75,7 +78,8 @@ export class Home{
   },
   {
     titulo: "Pérdida de agua importante en vía pública",
-    direccion: "Av. Belgrano 3120",
+    lat: -34.567123,
+    lng: -58.432100,
     fecha: "2026-03-14",
     hora: "11:00",
     estado: "Terminado",
@@ -83,7 +87,8 @@ export class Home{
   },
   {
     titulo: "Arbolado en peligro de caída por tormenta",
-    direccion: "Calle Rivadavia 540",
+    lat: -34.567123,
+    lng: -58.432100,
     fecha: "2026-03-15",
     hora: "16:45",
     estado: "Terminado",
@@ -157,9 +162,15 @@ export class Home{
             titulo.textContent = `${reclamo.titulo}`;
 
             // Direccion
-            const ubicacion = document.createElement("p");
+            const ubicacion = document.createElement("button");
             ubicacion.classList.add("reclamo-ubicacion");
-            ubicacion.textContent = `${reclamo.direccion}`;
+            ubicacion.textContent = "Ver ubicación";
+
+            ubicacion.addEventListener("click", () => {
+                const url = `https://www.google.com/maps/search/?api=1&query=${reclamo.lat},${reclamo.lng}`;
+                window.open(url, "_blank");
+            });
+
 
             // Estado
             const estado =document.createElement("div");
@@ -326,7 +337,7 @@ export class Home{
                     break;
             }
 
-          
+        
 
             // fecha
             const fecha = document.createElement("p");
