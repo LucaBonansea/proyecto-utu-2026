@@ -28,10 +28,6 @@ export class Cuenta {
                 Configuración
             </button>
 
-            <button class="cuenta-opcion cerrar-sesion">
-                <span class="material-symbols-outlined">logout</span>
-                Cerrar sesión
-            </button>
         `;
 
         this.eventos_cuenta();

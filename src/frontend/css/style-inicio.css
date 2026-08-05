@@ -135,6 +135,19 @@ main{
     box-shadow:0 4px 12px rgba(11, 97, 246, 0.588);
 }
 
+.nav-perfil{
+    display: flex;
+    gap: 20px;
+    button{
+        border: none;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        background-color: #FFFFFF;
+        border-radius: 50%;
+    }
+}
+
 
 .bottom-nav button{
     width:45px;
@@ -846,6 +859,8 @@ main{
 }
 
 
+
+
 .top-new-reclamo{
     display: flex;
     align-items: center;
@@ -969,9 +984,18 @@ footer{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
     }
+
+
+    
 }
 
 @media (max-width: 768px) {
+    .notificaciones-btn-top{
+        display: none !important;
+    }
+    .user-btn-top{
+        display: none !important;
+    }
     .reclamos-seccion {
         display: block;
         gap: 0;
