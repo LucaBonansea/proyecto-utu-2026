@@ -1,10 +1,12 @@
 export class Cuenta {
-    constructor(Main) {
+    constructor(Main,button_restart_actives) {
         this.Main = Main;
+        this.button_restart_actives = button_restart_actives;
     }
 
     // Vista principal de cuenta
     fifth_view() {
+        this.button_restart_actives();
         this.Main.innerHTML = `
             <div class="div-inicial">
                 <h2>Cuenta</h2>
@@ -31,10 +33,10 @@ export class Cuenta {
         `;
 
         this.eventos_cuenta();
+    
     }
 
     eventos_cuenta() {
-
         document.querySelector("#btnConfiguracion").addEventListener("click", () => {
             this.sixth_view();
         });

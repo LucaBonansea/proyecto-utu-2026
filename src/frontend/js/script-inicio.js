@@ -27,13 +27,14 @@ const $user_btn = document.querySelector(".user-btn");
 const home = new Home($btn_home_top, $btn_home, Main, iniciarReclamo);
 const reclamos = new Reclamos(Main);
 const nuevo_reclamos = new Nuevo_reclamos($btn_home_top, $btn_home, Main);
-const cuenta = new Cuenta(Main);
-const notificaciones = new Notificaciones(Main);
+const cuenta = new Cuenta(Main, button_restart_actives);
+const notificaciones = new Notificaciones(Main, button_restart_actives);
 
 home.first_view();
 
 // Evento de los botones de arriba
-buttons_tops.forEach(button => {
+function button_actives_top(){
+    buttons_tops.forEach(button => {
     button.addEventListener("click", () => {
 
         // Siempre quitar activos anteriores
@@ -44,9 +45,20 @@ buttons_tops.forEach(button => {
         button.classList.add("active");
     });
 
-});
+    });
+}
+
+function button_restart_actives(){
+    buttons_tops.forEach(button => {
+        button.classList.remove("active");
+    })
+}
+
+button_actives_top();
 
 // Eventos de los botones del nav
+
+
 buttons.forEach(button => {
     button.addEventListener("click", () => {
 
