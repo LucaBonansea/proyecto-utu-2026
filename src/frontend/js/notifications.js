@@ -1,9 +1,11 @@
 export class Notificaciones {
-    constructor(Main) {
+    constructor(Main, button_restart_actives) {
         this.Main = Main;
+        this.button_restart_actives = button_restart_actives;
     }
 
     fourth_view() {
+        this.button_restart_actives();
         this.Main.innerHTML = `
             <div class="div-inicial">
                 <h2>Notificaciones</h2>

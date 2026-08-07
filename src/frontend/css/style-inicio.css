@@ -113,18 +113,11 @@ main{
 
 }
 
-.top-nav button:hover span{
-    font-size:28px;
-    transition:.25s ease;
-    transform:scale(1.08);
-}
 
 
 
-.top-nav button:hover p{
-    font-size: 15px;
-    transition:.25s ease;
-}
+
+
 
 .top-nav button:active{
     transform:scale(.92);
@@ -132,7 +125,6 @@ main{
 
 .top-nav button.active{
     background:#0a45ac;
-    box-shadow:0 4px 12px rgba(11, 97, 246, 0.588);
 }
 
 .nav-perfil{
@@ -145,6 +137,7 @@ main{
         align-items: center;
         background-color: #FFFFFF;
         border-radius: 50%;
+        cursor: pointer;
     }
 }
 
@@ -409,7 +402,6 @@ main{
     margin-left:25px;
     height: 65px;
     box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
-    margin-bottom: 15px;
     font-size: 14px;
     color:#535353;
     gap:10px;
@@ -441,12 +433,10 @@ main{
 .descripcion{
     display: flex;
     align-items: flex-start;
-    
     gap: 15px;
     width: calc(100% - 70px);
-    min-height: 50px;
+    min-height: 65px;
     margin: 0px 25px;
-    
     padding-left:20px;
     font-size: 12px;
     border-radius: 18px;
