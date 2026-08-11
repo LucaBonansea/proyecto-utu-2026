@@ -20,9 +20,11 @@ export class Home{
         this.$btn_home.classList.add("active");
         this.main.innerHTML = `        
 
+        <section class="new-reclamo-inicial-container">
         <button class="new-reclamo-inicial">
            Nuevo Reclamo
         </button>
+        </section>
 
 
         <div>
