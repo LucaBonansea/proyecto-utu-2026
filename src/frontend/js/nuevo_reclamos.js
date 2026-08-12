@@ -30,7 +30,7 @@ export class Nuevo_reclamos{
                 id="descripcion"
                 maxlength="200"
                 placeholder="Describe el problema..."
-                rows="2"></textarea>
+                rows="1"></textarea>
                 <span id="contador">0 / 200</span>
             </div>
         </label>
@@ -58,47 +58,51 @@ export class Nuevo_reclamos{
 </div>
 
 
-
+        <section class="bottom-new-reclamo">
         <button class="enviarReclamo">Enviar Reclamo</button>
+        </section>
     `;
     }
 
     descripcion_eventos(){
-        const descripcion = document.getElementById("descripcion");
-        const contador = document.getElementById("contador");
+    const descripcion = document.getElementById("descripcion");
+    const contador = document.getElementById("contador");
+    const contenedor = descripcion.closest(".descripcion");  
 
 
-        descripcion.addEventListener("focus", () => {
-            contador.style.display = "block";
-         });
+    descripcion.addEventListener("focus", () => {
+        contador.style.visibility = "visible";
+        contenedor.classList.add("enfocado");  
+     });
 
 
-        descripcion.addEventListener("blur", () => {
-            contador.style.display = "none";
-        });
+    descripcion.addEventListener("blur", () => {
+        contador.style.visibility = "hidden";
+        contenedor.classList.remove("enfocado"); 
+    });
 
 
-    descripcion.addEventListener("input", () => {
+descripcion.addEventListener("input", () => {
 
-        // aumentar textarea automáticamente
-        descripcion.style.height = "auto";
-        descripcion.style.height = descripcion.scrollHeight + "px";
-
-
-        // contador
-        contador.textContent = `${descripcion.value.length} / 200`;
+    // aumentar textarea automáticamente
+    descripcion.style.height = "auto";
+    descripcion.style.height = descripcion.scrollHeight + "px";
 
 
-        // cambiar color al acercarse al límite
-        if(descripcion.value.length >= 180){
-            contador.style.color = "#e53935";
-        }else{
-            contador.style.color = "#777";
-        }
+    // contador
+    contador.textContent = `${descripcion.value.length} / 200`;
 
-        });
 
+    // cambiar color al acercarse al límite
+    if(descripcion.value.length >= 180){
+        contador.style.color = "#e53935";
+    }else{
+        contador.style.color = "#777";
     }
+
+    });
+
+}
 
     mapa_renderizadar(){
         // Establezo las coordanadas donde quiero que el mapa aparezca
