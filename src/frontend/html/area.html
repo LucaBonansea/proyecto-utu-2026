@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrativos - Reclamos</title>
-    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrativos.css">
+    <title>Usuario de Área - Reclamos</title>
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-area.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -13,9 +13,14 @@
 <body>
     <aside class="sidebar">
         <div class="first-btns">
-            <button class="sidebar-btn all-reclamos active">
-                <span class="material-symbols-outlined">assignment</span>
-                Reclamos a validar
+            <button class="sidebar-btn reclamos-validados active">
+                <span class="material-symbols-outlined">assignment_turned_in</span>
+                Reclamos validados
+            </button>
+
+            <button class="sidebar-btn reclamos-resueltos">
+                <span class="material-symbols-outlined">add_task</span>
+                Reclamos resueltos
             </button>
         </div>
         <div class="last-btns">
@@ -43,6 +48,6 @@
         <section></section>
     </main>
 
-    <script src="/proyecto-utu-2026/src/frontend/js/script-administrativos.js"></script>
+    <script src="/proyecto-utu-2026/src/frontend/js/script-area.js"></script>
 </body>
 </html>
