@@ -738,11 +738,7 @@ main{
     gap:14px;
     transition:.3s ease;
 }
-.area-card:hover{
-    box-shadow:0 10px 22px rgba(2,60,161,.14);
-    transform:translateY(-3px);
-    border-color:#c9d9f7;
-}
+
 
 .area-card-top{
     display:flex;
