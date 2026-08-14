@@ -113,10 +113,44 @@ main{
 
 }
 
+.menu-top-cuenta{
+    display: none;
+    z-index: 100;
+    position: fixed;
+    top: 80px;
+    right: 120px;
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    width: 350px;
+}
+
+.menu-top-cuenta.active{
+    display: block;
+}
+
+.menu-top-notificaciones{
+    right: 120px;
+    position: fixed;
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    width: 350px;
+    z-index: 10;
+    display: none;
+    top: 80px;
+    
+}
+
+.notificaciones-lista{
+    overflow-y: auto;
+    max-height: 400px;
+}
 
 
 
 
+.menu-top-notificaciones.active{
+    display: block;
+}
 
 
 .top-nav button:active{
@@ -570,6 +604,7 @@ main{
     border-radius:25px;
     overflow:hidden;
     box-shadow:0 8px 24px rgba(0,29,81,.18);
+    z-index: 1;
 }
 .textarea-container{
     flex:1;
@@ -1017,7 +1052,13 @@ footer{
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .menu-top-cuenta{
+        right: 20px;
+    }
 
+    .menu-top-notificaciones{
+        right: 20px;
+    }
     
 }
 
@@ -1054,6 +1095,14 @@ footer{
         z-index:1000;
     }
 
+
+    .menu-top-cuenta{
+        display: none !important;
+    }
+
+    .menu-top-notificaciones{
+        display: none !important;
+    }
     footer{
         display: block;
     }

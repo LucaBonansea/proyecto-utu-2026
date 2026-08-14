@@ -36,6 +36,7 @@ export class Cuenta {
     
     }
 
+
     eventos_cuenta() {
         document.querySelector("#btnConfiguracion").addEventListener("click", () => {
             this.sixth_view();
@@ -88,4 +89,9 @@ export class Cuenta {
             console.log("Acerca de la app clickeado");
         });
     }
+
+    
+    
+
+
 }
