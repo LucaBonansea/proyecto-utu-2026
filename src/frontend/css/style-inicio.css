@@ -161,6 +161,113 @@ main{
     background:#0a45ac;
 }
 
+.main-numero{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 20px;
+    align-items: center;
+}
+.seccion-numero{
+    width: 100%;
+}
+
+.container-top-number{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 70%;
+}
+
+.numero-change-header{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+    padding: 20px 0px;
+    
+    
+    
+    button{
+        border: none;
+        border-radius: 100px;
+        background-color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        box-shadow:0 8px 25px rgba(0,0,0,.25);
+    }
+   
+     
+
+}
+
+ .title{
+    background-color: #ffffff;
+    padding: 5px;
+    border-radius: 100px;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+    font-weight: 600;
+}
+
+.container-change{
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    padding: 20px 10px;
+    border-radius: 10px;
+    color: #001D51;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+    input{
+        margin-top: 6px;
+        padding: 8px 12px;
+        box-shadow:0 8px 25px rgba(0,0,0,.25);
+        border: none;
+        border-radius: 100px;
+        background-color: #F2F2F2;
+    }
+
+     button{
+        display: flex;
+        align-items: center;
+        padding: 6px 20px;
+        color: white;
+        background-color: #023CA1;
+        border: none;
+        border-radius: 100px;
+        box-shadow:0 8px 25px rgba(0,0,0,.25);
+        font-size: 13px;
+    }
+}
+
+.bottom-container-change{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    align-items: center;
+
+    a{
+        font-size: 12px;
+        text-decoration: none;
+    }
+}
+
+.title-change{
+    display: flex;
+    justify-content: left;
+    width: 74%;
+    margin-bottom: 20px;
+    color: #001D51;
+}
+
+.container-btn-sms{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 6px 0px;
+
+   
+}
 .nav-perfil{
     display: flex;
     gap: 20px;
