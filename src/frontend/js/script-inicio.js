@@ -22,12 +22,15 @@ const $notificaciones_btn = document.querySelector(".notificaciones-btn");
 const $notificaciones_btn_top = document.querySelector(".notificaciones-btn-top");
 const $user_btn_top = document.querySelector(".user-btn-top");
 const $user_btn = document.querySelector(".user-btn");
+const $menu_usuario = document.querySelector(".menu-top-cuenta");
+const $menu_top_cuenta = document.querySelector(".menu-top-cuenta");
+const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
 
 // Objetos
 const home = new Home($btn_home_top, $btn_home, Main, iniciarReclamo);
 const reclamos = new Reclamos(Main);
 const nuevo_reclamos = new Nuevo_reclamos($btn_home_top, $btn_home, Main);
-const cuenta = new Cuenta(Main, button_restart_actives);
+const cuenta = new Cuenta(Main, button_restart_actives, $user_btn_top);
 const notificaciones = new Notificaciones(Main, button_restart_actives);
 
 home.first_view();
@@ -132,12 +135,36 @@ $notificaciones_btn.addEventListener("click", () => {
 });
 
 $notificaciones_btn_top.addEventListener("click", () => {
-    notificaciones.fourth_view();
+    $menu_usuario.classList.remove("active");
+    $menu_top_notificaciones.classList.add("active");
+    event.stopPropagation();
 });
+
+$menu_top_notificaciones.addEventListener("click", () =>{
+    event.stopPropagation();
+});
+
+document.addEventListener("click", function() {
+  $menu_top_notificaciones.classList.remove("active");
+});
+
 
 $user_btn.addEventListener("click", () => {
     cuenta.fifth_view();
 });
-$user_btn_top.addEventListener("click", () => {
-    cuenta.fifth_view();
+
+$menu_top_cuenta.addEventListener("click", () =>{
+    event.stopPropagation();
+})
+
+$user_btn_top.addEventListener("click", () =>{
+    $menu_top_notificaciones.classList.remove("active");
+    $menu_usuario.classList.add("active");
+    event.stopPropagation();
 });
+
+document.addEventListener("click", function() {
+  $menu_usuario.classList.remove("active");
+});
+
+
