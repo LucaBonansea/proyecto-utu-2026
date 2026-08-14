@@ -41,7 +41,6 @@ function firstview(){
                         Enviado
                         <div class="acciones-reclamo">
                             <button class="denegar">Denegar</button>
-                            <button class="eliminar">Eliminar</button>
                         </div>
                     </div>
                     <p class="fecha">${r.fecha}</p>
