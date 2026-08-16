@@ -173,16 +173,16 @@ function vistaAreas(){
     });
 }
 
+function quitarTildes(texto){
+    return texto
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
 function vistaUsuarios(filtro = ""){
     section.style.display = "grid";
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
     filtro_container.innerHTML = ``;
-
-    const usuariosFiltrados = filtro
-        ? usuarios.filter(u =>
-            u.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-            u.telefono.includes(filtro))
-        : usuarios;
 
     section.innerHTML = `
         <div class="lista-usuarios">
@@ -198,54 +198,71 @@ function vistaUsuarios(filtro = ""){
                 </button>
             </div>
 
-            <div class="contenedor-usuarios">
-                ${usuariosFiltrados.map((u, i) => `
-                    <div class="usuario-card" data-index="${usuarios.indexOf(u)}">
-                        <div class="usuario-info">
-                            <h3>${u.nombre}</h3>
-                            <p>Tel: ${u.telefono}</p>
-                            <span class="usuario-rol-actual">${u.rol}</span>
-                        </div>
-                        <div class="usuario-acciones">
-                            <select class="select-rol">
-                                <option selected disabled>Ascender a...</option>
-                                <option>Administrativo</option>
-                                <option>Usuario de área</option>
-                                <option>Proveedor</option>
-                            </select>
-                            <button class="btn-ascender">Guardar</button>
-                        </div>
-                    </div>
-                `).join("") || `<p style="padding:10px;">No se encontraron usuarios.</p>`}
-            </div>
+            <div class="contenedor-usuarios"></div>
         </div>
     `;
 
     const inputBuscar = document.querySelector(".input-buscar-usuario");
     const btnBuscar = document.querySelector(".btn-buscar-usuario");
+    const contenedor = document.querySelector(".contenedor-usuarios");
+
+    function renderLista(valorFiltro){
+        const filtroNormalizado = quitarTildes(valorFiltro.toLowerCase());
+
+        const usuariosFiltrados = valorFiltro
+            ? usuarios.filter(u =>
+                quitarTildes(u.nombre.toLowerCase()).includes(filtroNormalizado) ||
+                u.telefono.includes(valorFiltro))
+            : usuarios;
+
+        contenedor.innerHTML = usuariosFiltrados.map((u) => `
+            <div class="usuario-card" data-index="${usuarios.indexOf(u)}">
+                <div class="usuario-info">
+                    <h3>${u.nombre}</h3>
+                    <p>Tel: ${u.telefono}</p>
+                    <span class="usuario-rol-actual">${u.rol}</span>
+                </div>
+                <div class="usuario-acciones">
+                    <select class="select-rol">
+                        <option selected disabled>Ascender a...</option>
+                        <option>Administrativo</option>
+                        <option>Usuario de área</option>
+                        <option>Proveedor</option>
+                    </select>
+                    <button class="btn-ascender">Guardar</button>
+                </div>
+            </div>
+        `).join("") || `<p style="padding:10px;">No se encontraron usuarios.</p>`;
+
+        contenedor.querySelectorAll(".usuario-card").forEach(card => {
+            const index = card.dataset.index;
+
+            card.querySelector(".btn-ascender").addEventListener("click", () => {
+                const nuevoRol = card.querySelector(".select-rol").value;
+                if(!nuevoRol || nuevoRol === "Ascender a..."){
+                    alert("Selecciona el nuevo rol para el usuario.");
+                    return;
+                }
+
+                usuarios[index].rol = nuevoRol;
+                renderLista(inputBuscar.value.trim());
+            });
+        });
+    }
+
+    renderLista(filtro);
+
+    inputBuscar.addEventListener("input", () => {
+        renderLista(inputBuscar.value.trim());
+    });
 
     btnBuscar.addEventListener("click", () => {
-        vistaUsuarios(inputBuscar.value.trim());
+        renderLista(inputBuscar.value.trim());
     });
 
     inputBuscar.addEventListener("keydown", (e) => {
         if(e.key === "Enter"){
-            vistaUsuarios(inputBuscar.value.trim());
+            renderLista(inputBuscar.value.trim());
         }
-    });
-
-    document.querySelectorAll(".usuario-card").forEach(card => {
-        const index = card.dataset.index;
-
-        card.querySelector(".btn-ascender").addEventListener("click", () => {
-            const nuevoRol = card.querySelector(".select-rol").value;
-            if(!nuevoRol || nuevoRol === "Ascender a..."){
-                alert("Selecciona el nuevo rol para el usuario.");
-                return;
-            }
-            
-            usuarios[index].rol = nuevoRol;
-            vistaUsuarios(inputBuscar.value.trim());
-        });
     });
 }

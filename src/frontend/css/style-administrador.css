@@ -316,16 +316,6 @@ main{
     transform:translateY(-2px);
 }
 
-.eliminar{
-    background:#6b7280;
-    color:white;
-    padding:6px 12px;
-}
-.eliminar:hover{
-    background:#4b5563;
-    transform:translateY(-2px);
-}
-
 .camb-estado{
     background:#19a463;
     color:white;
@@ -355,6 +345,7 @@ main{
     font-size:12px;
     cursor:pointer;
     width:fit-content;
+
 }
 
 .btn-enviar-area{
@@ -738,11 +729,7 @@ main{
     gap:14px;
     transition:.3s ease;
 }
-.area-card:hover{
-    box-shadow:0 10px 22px rgba(2,60,161,.14);
-    transform:translateY(-3px);
-    border-color:#c9d9f7;
-}
+
 
 .area-card-top{
     display:flex;
