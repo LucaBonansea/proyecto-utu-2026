@@ -26,6 +26,7 @@ const $menu_usuario = document.querySelector(".menu-top-cuenta");
 const $menu_top_cuenta = document.querySelector(".menu-top-cuenta");
 const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
 const $cambiarNumero_desktop = document.querySelector("#cambiarNumero-desktop");
+const $cambiarPin_desktop = document.querySelector("#cambiarPin-desktop");
 
 // Objetos
 const home = new Home($btn_home_top, $btn_home, Main, iniciarReclamo);
@@ -172,6 +173,12 @@ $cambiarNumero_desktop.addEventListener("click", ()=>{
     button_restart_actives();
     $menu_top_cuenta.classList.remove("active");
     cuenta.seven_view();
+});
+
+$cambiarPin_desktop.addEventListener("click", ()=>{
+    button_restart_actives();
+    $menu_top_cuenta.classList.remove("active");
+    cuenta.eight_view();
 });
 
 
