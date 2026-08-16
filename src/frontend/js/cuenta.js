@@ -85,12 +85,12 @@ export class Cuenta {
                     <button class="arrow-back-mobile">
                         <span class="material-symbols-outlined">arrow_back</span>
                     </button>
-                    <h3 class="title">Cambiar Numero</h2>
+                    <h3 class="title">Cambiar Número</h2>
                 </div> 
             </header>
             <main class="main-numero">
                 <div class="title-change">
-                    <h3>Cambiar numero</h3>
+                    <h3>Cambiar número</h3>
                 </div>
                 
                 <div class="container-change">
@@ -116,6 +116,42 @@ export class Cuenta {
 
     }
 
+    eight_view(){
+        this.Main.innerHTML = `
+            <section class="seccion-numero">
+            <header class="numero-change-header">
+                <div class="container-top-number">
+                    <button class="arrow-back-mobile">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </button>
+                    <h3 class="title">Cambiar Pin</h2>
+                </div> 
+            </header>
+            <main class="main-numero">
+                <div class="title-change" style="margin-bottom: 4px">
+                    <h3>Cambiar pin</h3>
+                </div>
+                
+                <div class="container-change">
+                    <div>
+                        <h4>Pin Antiguo: </h4>
+                    </div>
+                    <input placeholder="****" style="margin: 10px 0px;">
+                    <div>
+                        <h4>Pin Nuevo: </h4>
+                    </div>
+                    <input placeholder="****" style="margin: 10px 0px;"> 
+                    <div class="bottom-container-change">
+                        <button>Confirmar</button>
+                    </div>
+                </div>
+            </main>
+       </section>
+        `;
+
+        this.eventos_configuracion_menus();
+    }
+
     eventos_configuracion() {
     document.querySelector(".config-volver").addEventListener("click", () => {
         this.fifth_view();
@@ -127,7 +163,7 @@ export class Cuenta {
 
    
     document.querySelector("#cambiarPin-mobile").addEventListener("click", () => {
-        console.log("Cambiar PIN clickeado");
+        this.eight_view();
     });
 
     document.querySelector("#acercaDe-mobile").addEventListener("click", () => {
