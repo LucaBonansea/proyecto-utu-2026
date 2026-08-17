@@ -136,13 +136,13 @@ $notificaciones_btn.addEventListener("click", () => {
     notificaciones.fourth_view();
 });
 
-$notificaciones_btn_top.addEventListener("click", () => {
+$notificaciones_btn_top.addEventListener("click", (event) => {
     $menu_usuario.classList.remove("active");
     $menu_top_notificaciones.classList.add("active");
     event.stopPropagation();
 });
 
-$menu_top_notificaciones.addEventListener("click", () =>{
+$menu_top_notificaciones.addEventListener("click", (event) =>{
     event.stopPropagation();
 });
 
@@ -155,11 +155,11 @@ $user_btn.addEventListener("click", () => {
     cuenta.fifth_view();
 });
 
-$menu_top_cuenta.addEventListener("click", () =>{
+$menu_top_cuenta.addEventListener("click", (event) =>{
     event.stopPropagation();
 })
 
-$user_btn_top.addEventListener("click", () =>{
+$user_btn_top.addEventListener("click", (event) =>{
     $menu_top_notificaciones.classList.remove("active");
     $menu_usuario.classList.add("active");
     event.stopPropagation();

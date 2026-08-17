@@ -85,7 +85,9 @@ export class Cuenta {
                     <button class="arrow-back-mobile">
                         <span class="material-symbols-outlined">arrow_back</span>
                     </button>
+                    <div class="config-titulo-container">
                     <h3 class="title">Cambiar Número</h2>
+                   </div>
                 </div> 
             </header>
             <main class="main-numero">
@@ -124,7 +126,9 @@ export class Cuenta {
                     <button class="arrow-back-mobile">
                         <span class="material-symbols-outlined">arrow_back</span>
                     </button>
+                    <div class="config-titulo-container">
                     <h3 class="title">Cambiar Pin</h2>
+                    </div>
                 </div> 
             </header>
             <main class="main-numero">
@@ -174,9 +178,18 @@ export class Cuenta {
 }
 
     eventos_configuracion_menus(){
-        document.querySelector(".arrow-back-mobile").addEventListener("click", ()=>{
-            this.$user_btn.classList.remove("active");
-            this.home.first_view();
+        document.querySelector(".arrow-back-mobile").addEventListener("click", (event)=>{
+            // Verificar para que version estoy aplicacindo las acciones
+            // Aca primero verifico si es tablet y si no aplico las acciones para desktop
+            if(window.innerWidth <= 768){
+                this.sixth_view();
+            }else{
+                event.stopPropagation();
+                this.home.first_view();
+                this.$menu_top_cuenta.classList.add("active");
+            
+            }
+
         });
     }
 

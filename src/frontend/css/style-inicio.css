@@ -174,7 +174,6 @@ main{
 
 .container-top-number{
     display: flex;
-    justify-content: space-between;
     align-items: center;
     width: 70%;
 }
@@ -190,11 +189,10 @@ main{
     button{
         border: none;
         border-radius: 100px;
-        background-color: #FFFFFF;
         display: flex;
         align-items: center;
         padding: 5px;
-        box-shadow:0 8px 25px rgba(0,0,0,.25);
+        background-color: transparent;
     }
    
      
@@ -202,11 +200,14 @@ main{
 }
 
  .title{
-    background-color: #ffffff;
     padding: 5px;
     border-radius: 100px;
-    box-shadow:0 8px 25px rgba(0,0,0,.25);
     font-weight: 600;
+}
+
+.config-titulo-container{
+    width: 100%;
+    text-align: center;
 }
 
 .container-change{
