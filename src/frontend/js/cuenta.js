@@ -85,12 +85,14 @@ export class Cuenta {
                     <button class="arrow-back-mobile">
                         <span class="material-symbols-outlined">arrow_back</span>
                     </button>
-                    <h3 class="title">Cambiar Numero</h2>
+                    <div class="config-titulo-container">
+                    <h3 class="title">Cambiar Número</h2>
+                   </div>
                 </div> 
             </header>
             <main class="main-numero">
                 <div class="title-change">
-                    <h3>Cambiar numero</h3>
+                    <h3>Cambiar número</h3>
                 </div>
                 
                 <div class="container-change">
@@ -116,6 +118,44 @@ export class Cuenta {
 
     }
 
+    eight_view(){
+        this.Main.innerHTML = `
+            <section class="seccion-numero">
+            <header class="numero-change-header">
+                <div class="container-top-number">
+                    <button class="arrow-back-mobile">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </button>
+                    <div class="config-titulo-container">
+                    <h3 class="title">Cambiar Pin</h2>
+                    </div>
+                </div> 
+            </header>
+            <main class="main-numero">
+                <div class="title-change" style="margin-bottom: 4px">
+                    <h3>Cambiar pin</h3>
+                </div>
+                
+                <div class="container-change">
+                    <div>
+                        <h4>Pin Antiguo: </h4>
+                    </div>
+                    <input placeholder="****" style="margin: 10px 0px;">
+                    <div>
+                        <h4>Pin Nuevo: </h4>
+                    </div>
+                    <input placeholder="****" style="margin: 10px 0px;"> 
+                    <div class="bottom-container-change">
+                        <button>Confirmar</button>
+                    </div>
+                </div>
+            </main>
+       </section>
+        `;
+
+        this.eventos_configuracion_menus();
+    }
+
     eventos_configuracion() {
     document.querySelector(".config-volver").addEventListener("click", () => {
         this.fifth_view();
@@ -127,7 +167,7 @@ export class Cuenta {
 
    
     document.querySelector("#cambiarPin-mobile").addEventListener("click", () => {
-        console.log("Cambiar PIN clickeado");
+        this.eight_view();
     });
 
     document.querySelector("#acercaDe-mobile").addEventListener("click", () => {
@@ -138,9 +178,18 @@ export class Cuenta {
 }
 
     eventos_configuracion_menus(){
-        document.querySelector(".arrow-back-mobile").addEventListener("click", ()=>{
-            this.$user_btn.classList.remove("active");
-            this.home.first_view();
+        document.querySelector(".arrow-back-mobile").addEventListener("click", (event)=>{
+            // Verificar para que version estoy aplicacindo las acciones
+            // Aca primero verifico si es tablet y si no aplico las acciones para desktop
+            if(window.innerWidth <= 768){
+                this.sixth_view();
+            }else{
+                event.stopPropagation();
+                this.home.first_view();
+                this.$menu_top_cuenta.classList.add("active");
+            
+            }
+
         });
     }
 
