@@ -784,3 +784,46 @@ main{
 .btn-ascender:hover{
     background:#24db85;
 }
+
+.prioridad-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.prioridad {
+    margin: 0;
+    font-weight: 600;
+    color: #555;
+    font-size: 13px;
+}
+
+.prioridad-urgente {
+    color: #d32f2f;
+    font-weight: 800;
+}
+
+.Urgente {
+    border: none;
+    background-color: #eeeeee;
+    color: #333;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.Urgente:hover {
+    background-color: #ddd;
+}
+
+.Urgente.urgencia-activa {
+    background-color: #d32f2f;
+    color: white;
+}
+
+.Urgente.urgencia-activa:hover {
+    background-color: #b71c1c;
+}

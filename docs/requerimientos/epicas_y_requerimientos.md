@@ -13,7 +13,7 @@
 | RF-08 | Recibir notificaciones | El ciudadano recibirá notificaciones dentro de la aplicación ante cambios de estado del reclamo. | Doc. proyecto 2.1 – PWA Ciudadanía; Entrevista P14, P24 | |
 | RF-09 | Visualizar reclamos públicos | El ciudadano podrá visualizar reclamos ajenos con diferente nivel de exposición según su estado. | Entrevista P20 | |
 | RF-10 | Visualizar todos los reclamos | El personal de la comuna podrá visualizar todos los reclamos registrados. Los usuarios de cada área dispondrán de un filtro para visualizar únicamente los reclamos correspondientes. | Doc. proyecto 2.1 – Dashboard Comuna; Backend GET /reclamos | |
-| RF-11 | Gestión mediante Kanban | El dashboard organizará los reclamos en estados: Ingreso, En proceso, Resuelto y Rechazado. | Doc. proyecto 2.1 – Dashboard Comuna | |
+| RF-11 *(Cancelado)* | Gestión mediante Kanban | El dashboard organizará los reclamos en estados: Ingreso, En proceso, Resuelto y Rechazado. | Doc. proyecto 2.1 – Dashboard Comuna | |
 | RF-12 | Asignar reclamos | La comuna podrá asignar reclamos a equipos internos o proveedores luego de ser clasificados por el administrativo. | Doc. proyecto 2.1 – Dashboard Comuna; PATCH /reclamos/{id}/assign | |
 | RF-13 | Derivación automática |El sistema deberá derivar automáticamente el reclamo al área o proveedor correspondiente según la clasificación realizada por el administrativo. | Entrevista P12, P29| |
 | RF-14 | Visualizar evidencias | La comuna podrá visualizar evidencias antes y después de la resolución. | Doc. proyecto 2.1 – Dashboard Comuna; Entrevista P16 | |
@@ -28,6 +28,7 @@
 | RF-23 | Moderación manual de contenido | El administrativo deberá moderar el contenido ingresado por los ciudadanos antes de clasificar y derivar el reclamo al área correspondiente. | Entrevista P22, P23, P36 | Rol: Administrativo. | | |
 | RF-24 | Gestionar proveedores | El administrativo podrá registrar, modificar y administrar los proveedores del sistema. | Entrevista P37 |  | | |
 | RF-25 | Gestionar clasificaciones | El administrador o administrativo podrá crear, editar, modificar y administrar las categorías y clasificaciones disponibles en el sistema.  | Notas del proyecto; Alcance 9.6 |  | | |
+
 
 ## Requerimientos no funcionales
 | ID | Requerimiento no funcional | Descripción | Fuente | Observaciones |
@@ -51,9 +52,62 @@
 | EP-01 | Gestión de usuarios y acceso | Permitir el registro, inicio de sesión, validación de identidad y acceso según rol. | RF-01, RF-02, RF-03, RF-21, RF-22 |
 | EP-02 | Registro de reclamos ciudadanos | Permitir que el ciudadano cree reclamos completos con ubicación y evidencias.| RF-04, RF-05, RF-06, RF-20 |
 | EP-03 | Seguimiento ciudadano y notificaciones | Permitir que el ciudadano consulte sus reclamos, vea reclamos públicos y reciba notificaciones. | RF-07, RF-08, RF-09 |
-| EP-04 | Gestión interna de reclamos | Permitir que la comuna visualice y organice reclamos mediante dashboard y tablero Kanban. | RF-10, RF-11, RF-14 |
+| EP-04 | Gestión interna de reclamos | Permitir que la comuna visualice y organice reclamos. | RF-10, RF-14 |
 | EP-05 | Asignación y derivación | Permitir asignar reclamos a equipos o proveedores y derivarlos automáticamente según la clasificación realizada por el administrativo. | RF-12, RF-13 |
 | EP-06 | Gestión de tareas de equipos/proveedores | Permitir que equipos y proveedores consulten sus tareas, registren finalizaciones y reprocesen tareas rechazadas. | RF-17, RF-18, RF-19 |
 | EP-07 | Evidencias del reclamo | Permitir cargar, almacenar, consultar y visualizar evidencias asociadas a reclamos y resoluciones. | RF-14, RF-16, RF-20 |
 | EP-08 | Validación y cierre de reclamos | Permitir aprobar, rechazar y cerrar reclamos luego de revisar el trabajo realizado. | RF-15, RF-16, RF-18, RF-19 |
 | EP-09 | Moderación manual y administración del sistema  | Permitir que el funcionario administrativo revise el contenido ingresado por los ciudadanos, gestione las clasificaciones del sistema y administre el catálogo de proveedores.  | RF-23, RF-24, RF-25 |
+
+## Estimación por épica
+
+#### Escala de estimación
+
+- **1 punto:** tarea muy pequeña.
+- **3 puntos:** tarea simple, con cierta lógica.
+- **5 puntos:** tarea media.
+- **8 puntos:** tarea compleja.
+- **13 puntos:** tarea grande o riesgosa.
+
+| Código | Épica | Estimación en puntos |
+| --- | --- | --- |
+| EP-01 | Gestión de usuarios y acceso | 16 |
+| EP-02 | Registro de reclamos ciudadanos | 16 |
+| EP-03 | Seguimiento ciudadano y notificaciones | 15 |
+| EP-04 | Gestión interna de reclamos | 10 |
+| EP-05 | Asignación y derivación | 13 |
+| EP-06 | Gestión de tareas de equipos/proveedores | 16 |
+| EP-07 | Evidencias del reclamo | 5 |
+| EP-08 | Validación y cierre de reclamos | 8 |
+| EP-09 | Moderación manual y administración del sistema | 13 |
+| **Total** | | **112 puntos** |
+
+
+La estimación total (112 puntos) queda por debajo de la capacidad de 6 sprints a 20 puntos promedio (120 puntos), dejando un margen de 8 puntos como buffer ante imprevistos — precisamente el espacio liberado al cancelar RF-11/HU11.
+
+## Propuesta presentada al cliente
+
+El equipo presenta la siguiente propuesta:
+
+| Elemento | Propuesta |
+|---|---|
+| Producto | Portal Ciudadano, sistema web de gestión de reclamos ciudadanos. |
+| Duración | 12 semanas (aprox. 3 meses). |
+| Metodología | Scrum, con 6 sprints de 2 semanas. |
+| Entregas | Incremento funcional al final de cada sprint. |
+| Esfuerzo estimado | 72 horas. |
+| Forma de trabajo | Reporte quincenal de actividad y trazabilidad Git obligatoria. |
+| Primera versión | Registro y validación de identidad de ciudadanos, roles y permisos, creación y seguimiento de reclamos, asignación y derivación a equipos/proveedores, registro de finalización con evidencias, aprobación/rechazo de cierre, moderación manual, gestión de proveedores y clasificaciones. |
+| Exclusiones | Integración con TuID de Antel, asignación automática de prioridad por tipo de incidencia, registro de intentos fraudulentos, historial completo de cambios, reapertura de reclamos cerrados, registro de inicio de trabajo de equipos (solo finalización), estadísticas/indicadores, moderación automática con IA, detección automática de reclamos inválidos o fraude, visualización en tiempo real del recorrido del equipo, notificaciones push al celular. |
+
+
+## Control de cambios
+
+**Cambio:** Se cancela RF-11 (Gestión mediante Kanban) y, en consecuencia, la historia HU11 (Tablero Kanban) queda fuera del alcance del proyecto.
+
+**Justificación:** El equipo ya cuenta con las tres interfaces definidas para la Intendencia (PWA Ciudadanía, Dashboard Comuna, Frontend Equipos/Proveedores), por lo que agregar una vista adicional de tablero Kanban dentro del Dashboard Comuna resulta redundante y poco práctico dado el plazo ajustado del proyecto. La visualización y gestión de reclamos por parte del personal de la comuna se seguirá cubriendo mediante RF-10 (listado de reclamos con filtro por área) y el campo de estado de cada reclamo (Ingreso, Validado, En proceso, Completado), sin necesidad de una representación visual tipo tablero.
+
+**Impacto:**
+- Se elimina HU11 (8 puntos) del backlog priorizado.
+- La épica EP-04 (Gestión interna de reclamos) pasa a cubrirse únicamente con HU10 y HU12.
+- El Sprint 4, que incluía HU11, libera 8 puntos de capacidad, que pueden reasignarse a otra historia pendiente o usarse como colchón ante retrasos.

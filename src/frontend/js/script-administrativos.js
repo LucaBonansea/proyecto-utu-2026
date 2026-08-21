@@ -8,6 +8,7 @@ let reclamosAValidar = [
         titulo: "Vi este agujero en la calle arreglenlo rapido",
         usuario: "098 999 999",
         fecha: "17/02/26 • Hace 2 dias",
+        prioridad:"Normal",
         lat: -34.9011,
         lng: -56.1645,
         foto: "https://imgs.search.brave.com/o7Hp6ebhqiOzB5Ng50bKejGy-Dy1clafDW8xSB0BfS8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi9jYXJy/ZXRlcmEtZGUtYXNm/YWx0by1hZ3JpZXRh/ZG8tY29uLWJhY2hl/cy1wcm9mdW5kb3Mt/bGxlbm9zLWFndWEt/cXVlLXJlZmxlamFu/LWxhcy1sdWNlcy1s/YS1jaXVkYWQtNDI4/Nzg5ODkzLmpwZw"
@@ -44,7 +45,16 @@ function firstview(){
                         </div>
                     </div>
                     <p class="fecha">${r.fecha}</p>
+                    <div class="prioridad-container">
+                        <p class="prioridad ${r.prioridad === "Urgente" ? "prioridad-urgente" : ""}">
+                            Prioridad: ${r.prioridad}
+                        </p> 
+                        <button class="Urgente ${r.prioridad === "Urgente" ? "urgencia-activa" : ""}">
+                            ${r.prioridad === "Urgente" ? "Quitar urgencia" : "Marcar Urgencia"}
+                        </button>
+                    </div>
 
+                    
                     <select class="select-area">
                         <option selected disabled>Seleccionar área</option>
                         <option>Tránsito</option>
@@ -123,6 +133,31 @@ function firstview(){
             }
         });
 
+        card.querySelector(".Urgente").addEventListener("click", () => {
+        const btnUrgencia = card.querySelector(".Urgente");
+        const textoPrioridad = card.querySelector(".prioridad");
+
+        if (reclamo.prioridad === "Default") {
+            reclamo.prioridad = "Urgente";
+
+            textoPrioridad.textContent = "Prioridad: Urgente";
+            textoPrioridad.classList.add("prioridad-urgente");
+
+            btnUrgencia.textContent = "Quitar urgencia";
+            btnUrgencia.classList.add("urgencia-activa");
+
+        } else {
+            reclamo.prioridad = "Default";
+
+            textoPrioridad.textContent = "Prioridad: Default";
+            textoPrioridad.classList.remove("prioridad-urgente");
+
+            btnUrgencia.textContent = "Marcar Urgencia";
+            btnUrgencia.classList.remove("urgencia-activa");
+        }
+    });
+
+
         
         card.querySelector(".eliminar").addEventListener("click", () => {
             if(confirm("¿Eliminar este reclamo? Esta acción no se puede deshacer.")){
@@ -142,5 +177,7 @@ function firstview(){
             reclamosAValidar = reclamosAValidar.filter(r => r.id != id);
             firstview();
         });
+
+        
     });
 }
