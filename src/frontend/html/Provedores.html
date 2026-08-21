@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proveedores</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-provedores.css">
+
+    <link rel="icon" href="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png">
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        .map {
+            width: 100%;
+            height: 250px;
+            margin-top: 20px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logos">
+        <div class="logo-div">
+            <img class="logo"
+                 src="/proyecto-utu-2026/src/frontend/assets/imgs/intendencia-logo-inicio.png"
+                 alt="Logo">
+        </div>
+
+        <a href="index.html" class="int-logo-div">
+            <img class="int-logo"
+                 src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png"
+                 alt="Logo de la intendencia">
+        </a>
+    </div>
+</header>
+
+<main>
+    <h1 class="rar">Reclamos a resolver</h1>
+
+    <section class="container-reclamos">
+
+        <div class="r">
+            <section class="top-container">
+                <div class="foto-reclamo">
+                    <img src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
+                         alt="Pozo en la calle">
+                </div>
+
+                <div class="info-reclamo">
+                    <h3>Pozo en el Mallada</h3>
+
+                    <div class="top-container btns">
+                        <p class="reclamos-text">07/09/2026</p>
+                    </div>
+
+                    <button class="btn-resolver" type="button">
+                        Resolver
+                    </button>
+                </div>
+            </section>
+
+            <section class="bottom-container">
+                <div id="mapa1" class="map"></div>
+            </section>
+        </div>
+
+        <div class="r">
+            <section class="top-container">
+                <div class="foto-reclamo">
+                    <img src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
+                         alt="Pozo en la calle">
+                </div>
+
+                <div class="info-reclamo">
+                    <h3>Pozo en el Mallada</h3>
+
+                    <div class="top-container btns">
+                        <p class="reclamos-text">07/09/2026</p>
+                    </div>
+
+                    <button class="btn-resolver" type="button">
+                        Resolver
+                    </button>
+                </div>
+            </section>
+
+            <section class="bottom-container">
+                <div id="mapa2" class="map"></div>
+            </section>
+        </div>
+
+    </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    const coordenadasIniciales = [-34.9011, -56.1645];
+    const mapas = [];
+
+    document.querySelectorAll(".map").forEach(function (contenedor) {
+        const mapa = L.map(contenedor).setView(coordenadasIniciales, 13);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(mapa);
+
+        mapas.push(mapa);
+    });
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const precision = position.coords.accuracy;
+
+                mapas.forEach(function (mapa) {
+                    mapa.setView([lat, lng], 16);
+
+                    L.marker([lat, lng])
+                        .addTo(mapa)
+                        .bindPopup("📍 Tu ubicación")
+                        .openPopup();
+
+                    L.circle([lat, lng], {
+                        radius: precision,
+                        color: "blue",
+                        fillColor: "#3f8cff",
+                        fillOpacity: 0.25
+                    }).addTo(mapa);
+                });
+            },
+            function (error) {
+                console.error("No fue posible obtener la ubicación:", error.message);
+            }
+        );
+    } else {
+        console.log("Tu navegador no soporta geolocalización.");
+    }
+</script>
+
+</body>
+</html>
