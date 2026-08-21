@@ -117,9 +117,10 @@ main{
     color: #3A3A3A;
     margin-bottom: 0px;
 }
-
+    
+.name-input,
 .tel-input,
-.pass-input{
+.pass-input, .pass-input-2{
     width: 100%;
     padding: 14px;
     border: 1px solid #D8DCE6;
@@ -172,7 +173,7 @@ main{
 
 
 
-.btn-login{
+.btn-registro{
     width: 35%;
     min-width: 150px;
     margin-top: 25px;

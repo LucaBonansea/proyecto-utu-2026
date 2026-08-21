@@ -3,30 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Document</title>
+    <title>Portal Ciudadano</title>
     <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-inicio.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <link rel="icon" href="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png">
+    <link rel="apple-touch-icon" href="/proyecto-utu-2026/src/frontend/assets/imgs/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Portal ISJ">
+    <link rel="manifest" href="/proyecto-utu-2026/src/frontend/manifest.json">
+    <meta name="theme-color" content="#023ca1">
+    <link rel="apple-touch-icon" href="/proyecto-utu-2026/src/frontend/icons/icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/proyecto-utu-2026/src/frontend/icons/icon-32x32.png">
 </head>
 <body>
     <header>
+        <a href="inicio.html">
         <div class="logos">
             <div class="logo-div">
                 <img class="logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/intendencia-logo-inicio.png" alt="">
             </div>
-            <a href="index.html"class="int-logo-div">
+            <div class="int-logo-div">
                 <img class="int-logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png" alt="">
-            </a>
+            </div>
         </div>
-        <button class="noti">
-            <span style="color:white;" class="material-symbols-outlined notification">notifications</span>
-        </button>
+        </a>
+        <section class="top-nav">
+            <button class="main-button-top">
+                <span class="material-symbols-outlined">home</span>
+                <p>Inicio</p>
+            </button>
+            <button class="mireclamo-top">
+                 <span class="material-symbols-outlined">list_alt_check</span>
+                <p>Mis Reclamos</p>
+            </button>
+            <button class="new-reclamo-top">
+                <span class="material-symbols-outlined">add</span>
+                <p>Nuevo Reclamo</p>
+            </button>
+        </section>
+        <section class="nav-perfil">
+            <button class="notificaciones-btn-top">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <button class="user-btn-top">
+                <span class="material-symbols-outlined">person</span>
+            </button>
+            <button class="noti">
+                <span class="material-symbols-outlined">
+                    logout
+                </span>
+            </button>
+        </section>
+        
+        
     </header>
+    <section class="menu-top-notificaciones">
+            <div class="div-inicial">
+                <h2>Notificaciones</h2>
+            </div>
+            <section class="notificaciones-lista">
+            <div class="notification critical">
+                <div class="notification-title">
+                    <span>
+                        <span class="material-symbols-outlined">task_alt</span>
+                        Reclamo Resuelto
+                    </span>
+                </div>
+                <div class="notification-content">
+                    Tu reclamo N.° 6382929 fue resuelto con éxito. ¡Gracias por ayudarnos a mejorar la ciudad!
+                </div>
+                <div class="notification-time">11:23 AM</div>
+            </div>
 
+            <div class="notification critical">
+                <div class="notification-title">
+                    <span>
+                        <span class="material-symbols-outlined">cancel</span>
+                        Reclamo Denegado
+                    </span>
+                </div>
+                <div class="notification-content">
+                    Tu reclamo N.° 6382930 fue denegado por presentar inconsistencias en la información proporcionada. Podés volver a enviarlo con más detalle.
+                </div>
+                <div class="notification-time">10:05 AM</div>
+            </div>
+
+            <div class="notification critical">
+                <div class="notification-title">
+                    <span>
+                        <span class="material-symbols-outlined">gpp_maybe</span>
+                        Advertencia de Contenido
+                    </span>
+                </div>
+                <div class="notification-content">
+                    Tu reclamo N.° 6382936 incumple las normas de uso por contener lenguaje ofensivo o imágenes no relacionadas con el problema reportado. Esta es tu primera advertencia: reiterar esta conducta puede derivar en la suspensión de tu cuenta.
+                </div>
+                <div class="notification-time">3:15 PM</div>
+            </div>
+            </section>
+    </section>
+    <section class="menu-top-cuenta">
+                <div class="div-inicial">
+                    <h2>Cuenta</h2>
+                </div>
+
+                <div class="perfil-card">
+                    <div class="perfil-avatar">
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+                    <div class="perfil-info">
+                        <p class="perfil-nombre">Nombre Apellido</p>
+                        <p class="perfil-telefono">
+                            <span class="material-symbols-outlined">call</span>
+                            099 123 456
+                        </p>
+                    </div>
+                </div>
+
+            <div class="config-header config-header-menu">
+               <span class="material-symbols-outlined">settings</span> <h2 class="config-titulo">Configuración</h2>
+            </div>
+
+            <button class="cuenta-opcion" id="cambiarNumero-desktop">
+                <span class="material-symbols-outlined">call</span>
+                Cambiar número
+            </button>
+
+            <button class="cuenta-opcion" id="cambiarPin-desktop">
+                <span class="material-symbols-outlined">lock</span>
+                Cambiar PIN
+            </button>
+
+            <button class="cuenta-opcion" id="acercaDe-dekstop">
+                <span class="material-symbols-outlined">info</span>
+                Acerca de la app
+            </button>
+    </section>
     <main id="main">
         
-
+        
     </main>
 
     <footer class="bottom-nav">
@@ -39,22 +155,22 @@
             <span class="material-symbols-outlined">list_alt_check</span>
         </button>
 
-        <button class="new-reclamo ">
+        <button class="new-reclamo">
             <span class="material-symbols-outlined">add</span>
         </button>
 
-        <button >
-            <span class="material-symbols-outlined">news</span>
+        <button class="notificaciones-btn">
+            <span class="material-symbols-outlined">notifications</span>
         </button>
 
-        <button >
+        <button class="user-btn" >
             <span class="material-symbols-outlined">person</span>
         </button>
 
     </footer>
 
 
-    <script src="/proyecto-utu-2026/src/frontend/js/script-inicio.js"></script>
+    <script src="/proyecto-utu-2026/src/frontend/js/script-inicio.js" type="module"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
 </html>
