@@ -57,7 +57,7 @@ export class Home{
     lng: -58.432100,
     fecha: "2026-03-01",
     hora: "08:20",
-    estado: "Terminado",
+    estado: "Completado",
     img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWLMJI2-PKY2q5A_y5W14PC6H0vD7HSNOvVInlLkY3OqsR21npjVaKqjY&s=10"
   },
   {
@@ -66,7 +66,7 @@ export class Home{
     lng: -58.432100,
     fecha: "2026-03-10",
     hora: "14:30",
-    estado: "Terminado",
+    estado: "Completado",
     img: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80"
   },
   {
@@ -84,7 +84,7 @@ export class Home{
     lng: -58.432100,
     fecha: "2026-03-14",
     hora: "11:00",
-    estado: "Terminado",
+    estado: "Completado",
     img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-e-5tvU0jW7XpHmS-MzE7I7JNd0--nyJjv2AtQc9Q3B0zI-2fdc5v6o&s=10"
   },
   {
@@ -93,14 +93,14 @@ export class Home{
     lng: -58.432100,
     fecha: "2026-03-15",
     hora: "16:45",
-    estado: "Terminado",
+    estado: "Completado",
     img: "https://www.lanacion.com.ar/resizer/v2/en-palermo-la-caida-de-este-arbol-levanto-el-3IV7FTNFLRH3NMDBXQDAL5GGKM.JPG?auth=8b7bbabf89a81c7349483262cec49574dd3799e42ffcf559022eb4ff7d8b3293&width=420&height=280&quality=70&smart=true"
   },{
   titulo: "Semáforo averiado en cruce principal",
   direccion: "Av. Italia 1850",
   fecha: "2026-03-18",
   hora: "07:50",
-  estado: "Terminado",
+  estado: "Completado",
   img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7HcL4LZfibO1m02w7wkZ789KuufbO_rsemm0-fiqU-g&s=100"
 },
 {
@@ -108,7 +108,7 @@ export class Home{
   direccion: "Calle Rivera 930",
   fecha: "2026-03-19",
   hora: "13:10",
-  estado: "Terminado",
+  estado: "Completado",
   img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS_Cov5itkVvs0SuEv9ejrkZsyk6au2heuoSWaSFNrFA&s=10"
 },
 {
@@ -124,7 +124,7 @@ export class Home{
   direccion: "Plaza Independencia 120",
   fecha: "2026-03-21",
   hora: "18:25",
-  estado: "Terminado",
+  estado: "Completado",
   img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNJ34hpbA7LS_cq-7yqk8Q7vq4dKO99FivfZOQsMKqcw&s=10"
 }
 ];
@@ -184,14 +184,14 @@ export class Home{
                         <div class="stepper">
                             <div class="step active">
                                 <div class="circle"></div>
-                                <span>Enviado</span>
+                                <span>Ingresado</span>
                             </div>
 
                             <div class="line active"></div>
 
                             <div class="step active">
                                 <div class="circle"></div>
-                                <span>Aceptado</span>
+                                <span>Validado</span>
                             </div>
 
                             <div class="line active"></div>
@@ -205,25 +205,25 @@ export class Home{
 
                             <div class="step">
                                 <div class="circle"></div>
-                                <span>Terminado</span>
+                                <span>Completado</span>
                             </div>
                     </div>
                     `;
                     break;
 
-                    case "Aceptado":
+                    case "Validado":
                         estado.innerHTML = `
                             <div class="stepper">
                             <div class="step active">
                                 <div class="circle"></div>
-                                <span>Enviado</span>
+                                <span>Ingresado</span>
                             </div>
 
                             <div class="line active"></div>
 
                             <div class="step active">
                                 <div class="circle"></div>
-                                <span>Aceptado</span>
+                                <span>Validado</span>
                             </div>
 
                             <div class="line" ></div>
@@ -237,25 +237,25 @@ export class Home{
 
                             <div class="step">
                                 <div class="circle"></div>
-                                <span>Terminado</span>
+                                <span>Completado</span>
                             </div>
                     </div>
                         `;
                     break;
 
-                    case "Enviado":
+                    case "Ingresado":
                         estado.innerHTML = `
                             <div class="stepper">
                             <div class="step active">
                                 <div class="circle"></div>
-                                <span>Enviado</span>
+                                <span>Ingresado</span>
                             </div>
 
                             <div class="line"></div>
 
                             <div class="step">
                                 <div class="circle"></div>
-                                <span>Aceptado</span>
+                                <span>Validado</span>
                             </div>
 
                             <div class="line" ></div>
@@ -269,25 +269,25 @@ export class Home{
 
                             <div class="step">
                                 <div class="circle"></div>
-                                <span>Terminado</span>
+                                <span>Completado</span>
                             </div>
                         `;
 
                     break;
 
-                    case "Terminado":
+                    case "Completado":
                         estado.innerHTML = `
                             <div class="stepper">
                             <div class="step">
                                 <div class="circle" style="background: #22c55e;"></div>
-                                <span>Enviado</span>
+                                <span>Ingresado</span>
                             </div>
 
                             <div class="line" style="background: #22c55e;"></div>
 
                             <div class="step">
                                 <div class="circle" style="background: #22c55e;"></div>
-                                <span>Aceptado</span>
+                                <span>Validado</span>
                             </div>
 
                             <div class="line" style="background: #22c55e;"></div>
@@ -301,7 +301,7 @@ export class Home{
 
                             <div class="step">
                                 <div class="circle" style="background: #22c55e;"></div>
-                                <span>Terminado</span>
+                                <span>Completado</span>
                             </div>
                         `;
                     break;
@@ -311,14 +311,14 @@ export class Home{
                             <div class="stepper">
                                 <div class="step">
                                     <div class="circle"></div>
-                                    <span>Enviado</span>
+                                    <span>Ingresado</span>
                                 </div>
 
                                 <div class="line"></div>
 
                             <div class="step">
                                 <div class="circle"></div>
-                                <span>Aceptado</span>
+                                <span>Validado</span>
                             </div>
 
                             <div class="line"></div>
@@ -332,7 +332,7 @@ export class Home{
 
                             <div class="step">
                                 <div class="circle"></div>
-                                <span>Terminado</span>
+                                <span>Completado</span>
                             </div>
                             </div>
                         `;
