@@ -1,10 +1,14 @@
 export class Notificaciones {
+
     constructor(Main, button_restart_actives) {
         this.Main = Main;
         this.button_restart_actives = button_restart_actives;
+    }
 
-        // TODO: reemplazar por datos de la API del backend
-        this.notificaciones = [
+    fourth_view() {
+        this.button_restart_actives();
+
+        const notificaciones = [
             {
                 icono: "task_alt",
                 titulo: "Reclamo Resuelto",
@@ -20,30 +24,41 @@ export class Notificaciones {
             {
                 icono: "gpp_maybe",
                 titulo: "Advertencia de Contenido",
-                contenido: "Tu reclamo N.° 6382936 incumple las normas de uso por contener lenguaje ofensivo o imágenes no relacionadas con el problema reportado. Esta es tu primera advertencia: reiterar esta conducta puede derivar en la suspensión de tu cuenta.",
+                contenido: "Tu reclamo N.° 6382936 incumple las normas de uso por contener lenguaje ofensivo o imágenes no relacionadas con el problema reportado.",
                 hora: "3:15 PM"
             },
             {
                 icono: "gpp_maybe",
                 titulo: "Advertencia de Contenido",
-                contenido: "Tu reclamo N.° 6382936 incumple las normas de uso por contener lenguaje ofensivo o imágenes no relacionadas con el problema reportado. Esta es tu primera advertencia: reiterar esta conducta puede derivar en la suspensión de tu cuenta.",
+                contenido: "Tu reclamo N.° 6382937 incumple las normas de uso.",
+                hora: "3:15 PM"
+            },
+             {
+                icono: "gpp_maybe",
+                titulo: "Advertencia de Contenido",
+                contenido: "Tu reclamo N.° 6382937 incumple las normas de uso.",
                 hora: "3:15 PM"
             }
         ];
-    }
 
-    _lista_html() {
-        return this.notificaciones.map(notificacion => `
-            <div class="notification critical">
+        let contenido = `
+            <div class="div-inicial">
+                <h2>Notificacion</h2>
+            </div>
+        `;
 
-                <div class="notification-title">
-                    <span>
-                        <span class="material-symbols-outlined">
-                            ${notificacion.icono}
+        notificaciones.forEach(function(notificacion) {
+            contenido += `
+                <div class="notification critical">
+
+                    <div class="notification-title">
+                        <span>
+                            <span class="material-symbols-outlined">
+                                ${notificacion.icono}
+                            </span>
+                            ${notificacion.titulo}
                         </span>
-                        ${notificacion.titulo}
-                    </span>
-                </div>
+                    </div>
 
                 <div class="notification-content">
                     ${notificacion.contenido}
@@ -53,22 +68,10 @@ export class Notificaciones {
                     ${notificacion.hora}
                 </div>
 
-            </div>
-        `).join("");
-    }
+                </div>
+            `;
+        });
 
-    fourth_view() {
-        this.button_restart_actives();
-
-        this.Main.innerHTML = `
-            <div class="div-inicial">
-                <h2>Notificacion</h2>
-            </div>
-            ${this._lista_html()}
-        `;
-    }
-
-    render_en(contenedor) {
-        contenedor.innerHTML = this._lista_html();
+        this.Main.innerHTML = contenido;
     }
 }

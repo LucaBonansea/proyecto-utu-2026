@@ -1248,5 +1248,9 @@ footer{
     .container-top-number{
         width: 100%;
     }
+
+    .numero-change-header{
+        padding: 0px;
+    }
     
 }
