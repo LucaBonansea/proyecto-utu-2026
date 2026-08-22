@@ -25,6 +25,7 @@ const $user_btn = document.querySelector(".user-btn");
 const $menu_usuario = document.querySelector(".menu-top-cuenta");
 const $menu_top_cuenta = document.querySelector(".menu-top-cuenta");
 const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
+const $notificaciones_lista_top = document.querySelector(".menu-top-notificaciones .notificaciones-lista");
 const $cambiarNumero_desktop = document.querySelector("#cambiarNumero-desktop");
 const $cambiarPin_desktop = document.querySelector("#cambiarPin-desktop");
 
@@ -139,6 +140,7 @@ $notificaciones_btn.addEventListener("click", () => {
 $notificaciones_btn_top.addEventListener("click", (event) => {
     $menu_usuario.classList.remove("active");
     $menu_top_notificaciones.classList.add("active");
+    notificaciones.render_en($notificaciones_lista_top);
     event.stopPropagation();
 });
 
