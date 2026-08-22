@@ -2,12 +2,9 @@ export class Notificaciones {
     constructor(Main, button_restart_actives) {
         this.Main = Main;
         this.button_restart_actives = button_restart_actives;
-    }
 
-    fourth_view() {
-        this.button_restart_actives();
-
-        const notificaciones = [
+        // TODO: reemplazar por datos de la API del backend
+        this.notificaciones = [
             {
                 icono: "task_alt",
                 titulo: "Reclamo Resuelto",
@@ -33,38 +30,45 @@ export class Notificaciones {
                 hora: "3:15 PM"
             }
         ];
+    }
 
-        let contenido = `
+    _lista_html() {
+        return this.notificaciones.map(notificacion => `
+            <div class="notification critical">
+
+                <div class="notification-title">
+                    <span>
+                        <span class="material-symbols-outlined">
+                            ${notificacion.icono}
+                        </span>
+                        ${notificacion.titulo}
+                    </span>
+                </div>
+
+                <div class="notification-content">
+                    ${notificacion.contenido}
+                </div>
+
+                <div class="notification-time">
+                    ${notificacion.hora}
+                </div>
+
+            </div>
+        `).join("");
+    }
+
+    fourth_view() {
+        this.button_restart_actives();
+
+        this.Main.innerHTML = `
             <div class="div-inicial">
                 <h2>Notificacion</h2>
             </div>
+            ${this._lista_html()}
         `;
+    }
 
-        notificaciones.forEach(function(notificacion) {
-            contenido += `
-                <div class="notification critical">
-
-                    <div class="notification-title">
-                        <span>
-                            <span class="material-symbols-outlined">
-                                ${notificacion.icono}
-                            </span>
-                            ${notificacion.titulo}
-                        </span>
-                    </div>
-
-                    <div class="notification-content">
-                        ${notificacion.contenido}
-                    </div>
-
-                    <div class="notification-time">
-                        ${notificacion.hora}
-                    </div>
-
-                </div>
-            `;
-        });
-
-        this.Main.innerHTML = contenido;
+    render_en(contenedor) {
+        contenedor.innerHTML = this._lista_html();
     }
 }
