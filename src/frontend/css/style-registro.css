@@ -131,6 +131,11 @@ main{
     box-sizing: border-box;
 }
 
+
+.error{
+    border: 1px solid red;
+}
+
 .tel-input:focus,
 .pass-input:focus{
     border-color: #023CA1;
@@ -188,6 +193,7 @@ main{
     transition: all .25s ease;
     box-shadow: 0 6px 15px rgba(39, 174, 96, .35);
 }
+
 
 .btn-login:hover{
     transform: translateY(-2px);
