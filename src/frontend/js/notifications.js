@@ -1,13 +1,10 @@
 export class Notificaciones {
+
     constructor(Main, button_restart_actives) {
         this.Main = Main;
         this.button_restart_actives = button_restart_actives;
-    }
 
-    fourth_view() {
-        this.button_restart_actives();
-
-        const notificaciones = [
+        this.notificaciones = [
             {
                 icono: "task_alt",
                 titulo: "Reclamo Resuelto",
@@ -23,24 +20,31 @@ export class Notificaciones {
             {
                 icono: "gpp_maybe",
                 titulo: "Advertencia de Contenido",
-                contenido: "Tu reclamo N.° 6382936 incumple las normas de uso por contener lenguaje ofensivo o imágenes no relacionadas con el problema reportado. Esta es tu primera advertencia: reiterar esta conducta puede derivar en la suspensión de tu cuenta.",
+                contenido: "Tu reclamo N.° 6382936 incumple las normas de uso por contener lenguaje ofensivo o imágenes no relacionadas con el problema reportado.",
                 hora: "3:15 PM"
             },
             {
                 icono: "gpp_maybe",
                 titulo: "Advertencia de Contenido",
-                contenido: "Tu reclamo N.° 6382936 incumple las normas de uso por contener lenguaje ofensivo o imágenes no relacionadas con el problema reportado. Esta es tu primera advertencia: reiterar esta conducta puede derivar en la suspensión de tu cuenta.",
+                contenido: "Tu reclamo N.° 6382937 incumple las normas de uso.",
+                hora: "3:15 PM"
+            },
+             {
+                icono: "gpp_maybe",
+                titulo: "Advertencia de Contenido",
+                contenido: "Tu reclamo N.° 6382937 incumple las normas de uso.",
                 hora: "3:15 PM"
             }
+         
         ];
+    }
 
-        let contenido = `
-            <div class="div-inicial">
-                <h2>Notificacion</h2>
-            </div>
-        `;
+    crearNotificaciones() {
 
-        notificaciones.forEach(function(notificacion) {
+        let contenido = "";
+
+        this.notificaciones.forEach(function(notificacion) {
+
             contenido += `
                 <div class="notification critical">
 
@@ -49,6 +53,7 @@ export class Notificaciones {
                             <span class="material-symbols-outlined">
                                 ${notificacion.icono}
                             </span>
+
                             ${notificacion.titulo}
                         </span>
                     </div>
@@ -63,8 +68,26 @@ export class Notificaciones {
 
                 </div>
             `;
+
         });
 
-        this.Main.innerHTML = contenido;
+        return contenido;
+    }
+
+    fourth_view() {
+
+        this.button_restart_actives();
+
+        this.Main.innerHTML = `
+
+            <div class="div-inicial">
+                <h2>Notificaciones</h2>
+            </div>
+
+            <section class="notificaciones-lista">
+                ${this.crearNotificaciones()}
+            </section>
+
+        `;
     }
 }
