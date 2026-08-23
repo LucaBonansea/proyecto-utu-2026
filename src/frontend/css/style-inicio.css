@@ -1,23 +1,36 @@
 *{
     margin: 0;
     padding: 0;
-    
+    box-sizing: border-box;
 }
+
+:root{
+    --content-max: 1600px;
+    --side-margin: clamp(16px, 4vw, 140px);
+    --font-base: clamp(14px, 0.9vw + 8px, 17px);
+}
+
 body{
     background-color: #F0F5FF;
     font-family:'Inter', sans-serif;
-    margin: 0px 100px;
+    margin: 0 auto;
+    max-width: var(--content-max);
+    padding: 0 var(--side-margin);
+    font-size: var(--font-base);
 }
+
 header{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin:15px 25px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 html{
     overflow-y:scroll;
-    scrollbar-width:none; /* Firefox */
+    scrollbar-width:none;
 }
 
 body{
@@ -25,7 +38,7 @@ body{
 }
 
 html::-webkit-scrollbar{
-    display:none; /* Chrome, Edge, Safari */
+    display:none;
 }
 main{
     padding-bottom:150px;
@@ -36,11 +49,12 @@ main{
     border-radius: 1000px;
     padding:5px;
     gap: 5px;
-    
+    flex-wrap: wrap;
 }
 
 .int-logo{
     width:90px;
+    max-width: 100%;
     height:auto;
     margin:2px;
 }
@@ -57,7 +71,6 @@ main{
     display: flex;
     justify-content: center;
     align-items: center;
-    
 }
 .logo{
     width:38px;
@@ -90,27 +103,28 @@ main{
 
 .top-nav{
     display:flex;
-    gap: 50px;
+    flex-wrap: wrap;
+    gap: clamp(10px, 2vw, 50px);
     background:linear-gradient(180deg,#023ca1cf,#001844e4);
-    height: 60px;
+    min-height: 60px;
     padding: 0px 25px;
     border-radius:100px;
     box-shadow:0 8px 25px rgba(0,0,0,.25);
-    button{
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        color: white;
-        justify-content: center;
-        padding: 0px 20px;
-        border-radius: 100px;
-        margin: 6px 0px;
-        transition:.25s;
-    }
-
+}
+.top-nav button{
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    justify-content: center;
+    padding: 0px 20px;
+    border-radius: 100px;
+    margin: 6px 0px;
+    transition:.25s;
+    white-space: nowrap;
 }
 
 .menu-top-cuenta{
@@ -121,7 +135,7 @@ main{
     right: 120px;
     background-color: #FFFFFF;
     border-radius: 20px;
-    width: 350px;
+    width: min(350px, 90vw);
 }
 
 .menu-top-cuenta.active{
@@ -133,11 +147,10 @@ main{
     position: fixed;
     background-color: #FFFFFF;
     border-radius: 20px;
-    width: 350px;
+    width: min(350px, 90vw);
     z-index: 10;
     display: none;
     top: 80px;
-    
 }
 
 .notificaciones-lista{
@@ -145,13 +158,9 @@ main{
     max-height: 400px;
 }
 
-
-
-
 .menu-top-notificaciones.active{
     display: block;
 }
-
 
 .top-nav button:active{
     transform:scale(.92);
@@ -175,7 +184,8 @@ main{
 .container-top-number{
     display: flex;
     align-items: center;
-    width: 70%;
+    width: min(70%, 900px);
+    flex-wrap: nowrap;
 }
 
 .numero-change-header{
@@ -183,6 +193,7 @@ main{
     justify-content: center;
     margin-bottom: 50px;
     padding: 20px 0px;
+<<<<<<< HEAD
     
     
     
@@ -201,8 +212,26 @@ main{
 
  .title{
     padding: 5px;
+=======
+}
+.numero-change-header button{
+    border: none;
+    border-radius: 100px;
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+ .title{
+    background-color: #ffffff;
+    padding: 12px;
+>>>>>>> e2182e1 (Fix typos in 'cuenta.js' and improve layout in 'style-inicio.css')
     border-radius: 100px;
     font-weight: 600;
+    font-size: clamp(14px, 1vw + 8px, 18px);
+    margin-left: 15px;
 }
 
 .config-titulo-container{
@@ -211,7 +240,7 @@ main{
 }
 
 .container-change{
-    width: 70%;
+    width: min(50%, 520px);
     display: flex;
     flex-direction: column;
     background-color: #FFFFFF;
@@ -219,6 +248,7 @@ main{
     border-radius: 10px;
     color: #001D51;
     box-shadow:0 8px 25px rgba(0,0,0,.25);
+<<<<<<< HEAD
     input{
         margin-top: 6px;
         padding: 8px 12px;
@@ -238,26 +268,47 @@ main{
         box-shadow:0 8px 25px rgba(0,0,0,.25);
         font-size: 13px;
     }
+=======
+    align-items: center;
+}
+.container-change input{
+    margin-top: 10px;
+    padding: 8px 12px;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+    border: none;
+    border-radius: 100px;
+    background-color: #F2F2F2;
+    width: 70%;
+}
+.container-change button{
+    display: flex;
+    align-items: center;
+    padding: 6px 20px;
+    color: white;
+    background-color: #023CA1;
+    border: none;
+    border-radius: 100px;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+    font-size: 13px;
+    margin-top: 10px;
+>>>>>>> e2182e1 (Fix typos in 'cuenta.js' and improve layout in 'style-inicio.css')
 }
 
 .bottom-container-change{
     display: flex;
     justify-content: space-between;
-    margin-top: 6px;
-    align-items: center;
-
-    a{
-        font-size: 12px;
-        text-decoration: none;
-    }
+    margin-top: 10px;
+    margin-left: 260px;
+}
+.bottom-container-change a{
+    font-size: 12px;
+    text-decoration: none;
+    position: relative;
+    top: 15px;
 }
 
-.title-change{
-    display: flex;
-    justify-content: left;
-    width: 74%;
-    margin-bottom: 20px;
-    color: #001D51;
+.btn-confirmar{
+    margin-top: -15px;
 }
 
 .container-btn-sms{
@@ -265,23 +316,20 @@ main{
     justify-content: center;
     width: 100%;
     margin: 6px 0px;
-
-   
 }
 .nav-perfil{
     display: flex;
     gap: 20px;
-    button{
-        border: none;
-        padding: 6px;
-        display: flex;
-        align-items: center;
-        background-color: #FFFFFF;
-        border-radius: 50%;
-        cursor: pointer;
-    }
 }
-
+.nav-perfil button{
+    border: none;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    cursor: pointer;
+}
 
 .bottom-nav button{
     width:45px;
@@ -318,8 +366,6 @@ main{
     transform:scale(1.08);
 }
 
-
-
 .bottom-nav button.active{
     background:#0a45ac;
     border-radius:50%;
@@ -332,34 +378,24 @@ main{
     align-items: center;
 }
 
-
-
 .bottom-nav .new-reclamo{
     width:58px;
     height:58px;
-
-    margin-top:-20px;
-
+    margin-top:0px;
     background:white;
     color:#0A007B;
-
     box-shadow:0 5px 15px rgba(0,0,0,.25);
     transition:0.25s ease;
 }
 
 .bottom-nav .new-reclamo:hover{
     transform:translateY(-3px) scale(1.05);
-
-    box-shadow:
-        0 10px 25px rgba(0,0,0,.35);
+    box-shadow: 0 10px 25px rgba(0,0,0,.35);
 }
 .bottom-nav .new-reclamo:active{
     transform:translateY(-1px) scale(0.98);
-
-    box-shadow:
-        0 5px 15px rgba(0,0,0,.25);
+    box-shadow: 0 5px 15px rgba(0,0,0,.25);
 }
-
 
 .bottom-nav .new-reclamo span{
     font-size:42px;
@@ -372,15 +408,13 @@ main{
 .div-inicial{
     margin-top: 20px;
     margin-left: 20px;
-    font-size: 16px;
+    font-size: clamp(14px, 0.8vw + 10px, 16px);
     margin-bottom: 18px;
-    
 }
 .new-reclamo-inicial{
     margin-top: 15px;
-    font-size: 20px;
-    
-    width: calc(100% - 50px);
+    font-size: clamp(16px, 1vw + 12px, 20px);
+    width: min(50%, 420px);
     font-weight: 600;
     border:none;
     background: linear-gradient(90deg, #0056eb 0%, #023ca1 50%, #0056eb 100%);
@@ -390,8 +424,7 @@ main{
     box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
     cursor:pointer;
     transition:0.25s ease;
-    
-    
+    margin-left: 38px;
 }
 
 .new-reclamo-inicial:hover{
@@ -415,6 +448,7 @@ main{
     margin-left: 10px;
     margin-top: 5px;
     margin-bottom: 5px;
+    flex-wrap: wrap;
 }
 
 .step{
@@ -433,7 +467,6 @@ main{
     border-radius:50%;
     background:#d1d5db;
     color:white;
-
     display:flex;
     align-items:center;
     justify-content:center;
@@ -448,7 +481,6 @@ main{
     height:2px;
     background:#d1d5db;
     margin-top: 5px;
-    
 }
 
 .line.active{
@@ -458,7 +490,6 @@ main{
 .step span{
     top:20px;
     left:50%;
-    
     width:52px;
     text-align:center;
     font-size:8px;
@@ -467,22 +498,18 @@ main{
 }
 
 .primerdiv-reclamo{
-    
     display:flex;
     margin-left: 12px;
-    
     margin-bottom: 12px;
     background-color: white;
     width: calc(100% - 24px);
     box-sizing: border-box;
     border-radius:20px;
     box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
-    
-    
 }
 .foto-reclamo{
     width:100px;
-    height:128px; 
+    height:128px;
     overflow:hidden;
     flex-shrink:0;
     margin:5px;
@@ -493,7 +520,6 @@ main{
     height:100%;
     object-fit:cover;
     border-radius: 16px;
-    
 }
 
 .info-reclamo{
@@ -505,7 +531,6 @@ main{
     flex:1;
     min-width:0;
     gap: 6px;
-    
 }
 
 .reclamo-ubicacion{
@@ -591,7 +616,7 @@ main{
 }
 
 .descripcion{
-    position: relative; 
+    position: relative;
     box-sizing: border-box;
     display:flex;
     align-items:center;
@@ -599,14 +624,12 @@ main{
     width: calc(100% - 50px);
     min-height:65px;
     margin:19px 25px 20px 25px;
-    padding: 0px 20px 0px 25px; 
+    padding: 0px 20px 0px 25px;
     font-size:12px;
     border-radius:18px;
     background:#fff;
     box-shadow:0 8px 24px rgba(0,29,81,.18);
-    transition: padding-bottom .2s;  
-    
-     
+    transition: padding-bottom .2s;
 }
 
 .descripcion textarea:focus::placeholder{
@@ -626,7 +649,6 @@ main{
     align-items:center;
     top: 16px;
     left: 20px;
-    
 }
 
 .descripcion textarea{
@@ -742,11 +764,10 @@ main{
 }
 #ubicacion span {
     color:rgb(4, 34, 169);
-    
 }
 
 .enviarReclamo{
-    width: calc(70% - 50px);
+    width: min(calc(70% - 50px), 380px);
     margin-left:25px;
     cursor: pointer;
     border: none;
@@ -769,7 +790,6 @@ main{
     box-shadow: 0 8px 18px rgba(22, 163, 74, 0.45);
     transform: translateX(2px);
 }
-
 
 .sugerencias-lista{
     list-style:none;
@@ -830,7 +850,6 @@ main{
 
 .notification.critical {
     border-left: 4px solid #030a99;
-    
 }
 
 .notification-title {
@@ -879,7 +898,7 @@ main{
     margin-left: 25px;
     margin-bottom: 15px;
     background-color: white;
-    width: calc(100% - 50px);
+    width: min(calc(100% - 50px), 560px);
     padding: 13px;
     border-radius: 200px;
     box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
@@ -959,7 +978,7 @@ main{
     display:flex;
     align-items:center;
     gap:12px;
-    width: calc(100% - 50px);
+    width: min(calc(100% - 50px), 560px);
     margin-left: 25px;
     margin-bottom: 12px;
     padding: 14px 20px;
@@ -1025,19 +1044,15 @@ main{
 
 .config-titulo{
     flex:1;
-    text-align:center;
+    text-align:left;
     font-size:17px;
-    margin-right: 36px; /* compensa el ancho de la flecha para centrar de verdad */
+    margin-left: 5px;
 }
-
-
-
 
 .top-new-reclamo{
     display: flex;
     align-items: center;
 }
-/*Etiquetas*/
 
 .estado-last{
     background: #0a45ac;
@@ -1047,126 +1062,57 @@ footer{
     display: none;
 }
 
-
-
-
-
-/*Media query*/
-
-
 .reclamos-seccion {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
+    gap: 15px;
 }
 
-@media (max-width: 366px){
-    .step span{
-        font-size: 6px;
-    }
-   
-    .primerdiv-reclamo{
-        display:flex;
-        margin-left: 5px;
-        align-items: center;
-        margin-bottom: 12px;
-        background-color: white;
-        width: calc(100% - 10px);
-        height: auto;
-        gap: 5px;
-        box-sizing: border-box;
-        border-radius:20px;
-        box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
-    }
-    
-    .step{
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        gap:8px;
-        width: 3px;
-        position:relative;
-        flex-shrink: 0;
-    }
-    
-    .info-reclamo{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin-left:10px;
-        margin-right: 15px;
-        flex:1;
-        min-width:0;
-        gap: 6px;
-    }
-    .stepper{
-        display:flex;
-        align-items:flex-start;
-        justify-content:start;
-        margin-left: 10px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        flex-wrap: wrap;
-        max-width: 100%;
-    }
-
-    .reclamo-ubicacion{
-        font-size: 10px;
-        display: flex;
-        align-items: flex-start;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        color: rgb(3, 0, 152);
-    }
-
-    .reclamo-titulo{
-        font-size: 12px;
-        font-weight: 800;
-    }
-
-    .estado-text{
-        font-size: 10px;
-        color:rgb(56, 55, 55)
-    }
-
-    .fecha{
-        font-size: 10px;
-        color:rgb(128, 127, 127);
-    }
-    .fecha-misreclamos{
-        font-size: 12px;
-        color:rgb(128, 127, 127);
-        display: flex;
-        justify-content: space-between;
-        margin-right: 14px;
-    }
-}
-
-
-
-@media(max-width: 1024px){
-    body{
-        margin: 0px;
-    }
-
-    .top-nav{
-        gap:10px;
-        padding: 0px 10px;
-    }
-
+@media (min-width: 480px){
     .reclamos-seccion{
-        display: grid;
         grid-template-columns: repeat(2, 1fr);
     }
+}
 
+@media (min-width: 900px){
+    .reclamos-seccion{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1440px){
+    .reclamos-seccion{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1920px){
+    .reclamos-seccion{
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+    }
+    .primerdiv-reclamo{
+        border-radius: 24px;
+    }
+}
+
+@media (max-width: 1024px){
+    body{
+        padding: 0 12px;
+    }
+    .top-nav{
+        gap: 10px;
+        padding: 0px 10px;
+    }
     .menu-top-cuenta{
         right: 20px;
     }
-
     .menu-top-notificaciones{
         right: 20px;
     }
-    
+    .container-change{
+        width: 80%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1176,61 +1122,54 @@ footer{
     .user-btn-top{
         display: none !important;
     }
-    .reclamos-seccion {
-        display: block;
-        gap: 0;
-    }
-
     body{
-        margin: 0px;
+        padding: 0 8px;
     }
-
+    .numero-change-header{
+        margin-bottom: 0px;
+        padding: 0px;
+    }
     .bottom-nav{
-        position:fixed;
-        bottom: calc( env(safe-area-inset-bottom, 0px));
+        position: fixed;
+        bottom: calc(env(safe-area-inset-bottom, 0px));
         box-sizing: border-box;
-        left:50%;
-        transform:translateX(-50%);
-        width:350px;
-        height:60px;
-        border-radius:100px;
-        display:flex;
-        justify-content:space-around;
-        align-items:center;
-        background:linear-gradient(180deg,#023ca1cf,#001844e4);
-        box-shadow:0 8px 25px rgba(0,0,0,.25);
-        z-index:1000;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(350px, 92vw);
+        height: 60px;
+        border-radius: 100px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: linear-gradient(180deg,#023ca1cf,#001844e4);
+        box-shadow: 0 8px 25px rgba(0,0,0,.25);
+        z-index: 1000;
+        margin-bottom: 5px;
     }
-
-
     .menu-top-cuenta{
         display: none !important;
     }
-
     .menu-top-notificaciones{
         display: none !important;
     }
     footer{
         display: block;
     }
-
     .top-nav{
         display: none;
     }
-
     .icono-subir{
         margin-bottom: 15px;
     }
-
     .top-new-reclamo{
         display: block;
     }
-
-    .reclamos-seccion{
-        display: grid;
-        grid-template-columns: 1fr;
+    .container-top-number{
+        width: 100%;
     }
+}
 
+<<<<<<< HEAD
 }
 
 @media(max-width: 500px){
@@ -1253,4 +1192,80 @@ footer{
         padding: 0px;
     }
     
+=======
+@media (max-width: 480px){
+    body{
+        padding: 0 6px;
+    }
+    .new-reclamo-inicial{
+        margin-left: 0px !important;
+        width: calc(90% - 50px) !important;
+    }
+    .perfil-card, .cuenta-opcion{
+        border-radius: 20px;
+    }
+    .title{
+        font-size: clamp(14px, 3vw, 16px);
+        padding: 10px;
+        margin-left: 10px;
+        white-space: nowrap;
+    }
+    .bottom-container-change{
+        display: flex;
+        margin-top: 10px;
+        margin-left: clamp(150px, 56.25vw - 10px, 260px);
+        position: relative;
+        top: 6px;
+        padding: 0 10px;
+    }
+    .bottom-nav{
+        width: 94%;
+    }
+    .btn-confirmar{
+        display: flex;
+        margin-bottom: 30px;
+    }
+    .container-change{
+        padding: 5px 20px;
+        min-width: 94%;
+    }
+    .foto-reclamo{
+        width: 80px;
+        height: 100px;
+    }
+    .enviarReclamo{
+        font-size: 16px;
+    }
+    .step span{
+        font-size: 7px;
+    }
+    .primerdiv-reclamo{
+        margin-left: 5px;
+        align-items: center;
+        width: calc(100% - 10px);
+        height: auto;
+        gap: 5px;
+    }
+    .step{
+        width: 3px;
+    }
+    .info-reclamo{
+        margin-left: 10px;
+        margin-right: 15px;
+    }
+    .stepper{
+        margin-left: 10px;
+        flex-wrap: wrap;
+        max-width: 100%;
+    }
+    .reclamo-ubicacion{
+        font-size: 10px;
+    }
+    .reclamo-titulo{
+        font-size: 12px;
+    }
+    .estado-text, .fecha{
+        font-size: 10px;
+    }
+>>>>>>> e2182e1 (Fix typos in 'cuenta.js' and improve layout in 'style-inicio.css')
 }
