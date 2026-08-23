@@ -1156,6 +1156,7 @@ footer{
     }
     .container-change{
         padding: 5px 20px;
+        min-width: 94%;
     }
     .foto-reclamo{
         width: 80px;
