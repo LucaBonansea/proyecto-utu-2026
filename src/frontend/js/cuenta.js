@@ -85,7 +85,6 @@ export class Cuenta {
                     <button class="arrow-back-mobile">
                         <span class="material-symbols-outlined">arrow_back</span>
                     </button>
-<<<<<<< HEAD
                     <div class="config-titulo-container">
                     <h3 class="title">Cambiar Número</h2>
                    </div>
@@ -95,12 +94,6 @@ export class Cuenta {
                 <div class="title-change">
                     <h3>Cambiar número</h3>
                 </div>
-=======
-                    <h3 class="title">Cambiar Número</h2>
-                </div> 
-            </header>
-            <main class="main-numero">
->>>>>>> e2182e1 (Fix typos in 'cuenta.js' and improve layout in 'style-inicio.css')
                 
                 <div class="container-change">
                     <div>

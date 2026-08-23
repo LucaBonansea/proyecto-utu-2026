@@ -193,26 +193,6 @@ main{
     justify-content: center;
     margin-bottom: 50px;
     padding: 20px 0px;
-<<<<<<< HEAD
-    
-    
-    
-    button{
-        border: none;
-        border-radius: 100px;
-        display: flex;
-        align-items: center;
-        padding: 5px;
-        background-color: transparent;
-    }
-   
-     
-
-}
-
- .title{
-    padding: 5px;
-=======
 }
 .numero-change-header button{
     border: none;
@@ -227,16 +207,11 @@ main{
  .title{
     background-color: #ffffff;
     padding: 12px;
->>>>>>> e2182e1 (Fix typos in 'cuenta.js' and improve layout in 'style-inicio.css')
     border-radius: 100px;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
     font-weight: 600;
     font-size: clamp(14px, 1vw + 8px, 18px);
     margin-left: 15px;
-}
-
-.config-titulo-container{
-    width: 100%;
-    text-align: center;
 }
 
 .container-change{
@@ -248,27 +223,6 @@ main{
     border-radius: 10px;
     color: #001D51;
     box-shadow:0 8px 25px rgba(0,0,0,.25);
-<<<<<<< HEAD
-    input{
-        margin-top: 6px;
-        padding: 8px 12px;
-        border: none;
-        border-radius: 100px;
-        background-color: #F2F2F2;
-    }
-
-     button{
-        display: flex;
-        align-items: center;
-        padding: 6px 20px;
-        color: white;
-        background-color: #023CA1;
-        border: none;
-        border-radius: 100px;
-        box-shadow:0 8px 25px rgba(0,0,0,.25);
-        font-size: 13px;
-    }
-=======
     align-items: center;
 }
 .container-change input{
@@ -291,7 +245,6 @@ main{
     box-shadow:0 8px 25px rgba(0,0,0,.25);
     font-size: 13px;
     margin-top: 10px;
->>>>>>> e2182e1 (Fix typos in 'cuenta.js' and improve layout in 'style-inicio.css')
 }
 
 .bottom-container-change{
@@ -1169,30 +1122,6 @@ footer{
     }
 }
 
-<<<<<<< HEAD
-}
-
-@media(max-width: 500px){
-    .container-top-number{
-        width: 100%;
-    }
-    .title-change{
-        width: 100%;
-    }
-
-    .container-change{
-        width: 90%;
-    }
-
-    .container-top-number{
-        width: 100%;
-    }
-
-    .numero-change-header{
-        padding: 0px;
-    }
-    
-=======
 @media (max-width: 480px){
     body{
         padding: 0 6px;
@@ -1227,7 +1156,6 @@ footer{
     }
     .container-change{
         padding: 5px 20px;
-        min-width: 94%;
     }
     .foto-reclamo{
         width: 80px;
@@ -1267,5 +1195,4 @@ footer{
     .estado-text, .fecha{
         font-size: 10px;
     }
->>>>>>> e2182e1 (Fix typos in 'cuenta.js' and improve layout in 'style-inicio.css')
 }
