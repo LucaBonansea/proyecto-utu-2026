@@ -27,13 +27,13 @@ const $menu_top_cuenta = document.querySelector(".menu-top-cuenta");
 const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
 const $cambiarNumero_desktop = document.querySelector("#cambiarNumero-desktop");
 const $cambiarPin_desktop = document.querySelector("#cambiarPin-desktop");
-
+const $notificaciones_lista = document.querySelector(".notificaciones-lista")
 // Objetos
 const home = new Home($btn_home_top, $btn_home, Main, iniciarReclamo);
 const reclamos = new Reclamos(Main);
 const nuevo_reclamos = new Nuevo_reclamos($btn_home_top, $btn_home, Main);
 const cuenta = new Cuenta(Main, button_restart_actives, home, $user_btn, $menu_top_cuenta);
-const notificaciones = new Notificaciones(Main, button_restart_actives);
+const notificaciones = new Notificaciones(Main, button_restart_actives,  $notificaciones_lista);
 
 home.first_view();
 
@@ -139,6 +139,7 @@ $notificaciones_btn.addEventListener("click", () => {
 $notificaciones_btn_top.addEventListener("click", (event) => {
     $menu_usuario.classList.remove("active");
     $menu_top_notificaciones.classList.add("active");
+    notificaciones.fourth_view_desktop();
     event.stopPropagation();
 });
 

@@ -1,8 +1,9 @@
 export class Notificaciones {
 
-    constructor(Main, button_restart_actives) {
+    constructor(Main, button_restart_actives,  $notificaciones_lista) {
         this.Main = Main;
         this.button_restart_actives = button_restart_actives;
+        this.$notificaciones_lista = $notificaciones_lista;
 
         this.notificaciones = [
             {
@@ -88,6 +89,12 @@ export class Notificaciones {
                 ${this.crearNotificaciones()}
             </section>
 
+        `;
+    }
+
+    fourth_view_desktop(){
+        this.$notificaciones_lista.innerHTML = `
+            ${this.crearNotificaciones()}
         `;
     }
 }
