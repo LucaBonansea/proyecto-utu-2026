@@ -1,11 +1,11 @@
 export class Notificaciones {
 
-    constructor(Main, button_restart_actives,  $notificaciones_lista) {
+    constructor(Main, button_restart_actives, $notificaciones_lista) {
         this.Main = Main;
         this.button_restart_actives = button_restart_actives;
         this.$notificaciones_lista = $notificaciones_lista;
 
-        const notificaciones = [
+        this.notificaciones = [
             {
                 icono: "task_alt",
                 titulo: "Reclamo Resuelto",
@@ -30,21 +30,19 @@ export class Notificaciones {
                 contenido: "Tu reclamo N.° 6382937 incumple las normas de uso.",
                 hora: "3:15 PM"
             },
-             {
+            {
                 icono: "gpp_maybe",
                 titulo: "Advertencia de Contenido",
                 contenido: "Tu reclamo N.° 6382937 incumple las normas de uso.",
                 hora: "3:15 PM"
             }
         ];
+    }
 
-        let contenido = `
-            <div class="div-inicial">
-                <h2>Notificacion</h2>
-            </div>
-        `;
+    crearNotificaciones() {
+        let contenido = "";
 
-        notificaciones.forEach(function(notificacion) {
+        this.notificaciones.forEach((notificacion) => {
             contenido += `
                 <div class="notification critical">
 
@@ -53,17 +51,18 @@ export class Notificaciones {
                             <span class="material-symbols-outlined">
                                 ${notificacion.icono}
                             </span>
+
                             ${notificacion.titulo}
                         </span>
                     </div>
 
-                <div class="notification-content">
-                    ${notificacion.contenido}
-                </div>
+                    <div class="notification-content">
+                        ${notificacion.contenido}
+                    </div>
 
-                <div class="notification-time">
-                    ${notificacion.hora}
-                </div>
+                    <div class="notification-time">
+                        ${notificacion.hora}
+                    </div>
 
                 </div>
             `;
@@ -73,11 +72,9 @@ export class Notificaciones {
     }
 
     fourth_view() {
-
         this.button_restart_actives();
 
         this.Main.innerHTML = `
-
             <div class="div-inicial">
                 <h2>Notificaciones</h2>
             </div>
@@ -85,11 +82,10 @@ export class Notificaciones {
             <section class="notificaciones-lista">
                 ${this.crearNotificaciones()}
             </section>
-
         `;
     }
 
-    fourth_view_desktop(){
+    fourth_view_desktop() {
         this.$notificaciones_lista.innerHTML = `
             ${this.crearNotificaciones()}
         `;
