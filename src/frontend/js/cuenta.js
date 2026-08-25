@@ -104,11 +104,13 @@ export class Cuenta {
                     <div class="container-btn-sms">
                         <button>Enviar SMS</button>
                     </div>
-                    <input placeholder="Codigo enviado por SMS: ">
+                    <input placeholder="Código enviado por SMS: ">
                     <div class="bottom-container-change">
-                        <a href="">¿Reenviar Codigo?</a>
+                        <a href="">¿Reenviar Código?</a>
+                        </div>
+                            <div class="btn-confirmar">
                         <button>Confirmar</button>
-                    </div>
+                        </div>
                 </div>
             </main>
        </section>

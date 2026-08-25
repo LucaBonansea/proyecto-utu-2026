@@ -5,7 +5,7 @@ export class Notificaciones {
         this.button_restart_actives = button_restart_actives;
         this.$notificaciones_lista = $notificaciones_lista;
 
-        this.notificaciones = [
+        const notificaciones = [
             {
                 icono: "task_alt",
                 titulo: "Reclamo Resuelto",
@@ -36,16 +36,15 @@ export class Notificaciones {
                 contenido: "Tu reclamo N.° 6382937 incumple las normas de uso.",
                 hora: "3:15 PM"
             }
-         
         ];
-    }
 
-    crearNotificaciones() {
+        let contenido = `
+            <div class="div-inicial">
+                <h2>Notificacion</h2>
+            </div>
+        `;
 
-        let contenido = "";
-
-        this.notificaciones.forEach(function(notificacion) {
-
+        notificaciones.forEach(function(notificacion) {
             contenido += `
                 <div class="notification critical">
 
@@ -54,22 +53,20 @@ export class Notificaciones {
                             <span class="material-symbols-outlined">
                                 ${notificacion.icono}
                             </span>
-
                             ${notificacion.titulo}
                         </span>
                     </div>
 
-                    <div class="notification-content">
-                        ${notificacion.contenido}
-                    </div>
+                <div class="notification-content">
+                    ${notificacion.contenido}
+                </div>
 
-                    <div class="notification-time">
-                        ${notificacion.hora}
-                    </div>
+                <div class="notification-time">
+                    ${notificacion.hora}
+                </div>
 
                 </div>
             `;
-
         });
 
         return contenido;

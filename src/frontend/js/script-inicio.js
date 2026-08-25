@@ -25,6 +25,7 @@ const $user_btn = document.querySelector(".user-btn");
 const $menu_usuario = document.querySelector(".menu-top-cuenta");
 const $menu_top_cuenta = document.querySelector(".menu-top-cuenta");
 const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
+const $notificaciones_lista_top = document.querySelector(".menu-top-notificaciones .notificaciones-lista");
 const $cambiarNumero_desktop = document.querySelector("#cambiarNumero-desktop");
 const $cambiarPin_desktop = document.querySelector("#cambiarPin-desktop");
 const $notificaciones_lista = document.querySelector(".notificaciones-lista")
