@@ -1,12 +1,9 @@
 export class Notificaciones {
 
-    constructor(Main, button_restart_actives) {
+    constructor(Main, button_restart_actives,  $notificaciones_lista) {
         this.Main = Main;
         this.button_restart_actives = button_restart_actives;
-    }
-
-    fourth_view() {
-        this.button_restart_actives();
+        this.$notificaciones_lista = $notificaciones_lista;
 
         const notificaciones = [
             {
@@ -72,6 +69,29 @@ export class Notificaciones {
             `;
         });
 
-        this.Main.innerHTML = contenido;
+        return contenido;
+    }
+
+    fourth_view() {
+
+        this.button_restart_actives();
+
+        this.Main.innerHTML = `
+
+            <div class="div-inicial">
+                <h2>Notificaciones</h2>
+            </div>
+
+            <section class="notificaciones-lista">
+                ${this.crearNotificaciones()}
+            </section>
+
+        `;
+    }
+
+    fourth_view_desktop(){
+        this.$notificaciones_lista.innerHTML = `
+            ${this.crearNotificaciones()}
+        `;
     }
 }

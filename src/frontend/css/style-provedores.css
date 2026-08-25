@@ -166,5 +166,10 @@ display: flex;
     }
     
     
-    
+}
+
+@media(max-width: 460px){
+.container-reclamos{
+       display: block;
+    }
 }

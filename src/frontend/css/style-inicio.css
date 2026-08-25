@@ -1117,6 +1117,20 @@ footer{
     .top-new-reclamo{
         display: block;
     }
+
+    .reclamos-seccion{
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .notificaciones-lista{
+        overflow-y: none;
+        max-height: none;
+    }
+
+}
+
+@media(max-width: 500px){
     .container-top-number{
         width: 100%;
     }
@@ -1190,10 +1204,6 @@ footer{
     .reclamo-ubicacion{
         font-size: 10px;
     }
-    .reclamo-titulo{
-        font-size: 12px;
-    }
-    .estado-text, .fecha{
-        font-size: 10px;
-    }
+    
 }
+
