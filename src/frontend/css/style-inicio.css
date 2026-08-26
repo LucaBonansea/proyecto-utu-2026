@@ -174,7 +174,7 @@ main{
     display: flex;
     justify-content: center;
     flex-direction: column;
-    margin: 20px;
+    margin: 15px 25px;
     align-items: center;
 }
 .seccion-numero{
@@ -197,25 +197,32 @@ main{
 .numero-change-header button{
     border: none;
     border-radius: 100px;
-    background-color: #FFFFFF;
     display: flex;
     align-items: center;
     padding: 5px;
-    box-shadow:0 8px 25px rgba(0,0,0,.25);
+    background-color: transparent;
 }
 
- .title{
-    background-color: #ffffff;
+.title{
     padding: 12px;
     border-radius: 100px;
-    box-shadow:0 8px 25px rgba(0,0,0,.25);
     font-weight: 600;
     font-size: clamp(14px, 1vw + 8px, 18px);
     margin-left: 15px;
 }
 
+.title-change{
+    width: 75%;
+}
+
+
+.config-titulo-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
 .container-change{
-    width: min(50%, 520px);
+    width: 70%;
     display: flex;
     flex-direction: column;
     background-color: #FFFFFF;
@@ -223,7 +230,6 @@ main{
     border-radius: 10px;
     color: #001D51;
     box-shadow:0 8px 25px rgba(0,0,0,.25);
-    align-items: center;
 }
 .container-change input{
     margin-top: 10px;
@@ -232,7 +238,7 @@ main{
     border: none;
     border-radius: 100px;
     background-color: #F2F2F2;
-    width: 70%;
+    width: 100%;
 }
 .container-change button{
     display: flex;
@@ -250,14 +256,12 @@ main{
 .bottom-container-change{
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-    margin-left: 260px;
+    align-items: center;
+    margin-top: 20px;
 }
 .bottom-container-change a{
     font-size: 12px;
     text-decoration: none;
-    position: relative;
-    top: 15px;
 }
 
 .btn-confirmar{
@@ -1066,6 +1070,10 @@ footer{
     .container-change{
         width: 80%;
     }
+
+    .title-change{
+        width: 85%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1153,14 +1161,6 @@ footer{
         margin-left: 10px;
         white-space: nowrap;
     }
-    .bottom-container-change{
-        display: flex;
-        margin-top: 10px;
-        margin-left: clamp(150px, 56.25vw - 10px, 260px);
-        position: relative;
-        top: 6px;
-        padding: 0 10px;
-    }
     .bottom-nav{
         width: 94%;
     }
@@ -1203,6 +1203,10 @@ footer{
     }
     .reclamo-ubicacion{
         font-size: 10px;
+    }
+
+    .title-change{
+        width: 100%;
     }
     
 }

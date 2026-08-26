@@ -106,12 +106,11 @@ export class Cuenta {
                     </div>
                     <input placeholder="Código enviado por SMS: ">
                     <div class="bottom-container-change">
+                        <div class="btn-confirmar">
+                            <button>Confirmar</button>
+                        </div>
                         <a href="">¿Reenviar Código?</a>
-                        </div>
-                            <div class="btn-confirmar">
-                        <button>Confirmar</button>
-                        </div>
-                </div>
+                    </div>
             </main>
        </section>
         `;
@@ -147,7 +146,7 @@ export class Cuenta {
                         <h4>Pin Nuevo: </h4>
                     </div>
                     <input placeholder="****" style="margin: 10px 0px;"> 
-                    <div class="bottom-container-change">
+                    <div class="bottom-container-change" style="margin-top: 0px; align-items: center;">
                         <button>Confirmar</button>
                     </div>
                 </div>
