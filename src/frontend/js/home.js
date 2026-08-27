@@ -29,7 +29,8 @@ export class Home{
 
         <div>
             <div class="div-inicial">
-                <h2>Reclamos ciudadanos</h2>
+                <h2>Reclamos resueltos</h2>
+                <p>Un gobierno departamental comprometido con sus vecinos</p>
             </div>
             
             <section class="reclamos-seccion">
@@ -75,7 +76,7 @@ export class Home{
     lng: -58.432100,
     fecha: "2026-03-12",
     hora: "09:15",
-    estado: "En proceso",
+    estado: "Completado",
     img: "https://www.laprensafederal.com.ar/wp-content/uploads/2026/06/columnas-iluminacion-San-Vicente-1.jpeg"
   },
   {
