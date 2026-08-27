@@ -28,6 +28,8 @@ header{
 html{
     overflow-y:scroll;
     scrollbar-width:none;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body{
