@@ -10,6 +10,16 @@
     --font-base: clamp(14px, 0.9vw + 8px, 17px);
 }
 
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
 body{
     background-color: #F0F5FF;
     font-family:'Inter', sans-serif;
@@ -24,6 +34,8 @@ header{
     flex-wrap: wrap;
     gap: 10px;
 }
+
+
 
 html{
     overflow-y:scroll;
@@ -59,6 +71,8 @@ main{
     flex-wrap: wrap;
 }
 
+
+
 .int-logo{
     width:90px;
     max-width: 100%;
@@ -80,7 +94,7 @@ main{
     align-items: center;
 }
 .logo{
-    width:38px;
+    width:45px;
     height:auto;
     margin:2px;
     border-radius: 100px;
@@ -1563,8 +1577,9 @@ footer{
     }
     body {
         margin: 0 auto;
-        max-width: var(--content-max);
-        padding: 0 var(--side-margin);
+        width: 100%;
+        max-width: 1600px;
+        padding-inline: var(--side-margin);
         font-size: var(--font-base);
     }
 }
