@@ -1,5 +1,18 @@
 # Proyecto UTU 2026
 
+> [!CAUTION]
+> ## ⚠️ RESTRICTED USE — PLEASE READ THE LICENSE
+>
+> This repository is public for **viewing and educational purposes only**.
+>
+> **Copying, modifying, redistributing, forking, or reusing this project's code is NOT permitted without prior written permission from the author.**
+>
+> 📄 **[Read the full LICENSE](./LICENSE)**
+>
+> **Copyright © 2026 Luca Bonansea. All rights reserved.**
+
+
+
 Sistema de Gestión de Reclamos Ciudadanos: plataforma para que la ciudadanía registre y haga seguimiento de reclamos urbanos; la administración comunal gestione y asigne tareas mediante un tablero Kanban; y los equipos o proveedores registren avances y evidencias, garantizando trazabilidad y auditoría.
 
 Descripción
