@@ -1,21 +1,83 @@
-MIT License
+# RESTRICTED USE LICENSE
 
-Copyright (c) 2026 LucaBonansea
+**Project:** Proyecto UTU 2026  
+**Author:** Luca Bonansea  
+**Year:** 2026
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Copyright © 2026 Luca Bonansea. All rights reserved.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+---
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## 1. Intellectual Property
+
+The source code, structure, design, documentation, text, resources, and other original content specifically developed for **Proyecto UTU 2026** are the property of the author and are protected by applicable copyright and intellectual property laws.
+
+The fact that this project is publicly available on GitHub does not mean that the author grants a license to copy, modify, distribute, or reuse it.
+
+---
+
+## 2. Permitted Use
+
+The following uses are permitted:
+
+- Viewing the source code.
+- Reviewing the project for educational or evaluation purposes.
+- Studying how the project works.
+
+These permissions do not constitute authorization to reuse the code in other projects.
+
+---
+
+## 3. Restrictions
+
+Without prior written permission from the author, it is prohibited to:
+
+- Copy all or any substantial part of the source code.
+- Modify, adapt, or create derivative works based on the project.
+- Redistribute or republish the source code elsewhere.
+- Create forks for the purpose of reusing or redistributing the code.
+- Incorporate the code or substantial portions of it into other projects.
+- Use the code for commercial purposes.
+- Sell, sublicense, or distribute the code.
+- Present the code or substantial portions of the project as one's own.
+- Use substantial portions of the project to develop other applications or services.
+
+---
+
+## 4. Public Repository
+
+The author has chosen to make this project publicly available on GitHub for viewing, educational, and evaluation purposes.
+
+Public availability of the source code **does not constitute a grant of rights to copy, modify, distribute, reuse, or commercially exploit the code.**
+
+---
+
+## 5. Third-Party Dependencies
+
+This license applies only to the original code and content created by the author.
+
+Laravel, PHP, and any other libraries, packages, frameworks, resources, or third-party components used by the project remain subject to their respective licenses and terms of use.
+
+Nothing in this license modifies or overrides the rights granted by third-party licenses.
+
+---
+
+## 6. Permission Requests
+
+Anyone wishing to copy, modify, reuse, distribute, or incorporate substantial portions of this project into another project must obtain prior explicit written permission from the author.
+
+---
+
+## 7. No Warranty
+
+This project is provided for viewing, educational, and evaluation purposes. The author makes no warranties regarding its functionality, availability, security, reliability, or suitability for any particular purpose.
+
+---
+
+## 8. Reserved Rights
+
+All rights not expressly granted by this document are reserved by the author.
+
+---
+
+**Copyright © 2026 Luca Bonansea. All rights reserved.**
