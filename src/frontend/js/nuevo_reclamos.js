@@ -105,20 +105,21 @@ descripcion.addEventListener("input", () => {
 }
 
     mapa_renderizadar(){
-        // Establezo las coordanadas donde quiero que el mapa aparezca
-        const map = L.map("map").setView(
-            [-34.3375, -56.7136],
-            13
-        );
+         // Establezo las coordanadas donde quiero que el mapa aparezca
+    const map = L.map("map").setView(
+        [-34.3375, -56.7136],
+        13
+    );
 
-        // Luego cargo los alrededores del mapa y se lo añado al mapa
-        L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-            {
-                attribution:"© OpenStreetMap © CARTO"
-            }
+    // Luego cargo los alrededores del mapa (tiles de OpenStreetMap) y se lo añado al mapa
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }
 
-        ).addTo(map);
+    ).addTo(map);
 
 
         // Luego establecemos las coordenadas del punto rojo y le ponemos la caracteristica de que se puda mover = "draggable:true"
@@ -192,46 +193,34 @@ descripcion.addEventListener("input", () => {
     }
 
     ubicacion_automatica(map, marker){
-         if(navigator.geolocation){
-
-        navigator.geolocation.getCurrentPosition(
-
-            (pos)=>{
-
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-
-
-                map.setView(
-                    [lat,lng],
-                    17
-                );
-
-
-                marker.setLatLng(
-                    [lat,lng]
-                );
-
-
-            },
-
-
-            ()=>{
-
-                console.log(
-                    "No se permitió la ubicación"
-                );
-
-            },
-
-
-            {
-                enableHighAccuracy:true
-            }
-
-        );
-
+    if(!navigator.geolocation){
+        console.log("Geolocalización no soportada por el navegador");
+        return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+
+        (pos)=>{
+
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            map.setView([lat, lng], 17);
+            marker.setLatLng([lat, lng]);
+
+        },
+
+        (error)=>{
+            console.log("No se permitió la ubicación:", error);
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,      // corta el pedido a los 10s si no responde
+            maximumAge: 0        // no usar una ubicación cacheada vieja
+        }
+
+    );
     }
 
     direccion_asistida(map, marker){
