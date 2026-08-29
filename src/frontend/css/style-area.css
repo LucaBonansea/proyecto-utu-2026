@@ -37,8 +37,8 @@ section::-webkit-scrollbar{
     height: 100vh;
     flex-direction: column;
     width:75px;
-    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
-    border-radius: 0px 35px 35px 0px;
+    background: linear-gradient(to bottom, #0b3d5c 0%, #0380a6 100%);
+    
     box-shadow:0 8px 25px rgba(0,0,0,.25);
     color:white;
     justify-content: space-between;
@@ -103,7 +103,7 @@ main{
     min-height:0;
 }
 .logos{
-    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
+    background: linear-gradient(to bottom, #0b3d5c 0%, #0380a6 100%);
     display: flex;
     border-radius: 1000px;
     padding:5px;
@@ -123,7 +123,7 @@ main{
 }
 
 .logo-div{
-    background-color: white;
+    
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -136,13 +136,32 @@ main{
     border-radius: 100px;
     padding: 3px;
 }
-
+.logo-div img{
+    transform: scale(1.7);
+}
 .reclamos-text{
     margin-top: 16px;
     margin-left: 25px;
     font-size: 20px;
     font-weight: 400;
     margin-bottom: 15px;
+}
+.btn-limpiar-filtro{
+    
+    display:flex;
+    align-items:center;
+    justify-content:center;
+   
+    border:none;
+    background:#ce4b4b;
+    color:white;
+    padding:7px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:600;
+    transition:.3s ease;
+    gap: 5px;
 }
 
 .primerdiv-reclamo{
@@ -151,7 +170,7 @@ main{
     background-color: white;
     width:100%;
     height: auto;
-    border-radius:20px;
+    border-radius:25px;
     box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
     justify-content: space-between;
     align-items: center;
@@ -181,6 +200,8 @@ main{
     overflow:hidden;
     flex-shrink:0;
     align-self: stretch;
+    margin-left: 5px;
+    margin-top: 5px;
 }
 
 .foto-reclamo img{
@@ -199,6 +220,16 @@ main{
     order: 2;
     min-height: 200px;
     width: 100%;
+}
+.Area{
+    font-size: 12px;
+    background-color: rgb(255, 255, 225);
+    padding: 4px 10px;
+    width: fit-content;
+    border-radius: 100px;
+    color:rgb(238, 203, 0);
+    font-weight: 700;
+    border: 1px solid rgb(255, 221, 84);
 }
 
 .reclamo-ubicacion{

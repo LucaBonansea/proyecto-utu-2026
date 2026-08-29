@@ -87,11 +87,13 @@ main{
 }
 
 .logo-div{
-    background-color: white;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.logo-div img{
+    transform: scale(1.7);
 }
 .logo{
     width:45px;
