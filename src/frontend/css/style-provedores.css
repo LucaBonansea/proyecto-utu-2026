@@ -66,6 +66,14 @@ main{
     border-radius: 100px;
     padding: 3px;
 }
+.reclamos-Ur{
+    color: red;
+    width:fit-content;
+    background-color: #ffe2e2;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+}
 
 .reclamos-text{
     margin-top: 16px;
