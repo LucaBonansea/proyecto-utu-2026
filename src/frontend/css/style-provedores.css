@@ -67,32 +67,38 @@ main{
     padding: 3px;
 }
 .reclamos-Ur{
-    color: red;
-    width:fit-content;
-    background-color: #ffe2e2;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 12px;
+  display: inline-block;
+    width: fit-content;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #b91c1c;
+    background: #fee2e2;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
 }
-
+ 
 .reclamos-text{
-    margin-top: 16px;
-    font-size: 16px;
+    
+    font-size: 12px;
     font-weight: 100;
-    margin-bottom: 15px;
+    color: #505050;
+    
 }
 .foto-reclamo{
     width:120px;
     height:140px;
     overflow:hidden;
     flex-shrink:0;
+    border-radius: 26px;
 }
 
 .foto-reclamo img{
     width:100%;
     height:100%;
     object-fit:cover;
-    border-radius: 20px;
+    
 }
 .info-reclamo{
     display: flex;
@@ -103,30 +109,35 @@ main{
     min-width:0;
     gap: 6px;
 }
-.rar{
-    padding-left: 25px;
-    margin-bottom: 10px;
-}
+
+
 .r{
     background-color: white;
-    border-radius: 20px;
+    border-radius: 30px;
     margin: 0px 12px;
     width: calc(100% - 40px);
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 10px;
+    padding: 5px;
+    margin-bottom: 10px;
 }
 
 .container-reclamos{
     display: flex;
     justify-content: center;
 }
+.reclamos-title{
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 4px;
+}
 
 .info-reclamo {
     font-size: 16px;
     font-weight: 600;
     color: #000000;
-    gap: 4px;
-display: flex;
+    display: flex;
+    
     flex-direction: column;
 }
 
@@ -135,16 +146,29 @@ display: flex;
     gap: 10px;
 }
 .btn-resolver{
-    background-color: #22c55e;
-    color: white;
+    background-color: rgb(51, 51, 161);
+    color: rgb(255, 255, 255);
+    
     border: none;
-    padding: 10px 12px;
+    padding: px 8px;
     border-radius: 20px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
     cursor: pointer;
-    
-    
+    max-width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+
+
+.title{
+    font-size: 25px;
+    padding-left: 25px;
+    margin-bottom: 10px;
+
 }
 
 
