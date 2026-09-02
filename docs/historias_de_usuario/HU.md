@@ -85,7 +85,7 @@
 
 ---
 
-**ID: HU8a**
+**ID: HU8**
 **Historia:** Como ciudadano, quiero recibir notificaciones dentro de la app cuando cambia el estado de reclamo hacia *Rechazado* o *Completado*, para mantenerme informado.
 **Criterios de aceptación:**
 - [ ] Puedo ver un listado de mis notificaciones ordenadas por fecha.
@@ -95,16 +95,6 @@
 
 ---
 
-**ID: HU8b**
-**Historia:** Como ciudadano, quiero visualizar reclamos públicos de otros vecinos, con distinto nivel de exposición según su estado, para conocer los problemas reportados en mi zona.
-**Criterios de aceptación:**
-- [ ] Puedo ver un listado de reclamos de otros ciudadanos, no solo los míos.
-- [ ] La información visible de cada reclamo varía según su estado (por ejemplo, menos detalle si está recién ingresado).
-- [ ] No se muestran datos personales del ciudadano que hizo el reclamo.
-
-**Puntos:** 5 **Prioridad:** Media **Épica:** EP-03
-
----
 
 **ID: HU10**
 **Historia:** Como personal de la comuna, quiero visualizar todos los reclamos registrados, con un filtro por área, para gestionar únicamente los que me corresponden.
@@ -188,7 +178,6 @@
 **ID: HU16**
 **Historia:** Como equipo o proveedor, quiero volver a trabajar sobre una tarea rechazada con prioridad, para corregir lo que no fue aprobado por la comuna.
 **Criterios de aceptación:**
-- [ ] Puedo ver el motivo del rechazo indicado por la comuna.
 - [ ] El reclamo vuelve a pasar a "Ingresado" tras la corrección.
 
 **Puntos:** 5 **Prioridad:** Baja **Épica:** EP-06
@@ -303,8 +292,7 @@
 | 6 | HU5 | Clasificación de reclamos | 5 | Sprint 2 |
 | 7 | HU6 | Asignación de prioridad | 3 | Sprint 2 |
 | 8 | HU7 | Consulta de reclamos propios | 5 | Sprint 3 |
-| 9 | HU8a | Notificaciones de cambio de estado | 5 | Sprint 3 |
-| 10 | HU8b | Visualización de reclamos públicos | 5 | Sprint 3 |
+| 9 | HU8 | Notificaciones de cambio de estado | 5 | Sprint 3 |
 | 11 | HU20 | Moderación manual de contenido | 5 | Sprint 3 |
 | 12 | HU10 | Visualización de todos los reclamos (con filtro por área) | 5 | Sprint 4 |
 | 13 | HU12 | Visualización de evidencias antes/después | 5 | Sprint 4 |
@@ -340,8 +328,6 @@ Al finalizar el sprint, el cliente podrá:
 - Iniciar sesión con su cuenta.
 - Ver que el acceso a pantallas y funciones cambia según el rol (ciudadano, administrativo, etc.).
 
-**Sprint Review 1**
-El cliente revisa el incremento y responde:
 
 
 **Resultado del sprint**
@@ -371,9 +357,6 @@ Al finalizar el sprint, el cliente podrá:
 - Clasificar reclamos en categorías administradas por el sistema.
 - Marcar un reclamo como urgente.
 
-**Sprint Review 2**
-Durante la revisión, el cliente detecta un problema:
-“La geolocalización automática está muy bien, pero cuando el GPS falla o el ciudadano está en interiores, no hay forma de corregir la ubicación a mano. Necesitamos que el ciudadano pueda ajustar el pin en el mapa si detecta que quedó mal ubicado.”
 
 **Corrección solicitada**
 El cliente solicita agregar:
@@ -384,13 +367,8 @@ Se agrega una nueva historia:
 
 | ID | Nueva historia | Puntos | Prioridad |
 |---|---|---|---|
-| HU23 | Como ciudadano, quiero poder ajustar manualmente el pin de ubicación en el mapa, para corregir la geolocalización automática cuando falla. | 3 | Alta |
+| HU23 | Como ciudadano, quiero poder ajustar manualmente el pin de ubicación en el mapa, para corregir la geolocalización automática cuando falla. | 3 | Baja |
 
-**Resultado del sprint**
-Sprint funcional, pero requiere corrección.
-
-**Aprendizaje didáctico**
-Este sprint permite explicar que la automatización (geolocalización) no siempre es 100% confiable, y que el diseño debe prever un mecanismo de corrección manual como respaldo.
 
 ---
 
@@ -417,15 +395,7 @@ Al finalizar el sprint, el cliente podrá:
 - Ver reclamos de otros ciudadanos con nivel de detalle según su estado.
 - Revisar y moderar el contenido de un reclamo antes de que avance.
 
-**Sprint Review 3**
-El cliente revisa el incremento y responde:
-“Todo funciona como esperábamos. Un detalle: en los reclamos públicos, nos gustaría poder filtrar por zona o barrio, porque si no la lista se hace larga para navegar.”
 
-**Resultado del sprint**
-Sprint aprobado; el filtro por zona queda anotado como mejora para una futura iteración, sin bloquear el cierre del sprint.
-
-**Aprendizaje didáctico**
-Este sprint muestra que no toda observación del cliente implica una corrección inmediata: algunas quedan registradas como mejoras futuras si no afectan la funcionalidad esencial entregada.
 
 ---
 
@@ -449,15 +419,6 @@ Al finalizar el sprint, el cliente podrá:
 - Comparar evidencias antes y después de la resolución.
 - Ver, desde el rol de equipo/proveedor, únicamente las tareas asignadas.
 
-**Sprint Review 4**
-El cliente revisa el incremento y responde:
-“Esto nos da mucha visibilidad. Aprobamos este avance sin objeciones.”
-
-**Resultado del sprint**
-Sprint aprobado sin correcciones.
-
-**Aprendizaje didáctico**
-Este sprint quedó con menos puntos que el promedio (13 de 20) porque absorbió el espacio liberado al cancelar RF-11/HU11 (Kanban). Esto permite explicar que un recorte de alcance bien registrado en el control de cambios se traduce en menor carga real en los sprints siguientes, no solo en un número en una tabla.
 
 ---
 
@@ -483,26 +444,8 @@ Al finalizar el sprint, el cliente podrá:
 - Ver la derivación automática sugerida según la clasificación.
 - Verificar que un equipo no pueda cerrar una tarea sin evidencia.
 
-**Sprint Review 5**
-Durante la revisión, el cliente detecta un problema:
-“La derivación automática está bien pensada, pero si una clasificación no tiene área asociada, el sistema no avisa con claridad y parece que el reclamo quedó asignado igual. Necesitamos que quede bien visible cuando falta esa relación.”
 
-**Corrección solicitada**
-El cliente solicita:
-- Un aviso visible en el dashboard cuando una clasificación no tiene área/proveedor definido, antes de confirmar la asignación.
 
-**Impacto en el backlog**
-Se agrega una nueva historia:
-
-| ID | Nueva historia | Puntos | Prioridad |
-|---|---|---|---|
-| HU24 | Como personal de la comuna, quiero ver un aviso claro cuando una clasificación no tiene área o proveedor asociado, para no confirmar una derivación incompleta. | 2 | Alta |
-
-**Resultado del sprint**
-Sprint funcional, pero requiere corrección.
-
-**Aprendizaje didáctico**
-Este sprint permite explicar que los casos borde (una clasificación sin relación definida) suelen pasar desapercibidos en el desarrollo inicial y aparecen recién cuando el cliente prueba el flujo completo con datos reales.
 
 ---
 
@@ -528,8 +471,3 @@ Al finalizar el sprint, el cliente podrá:
 - Aprobar o rechazar el trabajo realizado, cerrando o devolviendo el reclamo.
 - Ver que las tareas rechazadas quedan priorizadas para su equipo/proveedor.
 - Confirmar que todo archivo multimedia queda correctamente asociado y accesible según permisos.
-
-
-
-
-
