@@ -188,7 +188,6 @@
 **ID: HU17**
 **Historia:** Como equipo o proveedor, quiero volver a trabajar sobre una tarea rechazada con prioridad, para corregir lo que no fue aprobado por la comuna.
 **Criterios de aceptación:**
-- [ ] Puedo ver el motivo del rechazo indicado por la comuna.
 - [ ] El reclamo vuelve a pasar a "Ingresado" tras la corrección.
 
 **Puntos:** 5 **Prioridad:** Baja **Épica:** EP-06
@@ -340,8 +339,6 @@ Al finalizar el sprint, el cliente podrá:
 - Iniciar sesión con su cuenta.
 - Ver que el acceso a pantallas y funciones cambia según el rol (ciudadano, administrativo, etc.).
 
-**Sprint Review 1**
-El cliente revisa el incremento y responde:
 
 
 **Resultado del sprint**
@@ -492,8 +489,3 @@ Al finalizar el sprint, el cliente podrá:
 - Aprobar o rechazar el trabajo realizado, cerrando o devolviendo el reclamo.
 - Ver que las tareas rechazadas quedan priorizadas para su equipo/proveedor.
 - Confirmar que todo archivo multimedia queda correctamente asociado y accesible según permisos.
-
-
-
-
-
