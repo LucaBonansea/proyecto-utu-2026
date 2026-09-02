@@ -1,4 +1,4 @@
-# Historias de Usuario 
+# Historias de Usuario
 ## Historias detalladas
 
 **ID: HU1**
@@ -95,6 +95,16 @@
 
 ---
 
+**ID: HU9**
+**Historia:** Como ciudadano, quiero visualizar reclamos públicos de otros vecinos, con distinto nivel de exposición según su estado, para conocer los problemas reportados en mi zona.
+**Criterios de aceptación:**
+- [ ] Puedo ver un listado de reclamos de otros ciudadanos, no solo los míos.
+- [ ] La información visible de cada reclamo varía según su estado (por ejemplo, menos detalle si está recién ingresado).
+- [ ] No se muestran datos personales del ciudadano que hizo el reclamo.
+
+**Puntos:** 5 **Prioridad:** Baja **Épica:** EP-03
+
+---
 
 **ID: HU10**
 **Historia:** Como personal de la comuna, quiero visualizar todos los reclamos registrados, con un filtro por área, para gestionar únicamente los que me corresponden.
@@ -126,11 +136,11 @@
 - [ ] Puedo ver las fotos originales adjuntadas por el ciudadano al crear el reclamo.
 - [ ] Puedo ver las fotos de evidencia cargadas por el equipo o proveedor al finalizar el trabajo.
 
-**Puntos:** 5 **Prioridad:** Media **Épica:** EP-04
+**Puntos:** 5 **Prioridad:** Baja **Épica:** EP-04
 
 ---
 
-**ID: HU9**
+**ID: HU13**
 **Historia:** Como comuna, quiero asignar reclamos ya clasificados a equipos internos o proveedores, para que se encarguen de resolverlos.
 **Criterios de aceptación:**
 - [ ] Puedo ver el listado de reclamos clasificados y sin asignar.
@@ -142,17 +152,17 @@
 
 ---
 
-**ID: HU13**
-**Historia:** Como sistema, quiero habilitar una herramienta para que el reclamo se pueda seleccionar al área o proveedor correspondiente según la clasificación realizada, para agilizar la asignación sin intervención manual adicional.
+**ID: HU14**
+**Historia:** Como sistema, quiero derivar automáticamente el reclamo al área o proveedor correspondiente según la clasificación realizada, para agilizar la asignación sin intervención manual adicional.
 **Criterios de aceptación:**
 - [ ] La derivación es manual que respeta la relación entre clasificación y área definida en el sistema.
 - [ ] Si no existe una relación definida para una clasificación, el sistema lo indica en vez de fallar silenciosamente.
 
-**Puntos:** 5 **Prioridad:** Alta **Épica:** EP-05
+**Puntos:** 5 **Prioridad:** Media **Épica:** EP-05
 
 ---
 
-**ID: HU14**
+**ID: HU15**
 **Historia:** Como equipo o proveedor, quiero consultar únicamente las tareas que tengo asignadas, para organizar mi trabajo diario.
 **Criterios de aceptación:**
 - [ ] Puedo ver un listado de los reclamos asignados a mi equipo/proveedor.
@@ -163,8 +173,8 @@
 
 ---
 
-**ID: HU15**
-**Historia:** Como equipo o proveedor, quiero registrar la finalización de una tarea con evidencias, fecha y hora, para documentar el trabajo realizado.
+**ID: HU16**
+**Historia:** Como equipo o proveedor, quiero registrar la finalización de una tarea con materiales, observaciones, evidencias, fecha y hora, para documentar el trabajo realizado.
 **Criterios de aceptación:**
 - [ ] Puedo marcar una tarea como finalizada solo desde una tarea que tengo asignada.
 - [ ] Debo adjuntar al menos una evidencia fotográfica del trabajo realizado.
@@ -175,7 +185,7 @@
 
 ---
 
-**ID: HU16**
+**ID: HU17**
 **Historia:** Como equipo o proveedor, quiero volver a trabajar sobre una tarea rechazada con prioridad, para corregir lo que no fue aprobado por la comuna.
 **Criterios de aceptación:**
 - [ ] El reclamo vuelve a pasar a "Ingresado" tras la corrección.
@@ -184,7 +194,7 @@
 
 ---
 
-**ID: HU17**
+**ID: HU18**
 **Historia:** Como sistema, quiero almacenar y permitir consultar archivos multimedia asociados a cada reclamo, para mantener un respaldo visual de todo el proceso.
 **Criterios de aceptación:**
 - [ ] Los archivos multimedia se guardan asociados al reclamo correspondiente.
@@ -195,7 +205,7 @@
 
 ---
 
-**ID: HU18**
+**ID: HU19**
 **Historia:** Como equipo o proveedor, quiero registrar evidencia obligatoria del trabajo realizado, para poder marcar un reclamo como resuelto.
 **Criterios de aceptación:**
 - [ ] No puedo finalizar una tarea sin adjuntar al menos una evidencia fotográfica.
@@ -206,7 +216,7 @@
 
 ---
 
-**ID: HU19**
+**ID: HU20**
 **Historia:** Como comuna, quiero aprobar o rechazar el trabajo realizado antes del cierre definitivo de un reclamo, para garantizar que la resolución sea satisfactoria.
 **Criterios de aceptación:**
 - [ ] Puedo ver los reclamos pendientes.
@@ -218,7 +228,7 @@
 
 ---
 
-**ID: HU20**
+**ID: HU21**
 **Historia:** Como administrativo, quiero moderar manualmente el contenido ingresado por los ciudadanos antes de clasificar y derivar el reclamo, para filtrar contenido inapropiado o inválido.
 **Criterios de aceptación:**
 - [ ] Puedo revisar la descripción y evidencias de un reclamo antes de clasificarlo.
@@ -230,18 +240,18 @@
 
 ---
 
-**ID: HU21**
-**Historia:** Como administrador, quiero registrar, modificar y administrar los proveedores del sistema, para mantener actualizado el catálogo de quienes resuelven reclamos.
+**ID: HU22**
+**Historia:** Como administrativo, quiero registrar, modificar y administrar los proveedores del sistema, para mantener actualizado el catálogo de quienes resuelven reclamos.
 **Criterios de aceptación:**
 - [ ] Puedo dar de alta un nuevo proveedor con sus datos básicos.
 - [ ] Puedo dar de baja o desactivar un proveedor.
 - [ ] Los proveedores desactivados no aparecen como opción al asignar nuevos reclamos.
 
-**Puntos:** 5 **Prioridad:** Media **Épica:** EP-09
+**Puntos:** 5 **Prioridad:** Baja **Épica:** EP-09
 
 ---
 
-**ID: HU22**
+**ID: HU23**
 **Historia:** Como administrador, quiero crear, editar y administrar las clasificaciones disponibles en el sistema, para mantener actualizadas las categorías de reclamos.
 **Criterios de aceptación:**
 - [ ] Puedo crear una nueva clasificación con nombre, área asociada y descripción breve.
@@ -288,23 +298,24 @@
 | 2 | HU2 | Inicio de sesión | 3 | Sprint 1 |
 | 3 | HU3 | Roles de usuario y restricción de información | 5 | Sprint 1 |
 | 4 | HU4 | Creación de reclamo (descripción, evidencias, ubicación) | 8 | Sprint 2 |
-| 5 | HU22 | Gestión de clasificaciones | 3 | Sprint 2 |
+| 5 | HU23 | Gestión de clasificaciones | 3 | Sprint 2 |
 | 6 | HU5 | Clasificación de reclamos | 5 | Sprint 2 |
 | 7 | HU6 | Asignación de prioridad | 3 | Sprint 2 |
 | 8 | HU7 | Consulta de reclamos propios | 5 | Sprint 3 |
 | 9 | HU8 | Notificaciones de cambio de estado | 5 | Sprint 3 |
-| 11 | HU20 | Moderación manual de contenido | 5 | Sprint 3 |
+| 10 | HU9 | Visualización de reclamos públicos | 5 | Sprint 3 |
+| 11 | HU21 | Moderación manual de contenido | 5 | Sprint 3 |
 | 12 | HU10 | Visualización de todos los reclamos (con filtro por área) | 5 | Sprint 4 |
 | 13 | HU12 | Visualización de evidencias antes/después | 5 | Sprint 4 |
-| 14 | HU14 | Consulta de tareas asignadas | 3 | Sprint 4 |
-| 15 | HU21 | Gestión de proveedores | 5 | Sprint 5 |
-| 16 | HU9 | Asignación de reclamos a equipos/proveedores | 8 | Sprint 5 |
-| 17 | HU13 | Derivación automática | 5 | Sprint 5 |
-| 18 | HU18 | Evidencia obligatoria de cierre | 3 | Sprint 5 |
-| 19 | HU15 | Registro de finalización de tarea | 8 | Sprint 6 |
-| 20 | HU19 | Aprobación/rechazo de cierre de reclamo | 5 | Sprint 6 |
-| 21 | HU17 | Almacenamiento de archivos multimedia | 5 | Sprint 6 |
-| 22 | HU16 | Reproceso de tareas rechazadas | 5 | Sprint 6, si hay capacidad |
+| 14 | HU15 | Consulta de tareas asignadas | 3 | Sprint 4 |
+| 15 | HU22 | Gestión de proveedores | 5 | Sprint 5 |
+| 16 | HU13 | Asignación de reclamos a equipos/proveedores | 8 | Sprint 5 |
+| 17 | HU14 | Derivación automática | 5 | Sprint 5 |
+| 18 | HU19 | Evidencia obligatoria de cierre | 3 | Sprint 5 |
+| 19 | HU16 | Registro de finalización de tarea | 8 | Sprint 6 |
+| 20 | HU20 | Aprobación/rechazo de cierre de reclamo | 5 | Sprint 6 |
+| 21 | HU18 | Almacenamiento de archivos multimedia | 5 | Sprint 6 |
+| 22 | HU17 | Reproceso de tareas rechazadas | 5 | Sprint 6 |
 
 ## Planificación de sprints
 
@@ -345,7 +356,7 @@ Permitir que el ciudadano cree reclamos y que el administrativo los clasifique y
 | ID | Historia | Puntos |
 |---|---|---|
 | HU4 | Creación de reclamo (descripción, evidencias, ubicación) | 8 |
-| HU22 | Gestión de clasificaciones | 3 |
+| HU23 | Gestión de clasificaciones | 3 |
 | HU5 | Clasificación de reclamos | 5 |
 | HU6 | Asignación de prioridad | 3 |
 | **Total** | | **19** |
@@ -357,17 +368,11 @@ Al finalizar el sprint, el cliente podrá:
 - Clasificar reclamos en categorías administradas por el sistema.
 - Marcar un reclamo como urgente.
 
+**Sprint Review 2**
+El cliente revisa el incremento y responde:
 
-**Corrección solicitada**
-El cliente solicita agregar:
-- Posibilidad de arrastrar el pin en el mapa para corregir manualmente la ubicación detectada automáticamente.
 
-**Impacto en el backlog**
-Se agrega una nueva historia:
-
-| ID | Nueva historia | Puntos | Prioridad |
-|---|---|---|---|
-| HU23 | Como ciudadano, quiero poder ajustar manualmente el pin de ubicación en el mapa, para corregir la geolocalización automática cuando falla. | 3 | Baja |
+**Resultado del sprint**
 
 
 ---
@@ -382,11 +387,10 @@ Permitir que el ciudadano haga seguimiento de sus reclamos y vea los de otros ve
 | ID | Historia | Puntos |
 |---|---|---|
 | HU7 | Consulta de reclamos propios | 5 |
-| HU8a | Notificaciones de cambio de estado | 5 |
-| HU8b | Visualización de reclamos públicos | 5 |
-| HU20 | Moderación manual de contenido | 5 |
-| HU23 | Ajuste manual del pin de ubicación (agregada en Sprint 2) | 3 |
-| **Total** | | **23** |
+| HU8 | Notificaciones de cambio de estado | 5 |
+| HU9 | Visualización de reclamos públicos | 5 |
+| HU21 | Moderación manual de contenido | 5 |
+| **Total** | | **20** |
 
 **Incremento esperado**
 Al finalizar el sprint, el cliente podrá:
@@ -395,6 +399,11 @@ Al finalizar el sprint, el cliente podrá:
 - Ver reclamos de otros ciudadanos con nivel de detalle según su estado.
 - Revisar y moderar el contenido de un reclamo antes de que avance.
 
+**Sprint Review 3**
+El cliente revisa el incremento y responde:
+
+
+**Resultado del sprint**
 
 
 ---
@@ -410,7 +419,7 @@ Dar al personal de la comuna una vista completa de los reclamos, con evidencias 
 |---|---|---|
 | HU10 | Visualización de todos los reclamos (con filtro por área) | 5 |
 | HU12 | Visualización de evidencias antes/después | 5 |
-| HU14 | Consulta de tareas asignadas | 3 |
+| HU15 | Consulta de tareas asignadas | 3 |
 | **Total** | | **13** |
 
 **Incremento esperado**
@@ -418,6 +427,12 @@ Al finalizar el sprint, el cliente podrá:
 - Ver el listado completo de reclamos, filtrado por área.
 - Comparar evidencias antes y después de la resolución.
 - Ver, desde el rol de equipo/proveedor, únicamente las tareas asignadas.
+
+**Sprint Review 4**
+El cliente revisa el incremento y responde:
+
+
+**Resultado del sprint**
 
 
 ---
@@ -431,10 +446,10 @@ Permitir que la comuna asigne y derive reclamos a equipos o proveedores, y admin
 
 | ID | Historia | Puntos |
 |---|---|---|
-| HU21 | Gestión de proveedores | 5 |
-| HU9 | Asignación de reclamos a equipos/proveedores | 8 |
-| HU13 | Derivación automática | 5 |
-| HU18 | Evidencia obligatoria de cierre | 3 |
+| HU22 | Gestión de proveedores | 5 |
+| HU13 | Asignación de reclamos a equipos/proveedores | 8 |
+| HU14 | Derivación automática | 5 |
+| HU19 | Evidencia obligatoria de cierre | 3 |
 | **Total** | | **21** |
 
 **Incremento esperado**
@@ -444,7 +459,11 @@ Al finalizar el sprint, el cliente podrá:
 - Ver la derivación automática sugerida según la clasificación.
 - Verificar que un equipo no pueda cerrar una tarea sin evidencia.
 
+**Sprint Review 5**
+El cliente revisa el incremento y responde:
 
+
+**Resultado del sprint**
 
 
 ---
@@ -458,12 +477,11 @@ Cerrar el flujo completo del reclamo: finalización de tareas, aprobación/recha
 
 | ID | Historia | Puntos |
 |---|---|---|
-| HU15 | Registro de finalización de tarea | 8 |
-| HU19 | Aprobación/rechazo de cierre de reclamo | 5 |
-| HU17 | Almacenamiento de archivos multimedia | 5 |
-| HU16 | Reproceso de tareas rechazadas | 5 |
-| HU24 | Aviso de clasificación sin área/proveedor (agregada en Sprint 5) | 2 |
-| **Total** | | **25** |
+| HU16 | Registro de finalización de tarea | 8 |
+| HU20 | Aprobación/rechazo de cierre de reclamo | 5 |
+| HU18 | Almacenamiento de archivos multimedia | 5 |
+| HU17 | Reproceso de tareas rechazadas | 5 |
+| **Total** | | **23** |
 
 **Incremento esperado**
 Al finalizar el sprint, el cliente podrá:

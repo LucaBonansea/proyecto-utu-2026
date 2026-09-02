@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proveedores</title>
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-provedores.css">
@@ -14,14 +14,7 @@
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
-    <style>
-        .map {
-            width: 100%;
-            height: 250px;
-            margin-top: 20px;
-            border-radius: 15px;
-        }
-    </style>
+
 </head>
 
 <body>
@@ -43,7 +36,7 @@
 </header>
 
 <main>
-    <h1 class="rar">Reclamos a resolver</h1>
+    <h1 class="title">Reclamos a resolver</h1>
 
     <section class="container-reclamos">
 
@@ -55,21 +48,46 @@
                 </div>
 
                 <div class="info-reclamo">
-                    <h3>Pozo en el Mallada</h3>
-
-                    <div class="top-container btns">
-                        <p class="reclamos-text">07/09/2026</p>
-                    </div>
+                    <h3 class="reclamos-title">Pozo en el Mallada</h3>
+                    <div class="reclamos-Ur" type="button">
+                    Urgente
+                </div>
+                    <p class="reclamos-text">07/09/2026</p>
+                    
 
                     <button class="btn-resolver" type="button">
-                        Resolver
+                        Ver mas 
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button> 
+                    
+                
+                </div>
+               
+            </section>
+
+            
+        </div>
+        <div class="r">
+            <section class="top-container">
+                <div class="foto-reclamo">
+                    <img src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
+                         alt="Pozo en la calle">
+                </div>
+
+                <div class="info-reclamo">
+                    <h3 class="reclamos-title">Pozo en el Mallada</h3>
+                
+                    <p class="reclamos-text">07/09/2026</p>
+                    
+
+                    <button class="btn-resolver" type="button">
+                        Ver mas 
+                        <span class="material-symbols-outlined">arrow_forward</span>
                     </button>
                 </div>
             </section>
 
-            <section class="bottom-container">
-                <div id="mapa1" class="map"></div>
-            </section>
+            
         </div>
 
         <div class="r">
@@ -80,22 +98,22 @@
                 </div>
 
                 <div class="info-reclamo">
-                    <h3>Pozo en el Mallada</h3>
-
-                    <div class="top-container btns">
-                        <p class="reclamos-text">07/09/2026</p>
-                    </div>
+                    <h3 class="reclamos-title">Pozo en el Mallada</h3>
+                
+                    <p class="reclamos-text">07/09/2026</p>
+                    
 
                     <button class="btn-resolver" type="button">
-                        Resolver
+                        Ver mas 
+                        <span class="material-symbols-outlined">arrow_forward</span>
                     </button>
                 </div>
             </section>
 
-            <section class="bottom-container">
-                <div id="mapa2" class="map"></div>
-            </section>
+            
         </div>
+
+        
 
     </section>
 </main>
