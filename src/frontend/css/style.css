@@ -130,6 +130,10 @@ main{
     box-sizing: border-box;
 }
 
+.error{
+    border: 1px solid red;
+}
+
 .tel-input:focus,
 .pass-input:focus{
     border-color: #023CA1;

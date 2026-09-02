@@ -46,4 +46,41 @@ class AuthController extends Controller
             'usuario' => $usuario
         ], 201);
     }
+
+    public function login(Request $request, AuthService $authService){
+        $datos = $request->validate(
+            [
+                'telefono' => [
+                    'required',
+                    'string',
+                    'regex:/^09\d{7}$/'
+                ],
+
+                'pin' => [
+                    'required',
+                    'digits:4'
+                ]
+            ],
+            [
+                'telefono.required' => 'Debes ingresar tu número telefónico.',
+                'telefono.regex' => 'El número telefónico no tiene un formato válido.',
+
+                'pin.required' => 'Debes ingresar un PIN.',
+                'pin.digits' => 'El PIN debe contener exactamente 4 números.'
+            ]
+        );
+
+        $usuario = $authService->login($datos);
+
+        if(!$usuario){
+            return response()->json([
+                'mensaje' => 'Teléfono o PIN incorrectos'
+            ], 401);
+        }
+
+        return response()->json([
+            'mensaje' => 'Inicio de sesión correcto',
+            'usuario' => $usuario
+        ], 200);
+    }
 }
