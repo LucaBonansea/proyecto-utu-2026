@@ -17,4 +17,19 @@ class AuthService
             'identidad_validada' => false
         ]);
     }
+
+    public function login(array $datos){
+        $telefono = $datos['telefono'];
+        $pin = $datos['pin'];
+
+        $usuario = Usuario::where('telefono', $telefono)->first();
+
+        if($usuario){
+            $pass = Hash::check($pin, $usuario->pin);
+
+            if($pass){
+                return $usuario;
+            }
+        }
+    }
 }

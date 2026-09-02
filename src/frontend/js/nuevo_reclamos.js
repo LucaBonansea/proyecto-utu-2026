@@ -105,21 +105,21 @@ descripcion.addEventListener("input", () => {
 }
 
     mapa_renderizadar(){
-         // Establezo las coordanadas donde quiero que el mapa aparezca
-    const map = L.map("map").setView(
-        [-34.3375, -56.7136],
-        13
-    );
+        // Establezo las coordanadas donde quiero que el mapa aparezca
+        const map = L.map("map").setView(
+            [-34.3375, -56.7136],
+            13
+        );
 
-    // Luego cargo los alrededores del mapa (tiles de OpenStreetMap) y se lo añado al mapa
-    L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 19
-        }
+        // Luego cargo los alrededores del mapa (tiles de OpenStreetMap) y se lo añado al mapa
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+             maxZoom: 19
+            }
 
-    ).addTo(map);
+        ).addTo(map);
 
 
         // Luego establecemos las coordenadas del punto rojo y le ponemos la caracteristica de que se puda mover = "draggable:true"
