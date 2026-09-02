@@ -37,8 +37,8 @@ section::-webkit-scrollbar{
     height: 100vh;
     flex-direction: column;
     width:75px;
-    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
-    border-radius: 0px 35px 35px 0px;
+    background: linear-gradient(to bottom, #0b3d5c 0%, #0380a6 100%);
+   
     box-shadow:0 8px 25px rgba(0,0,0,.25);
     color:white;
     justify-content: space-between;
@@ -103,7 +103,7 @@ main{
     min-height:0;
 }
 .logos{
-    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
+    background: linear-gradient(to bottom, #0b3d5c 0%, #0380a6 100%);
     display: flex;
     border-radius: 1000px;
     padding:5px;
@@ -123,11 +123,15 @@ main{
 }
 
 .logo-div{
-    background-color: white;
+    
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.logo-div img{
+    transform: scale(1.7);
 }
 .logo{
     width:38px;
@@ -176,17 +180,38 @@ main{
 }
 
 .foto-reclamo{
-    width:156px;
-    height:182px;
+    min-width: 200px;
+    max-width: 350px;
+    height:auto;
     overflow:hidden;
     flex-shrink:0;
-    align-self: stretch;
+    
+    display: flex;
+    align-items: center;    
+    justify-content: center;
+    margin-left: 5px;
 }
+
 
 .foto-reclamo img{
     width:100%;
     height:100%;
     object-fit:cover;
+    border-radius: 20px;
+}
+
+.foto-reclamo-basica{
+    overflow:hidden;
+    flex-shrink:0;
+    display: flex;
+    align-items: center;    
+    justify-content: center;
+}
+
+.foto-reclamo-basica img{
+    width:100%;
+    height:auto;   
+    object-fit: cover;
     border-radius: 20px;
 }
 .info-reclamo{
@@ -214,7 +239,7 @@ main{
     font-weight: 700;
     overflow-wrap: break-word;
     word-break: break-word;
-    margin-top: 10px;
+    
     margin-right: 10px;
 }
 
@@ -370,7 +395,7 @@ main{
     font-size:12px;
     font-weight:600;
     transition:.3s ease;
-    width:150px;
+    
 }
 .btn-enviar-area:hover{
     background:#00286F;
@@ -826,4 +851,130 @@ main{
 
 .Urgente.urgencia-activa:hover {
     background-color: #b71c1c;
+}
+
+.reclamo-card-basica {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 25px;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+    
+    break-inside: avoid;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.reclamo-card-basica:hover {
+    box-shadow: 0 4px 14px rgba(11, 61, 92, 0.08);
+    transform: translateY(-2px);
+}
+
+.reclamo-card-basica .foto-reclamo {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+}
+
+.reclamo-card-basica .foto-reclamo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.info-basica {
+    padding: 0.9rem 1rem 0.4rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.reclamo-titulo-basico {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1f2937;
+    display: -webkit-box;
+    
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.info-basica .fecha {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #9ca3af;
+}
+
+.badge-urgente {
+    display: inline-block;
+    width: fit-content;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #b91c1c;
+    background: #fee2e2;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+}
+
+.btn-ver-detalle {
+    margin: 0.7rem 1rem 1rem 1rem;
+    background: #0b3d5c;
+    color: white;
+    border: none;
+    padding: 0.55rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-ver-detalle:hover {
+    background: #093049;
+}
+
+
+.btn-volver-lista {
+    background-color: #e5f1ff;
+    color: #052d46;
+    border: none;
+    border-radius: 10px;
+    margin: 8px;
+    padding: 9px 19px;
+    
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    
+    align-self: flex-start;
+    
+    box-shadow: 0 3px 8px rgba(5, 45, 70, 0.15);
+    transition: all 0.25s ease;
+}
+
+.btn-volver-lista:hover {
+    background: linear-gradient(135deg, #c5cde4, #97a7ce);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(5, 45, 70, 0.22);
+}
+
+.btn-volver-lista:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(5, 45, 70, 0.15);
+}
+.contenedor-masonry {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.columna-masonry {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
 }

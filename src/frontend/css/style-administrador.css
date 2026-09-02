@@ -37,8 +37,7 @@ section::-webkit-scrollbar{
     height: 100vh;
     flex-direction: column;
     width:75px;
-    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
-    border-radius: 0px 35px 35px 0px;
+    background: linear-gradient(to bottom, #0b3d5c 0%, #0380a6 100%);
     box-shadow:0 8px 25px rgba(0,0,0,.25);
     color:white;
     justify-content: space-between;
@@ -84,15 +83,23 @@ section::-webkit-scrollbar{
 }
 
 .logout{
-    color: rgb(255, 24, 86);
+    color: rgb(255, 255, 255);
     font-size: 9px;
+    
+    border-radius: 10px;
+    
 }
 
 header{
     display: flex;
-    justify-content: space-between;
+    gap: 15px;
     align-items: center;
     margin:15px 25px;
+
+}
+
+.header-title h1{
+    font-size: 22px;
 }
 
 main{
@@ -103,11 +110,18 @@ main{
     min-height:0;
 }
 .logos{
-    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
+    background: linear-gradient(to bottom, #0b3d5c 0%, #0380a6 100%);
     display: flex;
     border-radius: 1000px;
     padding:5px;
     gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+.int-logo-div{
+    background-color: white;
+    padding: 4px 16px;
+    border-radius: 50px;
 }
 
 .int-logo{
@@ -116,19 +130,18 @@ main{
     margin:2px;
 }
 
-.int-logo-div{
-    background-color: white;
-    padding: 4px 16px;
-    border-radius: 50px;
-}
-
 .logo-div{
-    background-color: white;
+    
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+.logo-div img{
+    transform: scale(1.7);
+}
+
 .logo{
     width:38px;
     height:auto;
@@ -911,4 +924,101 @@ main{
 }
 .btn-ascender:hover{
     background:#24db85;
+}
+
+
+.proveedor-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.proveedor-cant-usuarios {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #0b3d5c;
+    background: #eaf1f6;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.proveedor-contacto {
+    margin: 0.1rem 0;
+    font-size: 0.82rem;
+    color: #6b7280;
+}
+
+.btn-detalle-proveedor {
+    margin-top: 0.6rem;
+    background: none;
+    border: none;
+    color: #0b3d5c;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+}
+
+.btn-detalle-proveedor:hover {
+    text-decoration: underline;
+}
+
+.btn-volver-proveedores {
+    background: none;
+    border: none;
+    color: #0b3d5c;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.btn-volver-proveedores:hover {
+    text-decoration: underline;
+}
+
+.proveedor-detalle-info {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.88rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.proveedor-detalle-info strong {
+    color: #1f2937;
+}
+
+.proveedor-detalle-subtitulo {
+    font-size: 0.95rem;
+    margin: 0 0 0.8rem 0;
+    color: #1f2937;
+}
+
+
+.usuario-proveedor-actual {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #0b3d5c;
+    background: #eaf1f6;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+}
+
+.select-proveedor-destino {
+    margin-left: 0.4rem;
+}
+
+.select-proveedor-destino.oculto {
+    display: none;
 }
