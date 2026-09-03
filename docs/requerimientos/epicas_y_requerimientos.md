@@ -26,7 +26,7 @@
 | RF-21 | Roles de usuario | El sistema deberá manejar distintos roles como ciudadano, administrador, administrativo, usuario de área y proveedor. | Entrevista P15, P21 | |
 | RF-22 | Restricción de información por rol | El sistema deberá restringir la información visible según el rol del usuario. | Entrevista P15, P16, P21 | |
 | RF-23 | Moderación manual de contenido | El administrativo deberá moderar el contenido ingresado por los ciudadanos antes de clasificar y derivar el reclamo al área correspondiente. | Entrevista P22, P23, P36 | Rol: Administrativo. | | |
-| RF-24 | Gestionar proveedores | El administrativo podrá registrar, modificar y administrar los proveedores del sistema. | Entrevista P37 |  | | |
+| RF-24 | Gestionar proveedores | El administrador podrá registrar, modificar y administrar los proveedores del sistema. | Entrevista P37 |  | | |
 | RF-25 | Gestionar clasificaciones | El administrador o administrativo podrá crear, editar, modificar y administrar las categorías y clasificaciones disponibles en el sistema.  | Notas del proyecto; Alcance 9.6 |  | | |
 
 
