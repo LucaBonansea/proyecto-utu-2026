@@ -1,6 +1,6 @@
 # Control de cambios
 
-## 1
+## Cambio 1
 
 ### Fecha: 21/8/2026
 **Cambio:** Se cancela RF-11 (Gestión mediante Kanban) y, en consecuencia, la historia HU11 (Tablero Kanban) queda fuera del alcance del proyecto.
@@ -12,24 +12,34 @@
 - La épica EP-04 (Gestión interna de reclamos) pasa a cubrirse únicamente con HU10 y HU12.
 - El Sprint 4, que incluía HU11, libera 8 puntos de capacidad, que pueden reasignarse a otra historia pendiente o usarse como colchón ante retrasos.
 
-## 2
+## Cambio 2
 
-### Fecha:3/9/26
+### Fecha: 3/9/2026
 
-**Cambio:** Ahora el proyecto esta enfocado a la gestion de reclamos dentro de edificios publicos, para la intendencia.
+**Cambio:** Modificación del alcance del proyecto.
 
-**Justificación:** Nuevos requerimientos por temas de San José Innova.
+**Justificación:**  
+El proyecto, originalmente orientado a la gestión de reclamos ciudadanos, pasa a enfocarse en la gestión de reclamos realizados por usuarios habilitados pertenecientes a uno o más edificios públicos de la Intendencia.
 
 **Impacto:**
 
-- Ahora el proyecto se trata de raclamos de usuarios habilitados por el administrador los cuales son pertenecientes a un edificio publico.
-- El reclamo será clasificado por el usuario de edificio como: Iluminacion, infrestructura, etc sobre el edificio publico
-- Usuario de Area es eliminado ya que su funcion de derivar a proveedores no tiene porque ser realizada por alguien de transito, infraestructura, etc.
-- El administrador ahora podra ver proveedores y todos los reclamos, podra tener acceso a todos los usuarios, registrando usuarios de cada edificio con datos como numero, contraseña, y edificio correspondiente, tambien podra actualizar sus contraseñas en caso de haberselas olvidado, ademas podra crear nuevos edificios y gestionar quienes pertenecen a cada uno como denunciantes de reclamos.
-- El ex "ciudadano" ahora es "usuario de edificio".
-- Geolocalizacion ya no es necesaria ya que se sabe a donde pertenece cada edificio.
-- Ahora el proveedor mandara la solucion de su trabajo al denunciante no al antiguo usuario de areas
-
-
-
-
+- El sistema estará orientado a la gestión de reclamos realizados por usuarios de edificio previamente registrados y habilitados por el Administrador.
+- Cada usuario de edificio podrá pertenecer a uno o más edificios públicos.
+- Los reclamos estarán asociados al edificio desde el cual fueron realizados y deberán ser clasificados por el usuario de edificio según el tipo de problema identificado, por ejemplo: iluminación, infraestructura, mantenimiento, entre otros.
+- Se elimina el rol de **Usuario de Área**, ya que la función de derivar reclamos a proveedores deja de depender de áreas específicas como Tránsito, Infraestructura u otras.
+- El **Administrador** podrá gestionar los usuarios de edificio, incluyendo su registro y actualización. Para cada usuario se podrán registrar datos como número telefónico, cédula, nombre, contraseña y los edificios a los que pertenece.
+- El **Administrador** podrá restablecer o actualizar las contraseñas de los usuarios de edificio y las de los Usuarios de proveedor cuando sea necesario.
+- El **Administrador** podrá crear y gestionar los edificios públicos registrados en el sistema. Cada edificio deberá contar, como mínimo, con un identificador, nombre y dirección.
+- El **Administrador** podrá gestionar la relación entre usuarios de edificio y edificios, permitiendo que un mismo usuario pertenezca a uno o más edificios.
+- El **Administrador** podrá registrar y gestionar los **Proveedores** que prestarán servicios para la resolución de los reclamos. El proveedor representará a una empresa u organización y deberá contar con datos propios de la empresa, como **RUT, razón social o nombre comercial, dirección, teléfono, correo electrónico y datos de un contacto responsable**, como el propietario, encargado o representante de la empresa.
+- Los **Proveedores** podrán tener uno o más **Usuarios de proveedor** asociados. Estos usuarios serán las personas encargadas de realizar los trabajos y utilizar el sistema en representación del proveedor.
+- El **Administrador** podrá registrar y gestionar los **Usuarios de proveedor**, asociándolos al proveedor correspondiente. Para cada usuario se podrán registrar datos como **cédula, nombre, teléfono, correo electrónico y contraseña**.
+- Los **Usuarios de proveedor** podrán iniciar sesión en el sistema y visualizar únicamente los reclamos o tareas asignados al proveedor al que pertenecen.
+- El antiguo rol de **Ciudadano** pasa a denominarse **Usuario de edificio**, debido al nuevo alcance del sistema.
+- Se elimina la necesidad de utilizar **geolocalización** para los reclamos, ya que cada reclamo estará asociado al edificio al que pertenece el usuario.
+- El **Administrativo** será responsable de moderar, clasificar y asignar los reclamos al proveedor correspondiente, sin realizar derivaciones hacia áreas internas de la Intendencia.
+- Los reclamos serán asignados directamente a los **Proveedores**, eliminando la necesidad de una derivación intermedia hacia un Usuario de Área.
+- Los **Usuarios de proveedor** serán los encargados de atender los reclamos asignados al proveedor al que pertenecen, registrar la solución realizada y adjuntar las evidencias correspondientes.
+- La solución y las evidencias registradas por el **Usuario de proveedor** serán comunicadas al **Usuario de edificio** que realizó el reclamo.
+- El **Usuario de edificio** podrá consultar el estado y avance de sus reclamos y visualizar la información y evidencias relacionadas con la resolución del reclamo.
+- Se eliminan del alcance las funcionalidades relacionadas con la visualización pública de reclamos de otros ciudadanos, dado que los reclamos estarán vinculados a usuarios y edificios específicos.
