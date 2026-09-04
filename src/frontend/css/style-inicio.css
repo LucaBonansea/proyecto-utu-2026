@@ -566,7 +566,8 @@ main{
     color: #535353;
 }
 
-#tipo-reclamo{
+#tipo-reclamo,
+#edificio{
     width: calc(100% - 50px);
     height: 65px;
     margin: 0 25px 20px;

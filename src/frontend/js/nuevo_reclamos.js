@@ -8,10 +8,12 @@ export class Nuevo_reclamos {
     third_view() {
         this.$btn_home.classList.remove("active");
         this.$btn_home_top.classList.remove("active");
-        this.Main.innerHTML = `
+        this.Main.innerHTML =  `
         <div class="div-inicial">
             <h2>Nuevo Reclamo</h2>
         </div>
+
+       
 
         <input type="file" id="archivo" hidden>
 
@@ -44,7 +46,14 @@ export class Nuevo_reclamos {
                 <option value="cerrajeria">Cerrajería</option>
             </select>
         </section>
+<label for="edificio" class="tipo-reclamo-label">Edificio</label>
 
+ <select id="edificio" required>
+    <option value="" selected disabled>Selecciona tu edificio</option>
+    <option value="edificio-central">Edificio central</option>
+    <option value="edificio-1">Edificio 1</option>
+    <option value="edificio-2">Edificio 2</option>
+ </select>
         <section class="bottom-new-reclamo">
             <button class="enviarReclamo">Enviar Reclamo</button>
         </section>`;
