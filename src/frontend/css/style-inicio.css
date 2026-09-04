@@ -18,8 +18,6 @@
     box-sizing: border-box;
 }
 
-
-
 body{
     background-color: #F0F5FF;
     font-family:'Inter', sans-serif;
@@ -35,7 +33,26 @@ header{
     gap: 10px;
 }
 
+@media (min-width: 769px) {
+    header{
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        flex-wrap: initial;
+    }
 
+    header > a{
+        justify-self: start;
+        min-width: 0;
+    }
+
+    .top-nav{
+        justify-self: center;
+    }
+
+    .nav-perfil{
+        justify-self: end;
+    }
+}
 
 html{
     overflow-y:scroll;
@@ -70,8 +87,6 @@ main{
     gap: 5px;
     flex-wrap: wrap;
 }
-
-
 
 .int-logo{
     width:90px;
@@ -178,16 +193,6 @@ main{
     background:#0a45ac;
 }
 
-
-
-
-
-
-
-
-
-
-
 .nav-perfil{
     display: flex;
     gap: 20px;
@@ -218,6 +223,7 @@ main{
 
     cursor:pointer;
     transition:.25s;
+    padding: 20px;
 }
 .bottom-nav button:not(.new-reclamo) {
     width: 45px;
@@ -238,11 +244,9 @@ main{
         transform 0.2s ease;
 }
 
-
 .bottom-nav button:not(.new-reclamo):hover {
     background: rgba(255, 255, 255, 0.12);
 }
-
 
 .bottom-nav button span {
     font-size: 28px;
@@ -253,11 +257,13 @@ main{
     transform: translateY(-1px) scale(1.05);
 }
 
-
-
 .bottom-nav button.active {
     background: rgba(255, 255, 255, 0.10);
     position: relative;
+    width: auto;
+    height: 50px;       
+    padding: 0px 30px;  
+    border-radius: 100px
 }
 
 .bottom-nav button.active::after {
@@ -269,7 +275,6 @@ main{
     border-radius: 50%;
     background: white;
 }
-
 
 .bottom-nav button:active {
     transform: scale(0.92);
@@ -447,7 +452,6 @@ main{
 
     gap: 3px;
 
-   
     overflow: hidden;
 }
 
@@ -459,11 +463,9 @@ main{
 
     white-space: nowrap;
 
-    
     overflow-x: auto;
     overflow-y: hidden;
 
-    
     width: 100%;
     min-width: 0;
 
@@ -477,7 +479,6 @@ main{
 .reclamo-titulo::-webkit-scrollbar {
     display: block;
 }
-
 
 .reclamo-ubicacion{
     font-size: 12px;
@@ -517,11 +518,18 @@ main{
 
 .edificios-chips{
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     margin-left: 20px;
     margin-right: 20px;
     margin-bottom: 15px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.edificios-chips::-webkit-scrollbar{
+    display: none;
 }
 
 .edificio-chip{
@@ -536,6 +544,7 @@ main{
     cursor: pointer;
     transition: .2s;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .edificio-chip:hover{
@@ -659,11 +668,11 @@ main{
     width: calc(100% - 50px);
     height: 65px;
     margin: 0 25px 20px;
-    padding: 0 20px;
+    padding: 0 45px 0 20px;
     border: none;
     border-radius: 18px;
     outline: none;
-    background: #fff;
+    background-color: #fff;
     box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
     color: #535353;
     font: inherit;
@@ -672,9 +681,17 @@ main{
     box-sizing: border-box;
     transition: .2s;
     margin-top: 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23535353' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    background-repeat: no-repeat;
+    background-position: right 23px center;
+    background-size: 14px;
 }
-#tipo-reclamo:hover{
-    background: #ddd;
+#tipo-reclamo:hover,
+#edificio:hover{
+    background-color: #ddd;
 }
 
 .tipo-reclamo-label{
@@ -1031,6 +1048,21 @@ main{
     padding: 10px 6px;
     border-radius:20px;
     box-shadow: 0 8px 24px rgba(0, 29, 81, 0.18);
+    border: none;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.stat-item:hover{
+    background-color: #f0f5ff;
+    transform: translateY(-2px);
+}
+
+.stat-item:hover .stat-numero{
+    color: #0056eb;
+    transform: scale(1.1);
+    display: inline-block;
+    transition: .2s;
 }
 
 .stat-numero{
@@ -1080,6 +1112,83 @@ main{
     color: rgb(225, 7, 68);
 }
 
+.vista-cuenta{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.vista-cuenta .div-inicial{
+    align-items: center;
+    text-align: center;
+    margin-left: 0;
+    width: auto;
+}
+
+.vista-cuenta .perfil-card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    margin: 0 0 20px;
+    width: min(calc(100% - 50px), 380px);
+    padding: 32px 24px 26px;
+    border-radius: 28px;
+}
+
+.vista-cuenta .perfil-avatar{
+    width: 96px;
+    height: 96px;
+    margin-bottom: 6px;
+}
+
+.vista-cuenta .perfil-avatar .material-symbols-outlined{
+    font-size: 48px;
+}
+
+.vista-cuenta .perfil-nombre{
+    font-size: 20px;
+}
+
+.vista-cuenta .perfil-telefono{
+    justify-content: center;
+}
+
+.perfil-badge{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0a45ac;
+    background: #e4ecff;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-top: 6px;
+}
+
+.perfil-badge .material-symbols-outlined{
+    font-size: 16px;
+}
+
+.vista-cuenta .perfil-stats{
+    margin: 0 0 20px;
+    width: min(calc(100% - 50px), 380px);
+    max-width: none;
+}
+
+.vista-cuenta .cuenta-opciones{
+    width: min(calc(100% - 50px), 380px);
+}
+
+.vista-cuenta .cuenta-opcion{
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+}
+
 .top-new-reclamo{
     display: flex;
     align-items: center;
@@ -1099,9 +1208,19 @@ footer{
     
 }
 
-/* =========================================================
-   MOBILE-FIRST (min-width) — grilla de reclamos y layout ancho
-   ========================================================= */
+.primerdiv-reclamo.estado-proceso .step.active .circle{
+    background: #f59e0b;
+}
+.primerdiv-reclamo.estado-proceso .line.active{
+    background: #f59e0b;
+}
+
+.primerdiv-reclamo.estado-resuelto .step.active .circle{
+    background: #16a34a;
+}
+.primerdiv-reclamo.estado-resuelto .line.active{
+    background: #16a34a;
+}
 
 @media (min-width: 480px) {
     .reclamos-seccion {
@@ -1143,11 +1262,6 @@ footer{
     }
 }
 
-
-/* =========================================================
-   DESKTOP-FIRST (max-width / rangos) — de más ancho a más angosto
-   ========================================================= */
-
 @media (max-width: 1024px) {
     .top-nav {
         gap: 10px;
@@ -1162,10 +1276,6 @@ footer{
 }
 
 @media (max-width: 768px) {
-    .notificaciones-btn-top {
-        display: none !important;
-    }
-
     .bottom-nav {
         position: fixed;
         bottom: calc(env(safe-area-inset-bottom, 0px));
@@ -1175,16 +1285,14 @@ footer{
         width: min(350px, 92vw);
         height: 60px;
         border-radius: 100px;
-        display: flex;
-        justify-content: space-around;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        justify-items: center;
         align-items: center;
         background: linear-gradient(180deg,#023ca1cf,#001844e4);
         box-shadow: 0 8px 25px rgba(0,0,0,.25);
         z-index: 1000;
-    }
-
-    .menu-top-notificaciones {
-        display: none !important;
+        margin-bottom: 5px;
     }
 
     footer {
@@ -1228,7 +1336,6 @@ footer{
         width: 94%;
     }
 
-    /* --- tarjeta de reclamo / stepper --- */
     .foto-reclamo {
         width: 80px;
         height: 100px;
@@ -1276,10 +1383,40 @@ footer{
     }
 
     .info-reclamo {
-        margin-left: 0px;
+        margin-left: 14px;
     }
 
     .foto-reclamo {
-        margin-right: 0;
+        margin-right: 4px;
+    }
+
+    .logos {
+        gap: 3px;
+        padding: 4px;
+    }
+
+    .logo {
+        width: 36px;
+        margin: 1px;
+    }
+
+    .int-logo {
+        width: 62px;
+        margin: 1px;
+    }
+
+    .int-logo-div {
+        padding: 3px 10px;
+    }
+
+    .edificios-chips {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    .edificio-chip {
+        font-size: 12px;
+        padding: 7px 14px;
     }
 }
+
