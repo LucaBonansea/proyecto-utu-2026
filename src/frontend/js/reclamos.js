@@ -2,33 +2,29 @@ export class Reclamos{
     constructor(Main){
         this.Main = Main;
 
-        // Datos de ejemplo (después esto vendría de tu backend)
-        // estado: "enviado" | "aceptado" | "proceso" | "terminado"
         this.reclamosData = [
-            { titulo: "Bache en la calle",      estado: "terminado", fecha: "17/02/26 • Hace 2 dias" },
-            { titulo: "Luminaria apagada",       estado: "terminado", fecha: "16/02/26 • Hace 3 dias" },
-            { titulo: "Árbol caído",             estado: "terminado", fecha: "15/02/26 • Hace 4 dias" },
-            { titulo: "Basural clandestino",     estado: "terminado", fecha: "14/02/26 • Hace 5 dias" },
-            { titulo: "Semáforo roto",           estado: "terminado", fecha: "13/02/26 • Hace 6 dias" },
-            { titulo: "Vereda rota",             estado: "terminado", fecha: "12/02/26 • Hace 7 dias" },
-            { titulo: "Caño roto",               estado: "terminado", fecha: "11/02/26 • Hace 8 dias" },
-            { titulo: "Poda de árbol",           estado: "terminado", fecha: "10/02/26 • Hace 9 dias" },
-            { titulo: "Bache en la calle",       estado: "proceso",   fecha: "09/02/26 • Hace 10 dias" },
-            { titulo: "Ruido molesto",           estado: "proceso",   fecha: "08/02/26 • Hace 11 dias" },
-            { titulo: "Contenedor dañado",       estado: "aceptado",  fecha: "07/02/26 • Hace 12 dias" },
-            { titulo: "Cartel caído",            estado: "enviado",   fecha: "06/02/26 • Hace 13 dias" },
+            { titulo: "Ascensor fuera de servicio",  estado: "terminado", fecha: "17/02/26 • Hace 2 dias" },
+            { titulo: "Luz de pasillo quemada",       estado: "terminado", fecha: "16/02/26 • Hace 3 dias" },
+            { titulo: "Filtración en el techo",       estado: "terminado", fecha: "15/02/26 • Hace 4 dias" },
+            { titulo: "Aire acondicionado roto",      estado: "terminado", fecha: "14/02/26 • Hace 5 dias" },
+            { titulo: "Puerta de emergencia trabada", estado: "terminado", fecha: "13/02/26 • Hace 6 dias" },
+            { titulo: "Baño sin agua",                estado: "terminado", fecha: "12/02/26 • Hace 7 dias" },
+            { titulo: "Cañería con pérdida",          estado: "terminado", fecha: "11/02/26 • Hace 8 dias" },
+            { titulo: "Extintor vencido",             estado: "terminado", fecha: "10/02/26 • Hace 9 dias" },
+            { titulo: "Enchufe dañado en oficina",    estado: "proceso",   fecha: "09/02/26 • Hace 10 dias" },
+            { titulo: "Ventana rota en sala 3",       estado: "proceso",   fecha: "08/02/26 • Hace 11 dias" },
+            { titulo: "Cielorraso con humedad",       estado: "aceptado",  fecha: "07/02/26 • Hace 12 dias" },
+            { titulo: "Sensor de humo desconectado",  estado: "enviado",   fecha: "06/02/26 • Hace 13 dias" },
         ];
 
         this.imgPlaceholder = "https://imgs.search.brave.com/o7Hp6ebhqiOzB5Ng50bKejGy-Dy1clafDW8xSB0BfS8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi9jYXJy/ZXRlcmEtZGUtYXNm/YWx0by1hZ3JpZXRh/ZG8tY29uLWJhY2hl/cy1wcm9mdW5kb3Mt/bGxlbm9zLWFndWEt/cXVlLXJlZmxlamFu/LWxhcy1sdWNlcy1s/YS1jaXVkYWQtNDI4/Nzg5ODkzLmpwZw";
 
-        // filtros disponibles para el nav de Inicio
         this.filtros = [
             { id: "todos",     label: "Todos" },
             { id: "resueltos", label: "Resueltos" },
             { id: "proceso",   label: "En proceso" },
         ];
 
-        // etiqueta + clase css por estado (badge y color del stepper)
         this.estadoInfo = {
             enviado:   { label: "Enviado",    clase: "estado-enviado" },
             aceptado:  { label: "Aceptado",   clase: "estado-aceptado" },
@@ -37,7 +33,6 @@ export class Reclamos{
         };
     }
 
-    // filtro: "todos" (default) | "resueltos" | "proceso"
     second_view(filtro = "todos"){
 
         const pasos = ["enviado", "aceptado", "proceso", "terminado"];
