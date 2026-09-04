@@ -7,6 +7,7 @@ const $input_password_2 = document.querySelector(".pass-input-2");
 
 $btn_registro.textContent = "Registrar";
 
+// Quitar error al modificar los campos
 $input_name.addEventListener("input", () => {
     $input_name.classList.remove("error");
 });
@@ -27,6 +28,7 @@ $input_password_2.addEventListener("input", () => {
     $input_password_2.classList.remove("error");
 });
 
+// Registrar usuario
 $btn_registro.addEventListener("click", (e) => {
     e.preventDefault();
 
@@ -62,6 +64,7 @@ async function registrar_usuario(datos) {
 
         const response = await request.json();
 
+        // Si la API devuelve un error
         if (!request.ok) {
             $btn_registro.textContent = "[ERROR] Intentar de nuevo";
             $btn_registro.disabled = false;
@@ -86,6 +89,7 @@ async function registrar_usuario(datos) {
             return;
         }
 
+        // Registro exitoso
         showToast.success("Usuario registrado correctamente", {
             duration: 4000,
             position: "top-center",
@@ -103,5 +107,14 @@ async function registrar_usuario(datos) {
 
         $btn_registro.disabled = false;
         $btn_registro.textContent = "[ERROR] Intentar de nuevo";
+
+        $btn_registro.style.background =
+            "linear-gradient(135deg, #e64a23 0%, #d2731f 100%)";
+
+        showToast.error("No se pudo conectar al servidor", {
+            duration: 4000,
+            progress: true,
+            position: "top-center"
+        });
     }
 }
