@@ -40,15 +40,31 @@
                     <p>Número telefónico</p>
                     <input class="tel-input" type="text" name="" id="" placeholder="098784392"  inputmode="numeric" pattern="[0-9]*" autocomplete="current-password" required>
                 </div>
-                
+                <div class="div-tel">
+                <p>Edificio</p>
+                <select class="edificio-select" required>
+                <option value="" selected disabled>Selecciona tu edificio</option>
+                <option value="edificio-1">Edificio Administrativo</option>
+                <option value="edificio-2">Edificio Ejecutivo</option>
+                <option value="edificio-3">Edificio Residencial</option>
+                 </select>
+                 </div>
 
-                <div class="div-pass">
-                    <p style="font-size:13px;">PIN</p>
-                    <input class="pass-input" placeholder="****" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="current-password" required>
-                    <p style="font-size:13px;">Repetir PIN</p>
-                    <input class="pass-input-2" placeholder="****" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="current-password" required>
+                 <div class="div-pass">
+                 <p style="font-size:13px;">Contraseña</p>
+                 <input class="pass-input"
+                  placeholder="Contraseña"
+                 type="password"
+                 autocomplete="new-password"
+                 required>
+
+                 <p style="font-size:13px;">Repetir contraseña</p>
+                 <input class="pass-input-2"
+                  placeholder="Repetir contraseña"
+                 type="password"
+                 autocomplete="new-password"
+                required>
                 </div>
-                
                 
                     </section>
             </section>

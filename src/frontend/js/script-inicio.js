@@ -22,19 +22,13 @@ const $notificaciones_btn = document.querySelector(".notificaciones-btn");
 const $notificaciones_btn_top = document.querySelector(".notificaciones-btn-top");
 const $user_btn_top = document.querySelector(".user-btn-top");
 const $user_btn = document.querySelector(".user-btn");
-const $menu_usuario = document.querySelector(".menu-top-cuenta");
-const $menu_top_cuenta = document.querySelector(".menu-top-cuenta");
-const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
-const $notificaciones_lista_top = document.querySelector(".menu-top-notificaciones .notificaciones-lista");
-const $cambiarNumero_desktop = document.querySelector("#cambiarNumero-desktop");
-const $cambiarPin_desktop = document.querySelector("#cambiarPin-desktop");
-const $notificaciones_lista = document.querySelector(".notificaciones-lista")
+
 // Objetos
 const home = new Home($btn_home_top, $btn_home, Main, iniciarReclamo);
 const reclamos = new Reclamos(Main);
 const nuevo_reclamos = new Nuevo_reclamos($btn_home_top, $btn_home, Main);
-const cuenta = new Cuenta(Main, button_restart_actives, home, $user_btn, $menu_top_cuenta);
-const notificaciones = new Notificaciones(Main, button_restart_actives,  $notificaciones_lista);
+const cuenta = new Cuenta(Main, button_restart_actives);
+const notificaciones = new Notificaciones(Main, button_restart_actives);
 
 home.first_view();
 
@@ -94,12 +88,6 @@ function iniciarReclamo(){
     nuevo_reclamos.third_view();
     // Evento
     nuevo_reclamos.descripcion_eventos();
-    // Renderizado ("Dibujo")
-    const {map, marker} = nuevo_reclamos.mapa_renderizadar();
-    // Eventos
-    nuevo_reclamos.boton_ubicacion_evento(map, marker);
-    nuevo_reclamos.ubicacion_automatica(map, marker);
-    nuevo_reclamos.direccion_asistida(map, marker);
 }
 
 
@@ -137,52 +125,13 @@ $notificaciones_btn.addEventListener("click", () => {
     notificaciones.fourth_view();
 });
 
-$notificaciones_btn_top.addEventListener("click", (event) => {
-    $menu_usuario.classList.remove("active");
-    $menu_top_notificaciones.classList.add("active");
-    notificaciones.fourth_view_desktop();
-    event.stopPropagation();
+$notificaciones_btn_top.addEventListener("click", () => {
+    notificaciones.fourth_view();
 });
-
-$menu_top_notificaciones.addEventListener("click", (event) =>{
-    event.stopPropagation();
-});
-
-document.addEventListener("click", function() {
-  $menu_top_notificaciones.classList.remove("active");
-});
-
 
 $user_btn.addEventListener("click", () => {
     cuenta.fifth_view();
 });
-
-$menu_top_cuenta.addEventListener("click", (event) =>{
-    event.stopPropagation();
-})
-
-$user_btn_top.addEventListener("click", (event) =>{
-    $menu_top_notificaciones.classList.remove("active");
-    $menu_usuario.classList.add("active");
-    event.stopPropagation();
+$user_btn_top.addEventListener("click", () => {
+    cuenta.fifth_view();
 });
-
-document.addEventListener("click", function() {
-   $menu_usuario.classList.remove("active");
-});
-
-$cambiarNumero_desktop.addEventListener("click", ()=>{
-    button_restart_actives();
-    $menu_top_cuenta.classList.remove("active");
-    cuenta.seven_view();
-});
-
-$cambiarPin_desktop.addEventListener("click", ()=>{
-    button_restart_actives();
-    $menu_top_cuenta.classList.remove("active");
-    cuenta.eight_view();
-});
-
-
-
-
