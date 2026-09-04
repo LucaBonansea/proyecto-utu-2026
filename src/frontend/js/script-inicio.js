@@ -89,12 +89,6 @@ function iniciarReclamo(){
     nuevo_reclamos.third_view();
     // Evento
     nuevo_reclamos.descripcion_eventos();
-    // Renderizado ("Dibujo")
-    const {map, marker} = nuevo_reclamos.mapa_renderizadar();
-    // Eventos
-    nuevo_reclamos.boton_ubicacion_evento(map, marker);
-    nuevo_reclamos.ubicacion_automatica(map, marker);
-    nuevo_reclamos.direccion_asistida(map, marker);
 }
 
 // Eventos de cada boton
