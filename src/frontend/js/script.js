@@ -7,12 +7,11 @@ $btn_login.addEventListener("click", (e) => {
 
     const data = {
         telefono: $input_tel.value,
-        password: $input_password.value
+        pin: $input_password.value
     };
 
     $btn_login.textContent = "Iniciando sesión...";
-    $btn_login.style.background =
-        "linear-gradient(135deg, #2ECC71 0%, #27AE60 100%)";
+    $btn_login.style.background = "linear-gradient(135deg, #2ECC71 0%, #27AE60 100%)";
 
     iniciar_usuario(data);
 });
@@ -50,10 +49,10 @@ async function iniciar_usuario(datos) {
                     });
                 }
 
-                if (response.errors?.password) {
+                if (response.errors?.pin) {
                     $input_password.classList.add("error");
 
-                    showToast.error(response.errors.password[0], {
+                    showToast.error(response.errors.pin[0], {
                         duration: 4000,
                         progress: true,
                         position: "top-center"
