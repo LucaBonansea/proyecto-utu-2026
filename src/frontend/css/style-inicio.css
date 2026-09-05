@@ -455,31 +455,6 @@ main{
     overflow: hidden;
 }
 
-.reclamo-titulo {
-    font-size: 14px;
-    font-weight: 800;
-
-    margin: 0;
-
-    white-space: nowrap;
-
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    width: 100%;
-    min-width: 0;
-
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-.reclamo-titulo {
-    overflow-x: auto;
-    scrollbar-width: auto;
-}
-.reclamo-titulo::-webkit-scrollbar {
-    display: block;
-}
-
 .reclamo-ubicacion{
     font-size: 12px;
     display: flex;
@@ -604,10 +579,12 @@ main{
 .reclamo-titulo{
     font-size: 14px;
     font-weight: 800;
-    white-space: nowrap;     
-    overflow: hidden;         
-    text-overflow: ellipsis;  
-    min-width: 0;   
+    margin: 0;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .estado-text{
