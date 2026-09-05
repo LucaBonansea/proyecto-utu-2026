@@ -1,6 +1,6 @@
 const $btn_registro = document.querySelector(".btn-registro");
 const $input_name = document.querySelector(".name-input");
-const $input_tel = document.querySelector(".tel-input");
+const $input_ci = document.querySelector(".ci-input");
 const $input_edificio = document.querySelector(".edificio-select");
 const $input_password = document.querySelector(".pass-input");
 const $input_password_2 = document.querySelector(".pass-input-2");
@@ -12,8 +12,8 @@ $input_name.addEventListener("input", () => {
     $input_name.classList.remove("error");
 });
 
-$input_tel.addEventListener("input", () => {
-    $input_tel.classList.remove("error");
+$input_ci.addEventListener("input", () => {
+    $input_ci.classList.remove("error");
 });
 
 $input_edificio.addEventListener("change", () => {
@@ -34,7 +34,7 @@ $btn_registro.addEventListener("click", (e) => {
 
     const datos = {
         nombre: $input_name.value,
-        telefono: $input_tel.value,
+        cedula: $input_ci.value,
         edificio: $input_edificio.value,
         password: $input_password.value,
         password_confirmation: $input_password_2.value
@@ -66,24 +66,62 @@ async function registrar_usuario(datos) {
 
         // Si la API devuelve un error
         if (!request.ok) {
+            console.log(response);
             $btn_registro.textContent = "[ERROR] Intentar de nuevo";
+            $btn_registro.style.background =
+                "linear-gradient(135deg, #e64a23 0%, #d2731f 100%)";
             $btn_registro.disabled = false;
 
             if (response.errors?.nombre) {
                 $input_name.classList.add("error");
+
+                showToast.error(response.errors.nombre[0], {
+                        duration: 4000,
+                        progress: true,
+                        position: "top-center",
+                        transition: "swingInverted",
+                        icon: '',
+                        sound: true,
+                    });
             }
 
-            if (response.errors?.telefono) {
-                $input_tel.classList.add("error");
+            if (response.errors?.cedula) {
+                $input_ci.classList.add("error");
+
+                showToast.error(response.errors.cedula[0], {
+                    duration: 4000,
+                    progress: true,
+                    position: "top-center",
+                    transition: "swingInverted",
+                    icon: '',
+                    sound: true,
+                });
             }
 
             if (response.errors?.edificio) {
                 $input_edificio.classList.add("error");
+                showToast.error(response.errors.edificio[0], {
+                    duration: 4000,
+                    progress: true,
+                    position: "top-center",
+                    transition: "swingInverted",
+                    icon: '',
+                    sound: true,
+                });
             }
 
             if (response.errors?.password) {
                 $input_password.classList.add("error");
                 $input_password_2.classList.add("error");
+
+                showToast.error(response.errors.password[0], {
+                        duration: 4000,
+                        progress: true,
+                        position: "top-center",
+                        transition: "swingInverted",
+                        icon: '',
+                        sound: true,
+                });
             }
 
             return;
