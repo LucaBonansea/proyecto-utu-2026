@@ -1,5 +1,4 @@
 // import (importaciones de los objetos)
-import { Home } from "./home.js";
 import { Reclamos } from "./reclamos.js";
 import { Nuevo_reclamos } from "./nuevo_reclamos.js";
 import { Cuenta } from "./cuenta.js";
@@ -12,31 +11,36 @@ const newReclamo = document.querySelector(".new-reclamo");
 const Main = document.querySelector("#main");
 
 // botones del nav
-const $btn_home = document.querySelector(".main-button");
-const $btn_misreclamos = document.querySelector(".mireclamo");
-const $btn_home_top = document.querySelector(".main-button-top");
-const $btn_misreclamos_top = document.querySelector(".mireclamo-top");
+// "Inicio" es la ex vista "Mis Reclamos": ahora es la pantalla de entrada.
+const $btn_inicio = document.querySelector(".inicio");
+const $btn_inicio_top = document.querySelector(".inicio-top");
 const $btn_newReclamo_top = document.querySelector(".new-reclamo-top");
-const $btn_logout = document.querySelector(".noti");
-const $notificaciones_btn = document.querySelector(".notificaciones-btn");
+const $btn_cuenta = document.querySelector(".cuenta");
+const $btn_cuenta_top = document.querySelector(".cuenta-top");
 const $notificaciones_btn_top = document.querySelector(".notificaciones-btn-top");
-const $user_btn_top = document.querySelector(".user-btn-top");
-const $user_btn = document.querySelector(".user-btn");
-const $menu_usuario = document.querySelector(".menu-top-cuenta");
-const $menu_top_cuenta = document.querySelector(".menu-top-cuenta");
 const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
 const $notificaciones_lista_top = document.querySelector(".menu-top-notificaciones .notificaciones-lista");
-const $cambiarNumero_desktop = document.querySelector("#cambiarNumero-desktop");
-const $cambiarPin_desktop = document.querySelector("#cambiarPin-desktop");
 const $notificaciones_lista = document.querySelector(".notificaciones-lista")
-// Objetos
-const home = new Home($btn_home_top, $btn_home, Main, iniciarReclamo);
-const reclamos = new Reclamos(Main);
-const nuevo_reclamos = new Nuevo_reclamos($btn_home_top, $btn_home, Main);
-const cuenta = new Cuenta(Main, button_restart_actives, home, $user_btn, $menu_top_cuenta);
-const notificaciones = new Notificaciones(Main, button_restart_actives,  $notificaciones_lista);
 
-home.first_view();
+// Objetos
+const reclamos = new Reclamos(Main);
+const nuevo_reclamos = new Nuevo_reclamos($btn_inicio_top, $btn_inicio, Main);
+const cuenta = new Cuenta(
+    Main,
+    button_restart_actives,
+    $btn_cuenta_top,
+    $btn_cuenta,
+    (filtro) => {
+        button_restart_actives();
+        $btn_inicio_top.classList.add("active");
+        $btn_inicio.classList.add("active");
+        reclamos.second_view(filtro);
+    }
+);
+const notificaciones = new Notificaciones(Main, button_restart_actives, $notificaciones_lista);
+
+// La vista de entrada de la app ahora es "Mis Reclamos" (etiquetada "Inicio" en el nav)
+reclamos.second_view();
 
 // Evento de los botones de arriba
 function button_actives_top(){
@@ -45,7 +49,6 @@ function button_actives_top(){
 
         // Siempre quitar activos anteriores
         buttons_tops.forEach(b => b.classList.remove("active"));
-        console.log("Probando..");
 
         // Activar solo botones normales
         button.classList.add("active");
@@ -58,12 +61,14 @@ function button_restart_actives(){
     buttons_tops.forEach(button => {
         button.classList.remove("active");
     })
+    buttons.forEach(button => {
+        button.classList.remove("active");
+    })
 }
 
 button_actives_top();
 
 // Eventos de los botones del nav
-
 
 buttons.forEach(button => {
     button.addEventListener("click", () => {
@@ -94,30 +99,13 @@ function iniciarReclamo(){
     nuevo_reclamos.third_view();
     // Evento
     nuevo_reclamos.descripcion_eventos();
-    // Renderizado ("Dibujo")
-    const {map, marker} = nuevo_reclamos.mapa_renderizadar();
-    // Eventos
-    nuevo_reclamos.boton_ubicacion_evento(map, marker);
-    nuevo_reclamos.ubicacion_automatica(map, marker);
-    nuevo_reclamos.direccion_asistida(map, marker);
 }
 
-
-home.nuevo_reclamo_inicio(iniciarReclamo);
-
 // Eventos de cada boton
-$btn_home_top.addEventListener("click", () => {
-    home.first_view();
+$btn_inicio_top.addEventListener("click", () => {
+    reclamos.second_view();
 })
-$btn_home.addEventListener("click", () => {
-    home.first_view();
-})
-
-$btn_misreclamos.addEventListener("click", () =>{
-   reclamos.second_view();
-})
-
-$btn_misreclamos_top.addEventListener("click", ()=>{
+$btn_inicio.addEventListener("click", () => {
     reclamos.second_view();
 })
 
@@ -129,16 +117,10 @@ $btn_newReclamo_top.addEventListener("click", () =>{
     iniciarReclamo();
 })
 
-$btn_logout.addEventListener("click", () => {
-  window.location.href = "/proyecto-utu-2026/src/frontend/html/";
-});
-
-$notificaciones_btn.addEventListener("click", () => {
-    notificaciones.fourth_view();
-});
+// El botón de "Cerrar sesión" se renderiza y se conecta dentro de
+// cuenta.js (fifth_view / eventos), ya no vive en el header.
 
 $notificaciones_btn_top.addEventListener("click", (event) => {
-    $menu_usuario.classList.remove("active");
     $menu_top_notificaciones.classList.add("active");
     notificaciones.fourth_view_desktop();
     event.stopPropagation();
@@ -152,37 +134,21 @@ document.addEventListener("click", function() {
   $menu_top_notificaciones.classList.remove("active");
 });
 
+// Cerrar el menú de notificaciones al hacer scroll, salvo que el scroll
+// sea el de la propia lista de notificaciones (para poder desplazarla)
+window.addEventListener("scroll", (event) => {
+    if ($menu_top_notificaciones.contains(event.target)) {
+        return;
+    }
+    $menu_top_notificaciones.classList.remove("active");
+}, { passive: true, capture: true });
 
-$user_btn.addEventListener("click", () => {
+// Cuenta ya no es un menú flotante: es una vista completa en #main,
+// igual que Inicio y Nuevo Reclamo.
+$btn_cuenta.addEventListener("click", () => {
     cuenta.fifth_view();
 });
 
-$menu_top_cuenta.addEventListener("click", (event) =>{
-    event.stopPropagation();
-})
-
-$user_btn_top.addEventListener("click", (event) =>{
-    $menu_top_notificaciones.classList.remove("active");
-    $menu_usuario.classList.add("active");
-    event.stopPropagation();
+$btn_cuenta_top.addEventListener("click", () => {
+    cuenta.fifth_view();
 });
-
-document.addEventListener("click", function() {
-   $menu_usuario.classList.remove("active");
-});
-
-$cambiarNumero_desktop.addEventListener("click", ()=>{
-    button_restart_actives();
-    $menu_top_cuenta.classList.remove("active");
-    cuenta.seven_view();
-});
-
-$cambiarPin_desktop.addEventListener("click", ()=>{
-    button_restart_actives();
-    $menu_top_cuenta.classList.remove("active");
-    cuenta.eight_view();
-});
-
-
-
-
