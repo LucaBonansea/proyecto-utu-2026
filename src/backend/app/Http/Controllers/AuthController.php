@@ -9,35 +9,49 @@ class AuthController extends Controller
 {
     public function register(Request $request, AuthService $authService)
     {
-       $datos = $request->validate(
-    [
-        'nombre' => 'required|string|max:100',
+        $datos = $request->validate(
+            [
+                'cedula' => [
+                    'required',
+                    'string',
+                    'max:20',
+                    'unique:usuarios,cedula'
+                ],
 
-        'telefono' => [
-            'required',
-            'string',
-            'regex:/^09\d{7}$/',
-            'unique:usuarios,telefono'
-        ],
+                'nombre' => [
+                    'required',
+                    'string',
+                    'max:100'
+                ],
 
-        'pin' => [
-            'required',
-            'digits:4',
-            'confirmed'
-        ]
-    ],
-    [
-        'nombre.required' => 'Debes ingresar tu nombre.',
 
-        'telefono.required' => 'Debes ingresar tu número telefónico.',
-        'telefono.regex' => 'El número telefónico no tiene un formato válido.',
-        'telefono.unique' => 'Este número telefónico ya está registrado.',
+                'password' => [
+                    'required',
+                    'string',
+                    'min:6',
+                    'confirmed'
+                ],
+                'edificio' => [
+                    'required',
+                    'integer',
+                    'exists:edificios,id'
+                ],
+            ],
+            [
+                'cedula.required' => 'Debes ingresar la cédula.',
+                'cedula.unique' => 'Ya existe un usuario con esa cédula.',
 
-        'pin.required' => 'Debes ingresar un PIN.',
-        'pin.digits' => 'El PIN debe contener exactamente 4 números.',
-        'pin.confirmed' => 'Los PIN ingresados no coinciden.'
-    ]
-);
+                'nombre.required' => 'Debes ingresar el nombre.',
+                'edificio.required' => 'Debes seleccionar un edificio.',
+                'edificio.exists' => 'El edificio seleccionado no existe.',
+
+                'telefono.required' => 'Debes ingresar el teléfono.',
+
+                'password.required' => 'Debes ingresar una contraseña.',
+                'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+                'password.confirmed' => 'Las contraseñas no coinciden.'
+            ]
+        );
 
         $usuario = $authService->registrar($datos);
 
@@ -47,34 +61,31 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request, AuthService $authService){
+    public function login(Request $request, AuthService $authService)
+    {
         $datos = $request->validate(
             [
-                'telefono' => [
+                'cedula' => [
                     'required',
-                    'string',
-                    'regex:/^09\d{7}$/'
+                    'string'
                 ],
 
-                'pin' => [
+                'password' => [
                     'required',
-                    'digits:4'
+                    'string'
                 ]
             ],
             [
-                'telefono.required' => 'Debes ingresar tu número telefónico.',
-                'telefono.regex' => 'El número telefónico no tiene un formato válido.',
-
-                'pin.required' => 'Debes ingresar un PIN.',
-                'pin.digits' => 'El PIN debe contener exactamente 4 números.'
+                'cedula.required' => 'Debes ingresar la cédula.',
+                'password.required' => 'Debes ingresar la contraseña.'
             ]
         );
 
         $usuario = $authService->login($datos);
 
-        if(!$usuario){
+        if (!$usuario) {
             return response()->json([
-                'mensaje' => 'Teléfono o PIN incorrectos'
+                'mensaje' => 'Cédula o contraseña incorrectas.'
             ], 401);
         }
 
