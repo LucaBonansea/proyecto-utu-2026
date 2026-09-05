@@ -24,7 +24,7 @@
 | RF-20 | Gestionar usuarios de edificio por edificio | El Administrador podrá asociar usuarios de edificio a uno o más edificios, modificar sus datos y gestionar su pertenencia a cada edificio. | Control de cambios 2 | Un mismo usuario podrá pertenecer a uno o más edificios. |
 | RF-21 | Restablecer contraseñas | El Administrador podrá restablecer o actualizar las contraseñas de los usuarios de edificio y de los Usuarios de proveedor cuando sea necesario. | Control de cambios 2 | |
 | RF-22 | Gestionar Usuarios de proveedor | El Administrador podrá registrar, modificar y administrar los Usuarios de proveedor, asociándolos al proveedor correspondiente. | Control de cambios 2 | Un proveedor podrá tener uno o más Usuarios de proveedor. |
-| RF-23 | Registrar datos de Usuarios de proveedor | El sistema deberá permitir registrar para cada Usuario de proveedor datos como cédula, nombre, teléfono, correo electrónico y contraseña. | Control de cambios 2 | Cada Usuario de proveedor deberá estar asociado a un proveedor. |
+| RF-23 | Registrar datos de Usuarios de proveedor | El sistema deberá permitir registrar para cada Usuario de proveedor datos como cédula, nombre, teléfono y contraseña. | Control de cambios 2 | Cada Usuario de proveedor deberá estar asociado a un proveedor. |
 | RF-24 | Registrar finalización del trabajo | El Usuario de proveedor podrá registrar la finalización de un trabajo indicando las observaciones correspondientes y adjuntando la evidencia del trabajo realizado. | Control de cambios 2; Doc. proyecto 2.1 | Reemplaza y reformula el antiguo RF-18. |
 | RF-25 | Asociar reclamos a edificios | El sistema deberá asociar cada reclamo con el edificio al cual pertenece el usuario de edificio que lo realiza. | Control de cambios 2 | No se requiere geolocalización para determinar la ubicación del reclamo. |
 
@@ -45,18 +45,21 @@
 | RNF-10 | Tratamiento ético de datos | El sistema deberá garantizar un tratamiento ético y responsable de los datos personales almacenados. | Doc. proyecto – Justificación pedagógica; 7.1 – Evaluación | |
 
 
-## Épicas
+# Épicas
 
-| ID | Épica | Objetivo | Requerimientos relacionados |
-|---|---|---|---|
-| EP-01 | Gestión de usuarios y acceso | Permitir el registro, validación, inicio de sesión y control de acceso de los diferentes usuarios del sistema según su rol. | RF-01, RF-02, RF-03, RF-15, RF-16, RF-21 |
-| EP-02 | Gestión de edificios y usuarios de edificio | Permitir al Administrador gestionar los edificios públicos y administrar la relación entre los usuarios de edificio y los edificios a los que pertenecen. | RF-18, RF-19, RF-20, RF-25 |
-| EP-03 | Registro y seguimiento de reclamos | Permitir que los usuarios de edificio registren reclamos asociados a sus edificios y puedan consultar su estado y avance. | RF-04, RF-08 |
-| EP-04 | Moderación y gestión interna de reclamos | Permitir que el Administrativo modere, clasifique, priorice y gestione los reclamos antes de su asignación a un proveedor. | RF-05, RF-06, RF-10 |
-| EP-05 | Gestión y asignación de proveedores | Permitir al Administrador gestionar los proveedores y al Administrativo asignar los reclamos directamente al proveedor correspondiente. | RF-07, RF-17, RF-18 |
-| EP-06 | Gestión de usuarios de proveedores | Permitir al Administrador registrar y gestionar las personas que trabajan para cada proveedor y utilizan el sistema en representación de la empresa. | RF-22, RF-23 |
-| EP-07 | Gestión de tareas y resolución | Permitir que los Usuarios de proveedor consulten las tareas asignadas, registren la finalización de los trabajos y reprocesen tareas que requieran correcciones. | RF-13, RF-14, RF-24 |
-| EP-08 | Evidencias y notificaciones | Permitir gestionar las evidencias asociadas a los reclamos y comunicar al Usuario de edificio las actualizaciones y la resolución de sus reclamos. | RF-09, RF-11, RF-12, RF-24 |
+| ID | Épica | Descripción | Historias de Usuario | Requerimientos Funcionales |
+|---|---|---|---|---|
+| EP-01 | Gestión de usuarios y autenticación | Gestionar el acceso al sistema, autenticación, roles, permisos y recuperación de credenciales. | HU1, HU2, HU3, HU26 | RF-01, RF-02, RF-03, RF-15, RF-16, RF-21 |
+| EP-02 | Gestión de edificios y asociaciones | Administrar los edificios y las asociaciones entre usuarios de edificio y los edificios a los que pertenecen. | HU24, HU25 | RF-19, RF-20, RF-25 | 
+| EP-03 | Gestión de reclamos del usuario de edificio | Permitir a los usuarios de edificio registrar reclamos y consultar su estado y avance. | HU4, HU7 | RF-04, RF-08, RF-25 |
+| EP-04 | Moderación y gestión administrativa de reclamos | Permitir al personal administrativo revisar, moderar, clasificar, priorizar y consultar los reclamos. | HU5, HU6, HU10, HU12, HU21, HU11* | RF-05, RF-06, RF-10, RF-11 |
+| EP-05 | Asignación y gestión de proveedores | Administrar proveedores y asignar reclamos a los proveedores correspondientes. | HU13, HU14, HU22 | RF-07, RF-17, RF-18 |
+| EP-06 | Gestión de usuarios de proveedor | Administrar los usuarios que trabajan en representación de cada proveedor. | HU27 | RF-22, RF-23 |
+| EP-07 | Gestión de tareas y resolución por proveedores | Permitir a los usuarios de proveedor consultar sus tareas, realizar trabajos y registrar su finalización. | HU15, HU16, HU17 | RF-12, RF-13, RF-14, RF-24 | 
+| EP-08 | Evidencias, notificaciones y aprobación de reclamos | Gestionar evidencias, notificaciones y la aprobación o rechazo de los trabajos realizados por proveedores. | HU8, HU9, HU18, HU19, HU20 | RF-09, RF-11, RF-12, RF-24 | 
+| EP-09 | Administración y configuración del sistema | Administrar las clasificaciones disponibles y otros elementos de configuración del sistema. | HU23 | RF-05 |
+
+\* HU11 está cancelada.
 
 
 ## Estimación por épica
@@ -69,44 +72,37 @@
 - **8 puntos:** tarea compleja.
 - **13 puntos:** tarea grande o riesgosa.
 
-| Código | Épica | Estimación en puntos |
-|---|---|---:|
-| EP-01 | Gestión de usuarios y acceso | 13 |
-| EP-02 | Gestión de edificios y usuarios de edificio | 13 |
-| EP-03 | Registro y seguimiento de reclamos | 13 |
-| EP-04 | Moderación y gestión interna de reclamos | 13 |
-| EP-05 | Gestión y asignación de proveedores | 8 |
-| EP-06 | Gestión de usuarios de proveedores | 8 |
-| EP-07 | Gestión de tareas y resolución | 13 |
-| EP-08 | Evidencias y notificaciones | 8 |
-| **Total** | | **89 puntos** |
 
+| Código | Épica | Historias | Estimación en puntos |
+|---|---|---|---:|
+| EP-01 | Gestión de usuarios y autenticación | HU1, HU2, HU3, HU26 | 32 |
+| EP-02 | Gestión de edificios y asociaciones | HU24, HU25 | 10 |
+| EP-03 | Gestión de reclamos del usuario de edificio | HU4, HU7, HU12 | 18 |
+| EP-04 | Moderación y gestión administrativa de reclamos | HU5, HU6, HU10, HU21 | 18 |
+| EP-05 | Gestión y asignación de proveedores | HU13, HU14, HU22 | 18 |
+| EP-06 | Gestión de usuarios de proveedor | HU27 | 5 |
+| EP-07 | Gestión de tareas y resolución por proveedores | HU15, HU16, HU17 | 16 |
+| EP-08 | Evidencias, notificaciones y aprobación de reclamos | HU8, HU9, HU18, HU19, HU20 | 23 |
+| EP-09 | Administración y configuración del sistema | HU23 | 3 |
+| **Total** | | **26 historias** | **143 puntos** |
 
-La estimación total (112 puntos) queda por debajo de la capacidad de 6 sprints a 20 puntos promedio (120 puntos), dejando un margen de 8 puntos como buffer ante imprevistos — precisamente el espacio liberado al cancelar RF-11/HU11.
+La estimación actual del Product Backlog es de **143 puntos**. Considerando una capacidad estimada de **20 puntos por sprint durante 6 sprints**, la capacidad total disponible sería de **120 puntos**. Por lo tanto, el backlog actual supera la capacidad estimada en **23 puntos**.
+
+Esta diferencia deberá ser revisada durante la planificación de los sprints, priorizando las historias de mayor valor para el producto y dejando las historias de menor prioridad como candidatas a quedar fuera del alcance si la capacidad del equipo no permite completarlas dentro del plazo establecido.
+
 
 ## Propuesta presentada al cliente
 
-El equipo presenta la siguiente propuesta:
+El equipo presenta la siguiente propuesta para el desarrollo del sistema:
 
 | Elemento | Propuesta |
 |---|---|
-| Producto | Portal Ciudadano, sistema web de gestión de reclamos ciudadanos. |
-| Duración | 12 semanas (aprox. 3 meses). |
+| Producto | Sistema web para la gestión y seguimiento de reclamos asociados a edificios públicos. |
+| Duración | 12 semanas. |
 | Metodología | Scrum, con 6 sprints de 2 semanas. |
-| Entregas | Incremento funcional al final de cada sprint. |
-| Esfuerzo estimado | 72 horas. |
-| Forma de trabajo | Reporte quincenal de actividad y trazabilidad Git obligatoria. |
-| Primera versión | Registro y validación de identidad de ciudadanos, roles y permisos, creación y seguimiento de reclamos, asignación y derivación a equipos/proveedores, registro de finalización con evidencias, aprobación/rechazo de cierre, moderación manual, gestión de proveedores y clasificaciones. |
-| Exclusiones | Integración con TuID de Antel, asignación automática de prioridad por tipo de incidencia, registro de intentos fraudulentos, historial completo de cambios, reapertura de reclamos cerrados, registro de inicio de trabajo de equipos (solo finalización), estadísticas/indicadores, moderación automática con IA, detección automática de reclamos inválidos o fraude, visualización en tiempo real del recorrido del equipo, notificaciones push al celular. |
-
-
-## Control de cambios
-
-**Cambio:** Se cancela RF-11 (Gestión mediante Kanban) y, en consecuencia, la historia HU11 (Tablero Kanban) queda fuera del alcance del proyecto.
-
-**Justificación:** El equipo ya cuenta con las tres interfaces definidas para la Intendencia (PWA Ciudadanía, Dashboard Comuna, Frontend Equipos/Proveedores), por lo que agregar una vista adicional de tablero Kanban dentro del Dashboard Comuna resulta redundante y poco práctico dado el plazo ajustado del proyecto. La visualización y gestión de reclamos por parte del personal de la comuna se seguirá cubriendo mediante RF-10 (listado de reclamos con filtro por área) y el campo de estado de cada reclamo (Ingreso, Validado, En proceso, Completado), sin necesidad de una representación visual tipo tablero.
-
-**Impacto:**
-- Se elimina HU11 (8 puntos) del backlog priorizado.
-- La épica EP-04 (Gestión interna de reclamos) pasa a cubrirse únicamente con HU10 y HU12.
-- El Sprint 4, que incluía HU11, libera 8 puntos de capacidad, que pueden reasignarse a otra historia pendiente o usarse como colchón ante retrasos.
+| Entregas | Incremento funcional al finalizar cada sprint. |
+| Revisión | Sprint Review junto al cliente al finalizar cada sprint. |
+| Esfuerzo estimado | 72 horas aproximadas. |
+| Alcance principal | Autenticación y roles, gestión de edificios, registro y seguimiento de reclamos, moderación, clasificación, priorización, gestión y asignación de proveedores, gestión de usuarios de proveedor, resolución de tareas, evidencias, notificaciones y aprobación o rechazo de trabajos. |
+| Fecha aproximada de finalización | 29 de octubre de 2026. |
+| Validación | Las funcionalidades serán validadas mediante los criterios de aceptación definidos para cada historia de usuario. |
