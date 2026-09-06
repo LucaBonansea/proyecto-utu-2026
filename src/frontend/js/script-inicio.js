@@ -101,6 +101,44 @@ function iniciarReclamo(){
     nuevo_reclamos.descripcion_eventos();
 }
 
+console.log("COOKIES EN INICIO:", document.cookie);
+
+async function verificar_sesion() {
+    try {
+        const request = await fetch(
+            "http://127.0.0.1:8000/api/auth/me",
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        console.log("SESSION STATUS:", request.status);
+
+        if (request.status === 401) {
+            window.location.href = "./index.html";
+            return;
+        }
+
+        if (!request.ok) {
+            window.location.href = "./index.html";
+            return;
+        }
+
+        const response = await request.json();
+
+        console.log("Usuario autenticado:", response.usuario);
+
+    } catch (error) {
+        console.log("Error comprobando sesión:", error);
+
+        window.location.href = "./index.html";
+    }
+}
+
 // Eventos de cada boton
 $btn_inicio_top.addEventListener("click", () => {
     reclamos.second_view();
@@ -116,6 +154,9 @@ newReclamo.addEventListener("click", () => {
 $btn_newReclamo_top.addEventListener("click", () =>{
     iniciarReclamo();
 })
+
+document.addEventListener("DOMContentLoaded", verificar_sesion);
+
 
 // El botón de "Cerrar sesión" se renderiza y se conecta dentro de
 // cuenta.js (fifth_view / eventos), ya no vive en el header.
