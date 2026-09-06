@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\AuthService;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -61,37 +62,49 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request, AuthService $authService)
-    {
-        $datos = $request->validate(
-            [
-                'cedula' => [
-                    'required',
-                    'string'
-                ],
-
-                'password' => [
-                    'required',
-                    'string'
-                ]
+    public function login(Request $request)
+{
+    $datos = $request->validate(
+        [
+            'cedula' => [
+                'required',
+                'string'
             ],
-            [
-                'cedula.required' => 'Debes ingresar la cédula.',
-                'password.required' => 'Debes ingresar la contraseña.'
+
+            'password' => [
+                'required',
+                'string'
             ]
-        );
+        ],
+        [
+            'cedula.required' => 'Debes ingresar la cédula.',
+            'password.required' => 'Debes ingresar la contraseña.'
+        ]
+    );
 
-        $usuario = $authService->login($datos);
+    $credenciales = [
+        'cedula' => $datos['cedula'],
+        'password' => $datos['password'],
+        'activo' => true
+    ];
 
-        if (!$usuario) {
-            return response()->json([
-                'mensaje' => 'Cédula o contraseña incorrectas.'
-            ], 401);
-        }
-
+    if (!Auth::attempt($credenciales)) {
         return response()->json([
-            'mensaje' => 'Inicio de sesión correcto',
-            'usuario' => $usuario
+            'mensaje' => 'Cédula o contraseña incorrectas.'
+        ], 401);
+    }
+
+    $request->session()->regenerate();
+
+    return response()->json([
+        'mensaje' => 'Inicio de sesión correcto',
+        'usuario' => Auth::user()
+    ], 200);
+}
+
+    public function me(Request $request){
+        return response()->json([
+            'usuario' => $request->user()
         ], 200);
     }
 }

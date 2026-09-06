@@ -16,4 +16,7 @@ Route::get('/clasificaciones', function () {
 Route::get('/clasificaciones', [ClasificacionController::class, 'index']);
 Route::get('/edificios', [EdificioController::class, 'index']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/me', [AuthController::class, 'me']);
+});
 ?>
