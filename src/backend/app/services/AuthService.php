@@ -7,29 +7,35 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
-    public function registrar(array $datos)
+    public function registrar(array $datos){
+    $usuario = Usuario::create([
+        'cedula' => $datos['cedula'],
+        'nombre' => $datos['nombre'],
+        'password' => Hash::make($datos['password']),
+        'rol' => 'usuario_edificio',
+        'activo' => true
+    ]);
+
+    $usuario->edificios()->attach($datos['edificio']);
+
+    return $usuario;
+}
+    public function login(array $datos)
     {
-        return Usuario::create([
-            'nombre' => $datos['nombre'],
-            'telefono' => $datos['telefono'],
-            'pin' => Hash::make($datos['pin']),
-            'rol' => 'ciudadano',
-            'identidad_validada' => false
-        ]);
-    }
+        $usuario = Usuario::where('cedula', $datos['cedula'])->first();
 
-    public function login(array $datos){
-        $telefono = $datos['telefono'];
-        $pin = $datos['pin'];
-
-        $usuario = Usuario::where('telefono', $telefono)->first();
-
-        if($usuario){
-            $pass = Hash::check($pin, $usuario->pin);
-
-            if($pass){
-                return $usuario;
-            }
+        if (!$usuario) {
+            return null;
         }
+
+        if (!$usuario->activo) {
+            return null;
+        }
+
+        if (!Hash::check($datos['password'], $usuario->password)) {
+            return null;
+        }
+
+        return $usuario;
     }
 }

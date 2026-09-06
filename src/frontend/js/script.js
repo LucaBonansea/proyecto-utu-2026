@@ -1,13 +1,24 @@
-const $input_tel = document.querySelector(".tel-input");
+const $input_ci = document.querySelector(".ci-input");
 const $input_password = document.querySelector(".pass-input");
 const $btn_login = document.querySelector(".btn-login");
+
+// Quitar error al modificar los campos
+$input_ci.addEventListener("input", () => {
+    $input_ci.classList.remove("error");
+});
+
+$input_password.addEventListener("input", () => {
+    $input_password.classList.remove("error");
+});
+
+
 
 $btn_login.addEventListener("click", (e) => {
     e.preventDefault();
 
     const data = {
-        telefono: $input_tel.value,
-        pin: $input_password.value
+        cedula: $input_ci.value,
+        password: $input_password.value
     };
 
     $btn_login.textContent = "Iniciando sesión...";
@@ -32,49 +43,78 @@ async function iniciar_usuario(datos) {
 
         const response = await request.json();
 
+        
+
         if (!request.ok) {
+
+            
+
             $btn_login.textContent = "[ERROR] Intentar de nuevo";
             $btn_login.style.background =
                 "linear-gradient(135deg, #e64a23 0%, #d2731f 100%)";
             $btn_login.disabled = false;
 
-            if (request.status === 422) {
-                if (response.errors?.telefono) {
-                    $input_tel.classList.add("error");
-
-                    showToast.error(response.errors.telefono[0], {
-                        duration: 4000,
-                        progress: true,
-                        position: "top-center"
-                    });
-                }
-
-                if (response.errors?.pin) {
-                    $input_password.classList.add("error");
-
-                    showToast.error(response.errors.pin[0], {
-                        duration: 4000,
-                        progress: true,
-                        position: "top-center"
-                    });
-                }
-            }
-
+            console.log(response);
             if (request.status === 401) {
-                $input_tel.classList.add("error");
+                $input_ci.classList.add("error");
                 $input_password.classList.add("error");
 
                 showToast.error(response.mensaje, {
                     duration: 4000,
                     progress: true,
-                    position: "top-center"
+                    position: "top-center",
+                    transition: "swingInverted",
+                    icon: '',
+                    sound: true,
+                });
+            }
+
+            if (request.status === 422) {
+                if (response.errors?.cedula) {
+                    $input_ci.classList.add("error");
+
+                    showToast.error(response.errors.cedula[0], {
+                        duration: 4000,
+                        progress: true,
+                        position: "top-center",
+                        transition: "swingInverted",
+                        icon: '',
+                        sound: true,
+                    });
+                }
+
+                if (response.errors?.password) {
+                    $input_password.classList.add("error");
+
+                    showToast.error(response.errors.password[0], {
+                        duration: 4000,
+                        progress: true,
+                        position: "top-center",
+                        transition: "swingInverted",
+                        icon: '',
+                        sound: true,
+                    });
+                }
+            }
+
+            if (request.status === 401) {
+                $input_ci.classList.add("error");
+                $input_password.classList.add("error");
+
+                showToast.error(response.mensaje, {
+                    duration: 4000,
+                    progress: true,
+                    position: "top-center",
+                    transition: "swingInverted",
+                    icon: '',
+                    sound: true,
                 });
             }
 
             return;
         }
 
-        $input_tel.classList.remove("error");
+        $input_ci.classList.remove("error");
         $input_password.classList.remove("error");
 
         showToast.success("Usuario inició sesión correctamente", {
@@ -92,7 +132,7 @@ async function iniciar_usuario(datos) {
         console.log("Error al intentar comunicarse con la API.");
         console.log(error);
 
-        $input_tel.classList.remove("error");
+        $input_ci.classList.remove("error");
         $input_password.classList.remove("error");
 
         $btn_login.disabled = false;
