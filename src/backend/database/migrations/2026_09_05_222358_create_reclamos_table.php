@@ -12,14 +12,27 @@ return new class extends Migration
         public function up(): void
         {
             Schema::create('reclamos', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained('users');
-        $table->foreignId('edificio_id')->constrained('edificios');
-        $table->text('description');
-        $table->foreignId('clasificacion_id')->constrained('clasificaciones');
-        $table->string('estado')->default('pendiente');
-        $table->timestamps();
-    });
+            $table->id();
+
+            $table->string('usuario_cedula');
+
+            $table->foreign('usuario_cedula')
+                ->references('cedula')
+                ->on('usuarios');
+
+            $table->foreignId('edificio_id')
+                ->constrained('edificios');
+
+            $table->text('description');
+
+            $table->foreignId('clasificacion_id')
+                ->constrained('clasificaciones');
+
+            $table->string('estado')
+                ->default('pendiente');
+
+            $table->timestamps();
+        });
 
     }
 

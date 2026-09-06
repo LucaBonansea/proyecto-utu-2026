@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
+use App\Models\Edificio;
+use App\Models\Proveedor;
+use Illuminate\Database\Eloquent\Model;
 
-class Usuario extends Authenticatable
+class Usuario extends Model
 {
-    use HasApiTokens;
 
     protected $table = 'usuarios';
 
@@ -20,9 +20,12 @@ class Usuario extends Authenticatable
     protected $fillable = [
         'cedula',
         'nombre',
+        'telefono',
+        'email',
         'password',
         'rol',
-        'activo'
+        'activo',
+        'proveedor_id',
     ];
 
     protected $hidden = [
@@ -37,5 +40,10 @@ class Usuario extends Authenticatable
             'usuario_cedula',
             'edificio_id'
         );
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class, 'proveedor_id');
     }
 }
