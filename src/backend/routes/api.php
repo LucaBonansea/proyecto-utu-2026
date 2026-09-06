@@ -22,4 +22,7 @@ Route::get('/proveedores', [ProveedorController::class, 'index']);
 Route::post('/proveedores', [ProveedorController::class, 'store']);
 Route::put('/proveedores/{id}/estado', [ProveedorController::class, 'cambiarEstado']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/me', [AuthController::class, 'me']);
+});
 ?>

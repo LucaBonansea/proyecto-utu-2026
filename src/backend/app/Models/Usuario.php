@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Edificio;
 use App\Models\Proveedor;
+use Illuminate\Database\Eloquent\Model;
 
 class Usuario extends Model
 {
+
     protected $table = 'usuarios';
 
     protected $primaryKey = 'cedula';
