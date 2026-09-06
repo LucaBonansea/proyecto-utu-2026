@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Edificio;
+use App\Models\Proveedor;
 
 class Usuario extends Model
 {
@@ -17,9 +19,12 @@ class Usuario extends Model
     protected $fillable = [
         'cedula',
         'nombre',
+        'telefono',
+        'email',
         'password',
         'rol',
-        'activo'
+        'activo',
+        'proveedor_id',
     ];
 
     protected $hidden = [
@@ -34,5 +39,10 @@ class Usuario extends Model
             'usuario_cedula',
             'edificio_id'
         );
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class, 'proveedor_id');
     }
 }

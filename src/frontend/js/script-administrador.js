@@ -6,222 +6,196 @@ const botones = document.querySelectorAll(".sidebar-btn");
 const edificiosbtn = document.querySelector(".edificios-btn");
 
 
-
-
 botones.forEach(boton => {
+
     boton.addEventListener("click", () => {
-        botones.forEach(item => item.classList.remove("active"));
+
+        botones.forEach(item =>
+            item.classList.remove("active")
+        );
+
         boton.classList.add("active");
+
     });
+
 });
+
+
 function quitarTildes(texto) {
+
     return texto
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
+
 }
 
 
 
-let proveedores = [
-    {
-        id: 1,
-        nombre: "SERVIAM",
-        razonSocial: "SERVIAM S.R.L.",
-        RUT: "21-100342-001-7",
-        direccion: "Av. Artigas 1450, San José",
-        telefono: "4342 5678",
-        email: "contacto@serviam.com.uy",
-        contactoResponsable: "Carlos Rodríguez",
-        telefonoContacto: "091 234 567",
-        emailContacto: "carlos@serviam.com.uy",
-        estado: "Activo"
-    },
-    {
-        id: 2,
-        nombre: "VIAMÁS",
-        razonSocial: "VIAMÁS S.A.",
-        RUT: "21-100342-002-5",
-        direccion: "Calle Treinta y Tres 820, San José",
-        telefono: "4342 7890",
-        email: "contacto@viamas.com.uy",
-        contactoResponsable: "María Fernández",
-        telefonoContacto: "091 987 654",
-        emailContacto: "maria@viamas.com.uy",
-        estado: "Activo"
-    },
-    {
-        id: 3,
-        nombre: "MANTENIMIENTOS DEL SUR",
-        razonSocial: "Mantenimientos del Sur S.R.L.",
-        RUT: "21-100342-003-3",
-        direccion: "Av. Lavalleja 1120, San José",
-        telefono: "4342 3456",
-        email: "contacto@mantenimientosur.com.uy",
-        contactoResponsable: "Diego Martínez",
-        telefonoContacto: "094 321 678",
-        emailContacto: "diego@mantenimientosur.com.uy",
-        estado: "Activo"
-    },
-    {
-        id: 4,
-        nombre: "ELECTROSAN",
-        razonSocial: "Electrosan S.R.L.",
-        RUT: "21-100342-004-1",
-        direccion: "Ituzaingó 635, San José",
-        telefono: "4342 6789",
-        email: "contacto@electrosan.com.uy",
-        contactoResponsable: "Fernando Silva",
-        telefonoContacto: "098 456 321",
-        emailContacto: "fernando@electrosan.com.uy",
-        estado: "Activo"
-    },
-    {
-        id: 5,
-        nombre: "CONSTRUSJ",
-        razonSocial: "Construcciones San José S.A.",
-        RUT: "21-100342-005-0",
-        direccion: "Ruta 3 km 92, San José",
-        telefono: "4342 9012",
-        email: "contacto@construsj.com.uy",
-        contactoResponsable: "Andrés González",
-        telefonoContacto: "092 654 987",
-        emailContacto: "andres@construsj.com.uy",
-        estado: "Activo"
-    },
-    {
-        id: 6,
-        nombre: "LIMPIEZAS SJ",
-        razonSocial: "Servicios de Limpieza SJ S.R.L.",
-        RUT: "21-100342-006-8",
-        direccion: "Sarandí 480, San José",
-        telefono: "4342 2345",
-        email: "contacto@limpiezassj.com.uy",
-        contactoResponsable: "Laura Pérez",
-        telefonoContacto: "095 789 123",
-        emailContacto: "laura@limpiezassj.com.uy",
-        estado: "Activo"
-    },
-    {
-        id: 7,
-        nombre: "CLIMASUR",
-        razonSocial: "Climasur Servicios S.R.L.",
-        RUT: "21-100342-007-6",
-        direccion: "Brasil 910, San José",
-        telefono: "4342 4567",
-        email: "contacto@climasur.com.uy",
-        contactoResponsable: "Roberto López",
-        telefonoContacto: "099 321 456",
-        emailContacto: "roberto@climasur.com.uy",
-        estado: "Activo"
-    },
-    {
-        id: 8,
-        nombre: "SEGURIDAD TOTAL",
-        razonSocial: "Seguridad Total Uruguay S.A.",
-        RUT: "21-100342-008-4",
-        direccion: "Colón 725, San José",
-        telefono: "4342 8123",
-        email: "contacto@seguridadtotal.com.uy",
-        contactoResponsable: "Pablo Suárez",
-        telefonoContacto: "093 567 890",
-        emailContacto: "pablo@seguridadtotal.com.uy",
-        estado: "Activo"
+let edificios = [];
+let usuarios = [];
+let proveedores = [];
+let filtroEstadoProveedor = "todos";
+
+
+// ==========================================
+// CARGAR EDIFICIOS DESDE LA BD
+// ==========================================
+
+async function cargarEdificios() {
+    try {
+        const response = await fetch(
+            "http://127.0.0.1:8000/api/edificios",
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Error al obtener los edificios");
+        }
+
+        const data = await response.json();
+
+        console.log("Edificios cargados desde la BD:", data);
+
+        edificios = data;
+
+    } catch (error) {
+
+        console.error(
+            "Error al cargar edificios:",
+            error
+        );
+
+        edificios = [];
+
+        alert("No se pudieron cargar los edificios.");
     }
-];
+}
+async function cargarUsuarios() {
 
-let areas = [
-    { nombre: "Infraestructura", descripcion: "Bacheo, veredas, puentes y obra vial en general.", encargado: "María Sosa" },
-    { nombre: "Tránsito", descripcion: "Semáforos, señalización y ordenamiento vehicular.", encargado: "Diego Ramos"}
-];
+    try {
 
-let usuarios = [
-    {
-        telefono: "098 111 111",
-        nombre: "Ana Pérez",
-        email: "ana@email.com",
-        rol: "Usuario de edificio",
-        edificioId: 1
-    },
-    {
-        telefono: "098 222 222",
-        nombre: "Juan Gómez",
-        email: "juan@email.com",
-        rol: "Usuario de edificio",
-        edificioId: 2
-    },
-    {
-        telefono: "098 333 333",
-        nombre: "Lucía Fernández",
-        email: "lucia@comuna.com.uy",
-        rol: "Administrativo"
-    },
-    {
-        telefono: "098 444 444",
-        nombre: "Roberto Díaz",
-        email: "roberto@serviam.com.uy",
-        rol: "Usuario de proveedor",
-        proveedorId: 1
-    },
-    {
-        telefono: "098 555 555",
-        nombre: "Carla Núñez",
-        email: "carla@serviam.com.uy",
-        rol: "Usuario de proveedor",
-        proveedorId: 1
-    },
-    {
-        telefono: "098 666 666",
-        nombre: "Pablo Silva",
-        email: "pablo@viamas.com.uy",
-        rol: "Usuario de proveedor",
-        proveedorId: 2
+        const response = await fetch(
+            "http://127.0.0.1:8000/api/usuarios",
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Error al obtener los usuarios");
+        }
+
+        const data = await response.json();
+
+        console.log("Usuarios cargados desde la BD:", data);
+
+        usuarios = data;
+
+    } catch (error) {
+
+        console.error(
+            "Error al cargar usuarios:",
+            error
+        );
+
+        usuarios = [];
+
+        alert("No se pudieron cargar los usuarios.");
     }
-];
+}
 
+async function cargarProveedores() {
 
-let edificios = [
-    {
-        id: 1,
-        nombre: "Edificio Central de la Intendencia",
-        direccion: "18 de Julio 1825, San José"
-    },
-    {
-        id: 2,
-        nombre: "Centro Cívico",
-        direccion: "Av. Lavalleja 950, San José"
-    },
-    {
-        id: 3,
-        nombre: "Casa de la Cultura",
-        direccion: "Ituzaingó 633, San José"
-    },
-    {
-        id: 4,
-        nombre: "Biblioteca Municipal",
-        direccion: "Treinta y Tres 720, San José"
-    },
-    {
-        id: 5,
-        nombre: "Polideportivo Municipal",
-        direccion: "Av. Manuel Oribe 1250, San José"
-    },
-    {
-        id: 6,
-        nombre: "Terminal de Ómnibus",
-        direccion: "Av. Brasil 850, San José"
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/api/proveedores",
+            {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Error al obtener los proveedores");
+        }
+
+        const data = await response.json();
+
+        console.log(
+            "Proveedores cargados desde la BD:",
+            data
+        );
+
+        proveedores = data;
+
+    } catch (error) {
+
+        console.error(
+            "Error al cargar proveedores:",
+            error
+        );
+
+        proveedores = [];
+
+        alert(
+            "No se pudieron cargar los proveedores."
+        );
+
     }
-];
+}
 
-let siguienteIdEdificio = 7;
+// ==========================================
+// INICIAR APLICACIÓN
+// ==========================================
 
 
-let siguienteIdProveedor = 9;
 
-vistaProveedores();
-proveedoresbtn.addEventListener("click", vistaProveedores);
-edificiosbtn.addEventListener("click", vistaEdificios);
+async function iniciarAplicacion() {
 
-usuariosbtn.addEventListener("click", () => vistaUsuarios());
+    await cargarEdificios();
+
+    await cargarUsuarios();
+
+    await cargarProveedores();
+
+    vistaProveedores();
+
+}
+
+
+iniciarAplicacion();
+
+
+
+// ==========================================
+// EVENTOS SIDEBAR
+// ==========================================
+
+proveedoresbtn.addEventListener(
+    "click",
+    vistaProveedores
+);
+
+edificiosbtn.addEventListener(
+    "click",
+    vistaEdificios
+);
+
+usuariosbtn.addEventListener(
+    "click",
+    () => vistaUsuarios()
+);
 
 
 
@@ -240,6 +214,21 @@ function vistaProveedores(){
                     <span class="material-symbols-outlined">add</span>
                     Agregar proveedor
                 </button>
+            </div>
+            <div class="filtro-estado-proveedores">
+
+                <button class="filtro-estado-btn" data-estado="todos">
+                    Todos
+                </button>
+
+                <button class="filtro-estado-btn" data-estado="Activo">
+                    Activos
+                </button>
+
+                <button class="filtro-estado-btn" data-estado="Inactivo">
+                    Desactivados
+                </button>
+
             </div>
 
 
@@ -352,14 +341,38 @@ function vistaProveedores(){
 
             <div class="contenedor-proveedores">
 
-                ${proveedores.map(renderCardProveedor).join("")}
+                ${
+                    proveedores
+                        .filter(p =>
+                            filtroEstadoProveedor === "todos" ||
+                            p.estado === filtroEstadoProveedor
+                        )
+                        .map(renderCardProveedor)
+                        .join("")
+                }
 
             </div>
 
         </div>
     `;
 
+    document
+        .querySelectorAll(".filtro-estado-btn")
+        .forEach(boton => {
 
+            if (boton.dataset.estado === filtroEstadoProveedor) {
+                boton.classList.add("activo");
+            }
+
+            boton.addEventListener("click", () => {
+
+                filtroEstadoProveedor = boton.dataset.estado;
+
+                vistaProveedores();
+
+        });
+
+    });
     const btnAgregar =
         document.querySelector(".btn-agregar-proveedor");
 
@@ -418,7 +431,7 @@ function vistaProveedores(){
 
 
 
-    btnGuardar.addEventListener("click", () => {
+    btnGuardar.addEventListener("click", async () => {
 
         const nombre =
             nombreInput.value.trim();
@@ -458,7 +471,7 @@ function vistaProveedores(){
             contactoResponsable === "" ||
             telefonoContacto === "" ||
             emailContacto === ""
-        ){
+        ) {
 
             alert("Completa todos los campos");
 
@@ -467,37 +480,90 @@ function vistaProveedores(){
         }
 
 
-        proveedores.push({
+        try {
 
-            id: siguienteIdProveedor++,
-
-            nombre,
-
-            razonSocial,
-
-            RUT,
-
-            direccion,
-
-            telefono,
-
-            email,
-
-            contactoResponsable,
-
-            telefonoContacto,
-
-            emailContacto,
-
-            estado: "Activo"
-
-        });
+            btnGuardar.disabled = true;
+            btnGuardar.textContent = "Guardando...";
 
 
-        vistaProveedores();
+            const response = await fetch(
+                "http://127.0.0.1:8000/api/proveedores",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        nombre: nombre,
+                        razon_social: razonSocial,
+                        rut: RUT,
+                        telefono: telefono,
+                        direccion: direccion,
+                        email: email,
+                        contacto_responsable: contactoResponsable,
+                        telefono_contacto: telefonoContacto,
+                        email_contacto: emailContacto
+
+                    })
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            console.log("STATUS:", response.status);
+            console.log("RESPUESTA:", data);
+
+
+            if (!response.ok) {
+
+                alert(
+                    data.message ||
+                    "Error al crear el proveedor."
+                );
+
+                return;
+            }
+
+
+            alert("Proveedor agregado correctamente.");
+
+
+            formulario.classList.add("oculto");
+
+
+            // Volver a cargar desde la BD
+
+            await cargarProveedores();
+
+            vistaProveedores();
+
+
+        } catch (error) {
+
+            console.error(
+                "Error al crear proveedor:",
+                error
+            );
+
+            alert(
+                "No se pudo conectar con el servidor."
+            );
+
+        } finally {
+
+            btnGuardar.disabled = false;
+            btnGuardar.textContent =
+                "Guardar proveedor";
+
+        }
 
     });
-
     document
         .querySelectorAll(".btn-detalle-proveedor")
         .forEach(boton => {
@@ -511,10 +577,24 @@ function vistaProveedores(){
 
             });
 
+
+        });
+    
+        document
+        .querySelectorAll(".btn-toggle-estado-proveedor")
+        .forEach(boton => {
+
+            boton.addEventListener("click", () => {
+
+                const id = Number(boton.dataset.id);
+
+                cambiarEstadoProveedor(id);
+
+            });
+
         });
 
 }
-
 
 
 function renderCardProveedor(p){
@@ -522,14 +602,16 @@ function renderCardProveedor(p){
     const usuariosDelProveedor =
         usuarios.filter(
             u =>
-                u.rol === "Usuario de proveedor" &&
-                u.proveedorId === p.id
+                u.rol === "usuario_proveedor" &&
+                u.proveedor &&
+                Number(u.proveedor.id) === Number(p.id)
         );
 
+    const esActivo = p.estado === "Activo";
 
     return `
 
-        <div class="proveedor-card">
+        <div class="proveedor-card ${esActivo ? "" : "proveedor-inactivo"}">
 
             <div class="proveedor-card-top">
 
@@ -538,13 +620,13 @@ function renderCardProveedor(p){
                     <h3>${p.nombre}</h3>
 
                     <span class="proveedor-razon-social">
-                        ${p.razonSocial}
+                        ${p.razon_social}
                     </span>
 
                 </div>
 
 
-                <span class="proveedor-estado">
+                <span class="proveedor-estado ${esActivo ? "estado-activo" : "estado-inactivo"}">
                     ${p.estado}
                 </span>
 
@@ -555,12 +637,12 @@ function renderCardProveedor(p){
 
                 <p>
                     <strong>RUT:</strong>
-                    ${p.RUT}
+                    ${p.rut}
                 </p>
 
                 <p>
                     <strong>Contacto:</strong>
-                    ${p.contactoResponsable}
+                    ${p.contacto_responsable}
                 </p>
 
                 <p>
@@ -571,14 +653,69 @@ function renderCardProveedor(p){
             </div>
 
 
-            <button class="btn-detalle-proveedor" data-id="${p.id}"> Ver detalles → </button>
+            <div class="proveedor-card-acciones">
+
+                <button class="btn-detalle-proveedor" data-id="${p.id}">
+                    Ver detalles →
+                </button>
+
+                <button
+                    class="btn-toggle-estado-proveedor"
+                    data-id="${p.id}"
+                >
+                    ${esActivo ? "Desactivar" : "Activar"}
+                </button>
+
+            </div>
 
         </div>
 
     `;
 
 }
+async function cambiarEstadoProveedor(id) {
 
+    try {
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/proveedores/${id}/estado`,
+            {
+                method: "PUT",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        console.log("STATUS:", response.status);
+        console.log("RESPUESTA:", data);
+
+        if (!response.ok) {
+            alert(
+                data.message ||
+                "No se pudo actualizar el estado."
+            );
+            return;
+        }
+
+        await cargarProveedores();
+
+        vistaProveedores();
+
+    } catch (error) {
+
+        console.error(
+            "Error al cambiar estado del proveedor:",
+            error
+        );
+
+        alert("No se pudo conectar con el servidor.");
+
+    }
+
+}
 
 
 function vistaDetalleProveedor(id){
@@ -589,12 +726,14 @@ function vistaDetalleProveedor(id){
     if(!proveedor) return;
 
 
+    // ✅ corregido
     const usuariosDelProveedor =
-        usuarios.filter(
-            u =>
-                u.rol === "Usuario de proveedor" &&
-                u.proveedorId === id
-        );
+    usuarios.filter(
+        u =>
+            u.rol === "usuario_proveedor" &&
+            u.proveedor &&
+            Number(u.proveedor.id) === Number(id)
+    );
 
 
     section.innerHTML = `
@@ -609,14 +748,13 @@ function vistaDetalleProveedor(id){
             <div class="titulo-proveedores">
 
                 <div>
-
                     <h2>${proveedor.nombre}</h2>
-
                     <span class="proveedor-razon-social">
-                        ${proveedor.razonSocial}
+                        ${proveedor.razon_social}
                     </span>
-
                 </div>
+
+                
 
             </div>
 
@@ -631,7 +769,7 @@ function vistaDetalleProveedor(id){
 
                     <p>
                         <strong>RUT</strong>
-                        ${proveedor.RUT}
+                        ${proveedor.rut}
                     </p>
 
                     <p>
@@ -651,17 +789,17 @@ function vistaDetalleProveedor(id){
 
                     <p>
                         <strong>Contacto responsable</strong>
-                        ${proveedor.contactoResponsable}
+                        ${proveedor.contacto_responsable}
                     </p>
 
                     <p>
                         <strong>Teléfono del contacto</strong>
-                        ${proveedor.telefonoContacto}
+                        ${proveedor.telefono_contacto}
                     </p>
 
                     <p>
                         <strong>Correo del contacto</strong>
-                        ${proveedor.emailContacto}
+                        ${proveedor.email_contacto}
                     </p>
 
                     <p>
@@ -852,7 +990,7 @@ function vistaEdificios(){
 
     });
 
-    btnGuardar.addEventListener("click", () => {
+    btnGuardar.addEventListener("click", async () => {
 
         const nombre =
             nombreInput.value.trim();
@@ -861,29 +999,94 @@ function vistaEdificios(){
             direccionInput.value.trim();
 
 
-        if(nombre === "" || direccion === ""){
+        if (nombre === "" || direccion === "") {
 
-            alert("Completa todos los campos");
+            alert("Completa todos los campos.");
 
             return;
-
         }
 
 
-        edificios.push({
+        try {
 
-            id: siguienteIdEdificio++,
-
-            nombre,
-
-            direccion
-
-        });
+            btnGuardar.disabled = true;
+            btnGuardar.textContent = "Guardando...";
 
 
-        vistaEdificios();
+            const response = await fetch(
+                "http://127.0.0.1:8000/api/edificios",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        nombre: nombre,
+                        direccion: direccion
+                    })
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            console.log("STATUS:", response.status);
+            console.log("RESPUESTA:", data);
+
+
+            if (!response.ok) {
+
+                alert(
+                    data.message ||
+                    "Error al crear el edificio."
+                );
+
+                return;
+            }
+
+
+            alert("Edificio agregado correctamente.");
+
+
+            formulario.classList.add("oculto");
+
+
+            nombreInput.value = "";
+            direccionInput.value = "";
+
+
+            // Volver a cargar desde la BD
+
+            await cargarEdificios();
+
+            vistaEdificios();
+
+
+        } catch (error) {
+
+            console.error(
+                "Error al crear edificio:",
+                error
+            );
+
+            alert(
+                "No se pudo conectar con el servidor."
+            );
+
+        } finally {
+
+            btnGuardar.disabled = false;
+            btnGuardar.textContent =
+                "Guardar edificio";
+
+        }
 
     });
+
     document
     .querySelectorAll(".btn-detalle-edificio")
     .forEach(boton => {
@@ -945,45 +1148,145 @@ function renderCardEdificio(edificio){
 
 function vistaDetalleEdificio(id) {
 
+    // ==========================================
+    // BUSCAR EDIFICIO
+    // ==========================================
+
     const edificio = edificios.find(
-        e => e.id === id
+        e => Number(e.id) === Number(id)
     );
 
-    if (!edificio) return;
+    if (!edificio) {
+        console.error(
+            "No se encontró el edificio:",
+            id
+        );
+
+        return;
+    }
 
 
-    // Buscar usuarios pertenecientes a este edificio
+    // ==========================================
+    // BUSCAR USUARIOS DEL EDIFICIO
+    // ==========================================
 
-    const usuariosDelEdificio = usuarios.filter(
-        u =>
-            u.rol === "Usuario de edificio" &&
-            u.edificioId === id
+    /*
+     * IMPORTANTE:
+     *
+     * Ya NO usamos:
+     *
+     * u.edificioId === id
+     *
+     * porque los usuarios vienen desde Laravel
+     * con una propiedad:
+     *
+     * u.edificios
+     *
+     * Ejemplo:
+     *
+     * {
+     *     cedula: "12345678",
+     *     nombre: "Juan Pérez",
+     *     rol: "Usuario de edificio",
+     *     edificios: [
+     *         {
+     *             id: 1,
+     *             nombre: "Edificio Administrativo"
+     *         }
+     *     ]
+     * }
+     */
+
+
+    const usuariosDelEdificio =
+        usuarios.filter(usuario => {
+
+            // Primero verificamos que sea
+            // usuario de edificio
+
+            if (
+                usuario.rol !==
+                "usuario_edificio"
+            ) {
+                return false;
+            }
+
+
+            // Verificamos que tenga edificios
+
+            if (
+                !Array.isArray(usuario.edificios)
+            ) {
+                return false;
+            }
+
+
+            // Buscamos el edificio dentro
+            // de los edificios del usuario
+
+            return usuario.edificios.some(
+                edificioUsuario =>
+                    Number(edificioUsuario.id) ===
+                    Number(id)
+            );
+
+        });
+
+
+    console.log(
+        "Edificio seleccionado:",
+        edificio
     );
 
+    console.log(
+        "Usuarios de este edificio:",
+        usuariosDelEdificio
+    );
+
+
+    // ==========================================
+    // CONFIGURAR SECCIÓN
+    // ==========================================
 
     section.style.display = "grid";
-    filtro_container.innerHTML = "";
-    section.style.gridTemplateColumns = "repeat(1, 1fr)";
 
+    filtro_container.innerHTML = "";
+
+    section.style.gridTemplateColumns =
+        "repeat(1, 1fr)";
+
+
+    // ==========================================
+    // HTML
+    // ==========================================
 
     section.innerHTML = `
 
         <div class="lista-edificios">
 
-            <!-- VOLVER -->
+
+            <!-- =================================
+                 VOLVER
+            ================================== -->
 
             <button class="btn-volver-edificios">
+
                 ← Volver a Edificios
+
             </button>
 
 
-            <!-- TITULO -->
+            <!-- =================================
+                 TITULO
+            ================================== -->
 
             <div class="titulo-edificios">
 
                 <div>
 
-                    <h2>${edificio.nombre}</h2>
+                    <h2>
+                        ${edificio.nombre}
+                    </h2>
 
                     <p class="subtitulo-edificios">
                         Información del edificio
@@ -994,109 +1297,195 @@ function vistaDetalleEdificio(id) {
             </div>
 
 
-            <!-- INFORMACIÓN DEL EDIFICIO -->
+            <!-- =================================
+                 INFORMACIÓN DEL EDIFICIO
+            ================================== -->
 
             <div class="edificio-detalle-info">
 
-                <h3>Datos del edificio</h3>
+                <h3>
+                    Datos del edificio
+                </h3>
+
 
                 <div class="detalle-edificio-grid">
 
+
                     <p>
-                        <strong>Nombre</strong>
+
+                        <strong>
+                            Nombre
+                        </strong>
+
                         ${edificio.nombre}
+
                     </p>
 
+
                     <p>
-                        <strong>ID del edificio</strong>
+
+                        <strong>
+                            ID del edificio
+                        </strong>
+
                         ${edificio.id}
+
                     </p>
 
+
                     <p>
-                        <strong>Dirección</strong>
+
+                        <strong>
+                            Dirección
+                        </strong>
+
                         ${edificio.direccion}
+
                     </p>
+
 
                 </div>
 
             </div>
 
 
-            <!-- USUARIOS -->
+            <!-- =================================
+                 USUARIOS
+            ================================== -->
 
             <h3 class="edificio-detalle-subtitulo">
+
                 Usuarios del edificio
+
             </h3>
 
 
             <div class="contenedor-usuarios-edificio">
+
 
                 ${
                     usuariosDelEdificio.length > 0
 
                     ?
 
-                    usuariosDelEdificio.map(u => `
+                    usuariosDelEdificio.map(usuario => `
 
-                        <div class="usuario-card">
+                        <div
+                            class="usuario-card"
+                        >
+
 
                             <div class="usuario-info">
 
+
                                 <h3>
-                                    ${u.nombre}
+                                    ${usuario.nombre}
                                 </h3>
 
+
                                 <p>
-                                    Tel: ${u.telefono}
+
+                                    Cédula:
+                                    ${usuario.cedula}
+
                                 </p>
 
+
+                                <p>
+
+                                    Tel:
+                                    ${
+                                        usuario.telefono
+                                        ||
+                                        "Sin teléfono"
+                                    }
+
+                                </p>
+
+
                                 ${
-                                    u.email
+                                    usuario.email
+
                                     ?
+
                                     `
                                     <p>
-                                        Email: ${u.email}
+
+                                        Email:
+                                        ${usuario.email}
+
                                     </p>
                                     `
+
                                     :
+
                                     ""
                                 }
 
-                                <span class="usuario-rol-actual">
+
+                                <span
+                                    class="usuario-rol-actual"
+                                >
+
                                     Usuario de edificio
+
                                 </span>
 
+
                             </div>
+
 
                         </div>
 
                     `).join("")
 
+
                     :
 
                     `
+
                     <p class="sin-usuarios">
+
                         Este edificio todavía no tiene
                         usuarios asignados.
+
                     </p>
+
                     `
+
                 }
 
+
             </div>
+
 
         </div>
 
     `;
 
 
-    // Botón volver
+    // ==========================================
+    // BOTÓN VOLVER
+    // ==========================================
 
-    document
-        .querySelector(".btn-volver-edificios")
-        .addEventListener(
-            "click",
-            vistaEdificios
+    const btnVolver =
+        document.querySelector(
+            ".btn-volver-edificios"
         );
+
+
+    if (btnVolver) {
+
+        btnVolver.addEventListener(
+            "click",
+            () => {
+
+                vistaEdificios();
+
+            }
+        );
+
+    }
 
 }
 
@@ -1114,6 +1503,7 @@ function vistaUsuarios(filtro = "") {
 
                 <div>
                     <h2>Usuarios</h2>
+
                     <p class="subtitulo-usuarios">
                         Gestiona los usuarios y sus asociaciones.
                     </p>
@@ -1127,13 +1517,29 @@ function vistaUsuarios(filtro = "") {
             </div>
 
 
-            <!-- FORMULARIO -->
+            <!-- ==============================
+                 FORMULARIO AGREGAR USUARIO
+            =============================== -->
 
             <div class="form-usuario oculto">
 
                 <div class="form-usuario-grid">
 
                     <div class="campo-usuario">
+
+                        <label>Cédula</label>
+
+                        <input
+                            class="cedula-usuario"
+                            type="text"
+                            placeholder="Ej. 12345678"
+                        >
+
+                    </div>
+
+
+                    <div class="campo-usuario">
+
                         <label>Nombre completo</label>
 
                         <input
@@ -1141,10 +1547,12 @@ function vistaUsuarios(filtro = "") {
                             type="text"
                             placeholder="Ej. Juan Pérez"
                         >
+
                     </div>
 
 
                     <div class="campo-usuario">
+
                         <label>Teléfono</label>
 
                         <input
@@ -1152,10 +1560,12 @@ function vistaUsuarios(filtro = "") {
                             type="text"
                             placeholder="Ej. 098 123 456"
                         >
+
                     </div>
 
 
                     <div class="campo-usuario">
+
                         <label>Correo electrónico</label>
 
                         <input
@@ -1163,33 +1573,58 @@ function vistaUsuarios(filtro = "") {
                             type="email"
                             placeholder="Ej. usuario@gmail.com"
                         >
+
                     </div>
 
 
                     <div class="campo-usuario">
-                        <label>Tipo de usuario</label>
 
-                        <select class="rol-usuario">
-                            <option selected disabled>
-                                Seleccionar tipo de usuario
-                            </option>
+                        <label>Contraseña</label>
 
-                            <option value="Usuario de edificio">
-                                Usuario de edificio
-                            </option>
+                        <input
+                            class="password-usuario"
+                            type="password"
+                            placeholder="Contraseña"
+                        >
 
-                            <option value="Usuario de proveedor">
-                                Usuario de proveedor
-                            </option>
-
-                            <option value="Administrativo">
-                                Administrativo
-                            </option>
-                        </select>
                     </div>
 
 
-                    <!-- EDIFICIO -->
+                    <div class="campo-usuario">
+
+                        <label>Tipo de usuario</label>
+
+                        <select class="rol-usuario">
+
+                            <option value="" selected disabled>
+                                Seleccionar tipo de usuario
+                            </option>
+
+                            <option value="usuario_edificio">
+                                Usuario de edificio
+                            </option>
+
+                            <option value="usuario_proveedor">
+                                Usuario de proveedor
+                            </option>
+
+                            <option value="administrativo">
+                                Administrativo
+                            </option>
+
+                            <option value="administrador">
+                                Administrador
+                            </option>
+
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ==============================
+                         EDIFICIO
+                    =============================== -->
 
                     <div class="campo-usuario campo-asociacion oculto">
 
@@ -1197,7 +1632,7 @@ function vistaUsuarios(filtro = "") {
 
                         <select class="edificio-usuario">
 
-                            <option selected disabled>
+                            <option value="" selected disabled>
                                 Seleccionar edificio
                             </option>
 
@@ -1214,7 +1649,9 @@ function vistaUsuarios(filtro = "") {
                     </div>
 
 
-                    <!-- PROVEEDOR -->
+                    <!-- ==============================
+                         PROVEEDOR
+                    =============================== -->
 
                     <div class="campo-usuario campo-proveedor-usuario oculto">
 
@@ -1222,7 +1659,7 @@ function vistaUsuarios(filtro = "") {
 
                         <select class="proveedor-usuario">
 
-                            <option selected disabled>
+                            <option value="" selected disabled>
                                 Seleccionar proveedor
                             </option>
 
@@ -1256,14 +1693,16 @@ function vistaUsuarios(filtro = "") {
             </div>
 
 
-            <!-- BUSCADOR -->
+            <!-- ==============================
+                 BUSCADOR
+            =============================== -->
 
             <div class="buscador-usuarios">
 
                 <input
                     class="input-buscar-usuario"
                     type="text"
-                    placeholder="Buscar por nombre o teléfono"
+                    placeholder="Buscar por nombre, teléfono o cédula"
                     value="${filtro}"
                 >
 
@@ -1280,7 +1719,9 @@ function vistaUsuarios(filtro = "") {
             </div>
 
 
-            <!-- LISTADO -->
+            <!-- ==============================
+                 LISTADO
+            =============================== -->
 
             <div class="contenedor-usuarios"></div>
 
@@ -1288,21 +1729,12 @@ function vistaUsuarios(filtro = "") {
     `;
 
 
-    // ==============================
-    // ELEMENTOS
-    // ==============================
+    // ==========================================
+    // ELEMENTOS DEL DOM
+    // ==========================================
 
-    const btnAgregar =
-        document.querySelector(".btn-agregar-usuario");
-
-    const formulario =
-        document.querySelector(".form-usuario");
-
-    const btnCancelar =
-        document.querySelector(".cancelar-usuario");
-
-    const btnGuardar =
-        document.querySelector(".guardar-usuario");
+    const cedulaInput =
+        document.querySelector(".cedula-usuario");
 
     const nombreInput =
         document.querySelector(".nombre-usuario");
@@ -1312,6 +1744,9 @@ function vistaUsuarios(filtro = "") {
 
     const emailInput =
         document.querySelector(".email-usuario");
+
+    const passwordInput =
+        document.querySelector(".password-usuario");
 
     const rolSelect =
         document.querySelector(".rol-usuario");
@@ -1328,6 +1763,18 @@ function vistaUsuarios(filtro = "") {
     const campoProveedor =
         document.querySelector(".campo-proveedor-usuario");
 
+    const btnAgregar =
+        document.querySelector(".btn-agregar-usuario");
+
+    const formulario =
+        document.querySelector(".form-usuario");
+
+    const btnCancelar =
+        document.querySelector(".cancelar-usuario");
+
+    const btnGuardar =
+        document.querySelector(".guardar-usuario");
+
     const inputBuscar =
         document.querySelector(".input-buscar-usuario");
 
@@ -1338,9 +1785,9 @@ function vistaUsuarios(filtro = "") {
         document.querySelector(".contenedor-usuarios");
 
 
-    // ==============================
+    // ==========================================
     // MOSTRAR FORMULARIO
-    // ==============================
+    // ==========================================
 
     btnAgregar.addEventListener("click", () => {
 
@@ -1349,17 +1796,19 @@ function vistaUsuarios(filtro = "") {
     });
 
 
-    // ==============================
+    // ==========================================
     // CANCELAR
-    // ==============================
+    // ==========================================
 
     btnCancelar.addEventListener("click", () => {
 
         formulario.classList.add("oculto");
 
+        cedulaInput.value = "";
         nombreInput.value = "";
         telefonoInput.value = "";
         emailInput.value = "";
+        passwordInput.value = "";
 
         rolSelect.selectedIndex = 0;
         edificioSelect.selectedIndex = 0;
@@ -1371,9 +1820,9 @@ function vistaUsuarios(filtro = "") {
     });
 
 
-    // ==============================
+    // ==========================================
     // CAMBIAR TIPO DE USUARIO
-    // ==============================
+    // ==========================================
 
     rolSelect.addEventListener("change", () => {
 
@@ -1382,26 +1831,35 @@ function vistaUsuarios(filtro = "") {
         campoEdificio.classList.add("oculto");
         campoProveedor.classList.add("oculto");
 
-        if (rol === "Usuario de edificio") {
+        edificioSelect.value = "";
+        proveedorSelect.value = "";
+
+
+        if (rol === "usuario_edificio") {
 
             campoEdificio.classList.remove("oculto");
 
         }
 
-        if (rol === "Usuario de proveedor") {
+        if (rol === "usuario_proveedor") {
 
             campoProveedor.classList.remove("oculto");
 
         }
 
+
+
     });
 
 
-    // ==============================
-    // GUARDAR USUARIO
-    // ==============================
+    // ==========================================
+    // GUARDAR NUEVO USUARIO
+    // ==========================================
 
-    btnGuardar.addEventListener("click", () => {
+    btnGuardar.addEventListener("click", async () => {
+
+        const cedula =
+            cedulaInput.value.trim();
 
         const nombre =
             nombreInput.value.trim();
@@ -1412,53 +1870,42 @@ function vistaUsuarios(filtro = "") {
         const email =
             emailInput.value.trim();
 
+        const password =
+            passwordInput.value.trim();
+
         const rol =
             rolSelect.value;
 
 
+        // ======================================
+        // VALIDACIONES
+        // ======================================
+
         if (
+            cedula === "" ||
             nombre === "" ||
-            telefono === "" ||
-            email === "" ||
-            !rol ||
-            rol === "Seleccionar tipo de usuario"
+            password === "" ||
+            !rol
         ) {
 
-            alert("Completa todos los campos.");
+            alert("Completa los campos obligatorios.");
 
             return;
 
         }
 
 
-        // Usuario de edificio
+        // ======================================
+        // VALIDAR EDIFICIO
+        // ======================================
 
-        if (rol === "Usuario de edificio") {
+        if (rol === "usuario_edificio"){
 
-            if (
-                !edificioSelect.value ||
-                edificioSelect.value === "Seleccionar edificio"
-            ) {
+            if (!edificioSelect.value) {
 
-                alert("Selecciona el edificio al que pertenece el usuario.");
-
-                return;
-
-            }
-
-        }
-
-
-        // Usuario de proveedor
-
-        if (rol === "Usuario de proveedor") {
-
-            if (
-                !proveedorSelect.value ||
-                proveedorSelect.value === "Seleccionar proveedor"
-            ) {
-
-                alert("Selecciona el proveedor al que pertenece el usuario.");
+                alert(
+                    "Selecciona el edificio al que pertenece el usuario."
+                );
 
                 return;
 
@@ -1467,232 +1914,233 @@ function vistaUsuarios(filtro = "") {
         }
 
 
-        const nuevoUsuario = {
+        // ======================================
+        // VALIDAR PROVEEDOR
+        // ======================================
 
+        if (rol === "usuario_proveedor"){
+
+            if (!proveedorSelect.value) {
+
+                alert(
+                    "Selecciona el proveedor al que pertenece el usuario."
+                );
+
+                return;
+
+            }
+
+        }
+
+
+        // ======================================
+        // DATOS PARA LARAVEL
+        // ======================================
+
+        const datos = {
+            cedula: cedula,
             nombre: nombre,
-
             telefono: telefono,
-
             email: email,
-
+            password: password,
             rol: rol
-
         };
 
 
-        // Asociar edificio
 
-        if (rol === "Usuario de edificio") {
+        /*
+         * IMPORTANTE:
+         *
+         * El backend actualmente recibe:
+         *
+         * edificio
+         *
+         * Por eso enviamos solamente eso.
+         */
 
-            nuevoUsuario.edificioId =
+        if (rol === "usuario_edificio") {
+
+            datos.edificio =
                 Number(edificioSelect.value);
 
         }
 
-
-        // Asociar proveedor
-
-        if (rol === "Usuario de proveedor") {
-
-            nuevoUsuario.proveedorId =
-                Number(proveedorSelect.value);
-
+        if (rol === "usuario_proveedor") {
+            datos.proveedor = Number(proveedorSelect.value);
         }
 
+        try {
 
-        usuarios.push(nuevoUsuario);
+            btnGuardar.disabled = true;
+            btnGuardar.textContent = "Guardando...";
 
 
-        alert("Usuario agregado correctamente.");
+            const response = await fetch(
+                "http://127.0.0.1:8000/api/usuarios",
+                {
+                    method: "POST",
 
-        vistaUsuarios();
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+
+                    body: JSON.stringify(datos)
+
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "STATUS:",
+                response.status
+            );
+
+            console.log(
+                "RESPUESTA:",
+                data
+            );
+
+
+            // ==================================
+            // ERROR
+            // ==================================
+
+            if (!response.ok) {
+
+                console.error(
+                    "Error del servidor:",
+                    data
+                );
+
+                alert(
+                    data.message ||
+                    "Error al crear el usuario."
+                );
+
+                return;
+
+            }
+
+
+            // ==================================
+            // ÉXITO
+            // ==================================
+
+            alert(
+                "Usuario agregado correctamente."
+            );
+
+
+            // ==================================
+            // ACTUALIZAR ARRAY LOCAL
+            // ==================================
+
+            usuarios.push(data.usuario);
+
+
+            // ==================================
+            // LIMPIAR FORMULARIO
+            // ==================================
+
+            formulario.classList.add("oculto");
+
+            cedulaInput.value = "";
+            nombreInput.value = "";
+            telefonoInput.value = "";
+            emailInput.value = "";
+            passwordInput.value = "";
+
+            rolSelect.selectedIndex = 0;
+            edificioSelect.selectedIndex = 0;
+            proveedorSelect.selectedIndex = 0;
+
+            campoEdificio.classList.add("oculto");
+            campoProveedor.classList.add("oculto");
+
+
+            // ==================================
+            // VOLVER A MOSTRAR LISTA
+            // ==================================
+
+            renderLista(
+                inputBuscar.value.trim()
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Error al crear usuario:",
+                error
+            );
+
+            alert(
+                "No se pudo conectar con el servidor."
+            );
+
+        } finally {
+
+            btnGuardar.disabled = false;
+            btnGuardar.textContent =
+                "Guardar usuario";
+
+        }
 
     });
 
 
-    // ==============================
-    // RENDERIZAR USUARIOS
-    // ==============================
+    // ==========================================
+    // RENDERIZAR LISTA
+    // ==========================================
 
-    function renderLista(valorFiltro) {
+    function renderLista(valorFiltro = "") {
 
         const filtroNormalizado =
-            quitarTildes(valorFiltro.toLowerCase());
+            quitarTildes(
+                valorFiltro.toLowerCase()
+            );
 
 
         const usuariosFiltrados =
             valorFiltro
 
-            ? usuarios.filter(u =>
-                quitarTildes(u.nombre.toLowerCase())
-                    .includes(filtroNormalizado)
-                ||
-                u.telefono.includes(valorFiltro)
-            )
+            ?
 
-            : usuarios;
+            usuarios.filter(u => {
 
+                const nombre =
+                    quitarTildes(
+                        (u.nombre || "").toLowerCase()
+                    );
 
-        contenedor.innerHTML = usuariosFiltrados.map((u) => {
+                const telefono =
+                    (u.telefono || "");
 
-            const index =
-                usuarios.indexOf(u);
-
-
-            // Buscar edificio
-
-            const edificioActual =
-                u.rol === "Usuario de edificio" &&
-                u.edificioId
-
-                ? edificios.find(
-                    e => e.id === u.edificioId
-                )
-
-                : null;
+                const cedula =
+                    (u.cedula || "");
 
 
-            // Buscar proveedor
+                return (
+                    nombre.includes(filtroNormalizado) ||
+                    telefono.includes(valorFiltro) ||
+                    cedula.includes(valorFiltro)
+                );
 
-            const proveedorActual =
-                u.rol === "Usuario de proveedor" &&
-                u.proveedorId
+            })
 
-                ? proveedores.find(
-                    p => p.id === u.proveedorId
-                )
+            :
 
-                : null;
-
-
-            return `
-
-                <div
-                    class="usuario-card"
-                    data-index="${index}"
-                >
-
-                    <div class="usuario-info">
-
-                        <h3>
-                            ${u.nombre}
-                        </h3>
-
-                        <p>
-                            Tel: ${u.telefono}
-                        </p>
-
-                        ${
-                            u.email
-                            ?
-                            `<p>Email: ${u.email}</p>`
-                            :
-                            ""
-                        }
+            usuarios;
 
 
-                        <span class="usuario-rol-actual">
-                            ${u.rol}
-                        </span>
-
-
-                        ${
-                            edificioActual
-                            ?
-                            `
-                            <span class="usuario-asociacion">
-                                Edificio: ${edificioActual.nombre}
-                            </span>
-                            `
-                            :
-                            ""
-                        }
-
-
-                        ${
-                            proveedorActual
-                            ?
-                            `
-                            <span class="usuario-asociacion">
-                                Proveedor: ${proveedorActual.nombre}
-                            </span>
-                            `
-                            :
-                            ""
-                        }
-
-                    </div>
-
-
-                    <div class="usuario-acciones">
-
-                        <select class="select-rol slct-usr">
-
-                            <option selected disabled>
-                                Cambiar tipo...
-                            </option>
-
-                            <option value="Usuario de edificio">
-                                Usuario de edificio
-                            </option>
-
-                            <option value="Usuario de proveedor">
-                                Usuario de proveedor
-                            </option>
-
-                            <option value="Administrativo">
-                                Administrativo
-                            </option>
-
-                        </select>
-
-
-                        <select class="select-edificio-cambio oculto slct-usr">
-
-                            <option selected disabled>
-                                Seleccionar edificio
-                            </option>
-
-                            ${
-                                edificios.map(e => `
-                                    <option value="${e.id}">
-                                        ${e.nombre}
-                                    </option>
-                                `).join("")
-                            }
-
-                        </select>
-
-
-                        <select class="select-proveedor-cambio oculto slct-usr">
-
-                            <option selected disabled>
-                                Seleccionar proveedor
-                            </option>
-
-                            ${
-                                proveedores.map(p => `
-                                    <option value="${p.id}">
-                                        ${p.nombre}
-                                    </option>
-                                `).join("")
-                            }
-
-                        </select>
-
-
-                        <button class="btn-guardar-cambio">
-                            Guardar
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }).join("");
-
+        // ======================================
+        // NO HAY USUARIOS
+        // ======================================
 
         if (!usuariosFiltrados.length) {
 
@@ -1707,77 +2155,456 @@ function vistaUsuarios(filtro = "") {
         }
 
 
-        // ==============================
-        // EVENTOS DE CADA USUARIO
-        // ==============================
+        // ======================================
+        // CREAR CARDS
+        // ======================================
+
+        contenedor.innerHTML =
+            usuariosFiltrados.map(usuario => {
+
+                /*
+                 * IMPORTANTE:
+                 *
+                 * Laravel devuelve:
+                 *
+                 * usuario.edificios
+                 *
+                 * y NO:
+                 *
+                 * usuario.edificioId
+                 */
+
+                const edificiosDelUsuario =
+                    usuario.rol === "usuario_edificio"
+                        ? (usuario.edificios || [])
+                        : [];
+
+
+                return `
+
+                    <div
+                        class="usuario-card"
+                        data-cedula="${usuario.cedula}"
+                    >
+
+                        <div class="usuario-info">
+
+                            <h3>
+                                ${usuario.nombre}
+                            </h3>
+
+
+                            <p>
+                                Cédula:
+                                ${usuario.cedula}
+                            </p>
+
+
+                            <p>
+                                Tel:
+                                ${usuario.telefono || "Sin teléfono"}
+                            </p>
+
+
+                            ${
+                                usuario.email
+                                ?
+                                `
+                                <p>
+                                    Email:
+                                    ${usuario.email}
+                                </p>
+                                `
+                                :
+                                ""
+                            }
+
+
+                            <span class="usuario-rol-actual">
+                                ${usuario.rol}
+                            </span>
+
+
+                            ${
+                                edificiosDelUsuario.length > 0
+                                ?
+
+                                edificiosDelUsuario.map(edificio => `
+
+                                    <span class="usuario-asociacion">
+
+                                        Edificio:
+                                        ${edificio.nombre}
+
+                                    </span>
+
+                                `).join("")
+
+                                :
+
+                                ""
+                            }
+
+                        </div>
+
+
+                        <!-- ==========================
+                             ACCIONES
+                        =========================== -->
+
+                        <div class="usuario-acciones">
+
+
+                            <select class="select-rol slct-usr">
+
+                                <option value="" selected disabled>
+                                    Cambiar tipo...
+                                </option>
+
+                                <option value="usuario_edificio">
+                                    Usuario de edificio
+                                </option>
+
+                                <option value="usuario_proveedor">
+                                    Usuario de proveedor
+                                </option>
+
+                                <option value="administrativo">
+                                    Administrativo
+                                </option>
+
+                            </select>
+
+
+                            <!-- EDIFICIO -->
+
+                            <select
+                                class="select-edificio-cambio oculto slct-usr"
+                            >
+
+                                <option value="" selected disabled>
+                                    Seleccionar edificio
+                                </option>
+
+                                ${
+                                    edificios.map(e => `
+
+                                        <option value="${e.id}">
+                                            ${e.nombre}
+                                        </option>
+
+                                    `).join("")
+                                }
+
+                            </select>
+
+
+                            <!-- PROVEEDOR -->
+
+                            <select
+                                class="select-proveedor-cambio oculto slct-usr"
+                            >
+
+                                <option value="" selected disabled>
+                                    Seleccionar proveedor
+                                </option>
+
+                                ${
+                                    proveedores.map(p => `
+
+                                        <option value="${p.id}">
+                                            ${p.nombre}
+                                        </option>
+
+                                    `).join("")
+                                }
+
+                            </select>
+
+
+                            <button class="btn-guardar-cambio">
+
+                                Guardar
+
+                            </button>
+
+
+                        </div>
+                        <div class="cambiar-password-container">
+
+                            <button class="btn-cambiar-password">
+                                Cambiar contraseña
+                            </button>
+
+                            <div class="form-cambiar-password oculto">
+
+                                <input
+                                    class="nueva-password"
+                                    type="password"
+                                    placeholder="Nueva contraseña"
+                                >
+
+                                <input
+                                    class="confirmar-password"
+                                    type="password"
+                                    placeholder="Repetir contraseña"
+                                >
+
+                                <div class="acciones-cambiar-password">
+
+                                    <button class="cancelar-password">
+                                        Cancelar
+                                    </button>
+
+                                    <button class="guardar-password">
+                                        Guardar
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+
+
+        // ==========================================
+        // EVENTOS DE CADA CARD
+        // ==========================================
 
         contenedor
             .querySelectorAll(".usuario-card")
             .forEach(card => {
+                                // ==================================
+                // CAMBIAR CONTRASEÑA
+                // ==================================
 
-                const index =
-                    Number(card.dataset.index);
+                const btnCambiarPassword =
+                    card.querySelector(".btn-cambiar-password");
+
+                const formPassword =
+                    card.querySelector(".form-cambiar-password");
+
+                const nuevaPasswordInput =
+                    card.querySelector(".nueva-password");
+
+                const confirmarPasswordInput =
+                    card.querySelector(".confirmar-password");
+
+                const btnCancelarPassword =
+                    card.querySelector(".cancelar-password");
+
+                const btnGuardarPassword =
+                    card.querySelector(".guardar-password");
+
+
+                btnCambiarPassword.addEventListener(
+                    "click",
+                    () => {
+                        formPassword.classList.toggle("oculto");
+                    }
+                );
+
+
+                btnCancelarPassword.addEventListener(
+                    "click",
+                    () => {
+                        formPassword.classList.add("oculto");
+                        nuevaPasswordInput.value = "";
+                        confirmarPasswordInput.value = "";
+                    }
+                );
+
+
+                btnGuardarPassword.addEventListener(
+                    "click",
+                    async () => {
+
+                        const nuevaPassword =
+                            nuevaPasswordInput.value.trim();
+
+                        const confirmarPassword =
+                            confirmarPasswordInput.value.trim();
+
+
+                        if (
+                            nuevaPassword === "" ||
+                            confirmarPassword === ""
+                        ) {
+                            alert("Completa ambos campos.");
+                            return;
+                        }
+
+                        if (nuevaPassword.length < 6) {
+                            alert("La contraseña debe tener al menos 6 caracteres.");
+                            return;
+                        }
+
+                        if (nuevaPassword !== confirmarPassword) {
+                            alert("Las contraseñas no coinciden.");
+                            return;
+                        }
+
+
+                        try {
+
+                            btnGuardarPassword.disabled = true;
+                            btnGuardarPassword.textContent = "Guardando...";
+
+                            const response = await fetch(
+                                `http://127.0.0.1:8000/api/usuarios/${usuario.cedula}/password`,
+                                {
+                                    method: "PUT",
+
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Accept": "application/json"
+                                    },
+
+                                    body: JSON.stringify({
+                                        password: nuevaPassword
+                                    })
+                                }
+                            );
+
+                            const data = await response.json();
+
+                            console.log("STATUS:", response.status);
+                            console.log("RESPUESTA:", data);
+
+                            if (!response.ok) {
+                                alert(
+                                    data.message ||
+                                    "No se pudo actualizar la contraseña."
+                                );
+                                return;
+                            }
+
+                            alert("Contraseña actualizada correctamente.");
+
+                            formPassword.classList.add("oculto");
+                            nuevaPasswordInput.value = "";
+                            confirmarPasswordInput.value = "";
+
+                        } catch (error) {
+
+                            console.error(
+                                "Error al actualizar contraseña:",
+                                error
+                            );
+
+                            alert("No se pudo conectar con el servidor.");
+
+                        } finally {
+
+                            btnGuardarPassword.disabled = false;
+                            btnGuardarPassword.textContent = "Guardar";
+
+                        }
+
+                    }
+                );
+                const cedula =
+                    card.dataset.cedula;
+
+
+                const usuario =
+                    usuarios.find(
+                        u => String(u.cedula) === String(cedula)
+                    );
+
+
+                if (!usuario) return;
 
 
                 const selectRol =
                     card.querySelector(".select-rol");
 
                 const selectEdificio =
-                    card.querySelector(".select-edificio-cambio");
+                    card.querySelector(
+                        ".select-edificio-cambio"
+                    );
 
                 const selectProveedor =
-                    card.querySelector(".select-proveedor-cambio");
+                    card.querySelector(
+                        ".select-proveedor-cambio"
+                    );
 
                 const btnGuardarCambio =
-                    card.querySelector(".btn-guardar-cambio");
+                    card.querySelector(
+                        ".btn-guardar-cambio"
+                    );
 
+                // ==================================
+                // CAMBIAR ROL
+                // ==================================
 
-                // Cambiar rol
-
-                selectRol.addEventListener("change", () => {
-
-                    const nuevoRol =
-                        selectRol.value;
-
-
-                    selectEdificio.classList.add("oculto");
-                    selectProveedor.classList.add("oculto");
-
-
-                    if (
-                        nuevoRol === "Usuario de edificio"
-                    ) {
-
-                        selectEdificio.classList.remove("oculto");
-
-                    }
-
-
-                    if (
-                        nuevoRol === "Usuario de proveedor"
-                    ) {
-
-                        selectProveedor.classList.remove("oculto");
-
-                    }
-
-                });
-
-
-                // Guardar cambio
-
-                btnGuardarCambio.addEventListener(
-                    "click",
+                selectRol.addEventListener(
+                    "change",
                     () => {
 
                         const nuevoRol =
                             selectRol.value;
 
 
+                        selectEdificio.classList.add(
+                            "oculto"
+                        );
+
+                        selectProveedor.classList.add(
+                            "oculto"
+                        );
+
+
+                        // USUARIO DE EDIFICIO
+
                         if (
-                            !nuevoRol ||
-                            nuevoRol === "Cambiar tipo..."
+                            nuevoRol ===
+                            "usuario_edificio"
                         ) {
+
+                            selectEdificio.classList.remove(
+                                "oculto"
+                            );
+
+                        }
+
+
+                        // USUARIO DE PROVEEDOR
+
+                        if (
+                            nuevoRol ===
+                            "usuario_proveedor"
+                        ) {
+
+                            selectProveedor.classList.remove(
+                                "oculto"
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                // ==================================
+                // GUARDAR CAMBIO DE ROL
+                // ==================================
+
+                btnGuardarCambio.addEventListener(
+                    "click",
+                    async () => {
+
+                        const nuevoRol =
+                            selectRol.value;
+
+
+                        if (!nuevoRol) {
 
                             alert(
                                 "Selecciona el nuevo tipo de usuario."
@@ -1788,10 +2615,14 @@ function vistaUsuarios(filtro = "") {
                         }
 
 
-                        // Cambiar a edificio
+                        // ==============================
+                        // EDIFICIO
+                        // ==============================
+
+                        let edificio = null;
 
                         if (
-                            nuevoRol === "Usuario de edificio"
+                            nuevoRol === "usuario_edificio"
                         ) {
 
                             if (!selectEdificio.value) {
@@ -1804,24 +2635,20 @@ function vistaUsuarios(filtro = "") {
 
                             }
 
-
-                            usuarios[index].rol =
-                                nuevoRol;
-
-                            usuarios[index].edificioId =
-                                Number(
-                                    selectEdificio.value
-                                );
-
-                            delete usuarios[index].proveedorId;
-
+                            edificio = Number(
+                                selectEdificio.value
+                            );
                         }
 
 
-                        // Cambiar a proveedor
+                        // ==============================
+                        // PROVEEDOR
+                        // ==============================
 
-                        else if (
-                            nuevoRol === "Usuario de proveedor"
+                        let proveedor = null;
+
+                        if (
+                            nuevoRol === "usuario_proveedor"
                         ) {
 
                             if (!selectProveedor.value) {
@@ -1834,39 +2661,138 @@ function vistaUsuarios(filtro = "") {
 
                             }
 
+                            proveedor = Number(
+                                selectProveedor.value
+                            );
 
-                            usuarios[index].rol =
-                                nuevoRol;
+                        }
 
-                            usuarios[index].proveedorId =
-                                Number(
-                                    selectProveedor.value
+
+
+                        // ==============================
+                        // ENVIAR A LARAVEL
+                        // ==============================
+
+                        try {
+
+                            btnGuardarCambio.disabled =
+                                true;
+
+                            btnGuardarCambio.textContent =
+                                "Guardando...";
+
+
+                            const response =
+                                await fetch(
+                                    `http://127.0.0.1:8000/api/usuarios/${usuario.cedula}/rol`,
+                                    {
+                                        method: "PUT",
+
+                                        headers: {
+                                            "Content-Type":
+                                                "application/json",
+
+                                            "Accept":
+                                                "application/json"
+                                        },
+
+                                        body: JSON.stringify({
+
+                                            rol: nuevoRol,
+
+                                            edificio: edificio,
+
+                                            proveedor: proveedor
+
+                                        })
+
+                                    }
                                 );
 
-                            delete usuarios[index].edificioId;
+
+                            const data =
+                                await response.json();
+
+
+                            console.log(
+                                "STATUS:",
+                                response.status
+                            );
+
+                            console.log(
+                                "RESPUESTA:",
+                                data
+                            );
+
+
+                            if (!response.ok) {
+
+                                alert(
+                                    data.message ||
+                                    "No se pudo actualizar el usuario."
+                                );
+
+                                return;
+
+                            }
+
+
+                            // ==========================
+                            // ACTUALIZAR USUARIO LOCAL
+                            // ==========================
+
+                            const indice =
+                                usuarios.findIndex(
+                                    u =>
+                                        String(u.cedula) ===
+                                        String(usuario.cedula)
+                                );
+
+
+                            if (indice !== -1) {
+
+                                usuarios[indice] =
+                                    data.usuario;
+
+                            }
+
+
+                            alert(
+                                "Usuario actualizado correctamente."
+                            );
+
+
+                            // ==========================
+                            // RENDERIZAR NUEVAMENTE
+                            // ==========================
+
+                            renderLista(
+                                inputBuscar.value.trim()
+                            );
+
+
+                        } catch (error) {
+
+                            console.error(
+                                "Error al actualizar usuario:",
+                                error
+                            );
+
+                            alert(
+                                "No se pudo conectar con el servidor."
+                            );
+
+                        } finally {
+
+                            btnGuardarCambio.disabled =
+                                false;
+
+                            btnGuardarCambio.textContent =
+                                "Guardar";
 
                         }
-
-
-                        // Cambiar a administrativo
-
-                        else {
-
-                            usuarios[index].rol =
-                                "Administrativo";
-
-                            delete usuarios[index].edificioId;
-                            delete usuarios[index].proveedorId;
-
-                        }
-
-
-                        renderLista(
-                            inputBuscar.value.trim()
-                        );
 
                     }
-
                 );
 
             });
@@ -1874,12 +2800,16 @@ function vistaUsuarios(filtro = "") {
     }
 
 
-    // ==============================
-    // BUSCADOR
-    // ==============================
+    // ==========================================
+    // PRIMER RENDER
+    // ==========================================
 
     renderLista(filtro);
 
+
+    // ==========================================
+    // BUSCAR MIENTRAS ESCRIBE
+    // ==========================================
 
     inputBuscar.addEventListener(
         "input",
@@ -1893,6 +2823,10 @@ function vistaUsuarios(filtro = "") {
     );
 
 
+    // ==========================================
+    // BOTÓN BUSCAR
+    // ==========================================
+
     btnBuscar.addEventListener(
         "click",
         () => {
@@ -1904,6 +2838,10 @@ function vistaUsuarios(filtro = "") {
         }
     );
 
+
+    // ==========================================
+    // ENTER PARA BUSCAR
+    // ==========================================
 
     inputBuscar.addEventListener(
         "keydown",
@@ -1921,5 +2859,6 @@ function vistaUsuarios(filtro = "") {
     );
 
 }
+
 
 

@@ -6,13 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Edificio extends Model
 {
+    protected $table = 'edificios';
+
     protected $fillable = [
         'nombre',
         'direccion',
     ];
 
-    public function reclamos()
+    public function usuarios()
     {
-        return $this->hasMany(Reclamo::class);
+        return $this->belongsToMany(
+            Usuario::class,
+            'usuario_edificio_edificio',
+            'edificio_id',
+            'usuario_cedula'
+        );
     }
 }
