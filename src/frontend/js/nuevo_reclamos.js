@@ -37,27 +37,177 @@ export class Nuevo_reclamos {
         </section>
 
         <section class="tipo-reclamo">
-            <label for="tipo-reclamo" class="tipo-reclamo-label">Tipo de reclamo</label>
-            <select id="tipo-reclamo" name="tipo-reclamo" required>
-                <option value="" selected disabled>Selecciona el tipo de reclamo</option>
-                <option value="plomeria">Plomería</option>
-                <option value="electricidad">Electricidad</option>
-                <option value="vidrieria">Vidriería</option>
-                <option value="cerrajeria">Cerrajería</option>
+            <label for="tipo-reclamo" class="tipo-reclamo-label">
+                Tipo de reclamo
+            </label>
+
+            <select id="tipo-reclamo" name="clasificacion_id" required>
+                <option value="" selected disabled>
+                    Cargando clasificaciones...
+                </option>
             </select>
         </section>
-<label for="edificio" class="tipo-reclamo-label">Edificio</label>
 
- <select id="edificio" required>
-    <option value="" selected disabled>Selecciona tu edificio</option>
-    <option value="edificio-central">Edificio central</option>
-    <option value="edificio-1">Edificio 1</option>
-    <option value="edificio-2">Edificio 2</option>
- </select>
+        <label for="edificio" class="tipo-reclamo-label">Edificio</label>
+
+        <select id="edificio" required>
+            <option value="" selected disabled>
+                Cargando edificios...
+            </option>
+        </select>
+
+
         <section class="bottom-new-reclamo">
             <button class="enviarReclamo">Enviar Reclamo</button>
         </section>`;
+        this.cargar_clasificaciones();
+        this.cargar_edificios();
+        this.enviar_reclamo();
     }
+
+    async cargar_clasificaciones() {
+        const select = document.getElementById("tipo-reclamo");
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/clasificaciones");
+
+
+            if (!response.ok) {
+                throw new Error("Error al obtener las clasificaciones");
+            }
+
+            const clasificaciones = await response.json();
+
+            select.innerHTML = `
+                <option value="" selected disabled>
+                    Selecciona el tipo de reclamo
+                </option>
+            `;
+
+            clasificaciones.forEach(clasificacion => {
+                const option = document.createElement("option");
+
+                option.value = clasificacion.id;
+                option.textContent = clasificacion.clasificacion;
+
+                select.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error("Error al cargar clasificaciones:", error);
+
+            select.innerHTML = `
+                <option value="" selected disabled>
+                    Error al cargar clasificaciones
+                </option>
+            `;
+        }
+    }
+
+    async cargar_edificios() {
+        const select = document.getElementById("edificio");
+
+        try {
+            const response = await fetch(
+                "http://127.0.0.1:8000/api/edificios"
+            );
+
+            if (!response.ok) {
+                throw new Error("Error al obtener edificios");
+            }
+
+            const edificios = await response.json();
+
+            select.innerHTML = `
+                <option value="" selected disabled>
+                    Selecciona tu edificio
+                </option>
+            `;
+
+            edificios.forEach(edificio => {
+                const option = document.createElement("option");
+
+                option.value = edificio.id;
+                option.textContent = edificio.nombre;
+
+                select.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error("Error al cargar los edificios:", error);
+
+            select.innerHTML = `
+                <option value="" selected disabled>
+                    Error al cargar los edificios
+                </option>
+            `;
+        }
+    }
+
+
+
+    enviar_reclamo() {
+    const boton = document.querySelector(".enviarReclamo");
+
+    boton.addEventListener("click", async () => {
+
+        const archivo = document.getElementById("archivo").files[0];
+        const descripcion = document.getElementById("descripcion").value;
+        const clasificacion_id = document.getElementById("tipo-reclamo").value;
+        const edificio_id = document.getElementById("edificio").value;
+
+        if (!archivo) {
+            alert("Debes subir una foto como evidencia.");
+            return;
+        }
+
+        if (!clasificacion_id) {
+            alert("Debes seleccionar una clasificación.");
+            return;
+        }
+
+        if (!edificio_id) {
+            alert("Debes seleccionar un edificio.");
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append("description", descripcion);
+        formData.append("clasificacion_id", clasificacion_id);
+        formData.append("edificio_id", edificio_id);
+        formData.append("photo", archivo);
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/reclamos", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            console.log("STATUS:", response.status);
+            console.log("RESPUESTA:", data);
+
+            if (!response.ok) {
+                alert(data.message || "Error al crear el reclamo");
+                return;
+            }
+
+            alert("Reclamo creado correctamente.");
+
+        } catch (error) {
+            console.error("Error de conexión:", error);
+        }
+    });
+}
+
+
+
+
+
+
+
 
     descripcion_eventos() {
         const descripcion = document.getElementById("descripcion");

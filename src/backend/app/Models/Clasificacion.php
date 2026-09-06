@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Edificio extends Model
+class Clasificacion extends Model
 {
+    protected $table = 'clasificaciones';
+
     protected $fillable = [
-        'nombre',
-        'direccion',
+        'clasificacion',
     ];
 
     public function reclamos()
