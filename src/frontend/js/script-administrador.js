@@ -1626,27 +1626,32 @@ function vistaUsuarios(filtro = "") {
                          EDIFICIO
                     =============================== -->
 
-                    <div class="campo-usuario campo-asociacion oculto">
+                    
 
-                        <label>Edificio</label>
+                        <div class="campo-usuario campo-asociacion oculto campo-completo">
 
-                        <select class="edificio-usuario">
+                            <label>Edificios</label>
 
-                            <option value="" selected disabled>
-                                Seleccionar edificio
-                            </option>
+                            <div class="checkboxes-edificios">
 
-                            ${
-                                edificios.map(e => `
-                                    <option value="${e.id}">
-                                        ${e.nombre}
-                                    </option>
-                                `).join("")
-                            }
+                                ${
+                                    edificios.map(e => `
+                                        <label class="checkbox-edificio">
+                                            <input
+                                                type="checkbox"
+                                                class="chk-edificio"
+                                                value="${e.id}"
+                                            >
+                                            ${e.nombre}
+                                        </label>
+                                    `).join("")
+                                }
 
-                        </select>
+                            </div>
 
-                    </div>
+                        </div>
+
+                    
 
 
                     <!-- ==============================
@@ -1751,8 +1756,6 @@ function vistaUsuarios(filtro = "") {
     const rolSelect =
         document.querySelector(".rol-usuario");
 
-    const edificioSelect =
-        document.querySelector(".edificio-usuario");
 
     const proveedorSelect =
         document.querySelector(".proveedor-usuario");
@@ -1811,14 +1814,17 @@ function vistaUsuarios(filtro = "") {
         passwordInput.value = "";
 
         rolSelect.selectedIndex = 0;
-        edificioSelect.selectedIndex = 0;
+
+        document
+            .querySelectorAll(".chk-edificio")
+            .forEach(chk => chk.checked = false);
+
         proveedorSelect.selectedIndex = 0;
 
         campoEdificio.classList.add("oculto");
         campoProveedor.classList.add("oculto");
 
     });
-
 
     // ==========================================
     // CAMBIAR TIPO DE USUARIO
@@ -1831,23 +1837,19 @@ function vistaUsuarios(filtro = "") {
         campoEdificio.classList.add("oculto");
         campoProveedor.classList.add("oculto");
 
-        edificioSelect.value = "";
+        document
+            .querySelectorAll(".chk-edificio")
+            .forEach(chk => chk.checked = false);
+
         proveedorSelect.value = "";
 
-
         if (rol === "usuario_edificio") {
-
             campoEdificio.classList.remove("oculto");
-
         }
 
         if (rol === "usuario_proveedor") {
-
             campoProveedor.classList.remove("oculto");
-
         }
-
-
 
     });
 
@@ -1899,12 +1901,17 @@ function vistaUsuarios(filtro = "") {
         // VALIDAR EDIFICIO
         // ======================================
 
-        if (rol === "usuario_edificio"){
+        const edificiosSeleccionados =
+            Array.from(
+                document.querySelectorAll(".chk-edificio:checked")
+            ).map(chk => Number(chk.value));
 
-            if (!edificioSelect.value) {
+        if (rol === "usuario_edificio") {
+
+            if (edificiosSeleccionados.length === 0) {
 
                 alert(
-                    "Selecciona el edificio al que pertenece el usuario."
+                    "Selecciona al menos un edificio para el usuario."
                 );
 
                 return;
@@ -1959,10 +1966,7 @@ function vistaUsuarios(filtro = "") {
          */
 
         if (rol === "usuario_edificio") {
-
-            datos.edificio =
-                Number(edificioSelect.value);
-
+            datos.edificios = edificiosSeleccionados;
         }
 
         if (rol === "usuario_proveedor") {
@@ -2056,7 +2060,9 @@ function vistaUsuarios(filtro = "") {
             passwordInput.value = "";
 
             rolSelect.selectedIndex = 0;
-            edificioSelect.selectedIndex = 0;
+            document
+                .querySelectorAll(".chk-edificio")
+                .forEach(chk => chk.checked = false);
             proveedorSelect.selectedIndex = 0;
 
             campoEdificio.classList.add("oculto");
@@ -2278,25 +2284,33 @@ function vistaUsuarios(filtro = "") {
 
                             <!-- EDIFICIO -->
 
-                            <select
-                                class="select-edificio-cambio oculto slct-usr"
-                            >
-
-                                <option value="" selected disabled>
-                                    Seleccionar edificio
-                                </option>
+                            <div class="checkboxes-edificios-cambio oculto">
 
                                 ${
-                                    edificios.map(e => `
+                                    edificios.map(e => {
 
-                                        <option value="${e.id}">
-                                            ${e.nombre}
-                                        </option>
+                                        const yaAsignado =
+                                            Array.isArray(usuario.edificios) &&
+                                            usuario.edificios.some(
+                                                ed => Number(ed.id) === Number(e.id)
+                                            );
 
-                                    `).join("")
+                                        return `
+                                            <label class="checkbox-edificio">
+                                                <input
+                                                    type="checkbox"
+                                                    class="chk-edificio-cambio"
+                                                    value="${e.id}"
+                                                    ${yaAsignado ? "checked" : ""}
+                                                >
+                                                ${e.nombre}
+                                            </label>
+                                        `;
+
+                                    }).join("")
                                 }
 
-                            </select>
+                            </div>
 
 
                             <!-- PROVEEDOR -->
@@ -2525,9 +2539,9 @@ function vistaUsuarios(filtro = "") {
                 const selectRol =
                     card.querySelector(".select-rol");
 
-                const selectEdificio =
+                const contenedorEdificiosCambio =
                     card.querySelector(
-                        ".select-edificio-cambio"
+                        ".checkboxes-edificios-cambio"
                     );
 
                 const selectProveedor =
@@ -2544,52 +2558,22 @@ function vistaUsuarios(filtro = "") {
                 // CAMBIAR ROL
                 // ==================================
 
-                selectRol.addEventListener(
-                    "change",
-                    () => {
+                selectRol.addEventListener("change", () => {
 
-                        const nuevoRol =
-                            selectRol.value;
+                    const nuevoRol = selectRol.value;
 
+                    contenedorEdificiosCambio.classList.add("oculto");
+                    selectProveedor.classList.add("oculto");
 
-                        selectEdificio.classList.add(
-                            "oculto"
-                        );
-
-                        selectProveedor.classList.add(
-                            "oculto"
-                        );
-
-
-                        // USUARIO DE EDIFICIO
-
-                        if (
-                            nuevoRol ===
-                            "usuario_edificio"
-                        ) {
-
-                            selectEdificio.classList.remove(
-                                "oculto"
-                            );
-
-                        }
-
-
-                        // USUARIO DE PROVEEDOR
-
-                        if (
-                            nuevoRol ===
-                            "usuario_proveedor"
-                        ) {
-
-                            selectProveedor.classList.remove(
-                                "oculto"
-                            );
-
-                        }
-
+                    if (nuevoRol === "usuario_edificio") {
+                        contenedorEdificiosCambio.classList.remove("oculto");
                     }
-                );
+
+                    if (nuevoRol === "usuario_proveedor") {
+                        selectProveedor.classList.remove("oculto");
+                    }
+
+                });
 
 
                 // ==================================
@@ -2619,25 +2603,20 @@ function vistaUsuarios(filtro = "") {
                         // EDIFICIO
                         // ==============================
 
-                        let edificio = null;
+                        let edificios_ids = [];
 
-                        if (
-                            nuevoRol === "usuario_edificio"
-                        ) {
+                        if (nuevoRol === "usuario_edificio") {
 
-                            if (!selectEdificio.value) {
+                            edificios_ids = Array.from(
+                                contenedorEdificiosCambio.querySelectorAll(
+                                    ".chk-edificio-cambio:checked"
+                                )
+                            ).map(chk => Number(chk.value));
 
-                                alert(
-                                    "Selecciona el edificio."
-                                );
-
+                            if (edificios_ids.length === 0) {
+                                alert("Selecciona al menos un edificio.");
                                 return;
-
                             }
-
-                            edificio = Number(
-                                selectEdificio.value
-                            );
                         }
 
 
@@ -2700,7 +2679,7 @@ function vistaUsuarios(filtro = "") {
 
                                             rol: nuevoRol,
 
-                                            edificio: edificio,
+                                            edificios: edificios_ids,  
 
                                             proveedor: proveedor
 

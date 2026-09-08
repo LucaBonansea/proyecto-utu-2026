@@ -63,10 +63,14 @@ class UsuarioController extends Controller
             ])
         ],
 
-        'edificio' => [
+        'edificios' => [
             'nullable',
             'required_if:rol,usuario_edificio',
-            'exists:edificios,id'
+            'array',
+        ],
+
+        'edificios.*' => [
+            'exists:edificios,id',
         ],
 
         'proveedor' => [
@@ -103,13 +107,14 @@ class UsuarioController extends Controller
     // EDIFICIO
     // ==============================
 
+
     if (
         $datos['rol'] === 'usuario_edificio' &&
-        !empty($datos['edificio'])
+        !empty($datos['edificios'])
     ) {
 
         $usuario->edificios()->attach(
-            $datos['edificio']
+            $datos['edificios']
         );
 
     }
@@ -175,10 +180,14 @@ class UsuarioController extends Controller
                 ])
             ],
 
-            'edificio' => [
+            'edificios' => [
                 'nullable',
                 'required_if:rol,usuario_edificio',
-                'exists:edificios,id'
+                'array',
+            ],
+
+            'edificios.*' => [
+                'exists:edificios,id',
             ],
 
             'proveedor' => [
@@ -194,19 +203,14 @@ class UsuarioController extends Controller
             'rol' => $datos['rol'],
         ]);
 
-        // Edificio: se desvincula y se vuelve a vincular si corresponde
-        $usuario->edificios()->detach();
+        // Edificios: sync reemplaza todo el set de una sola vez
+        $usuario->edificios()->sync(
+            $datos['rol'] === 'usuario_edificio'
+                ? $datos['edificios']
+                : []
+        );
 
-        if (
-            $datos['rol'] === 'usuario_edificio' &&
-            !empty($datos['edificio'])
-        ) {
-            $usuario->edificios()->attach(
-                $datos['edificio']
-            );
-        }
-
-        // Proveedor: se limpia y se reasigna si corresponde
+        // Proveedor
         $usuario->proveedor_id =
             $datos['rol'] === 'usuario_proveedor'
                 ? $datos['proveedor']
