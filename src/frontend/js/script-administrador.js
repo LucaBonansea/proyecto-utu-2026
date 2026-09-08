@@ -6,21 +6,6 @@ const botones = document.querySelectorAll(".sidebar-btn");
 const edificiosbtn = document.querySelector(".edificios-btn");
 
 
-botones.forEach(boton => {
-
-    boton.addEventListener("click", () => {
-
-        botones.forEach(item =>
-            item.classList.remove("active")
-        );
-
-        boton.classList.add("active");
-
-    });
-
-});
-
-
 function quitarTildes(texto) {
 
     return texto
@@ -161,7 +146,71 @@ async function cargarProveedores() {
 
 
 
+async function verificar_sesion() {
+    try {
+        const request = await fetch(
+            "http://127.0.0.1:8000/api/auth/me",
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        if (!request.ok) {
+            window.location.replace("./index.html");
+            return null;
+        }
+
+        const response = await request.json();
+        const usuario = response.usuario;
+
+        if (usuario.rol === "administrador") {
+            return usuario;
+        }
+
+        if (usuario.rol === "usuario_proveedor") {
+            window.location.replace("./Provedores.html");
+            return null;
+        }
+
+        window.location.replace("./inicio.html");
+        return null;
+    } catch (error) {
+        console.error("Error verificando sesión:", error);
+        window.location.replace("./index.html");
+        return null;
+    }
+}
+
 async function iniciarAplicacion() {
+
+    botones.forEach(boton => {
+        boton.addEventListener("click", () => {
+            botones.forEach(item =>
+                item.classList.remove("active")
+            );
+
+            boton.classList.add("active");
+        });
+    });
+
+    proveedoresbtn.addEventListener(
+        "click",
+        vistaProveedores
+    );
+
+    edificiosbtn.addEventListener(
+        "click",
+        vistaEdificios
+    );
+
+    usuariosbtn.addEventListener(
+        "click",
+        () => vistaUsuarios()
+    );
 
     await cargarEdificios();
 
@@ -174,28 +223,17 @@ async function iniciarAplicacion() {
 }
 
 
-iniciarAplicacion();
+async function iniciar() {
+    const usuario = await verificar_sesion();
 
+    if (!usuario) {
+        return;
+    }
 
+    await iniciarAplicacion();
+}
 
-// ==========================================
-// EVENTOS SIDEBAR
-// ==========================================
-
-proveedoresbtn.addEventListener(
-    "click",
-    vistaProveedores
-);
-
-edificiosbtn.addEventListener(
-    "click",
-    vistaEdificios
-);
-
-usuariosbtn.addEventListener(
-    "click",
-    () => vistaUsuarios()
-);
+document.addEventListener("DOMContentLoaded", iniciar);
 
 
 

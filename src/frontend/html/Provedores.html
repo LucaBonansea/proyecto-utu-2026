@@ -119,52 +119,7 @@
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-    const coordenadasIniciales = [-34.9011, -56.1645];
-    const mapas = [];
-
-    document.querySelectorAll(".map").forEach(function (contenedor) {
-        const mapa = L.map(contenedor).setView(coordenadasIniciales, 13);
-
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution: "&copy; OpenStreetMap contributors"
-        }).addTo(mapa);
-
-        mapas.push(mapa);
-    });
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function (position) {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                const precision = position.coords.accuracy;
-
-                mapas.forEach(function (mapa) {
-                    mapa.setView([lat, lng], 16);
-
-                    L.marker([lat, lng])
-                        .addTo(mapa)
-                        .bindPopup("📍 Tu ubicación")
-                        .openPopup();
-
-                    L.circle([lat, lng], {
-                        radius: precision,
-                        color: "blue",
-                        fillColor: "#3f8cff",
-                        fillOpacity: 0.25
-                    }).addTo(mapa);
-                });
-            },
-            function (error) {
-                console.error("No fue posible obtener la ubicación:", error.message);
-            }
-        );
-    } else {
-        console.log("Tu navegador no soporta geolocalización.");
-    }
-</script>
+<script src="/proyecto-utu-2026/src/frontend/js/script-provedores.js"></script>
 
 </body>
 </html>
