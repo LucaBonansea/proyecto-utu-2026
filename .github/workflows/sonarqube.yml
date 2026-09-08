@@ -12,7 +12,7 @@ on:
 jobs:
   sonar:
     name: Build and analyze
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
