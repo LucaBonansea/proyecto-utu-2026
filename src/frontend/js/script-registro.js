@@ -1,52 +1,112 @@
-const $btn_registro = document.querySelector(".btn-registro");
-const $input_name = document.querySelector(".name-input");
-const $input_ci = document.querySelector(".ci-input");
-const $input_edificio = document.querySelector(".edificio-select");
-const $input_password = document.querySelector(".pass-input");
-const $input_password_2 = document.querySelector(".pass-input-2");
+let $btn_registro;
+let $input_name;
+let $input_ci;
+let $input_edificio;
+let $input_password;
+let $input_password_2;
 
-$btn_registro.textContent = "Registrar";
+async function verificar_sesion() {
+    try {
+        const request = await fetch(
+            "http://127.0.0.1:8000/api/auth/me",
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
 
-// Quitar error al modificar los campos
-$input_name.addEventListener("input", () => {
-    $input_name.classList.remove("error");
-});
+        if (!request.ok) {
+            window.location.replace("./index.html");
+            return null;
+        }
 
-$input_ci.addEventListener("input", () => {
-    $input_ci.classList.remove("error");
-});
+        const response = await request.json();
+        const usuario = response.usuario;
 
-$input_edificio.addEventListener("change", () => {
-    $input_edificio.classList.remove("error");
-});
+        if (usuario.rol === "administrador") {
+            return usuario;
+        }
 
-$input_password.addEventListener("input", () => {
-    $input_password.classList.remove("error");
-});
+        if (usuario.rol === "usuario_proveedor") {
+            window.location.replace("./Provedores.html");
+            return null;
+        }
 
-$input_password_2.addEventListener("input", () => {
-    $input_password_2.classList.remove("error");
-});
+        window.location.replace("./inicio.html");
+        return null;
+    } catch (error) {
+        console.error("Error verificando sesión:", error);
+        window.location.replace("./index.html");
+        return null;
+    }
+}
 
-// Registrar usuario
-$btn_registro.addEventListener("click", (e) => {
-    e.preventDefault();
+function iniciarAplicacion() {
+    $btn_registro = document.querySelector(".btn-registro");
+    $input_name = document.querySelector(".name-input");
+    $input_ci = document.querySelector(".ci-input");
+    $input_edificio = document.querySelector(".edificio-select");
+    $input_password = document.querySelector(".pass-input");
+    $input_password_2 = document.querySelector(".pass-input-2");
 
-    const datos = {
-        nombre: $input_name.value,
-        cedula: $input_ci.value,
-        edificio: $input_edificio.value,
-        password: $input_password.value,
-        password_confirmation: $input_password_2.value
-    };
+    $btn_registro.textContent = "Registrar";
 
-    $btn_registro.disabled = true;
-    $btn_registro.textContent = "Registrando...";
-    $btn_registro.style.background =
-        "linear-gradient(135deg, #2ECC71 0%, #27AE60 100%)";
+    // Quitar error al modificar los campos
+    $input_name.addEventListener("input", () => {
+        $input_name.classList.remove("error");
+    });
 
-    registrar_usuario(datos);
-});
+    $input_ci.addEventListener("input", () => {
+        $input_ci.classList.remove("error");
+    });
+
+    $input_edificio.addEventListener("change", () => {
+        $input_edificio.classList.remove("error");
+    });
+
+    $input_password.addEventListener("input", () => {
+        $input_password.classList.remove("error");
+    });
+
+    $input_password_2.addEventListener("input", () => {
+        $input_password_2.classList.remove("error");
+    });
+
+    // Registrar usuario
+    $btn_registro.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const datos = {
+            nombre: $input_name.value,
+            cedula: $input_ci.value,
+            edificio: $input_edificio.value,
+            password: $input_password.value,
+            password_confirmation: $input_password_2.value
+        };
+
+        $btn_registro.disabled = true;
+        $btn_registro.textContent = "Registrando...";
+        $btn_registro.style.background =
+            "linear-gradient(135deg, #2ECC71 0%, #27AE60 100%)";
+
+        registrar_usuario(datos);
+    });
+}
+
+async function iniciar() {
+    const usuario = await verificar_sesion();
+
+    if (!usuario) {
+        return;
+    }
+
+    iniciarAplicacion();
+}
+
+document.addEventListener("DOMContentLoaded", iniciar);
 
 async function registrar_usuario(datos) {
     try {
@@ -136,7 +196,7 @@ async function registrar_usuario(datos) {
         });
 
         setTimeout(() => {
-            window.location.href = "./index.html";
+            window.location.replace("./index.html");
         }, 2000);
 
     } catch (error) {
