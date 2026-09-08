@@ -5,6 +5,51 @@ const usuariosbtn = document.querySelector(".usuarios-btn");
 const botones = document.querySelectorAll(".sidebar-btn");
 const edificiosbtn = document.querySelector(".edificios-btn");
 
+function obtener_cookie(nombre) {
+    const cookies = document.cookie.split("; ");
+
+    const cookie = cookies.find(
+        item => item.startsWith(nombre + "=")
+    );
+
+    if (!cookie) {
+        return null;
+    }
+
+    return decodeURIComponent(
+        cookie.substring(nombre.length + 1)
+    );
+}
+
+async function obtener_csrf() {
+    const response = await fetch(
+        "http://127.0.0.1:8000/sanctum/csrf-cookie",
+        {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                "Accept": "application/json"
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("No se pudo obtener la cookie CSRF");
+    }
+}
+
+async function obtener_token_csrf() {
+    await obtener_csrf();
+
+    const csrfToken = obtener_cookie("XSRF-TOKEN");
+
+    if (!csrfToken) {
+        throw new Error("No se encontró el token CSRF");
+    }
+
+    return csrfToken;
+}
+
 
 function quitarTildes(texto) {
 
@@ -32,6 +77,7 @@ async function cargarEdificios() {
             "http://127.0.0.1:8000/api/edificios",
             {
                 method: "GET",
+                credentials: "include",
                 headers: {
                     "Accept": "application/json"
                 }
@@ -68,6 +114,7 @@ async function cargarUsuarios() {
             "http://127.0.0.1:8000/api/usuarios",
             {
                 method: "GET",
+                credentials: "include",
                 headers: {
                     "Accept": "application/json"
                 }
@@ -105,6 +152,7 @@ async function cargarProveedores() {
             "http://127.0.0.1:8000/api/proveedores",
             {
                 method: "GET",
+                credentials: "include",
                 headers: {
                     "Accept": "application/json"
                 }
@@ -523,15 +571,18 @@ function vistaProveedores(){
             btnGuardar.disabled = true;
             btnGuardar.textContent = "Guardando...";
 
+            const csrfToken = await obtener_token_csrf();
 
             const response = await fetch(
                 "http://127.0.0.1:8000/api/proveedores",
                 {
                     method: "POST",
+                    credentials: "include",
 
                     headers: {
                         "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        "Accept": "application/json",
+                        "X-XSRF-TOKEN": csrfToken
                     },
 
                     body: JSON.stringify({
@@ -715,12 +766,16 @@ async function cambiarEstadoProveedor(id) {
 
     try {
 
+        const csrfToken = await obtener_token_csrf();
+
         const response = await fetch(
             `http://127.0.0.1:8000/api/proveedores/${id}/estado`,
             {
                 method: "PUT",
+                credentials: "include",
                 headers: {
-                    "Accept": "application/json"
+                    "Accept": "application/json",
+                    "X-XSRF-TOKEN": csrfToken
                 }
             }
         );
@@ -1050,15 +1105,18 @@ function vistaEdificios(){
             btnGuardar.disabled = true;
             btnGuardar.textContent = "Guardando...";
 
+            const csrfToken = await obtener_token_csrf();
 
             const response = await fetch(
                 "http://127.0.0.1:8000/api/edificios",
                 {
                     method: "POST",
+                    credentials: "include",
 
                     headers: {
                         "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        "Accept": "application/json",
+                        "X-XSRF-TOKEN": csrfToken
                     },
 
                     body: JSON.stringify({
@@ -2016,15 +2074,18 @@ function vistaUsuarios(filtro = "") {
             btnGuardar.disabled = true;
             btnGuardar.textContent = "Guardando...";
 
+            const csrfToken = await obtener_token_csrf();
 
             const response = await fetch(
                 "http://127.0.0.1:8000/api/usuarios",
                 {
                     method: "POST",
+                    credentials: "include",
 
                     headers: {
                         "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        "Accept": "application/json",
+                        "X-XSRF-TOKEN": csrfToken
                     },
 
                     body: JSON.stringify(datos)
@@ -2508,14 +2569,18 @@ function vistaUsuarios(filtro = "") {
                             btnGuardarPassword.disabled = true;
                             btnGuardarPassword.textContent = "Guardando...";
 
+                            const csrfToken = await obtener_token_csrf();
+
                             const response = await fetch(
                                 `http://127.0.0.1:8000/api/usuarios/${usuario.cedula}/password`,
                                 {
                                     method: "PUT",
+                                    credentials: "include",
 
                                     headers: {
                                         "Content-Type": "application/json",
-                                        "Accept": "application/json"
+                                        "Accept": "application/json",
+                                        "X-XSRF-TOKEN": csrfToken
                                     },
 
                                     body: JSON.stringify({
@@ -2698,19 +2763,25 @@ function vistaUsuarios(filtro = "") {
                             btnGuardarCambio.textContent =
                                 "Guardando...";
 
+                            const csrfToken =
+                                await obtener_token_csrf();
 
                             const response =
                                 await fetch(
                                     `http://127.0.0.1:8000/api/usuarios/${usuario.cedula}/rol`,
                                     {
                                         method: "PUT",
+                                        credentials: "include",
 
                                         headers: {
                                             "Content-Type":
                                                 "application/json",
 
                                             "Accept":
-                                                "application/json"
+                                                "application/json",
+
+                                            "X-XSRF-TOKEN":
+                                                csrfToken
                                         },
 
                                         body: JSON.stringify({
