@@ -2079,6 +2079,104 @@ main{
     background-color: #f2f2f2;
 }
 
+/* ==========================================
+   CONTENEDOR DE CHECKBOXES DE EDIFICIOS
+========================================== */
+
+.checkboxes-edificios,
+.checkboxes-edificios-cambio {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 10px 0px;
+    background-color: #fafbfc;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    width: 100%;
+}
+
+/* Scrollbar prolija (Chrome/Edge/Safari) */
+.checkboxes-edificios::-webkit-scrollbar,
+.checkboxes-edificios-cambio::-webkit-scrollbar {
+    width: 6px;
+}
+
+.checkboxes-edificios::-webkit-scrollbar-thumb,
+.checkboxes-edificios-cambio::-webkit-scrollbar-thumb {
+    background-color: #c5c5c5;
+    border-radius: 10px;
+}
+
+.checkboxes-edificios::-webkit-scrollbar-track,
+.checkboxes-edificios-cambio::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* ==========================================
+   CADA OPCIÓN (chip)
+========================================== */
+
+.checkbox-edificio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 10px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    margin: 0px 10px;
+}
+
+.checkbox-edificio:hover {
+    background-color: #eef4fb;
+}
+
+/* Checkbox custom */
+.checkbox-edificio input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border: 2px solid #bbb;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.checkbox-edificio input[type="checkbox"]:hover {
+    border-color: #4a90d9;
+}
+
+.checkbox-edificio input[type="checkbox"]:checked {
+    background-color: #4a90d9;
+    border-color: #4a90d9;
+}
+
+.checkbox-edificio input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Resalta la fila entera cuando está tildada */
+.checkbox-edificio:has(input:checked) {
+    background-color: #e4f0fc;
+    font-weight: 600;
+    color: #245a8d;
+}
 
 @media (max-width: 768px) {
 
