@@ -1,207 +1,501 @@
-*{
-    margin: 0;
-    padding: 0;
-}
-body{
-    background-color: #F0F5FF;
-    font-family:'Inter', sans-serif;
-    
-    
-}
-header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin:15px 25px;
+*{ 
+    margin: 0; 
+    padding: 0; 
+} 
+
+body{ 
+    background-color: #F0F5FF; 
+    font-family:'Inter', sans-serif; 
+} 
+
+header{ 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin:15px 25px; 
+} 
+
+html{ 
+    overflow-y:scroll; 
+    scrollbar-width:none; 
+} 
+
+body{ 
+    overflow-x:hidden; 
+} 
+
+html::-webkit-scrollbar{ 
+    display:none; 
+} 
+
+main{ 
+    padding-bottom:150px; 
+} 
+
+.logos{ 
+    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%); 
+    display: flex; 
+    border-radius: 1000px; 
+    padding:5px; 
+    gap: 5px; 
+} 
+
+.int-logo{ 
+    width:90px; 
+    height:auto; 
+    margin:2px; 
+} 
+
+.int-logo-div{ 
+    background-color: white; 
+    padding: 4px 16px; 
+    border-radius: 50px; 
+} 
+
+.logo-div{ 
+    background-color: white; 
+    border-radius: 50%; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+} 
+
+.logo{ 
+    width:38px; 
+    height:auto; 
+    margin:2px; 
+    border-radius: 100px; 
+    padding: 3px; 
+} 
+
+.reclamos-Ur{ 
+    display: inline-block; 
+    width: fit-content; 
+    font-size: 0.68rem; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 0.02em; 
+    color: #b91c1c; 
+    background: #fee2e2; 
+    padding: 0.15rem 0.5rem; 
+    border-radius: 999px; 
+} 
+
+.reclamos-text{ 
+    font-size: 12px; 
+    font-weight: 100; 
+    color: #505050; 
+} 
+
+.foto-reclamo{ 
+    width:120px; 
+    height:140px; 
+    overflow:hidden; 
+    flex-shrink:0; 
+    border-radius: 26px; 
+} 
+
+.foto-reclamo img{ 
+    width:100%; 
+    height:100%; 
+    object-fit:cover; 
+} 
+
+.info-reclamo{ 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    margin-left:10px; 
+    flex:1; 
+    min-width:0; 
+    gap: 6px; 
+} 
+
+.r{ 
+    background-color: white; 
+    border-radius: 30px; 
+    margin: 0px 12px; 
+    width: calc(100% - 40px); 
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
+    padding: 5px; 
+    margin-bottom: 10px; 
+} 
+
+.container-reclamos{ 
+    display: flex; 
+    justify-content: center; 
+} 
+
+.reclamos-title{ 
+    font-size: 18px; 
+    font-weight: 600; 
+    color: #000000; 
+    margin-bottom: 4px; 
+} 
+
+.info-reclamo { 
+    font-size: 16px; 
+    font-weight: 600; 
+    color: #000000; 
+    display: flex; 
+    flex-direction: column; 
+} 
+
+.top-container{ 
+    display: flex; 
+    gap: 10px; 
+} 
+
+.btn-resolver{ 
+    background-color: rgb(51, 51, 161); 
+    color: rgb(255, 255, 255); 
+    border: none; 
+    padding: px 8px; 
+    border-radius: 20px; 
+    cursor: pointer; 
+    font-size: 13px; 
+    max-width: 150px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 5px; 
+} 
+
+.title{ 
+    font-size: 25px; 
+    padding-left: 25px; 
+    margin-bottom: 10px; 
+} 
+
+@media (max-width: 600px) { 
+    .btns{ 
+        gap: 0px; 
+    } 
+} 
+
+@media (max-width: 320px) { 
+
+    .foto-reclamo{ 
+        width: 80px; 
+        height: 100px; 
+    } 
+
+    .reclamos-text{ 
+        margin: 0px; 
+        font-size: 10px; 
+    } 
+
+    .btn-resolver{ 
+        gap: 0px; 
+        width: 70px; 
+        height: 30px; 
+        margin: 0px; 
+        font-size: 9px; 
+    } 
+} 
+
+@media(max-width: 460px){ 
+
+    .container-reclamos{ 
+        display: block; 
+    } 
+
 }
 
-html{
-    overflow-y:scroll;
-    scrollbar-width:none; /* Firefox */
-}
 
-body{
-    overflow-x:hidden;
-}
-
-html::-webkit-scrollbar{
-    display:none; /* Chrome, Edge, Safari */
-}
-main{
-    padding-bottom:150px;
-}
-.logos{
-    background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
-    display: flex;
-    border-radius: 1000px;
-    padding:5px;
-    gap: 5px;
-    
-}
-
-.int-logo{
-    width:90px;
-    height:auto;
-    margin:2px;
-}
-
-.int-logo-div{
-    background-color: white;
-    padding: 4px 16px;
-    border-radius: 50px;
-}
-
-.logo-div{
-    background-color: white;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-}
-.logo{
-    width:38px;
-    height:auto;
-    margin:2px;
-    border-radius: 100px;
-    padding: 3px;
-}
-.reclamos-Ur{
-  display: inline-block;
-    width: fit-content;
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    color: #b91c1c;
-    background: #fee2e2;
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-}
- 
-.reclamos-text{
-    
-    font-size: 12px;
-    font-weight: 100;
-    color: #505050;
-    
-}
-.foto-reclamo{
-    width:120px;
-    height:140px;
-    overflow:hidden;
-    flex-shrink:0;
-    border-radius: 26px;
-}
-
-.foto-reclamo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    
-}
-.info-reclamo{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-left:10px;
-    flex:1;
-    min-width:0;
-    gap: 6px;
+.oculto{
+    display: none !important;
 }
 
 
-.r{
-    background-color: white;
-    border-radius: 30px;
-    margin: 0px 12px;
-    width: calc(100% - 40px);
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 5px;
-    margin-bottom: 10px;
-}
+.btn-volver{
+    margin: 0 25px 15px;
 
-.container-reclamos{
-    display: flex;
-    justify-content: center;
-}
-.reclamos-title{
-    font-size: 18px;
-    font-weight: 600;
-    color: #000000;
-    margin-bottom: 4px;
-}
-
-.info-reclamo {
-    font-size: 16px;
-    font-weight: 600;
-    color: #000000;
-    display: flex;
-    
-    flex-direction: column;
-}
-
-.top-container{
-    display: flex;
-    gap: 10px;
-}
-.btn-resolver{
-    background-color: rgb(51, 51, 161);
-    color: rgb(255, 255, 255);
-    
+    background: none;
     border: none;
-    padding: px 8px;
-    border-radius: 20px;
+
+    color: rgb(51, 51, 161);
+
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+
     cursor: pointer;
-    font-size: 13px;
-    cursor: pointer;
-    max-width: 150px;
+
     display: flex;
     align-items: center;
-    justify-content: center;
+
     gap: 5px;
 }
 
 
+.detalle-card{
+    background-color: white;
 
-.title{
+    border-radius: 30px;
+
+    margin: 0 20px;
+
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+    overflow: hidden;
+}
+
+
+
+.detalle-imagen-container{
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.detalle-imagen-container img{
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.detalle-info{
+    padding: 25px;
+}
+
+.detalle-info h1{
     font-size: 25px;
-    padding-left: 25px;
-    margin-bottom: 10px;
+    font-weight: 600;
 
+    margin-bottom: 12px;
 }
 
 
-@media (max-width: 600px) {
 
-    .btns{
-        gap: 0px;
-    }
-}
-@media (max-width: 320px) {
+.detalle-datos{
+    display: flex;
+    align-items: center;
 
-    .foto-reclamo{
-        width: 80px;
-        height: 100px;
-    }
-    .reclamos-text{
-        margin: 0px;
-        font-size: 10px;
-    }
-    .btn-resolver{
-        gap: 0px;
-        width: 70px;
-        height: 30px;
-        margin: 0px;
-        font-size: 9px;
-        
-    }
-    
-    
+    gap: 15px;
+
+    margin-bottom: 25px;
 }
 
-@media(max-width: 460px){
-.container-reclamos{
-       display: block;
+
+.descripcion{
+    margin-bottom: 30px;
+}
+
+.descripcion h2,
+.resolucion h2{
+    font-size: 19px;
+    font-weight: 600;
+
+    margin-bottom: 8px;
+}
+
+.descripcion p{
+    color: #505050;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+
+.resolucion{
+    border-top: 1px solid #eeeeee;
+
+    padding-top: 25px;
+}
+
+.resolucion-texto{
+    color: #505050;
+
+    font-size: 14px;
+
+    margin-bottom: 15px;
+}
+
+
+
+.upload-area{
+    border: 2px dashed #b8c3df;
+
+    border-radius: 20px;
+
+    padding: 30px 15px;
+
+    text-align: center;
+
+    margin-bottom: 15px;
+}
+
+.upload-area .material-symbols-outlined{
+    font-size: 40px;
+
+    color: rgb(51, 51, 161);
+
+    margin-bottom: 8px;
+}
+
+.upload-area p{
+    font-size: 14px;
+
+    color: #505050;
+
+    margin-bottom: 12px;
+}
+
+
+#foto-evidencia{
+    display: none;
+}
+
+
+
+.btn-foto{
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgb(51, 51, 161);
+
+    color: white;
+
+    padding: 9px 15px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+.preview-container{
+    margin-bottom: 15px;
+}
+
+.preview-container img{
+    display: block;
+
+    width: 100%;
+
+    max-height: 350px;
+
+    object-fit: cover;
+
+    border-radius: 20px;
+}
+
+
+
+.btn-cambiar-foto{
+    margin-top: 8px;
+
+    background-color: #fee2e2;
+
+    color: #b91c1c;
+
+    border: none;
+
+    border-radius: 20px;
+
+    padding: 8px 12px;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+}
+
+
+#observaciones{
+    width: 100%;
+
+    min-height: 90px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 15px;
+
+    padding: 12px;
+
+    resize: vertical;
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 13px;
+
+    margin-bottom: 15px;
+
+    outline: none;
+}
+
+#observaciones:focus{
+    border-color: rgb(51, 51, 161);
+}
+
+
+
+.btn-resolver-final{
+    width: 100%;
+
+    max-width: none;
+
+    height: 45px;
+
+    font-size: 14px;
+
+    margin-bottom: 5px;
+}
+
+
+
+@media(max-width: 600px){
+
+    .detalle-card{
+        margin: 0 12px;
     }
+
+    .detalle-imagen-container{
+        height: 220px;
+    }
+
+    .detalle-info{
+        padding: 20px;
+    }
+
+    .detalle-info h1{
+        font-size: 21px;
+    }
+
+    .btn-volver{
+        margin-left: 15px;
+    }
+
+}
+
+@media(max-width: 320px){
+
+    .detalle-imagen-container{
+        height: 180px;
+    }
+
+    .detalle-info{
+        padding: 15px;
+    }
+
+    .detalle-info h1{
+        font-size: 18px;
+    }
+
 }
