@@ -3,6 +3,7 @@ export class Nuevo_reclamos {
         this.$btn_home_top = $btn_home_top;
         this.$btn_home = $btn_home;
         this.Main = Main;
+        this.ultimoMensajeToast = "";
     }
 
     third_view() {
@@ -13,16 +14,14 @@ export class Nuevo_reclamos {
             <h2>Nuevo Reclamo</h2>
         </div>
 
-       
 
-        <input type="file" id="archivo" hidden>
+        <input type="file" id="archivo" class="input-subir" hidden>
 
         <section class="top-new-reclamo">
             <label for="archivo" class="icono-subir">
                 <span class="material-symbols-outlined">add_photo_alternate</span>
                 Sube aquí tu evidencia
             </label>
-
             <label class="descripcion">
                 <span class="material-symbols-outlined">description</span>
                 <div class="textarea-box">
@@ -36,6 +35,9 @@ export class Nuevo_reclamos {
             </label>
         </section>
 
+        <div class="preview-foto-container">
+                    <img class="preview-foto" src="https://previews.123rf.com/images/synell/synell2205/synell220500005/189187581-smashed-window-broken-glass-break-destroyed-building-broken-frame-window-plastic-aftermath-bombed.jpg" alt="Vista previa" accept="image/*">
+            </div>
         <section class="tipo-reclamo">
             <label for="tipo-reclamo" class="tipo-reclamo-label">
                 Tipo de reclamo
@@ -56,12 +58,15 @@ export class Nuevo_reclamos {
             </option>
         </select>
 
-
+        
         <section class="bottom-new-reclamo">
             <button class="enviarReclamo">Enviar Reclamo</button>
         </section>`;
+
         this.cargar_clasificaciones();
         this.cargar_edificios();
+        this.enviar_reclamo();
+        this.subir_foto();
         this.enviar_reclamo();
     }
 
@@ -231,4 +236,286 @@ export class Nuevo_reclamos {
             contador.style.color = descripcion.value.length >= 180 ? "#e53935" : "#777";
         });
     }
+
+    subir_foto() {
+    const input_subir =
+        document.querySelector(".input-subir");
+
+    const preview =
+        document.querySelector(".preview-foto");
+
+    input_subir.addEventListener("change", () => {
+        const archivo = input_subir.files[0];
+
+        if (!archivo) {
+            preview.src = "";
+            preview.style.display = "none";
+            return;
+        }
+
+        if (!archivo.type.startsWith("image/")) {
+            alert("Solo se permiten archivos de imagen.");
+
+            input_subir.value = "";
+            preview.src = "";
+            preview.style.display = "none";
+
+            return;
+        }
+
+        const urlTemporal =
+            URL.createObjectURL(archivo);
+
+        preview.src = urlTemporal;
+        preview.style.display = "block";
+    });
+}
+
+enviar_reclamo() {
+    const boton = document.querySelector(".enviarReclamo");
+
+    boton.addEventListener("click", async () => {
+        const archivo =
+            document.getElementById("archivo").files[0];
+
+        const descripcion =
+            document.getElementById("descripcion").value.trim();
+
+        const clasificacion_id =
+            document.getElementById("tipo-reclamo").value;
+
+        const edificio_id =
+            document.getElementById("edificio").value;
+
+        if (!archivo) {
+            this.mostrarToast(
+                "error",
+                "Debes subir una foto como evidencia."
+            );
+            return;
+        }
+
+        if (!archivo.type.startsWith("image/")) {
+            this.mostrarToast(
+                "error",
+                "El archivo debe ser una imagen."
+            );
+            return;
+        }
+
+        if (!descripcion) {
+            this.mostrarToast(
+                "error",
+                "Debes escribir una descripción."
+            );
+            return;
+        }
+
+        if (!clasificacion_id) {
+            this.mostrarToast(
+                "error",
+                "Debes seleccionar una clasificación."
+            );
+            return;
+        }
+
+        if (!edificio_id) {
+            this.mostrarToast(
+                "error",
+                "Debes seleccionar un edificio."
+            );
+            return;
+        }
+
+        try {
+            boton.disabled = true;
+            boton.textContent = "Enviando...";
+
+            await this.obtener_csrf();
+
+            const csrfToken =
+                this.obtener_cookie("XSRF-TOKEN");
+
+            if (!csrfToken) {
+                throw new Error(
+                    "No se encontró el token CSRF"
+                );
+            }
+
+            const formData = new FormData();
+
+            formData.append(
+                "description",
+                descripcion
+            );
+
+            formData.append(
+                "clasificacion_id",
+                clasificacion_id
+            );
+
+            formData.append(
+                "edificio_id",
+                edificio_id
+            );
+
+            formData.append(
+                "photo",
+                archivo
+            );
+
+            const response = await fetch(
+                "http://127.0.0.1:8000/api/reclamos",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Accept": "application/json",
+                        "X-XSRF-TOKEN": csrfToken
+                    },
+                    body: formData
+                }
+            );
+
+            const data = await response.json();
+
+            console.log(
+                "STATUS:",
+                response.status
+            );
+
+            console.log(
+                "RESPUESTA:",
+                data
+            );
+
+            if (!response.ok) {
+
+                if (response.status === 401) {
+                    this.mostrarToast(
+                        "error",
+                        "Tu sesión expiró. Inicia sesión nuevamente."
+                    );
+
+                    setTimeout(() => {
+                        window.location.replace("./index.html");
+                    }, 1500);
+
+                    return;
+                }
+
+                if (response.status === 419) {
+                    this.mostrarToast(
+                        "error",
+                        "La sesión de seguridad expiró."
+                    );
+
+                    return;
+                }
+
+                if (response.status === 422) {
+                    this.mostrarToast(
+                        "error",
+                        data.message ||
+                        "Hay datos inválidos en el reclamo."
+                    );
+
+                    return;
+                }
+
+                this.mostrarToast(
+                    "error",
+                    data.message ||
+                    "No se pudo crear el reclamo."
+                );
+
+                return;
+            }
+
+            this.mostrarToast(
+                "success",
+                "Reclamo creado correctamente."
+            );
+
+        } catch (error) {
+            console.error(
+                "Error creando reclamo:",
+                error
+            );
+
+            this.mostrarToast(
+                "error",
+                "No se pudo conectar con el servidor."
+            );
+
+        } finally {
+            boton.disabled = false;
+            boton.textContent = "Enviar Reclamo";
+        }
+    });
+}
+
+
+obtener_cookie(nombre) {
+    const cookies = document.cookie.split("; ");
+
+    const cookie = cookies.find(
+        item => item.startsWith(nombre + "=")
+    );
+
+    if (!cookie) {
+        return null;
+    }
+
+    return decodeURIComponent(
+        cookie.substring(nombre.length + 1)
+    );
+}
+
+async obtener_csrf() {
+    const response = await fetch(
+        "http://127.0.0.1:8000/sanctum/csrf-cookie",
+        {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                "Accept": "application/json"
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            "No se pudo obtener el token CSRF"
+        );
+    }
+}
+
+    mostrarToast(tipo, mensaje) {
+    if (mensaje === this.ultimoMensajeToast) {
+        return;
+    }
+
+    this.ultimoMensajeToast = mensaje;
+
+    const opciones = {
+        duration: 4000,
+        progress: true,
+        position: "top-center"
+    };
+
+    if (tipo === "success") {
+        showToast.success(mensaje, opciones);
+    }
+
+    if (tipo === "error") {
+        showToast.error(mensaje, opciones);
+    }
+
+    setTimeout(() => {
+        if (this.ultimoMensajeToast === mensaje) {
+            this.ultimoMensajeToast = "";
+        }
+    }, 4000);
+}
 }

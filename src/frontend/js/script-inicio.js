@@ -66,7 +66,8 @@ function iniciarAplicacion() {
     const $notificaciones_btn_top = document.querySelector(".notificaciones-btn-top");
     const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
     const $notificaciones_lista = document.querySelector(".notificaciones-lista");
-
+    const $btn_logout = document.querySelector("#btn-cerrar-sesion");
+    
     function button_restart_actives() {
         buttons_tops.forEach(button => {
             button.classList.remove("active");

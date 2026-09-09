@@ -87,6 +87,7 @@ export class Reclamos{
                 this.second_view(chip.dataset.filtro);
             });
         });
+
     }
 
     renderTarjeta(reclamo, index, pasos){
@@ -125,4 +126,6 @@ export class Reclamos{
             </div>
         `;
     }
+
+
 }
