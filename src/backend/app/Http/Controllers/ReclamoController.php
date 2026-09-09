@@ -18,7 +18,7 @@ class ReclamoController extends Controller
         ]);
 
         $reclamo = Reclamo::create([
-            'user_id' => auth()->id(),
+            'usuario_cedula' => $request->user()->cedula,
             'edificio_id' => $incomingFields['edificio_id'],
             'description' => $incomingFields['description'],
             'clasificacion_id' => $incomingFields['clasificacion_id'],

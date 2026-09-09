@@ -1,11 +1,12 @@
 export class Cuenta {
-    constructor(Main, button_restart_actives, $btn_cuenta_top, $btn_cuenta, irAInicioFiltrado){
+    constructor(Main, button_restart_actives, $btn_cuenta_top, $btn_cuenta, irAInicioFiltrado) {
         this.Main = Main;
         this.button_restart_actives = button_restart_actives;
         this.$btn_cuenta_top = $btn_cuenta_top;
         this.$btn_cuenta = $btn_cuenta;
         this.irAInicioFiltrado = irAInicioFiltrado; // función que viene de script-inicio.js
     }
+
 
     async obtener_informacion_cuenta() {
         try {
@@ -127,17 +128,106 @@ export class Cuenta {
         this.eventos();
     }
 
-    eventos(){
-        const $btn_logout = this.Main.querySelector("#btn-cerrar-sesion");
-        $btn_logout.addEventListener("click", () => {
-            window.location.href = "/proyecto-utu-2026/src/frontend/html/";
-        });
+    
 
-        this.Main.querySelectorAll(".stat-item").forEach(stat => {
-            stat.addEventListener("click", () => {
-                const filtro = stat.dataset.filtro;
-                this.irAInicioFiltrado(filtro);
-            });
-        });
+eventos() {
+    const $btn_logout = this.Main.querySelector("#btn-cerrar-sesion");
+
+    if ($btn_logout) {
+        $btn_logout.addEventListener(
+            "click",
+            () => this.cerrar_sesion()
+        );
     }
+}
+
+obtener_cookie(nombre) {
+    const cookies = document.cookie.split("; ");
+
+    const cookie = cookies.find(
+        item => item.startsWith(nombre + "=")
+    );
+
+    if (!cookie) {
+        return null;
+    }
+
+    return decodeURIComponent(
+        cookie.substring(nombre.length + 1)
+    );
+}
+
+async obtener_csrf() {
+    const response = await fetch(
+        "http://127.0.0.1:8000/sanctum/csrf-cookie",
+        {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                "Accept": "application/json"
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            "No se pudo obtener el token CSRF"
+        );
+    }
+}
+
+async cerrar_sesion() {
+    try {
+        await this.obtener_csrf();
+
+        const csrfToken =
+            this.obtener_cookie("XSRF-TOKEN");
+
+        if (!csrfToken) {
+            throw new Error(
+                "No se encontró el token CSRF"
+            );
+        }
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/api/auth/logout",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json",
+                    "X-XSRF-TOKEN": csrfToken
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        console.log(
+            "LOGOUT STATUS:",
+            response.status
+        );
+
+        console.log(
+            "LOGOUT RESPONSE:",
+            data
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                data.mensaje ||
+                "No se pudo cerrar la sesión"
+            );
+        }
+
+        window.location.replace("./index.html");
+
+    } catch (error) {
+        console.error(
+            "Error cerrando sesión:",
+            error
+        );
+    }
+    }
+
 }

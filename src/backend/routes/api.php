@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/reclamos', [ReclamoController::class, 'store']);
 Route::get('/clasificaciones', [ClasificacionController::class, 'index']);
 Route::get('/edificios', [EdificioController::class, 'index']);
 Route::get('/usuarios', [UsuarioController::class, 'index']);
@@ -23,6 +22,19 @@ Route::post('/proveedores', [ProveedorController::class, 'store']);
 Route::put('/proveedores/{id}/estado', [ProveedorController::class, 'cambiarEstado']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/reclamos', [ReclamoController::class, 'store']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/auth/me', [AuthController::class, 'me']);
+
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+});
+
 ?>
