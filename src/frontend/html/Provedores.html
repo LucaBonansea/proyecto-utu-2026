@@ -1,170 +1,416 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Proveedores</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-provedores.css">
-
-    <link rel="icon" href="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png">
 
     <link rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
+
+    <link rel="stylesheet"
+        href="/proyecto-utu-2026/src/frontend/css/style-provedores.css">
+
+    <link rel="icon"
+        href="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png">
 
 </head>
 
+
 <body>
 
-<header>
-    <div class="logos">
-        <div class="logo-div">
-            <img class="logo"
-                 src="/proyecto-utu-2026/src/frontend/assets/imgs/intendencia-logo-inicio.png"
-                 alt="Logo">
+    <header>
+
+        <div class="logos">
+
+            <div class="logo-div">
+
+                <img class="logo"
+                    src="/proyecto-utu-2026/src/frontend/assets/imgs/intendencia-logo-inicio.png"
+                    alt="Logo">
+
+            </div>
+
+
+            <a href="index.html"
+                class="int-logo-div">
+
+                <img class="int-logo"
+                    src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png"
+                    alt="Logo de la intendencia">
+
+            </a>
+
         </div>
 
-        <a href="index.html" class="int-logo-div">
-            <img class="int-logo"
-                 src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png"
-                 alt="Logo de la intendencia">
-        </a>
-    </div>
-</header>
+    </header>
 
-<main>
-    <h1 class="title">Reclamos a resolver</h1>
 
-    <section class="container-reclamos">
+    <main>
 
-        <div class="r">
-            <section class="top-container">
-                <div class="foto-reclamo">
-                    <img src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
-                         alt="Pozo en la calle">
+
+    
+
+        <section id="lista-reclamos">
+
+            <h1 class="title">
+                Reclamos a resolver
+            </h1>
+
+
+
+            <div class="container-reclamos">
+
+                <div class="r">
+
+                    <div class="top-container">
+
+                        <div class="foto-reclamo">
+
+                            <img
+                                src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
+                                alt="Foto del reclamo">
+
+                        </div>
+
+
+                        <div class="info-reclamo">
+
+                            <h2 class="reclamos-title">
+                                Pozo en el Mallada
+                            </h2>
+
+                            <span class="reclamos-Ur">
+                                Urgente
+                            </span>
+
+                            <p class="reclamos-text">
+                                07/09/2026
+                            </p>
+
+                            <button
+                                class="btn-resolver"
+                                type="button"
+                                onclick="mostrarReclamo(1)">
+
+                                Ver mas
+
+                                <span class="material-symbols-outlined">
+                                    arrow_forward
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div class="info-reclamo">
-                    <h3 class="reclamos-title">Pozo en el Mallada</h3>
-                    <div class="reclamos-Ur" type="button">
-                    Urgente
-                </div>
-                    <p class="reclamos-text">07/09/2026</p>
-                    
+            </div>
 
-                    <button class="btn-resolver" type="button">
-                        Ver mas 
-                        <span class="material-symbols-outlined">arrow_forward</span>
-                    </button> 
-                    
-                
+
+
+            <div class="container-reclamos">
+
+                <div class="r">
+
+                    <div class="top-container">
+
+                        <div class="foto-reclamo">
+
+                            <img
+                                src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
+                                alt="Foto del reclamo">
+
+                        </div>
+
+
+                        <div class="info-reclamo">
+
+                            <h2 class="reclamos-title">
+                                Pozo en el Mallada
+                            </h2>
+
+                            <p class="reclamos-text">
+                                07/09/2026
+                            </p>
+
+                            <button
+                                class="btn-resolver"
+                                type="button"
+                                onclick="mostrarReclamo(2)">
+
+                                Ver mas
+
+                                <span class="material-symbols-outlined">
+                                    arrow_forward
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
                 </div>
-               
-            </section>
+
+            </div>
+
 
             
-        </div>
-        <div class="r">
-            <section class="top-container">
-                <div class="foto-reclamo">
-                    <img src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
-                         alt="Pozo en la calle">
+
+            <div class="container-reclamos">
+
+                <div class="r">
+
+                    <div class="top-container">
+
+                        <div class="foto-reclamo">
+
+                            <img
+                                src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
+                                alt="Foto del reclamo">
+
+                        </div>
+
+
+                        <div class="info-reclamo">
+
+                            <h2 class="reclamos-title">
+                                Pozo en el Mallada
+                            </h2>
+
+                            <p class="reclamos-text">
+                                07/09/2026
+                            </p>
+
+                            <button
+                                class="btn-resolver"
+                                type="button"
+                                onclick="mostrarReclamo(3)">
+
+                                Ver mas
+
+                                <span class="material-symbols-outlined">
+                                    arrow_forward
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div class="info-reclamo">
-                    <h3 class="reclamos-title">Pozo en el Mallada</h3>
-                
-                    <p class="reclamos-text">07/09/2026</p>
-                    
+            </div>
 
-                    <button class="btn-resolver" type="button">
-                        Ver mas 
-                        <span class="material-symbols-outlined">arrow_forward</span>
-                    </button>
+        </section>
+
+
+
+ 
+
+        <section id="detalle-reclamo"
+            class="oculto">
+
+
+
+            <button
+                type="button"
+                class="btn-volver"
+                onclick="volverReclamos()">
+
+                <span class="material-symbols-outlined">
+                    arrow_back
+                </span>
+
+                Volver a reclamos
+
+            </button>
+
+
+            <div class="detalle-card">
+
+
+             
+                <div class="detalle-imagen-container">
+
+                    <img
+                        id="detalle-imagen"
+                        src=""
+                        alt="Imagen del reclamo">
+
                 </div>
-            </section>
 
-            
-        </div>
 
-        <div class="r">
-            <section class="top-container">
-                <div class="foto-reclamo">
-                    <img src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
-                         alt="Pozo en la calle">
+          
+
+                <div class="detalle-info">
+
+                    <h1 id="detalle-titulo">
+                        Pozo en el Mallada
+                    </h1>
+
+
+                    <div class="detalle-datos">
+
+                        <span
+                            id="detalle-prioridad"
+                            class="reclamos-Ur">
+
+                            Urgente
+
+                        </span>
+
+
+                        <span class="reclamos-text">
+
+                            Fecha:
+
+                            <strong id="detalle-fecha">
+                                07/09/2026
+                            </strong>
+
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="descripcion">
+
+                        <h2>
+                            Descripción
+                        </h2>
+
+                        <p id="detalle-descripcion">
+                        </p>
+
+                    </div>
+
+
+                    <div class="resolucion">
+
+                        <h2>
+                            Resolución
+                        </h2>
+
+                        <p class="resolucion-texto">
+
+                            Agrega una foto de evidencia
+                            cuando el reclamo haya sido
+                            solucionado.
+
+                        </p>
+
+
+                        <form id="form-resolver">
+
+
+                            <div
+                                id="upload-area"
+                                class="upload-area">
+
+                                <span class="material-symbols-outlined">
+                                    add_a_photo
+                                </span>
+
+
+                                <p>
+                                    Agregar foto de evidencia
+                                </p>
+
+
+                                <label
+                                    for="foto-evidencia"
+                                    class="btn-foto">
+
+                                    Seleccionar foto
+
+                                </label>
+
+
+                                <input
+                                    type="file"
+                                    id="foto-evidencia"
+                                    accept="image/*">
+
+                            </div>
+
+
+                         
+
+                            <div
+                                id="preview-container"
+                                class="preview-container oculto">
+
+                                <img
+                                    id="preview-imagen"
+                                    src=""
+                                    alt="Vista previa">
+
+
+                                <button
+                                    type="button"
+                                    class="btn-cambiar-foto"
+                                    onclick="eliminarFoto()">
+
+                                    <span class="material-symbols-outlined">
+                                        delete
+                                    </span>
+
+                                    Cambiar foto
+
+                                </button>
+
+                            </div>
+
+
+                       
+
+                            <textarea
+                                id="observaciones"
+                                placeholder="Observaciones de la resolución..."></textarea>
+
+
+
+                            <button
+                                type="submit"
+                                class="btn-resolver btn-resolver-final">
+
+                                <span class="material-symbols-outlined">
+                                    check_circle
+                                </span>
+
+                                Resolver reclamo
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
                 </div>
 
-                <div class="info-reclamo">
-                    <h3 class="reclamos-title">Pozo en el Mallada</h3>
-                
-                    <p class="reclamos-text">07/09/2026</p>
-                    
+            </div>
 
-                    <button class="btn-resolver" type="button">
-                        Ver mas 
-                        <span class="material-symbols-outlined">arrow_forward</span>
-                    </button>
-                </div>
-            </section>
+        </section>
 
-            
-        </div>
+    </main>
 
-        
-
-    </section>
-</main>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-    const coordenadasIniciales = [-34.9011, -56.1645];
-    const mapas = [];
-
-    document.querySelectorAll(".map").forEach(function (contenedor) {
-        const mapa = L.map(contenedor).setView(coordenadasIniciales, 13);
-
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution: "&copy; OpenStreetMap contributors"
-        }).addTo(mapa);
-
-        mapas.push(mapa);
-    });
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function (position) {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                const precision = position.coords.accuracy;
-
-                mapas.forEach(function (mapa) {
-                    mapa.setView([lat, lng], 16);
-
-                    L.marker([lat, lng])
-                        .addTo(mapa)
-                        .bindPopup("📍 Tu ubicación")
-                        .openPopup();
-
-                    L.circle([lat, lng], {
-                        radius: precision,
-                        color: "blue",
-                        fillColor: "#3f8cff",
-                        fillOpacity: 0.25
-                    }).addTo(mapa);
-                });
-            },
-            function (error) {
-                console.error("No fue posible obtener la ubicación:", error.message);
-            }
-        );
-    } else {
-        console.log("Tu navegador no soporta geolocalización.");
-    }
-</script>
+    <script
+        src="/proyecto-utu-2026/src/frontend/js/script-provedores.js">
+    </script>
 
 </body>
+
 </html>
