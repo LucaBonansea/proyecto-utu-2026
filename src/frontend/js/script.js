@@ -67,7 +67,7 @@ async function iniciar_usuario(datos) {
         // 1. Pedir cookie CSRF
         await obtener_csrf();
 
-        // 2. Leer la cookie DESPUÉS de pedirla
+        // 2. Leer la cookie después de pedirla
         const csrfToken = obtener_cookie("XSRF-TOKEN");
 
         console.log("CSRF TOKEN:", csrfToken);
@@ -76,7 +76,7 @@ async function iniciar_usuario(datos) {
             throw new Error("No se encontró el token CSRF");
         }
 
-        // 3. Hacer login enviando el token
+        // 3. Hacer login
         const request = await fetch(
             "http://127.0.0.1:8000/api/auth/login",
             {
@@ -179,8 +179,32 @@ async function iniciar_usuario(datos) {
             }
         );
 
+        // 4. REDIRECCIÓN SEGÚN ROL
+        const usuario = response.usuario;
+
+        console.log("ROL:", usuario.rol);
+
         setTimeout(() => {
-            window.location.href = "./inicio.html";
+            switch (usuario.rol) {
+
+                case "administrador":
+                    window.location.replace(
+                        "http://127.0.0.1:5500/proyecto-utu-2026/src/frontend/html/administrador.html"
+                    );
+                    break;
+
+                case "usuario_proveedor":
+                    window.location.replace(
+                        "http://127.0.0.1:5500/proyecto-utu-2026/src/frontend/html/Provedores.html"
+                    );
+                    break;
+
+                default:
+                    window.location.replace(
+                        "http://127.0.0.1:5500/proyecto-utu-2026/src/frontend/html/inicio.html"
+                    );
+                    break;
+            }
         }, 2000);
 
     } catch (error) {

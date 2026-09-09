@@ -65,7 +65,65 @@ let reclamosAValidar = [
     }
 ];
 
-vistaLista();
+async function verificar_sesion() {
+    try {
+        const request = await fetch(
+            "http://127.0.0.1:8000/api/auth/me",
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        if (!request.ok) {
+            window.location.replace("./index.html");
+            return null;
+        }
+
+        const response = await request.json();
+        const usuario = response.usuario;
+
+        switch (usuario.rol) {
+            case "administrativo":
+                return usuario;
+
+            case "administrador":
+                window.location.replace("./administrador.html");
+                return null;
+
+            case "usuario_proveedor":
+                window.location.replace("./Provedores.html");
+                return null;
+
+            default:
+                window.location.replace("./inicio.html");
+                return null;
+        }
+    } catch (error) {
+        console.error("Error verificando sesión:", error);
+        window.location.replace("./index.html");
+        return null;
+    }
+}
+
+function iniciarAplicacion() {
+    vistaLista();
+}
+
+async function iniciar() {
+    const usuario = await verificar_sesion();
+
+    if (!usuario) {
+        return;
+    }
+
+    iniciarAplicacion();
+}
+
+document.addEventListener("DOMContentLoaded", iniciar);
 
 function vistaLista(){
     filtro_container.innerHTML = ``;
