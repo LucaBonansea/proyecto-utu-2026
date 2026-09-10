@@ -1,0 +1,6 @@
+projectKey=Portal_Ciudadano
+serverUrl=http://localhost:9000
+serverVersion=26.8.0.126808
+dashboardUrl=http://localhost:9000/dashboard?id=Portal_Ciudadano
+ceTaskId=c41e9327-5a6a-485b-b399-535215ee79a4
+ceTaskUrl=http://localhost:9000/api/ce/task?id=c41e9327-5a6a-485b-b399-535215ee79a4
