@@ -51,6 +51,7 @@
 | razonSocial | RF-18. Permite registrar la identidad comercial de la empresa. |
 | direccion, telefono, correo, contactoResponsable | RF-18. Son los datos requeridos para administrar y contactar al proveedor. |
 | activo | HU22. Un proveedor desactivado no puede recibir nuevas asignaciones. |
+|contacto|Todos los datos necesarios para tener contacto con una persona responsable de la empresa|
 
 
 ## 5.6 Usuario de proveedor
@@ -83,6 +84,8 @@
 | Asociación con Clasificacion | RF-04, RF-05, HU4, HU5, HU10 y HU23. Todo reclamo debe tener una clasificación seleccionada y validable. |
 | Asociación con Edificio | RF-25 y HU25. Cada reclamo pertenece a un edificio al que está asociado su autor. |
 | Asociación con Proveedor | RF-07 y HU13. Un reclamo puede estar sin asignar inicialmente y luego ser asignado a una empresa proveedora. |
+|Archivo|Parte de la evidencia|
+|Ruta|Ruta del archivo de evidencia|
 
 ## 5.9 Clasificación
 
@@ -104,14 +107,6 @@
 | motivoRechazo | HU17 y HU20 exigen indicar obligatoriamente el motivo cuando el Administrativo rechaza la solución. |
 | Varios registros de solución por reclamo | HU17 permite reprocesar una tarea rechazada y volver a registrar observaciones y evidencias. Mantener soluciones anteriores evita perder trazabilidad. |
 
-## 5.11 Evidencia
-
-| Elemento | Justificación |
-|---|---|
-| Clase Evidencia | RF-04, RF-11, RF-12, HU4, HU9, HU12, HU16, HU18 y HU19. Permite almacenar las fotografías y archivos asociados al reclamo y a su resolución. |
-| idEvidencia | Identifica el archivo registrado. |
-| nombreArchivo, rutaArchivo, tipoMime, fechaCarga | RNF-05 establece almacenamiento de archivos en filesystem; estos atributos permiten localizar, identificar y consultar el archivo. |
-
 
 ## 5.12 Notificación
 
@@ -131,16 +126,11 @@
 | UsuarioEdificio — Edificio | Un UsuarioEdificio pertenece a 1..* edificios; un edificio puede tener 0..* usuarios | RF-20 y HU25. El requisito establece expresamente que un usuario puede asociarse a uno o más edificios. Por eso debe eliminarse el atributo único edificio: Edificio de UsuarioEdificio y conservar esta relación. |
 | UsuarioEdificio — Reclamo | Un UsuarioEdificio realiza 0..* reclamos; cada Reclamo es realizado por 1 UsuarioEdificio | RF-04, RF-08, HU4 y HU7. Permite identificar al creador del reclamo y consultar únicamente los reclamos propios. |
 | Edificio — Reclamo | Un edificio tiene 0..* reclamos; cada Reclamo pertenece a 1 edificio | RF-25 y HU25. Todo reclamo debe estar asociado al edificio sobre el que se informa el problema. |
-| Restricción UsuarioEdificio–Edificio–Reclamo | Regla de negocio | HU25. El edificio elegido al crear un reclamo debe ser uno de los edificios a los que pertenece el Usuario de edificio que lo realiza. |
 | Clasificacion — Reclamo | Una Clasificacion puede estar asociada a 0..* reclamos; cada Reclamo tiene 1 clasificación | RF-04, RF-05, HU4 y HU5. El usuario selecciona una clasificación al crear el reclamo y el Administrativo puede validarla o modificarla. |
 | Proveedor — Clasificacion | Muchos a muchos: un proveedor puede atender 0..* clasificaciones y una clasificación puede ser atendida por 0..* proveedores | HU14. Esta relación permite sugerir proveedores de acuerdo con la clasificación del reclamo. Debe agregarse al MER. |
 | Proveedor — Reclamo | Un proveedor puede tener 0..* reclamos asignados; un Reclamo puede tener 0..1 proveedor | RF-07 y HU13. Un reclamo recién creado todavía puede no estar asignado; luego el Administrativo lo asigna a una empresa proveedora. |
 | Reclamo — Solucion | Un Reclamo puede tener 0..* soluciones; cada Solucion pertenece a 1 reclamo | RF-24, HU16, HU17 y HU20. Puede haber más de una solución cuando el Usuario de edificio rechaza una resolución y el proveedor debe volver a trabajar. |
 | UsuarioProveedor — Solucion | Un UsuarioProveedor puede registrar 0..* soluciones; cada Solucion es enviada por 1 UsuarioProveedor | RF-24 y HU16. Permite saber quién registró las observaciones y evidencias de cada trabajo realizado. |
 | UsuarioEdificio — Solucion | Un UsuarioEdificio puede revisar 0..* soluciones; una Solucion puede ser revisada por 0..1 UsuarioEdificio | HU20. Una solución pendiente todavía no fue revisada; al aprobarla o rechazarla, el Usuario de edificio realiza la validación. |
-| Restricción UsuarioEdificio–Solucion | Regla de negocio | HU20. Sólo el Usuario de edificio que creó el reclamo asociado puede aprobar o rechazar su solución. |
-| Reclamo — Evidencia | Un Reclamo puede contener 0..* evidencias; cada Evidencia pertenece a 1 reclamo | RF-04, RF-11, HU4, HU9 y HU18. Permite conservar y consultar las evidencias iniciales y las de resolución dentro del reclamo correspondiente. |
-| Solucion — Evidencia | Una Solucion debe tener 1..* evidencias de resolución; una Evidencia puede pertenecer a 0..1 solución | RF-12, HU16 y HU19. Para finalizar una tarea debe existir al menos una fotografía que documente el trabajo realizado. Las evidencias iniciales pertenecen sólo al reclamo; las de resolución se vinculan además a una solución. |
 | UsuarioEdificio — Notificacion | Un UsuarioEdificio recibe 0..* notificaciones; cada Notificacion tiene 1 destinatario | RF-09 y HU8. Cada aviso se dirige al usuario propietario del reclamo actualizado. |
-| Reclamo — Notificacion | Un Reclamo puede generar 0..* notificaciones; cada Notificacion se vincula a 1 reclamo | RF-09 y HU8. La notificación informa una actualización específica ocurrida sobre un reclamo. Debe agregarse esta relación al MER. |
-| Proveedor — Contacto | Cada Proveedor tiene 1 Contacto responsable; cada Contacto pertenece a 1 proveedor | RF-18. El requisito pide registrar los datos de un contacto responsable de la empresa. Si mantenés la clase Contacto, eliminá el atributo textual contactoResponsable de Proveedor, porque duplicaría la misma información. |
+
