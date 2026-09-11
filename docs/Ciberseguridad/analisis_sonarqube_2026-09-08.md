@@ -15,7 +15,7 @@
 | **Quality Gate** | OK | ✔ Cumple |
 | **Vulnerabilidades** | **6** | ⚠ Revisar |
 | **Security Hotspots** | 0 | ✔ Ninguno |
-| **Nota de seguridad** | E | 🔴 Muy baja |
+| **Nota de seguridad** | D | 🔴 Baja |
 | **Bugs** | 9 | ⚠ (1 ya corregido localmente) |
 | **Code Smells** | 91 | ⚠ Mantenibilidad |
 | **Cobertura de tests** | 0.0 % | ⚠ Sin tests |
@@ -117,7 +117,7 @@ No hay hotspots de seguridad pendientes de revisión en este análisis.
 | NCLOC (código efectivo) | 10 922 |
 | Calificación de mantenibilidad | A (sqale_rating 1.0) |
 | Calificación de fiabilidad | E (reliability_rating 5.0) |
-| Calificación de seguridad | E (security_rating 4.0) |
+| Calificación de seguridad | D (security_rating 4.0) |
 | Calificación de revisión de seguridad | A (security_review_rating 1.0) |
 
 ---
