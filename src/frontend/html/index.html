@@ -4,76 +4,76 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
         <title>Portal Ciudadano</title>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style.css">
         <link rel="icon" href="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png">
     </head>
 
     <body>
-        <header>
-            <a href="index.html" class="logos">
-                <div class="logo-div">
-                    <img class="logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/intendencia-logo-inicio.png" alt="">
+        <main class="login-page">
+            <section class="login-panel">
+                <div class="login-card">
+                    <img class="brand-logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/intendencia-logo-inicio.png" alt="Intendencia">
+
+                    <div class="titulos">
+                        <h2>Iniciar sesión</h2>
+                        <p class="subtitulo">Ingresa tu cédula y contraseña.</p>
+                    </div>
+
+                    <form class="login-form" autocomplete="off">
+                        <div class="campo">
+                            <label for="ci-input">Cédula</label>
+                            <div class="input-wrap">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                                    <circle cx="8.5" cy="11" r="1.7" stroke="currentColor" stroke-width="1.6"/>
+                                    <path d="M13 10h5M13 13h5M5.5 16.2c.5-1.6 1.7-2.4 3-2.4s2.5.8 3 2.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                </svg>
+                                <input class="ci-input" type="text" id="ci-input" inputmode="numeric" pattern="[0-9]*" placeholder="52212392" autocomplete="username" required>
+                            </div>
+                        </div>
+
+                        <div class="campo">
+                            <label for="pass-input">Contraseña</label>
+                            <div class="input-wrap">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                                    <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                </svg>
+                                <input class="pass-input" type="password" id="pass-input" placeholder="Contraseña" autocomplete="current-password" required>
+                                <button type="button" class="toggle-pass" aria-label="Mostrar contraseña">
+                                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="currentColor" stroke-width="1.8"/>
+                                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="olv-div">
+                                <a class="olvidaste" href="#">¿Olvidaste tu contraseña?</a>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-login">Iniciar sesión</button>
+                    </form>
                 </div>
-                <div class="int-logo-div">
-                    <img class="int-logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png" alt="">
-                </div>
-            </a>
-        </header>
-
-        <main>
-            <div class="titulos">
-                <h2>Iniciar sesión</h2>
-                <p class="subtitulo">
-                    Ingresa tu cedula y contraseña.
-                </p>
-            </div>
-
-            <section class="div-login">
-            <section class="login-div">
-
-                <div class="div-tel">
-                    <p>Cedula</p>
-                    <input class="ci-input" type="text" name="" id="" placeholder="522123923"  inputmode="numeric" pattern="[0-9]*" autocomplete="current-password">
-                </div>
-                
-<div class="div-pass">
-    <p style="font-size:13px;">Contraseña</p>
-
-    <input
-        class="pass-input"
-        type="password"
-        placeholder="Contraseña"
-        autocomplete="current-password">
-
-</div>
-                
-                
-                    </section>
             </section>
 
-            <div class="div-login-btn">
-                <button class="btn-login">Iniciar sesión</button>
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-
+            <aside class="image-panel">
+                <img src="/proyecto-utu-2026/src/frontend/assets/imgs/login-image.png" alt="Imagen institucional">
+                <div class="image-overlay"></div>
+            </aside>
         </main>
-
-
-
 
         <script src="https://unpkg.com/nextjs-toast-notify@1.47.0/dist/nextjs-toast-notify.js"></script>
         <script src="/proyecto-utu-2026/src/frontend/js/script.js" type="module"></script>
-
+        <script>
+            const toggleBtn = document.querySelector('.toggle-pass');
+            const passInput = document.querySelector('.pass-input');
+            toggleBtn.addEventListener('click', () => {
+                const isHidden = passInput.type === 'password';
+                passInput.type = isHidden ? 'text' : 'password';
+                toggleBtn.classList.toggle('activo', isHidden);
+            });
+        </script>
     </body>
 </html>
