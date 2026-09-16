@@ -1,0 +1,7 @@
+.git
+.github
+.scannerwork
+src/backend/vendor
+src/backend/storage/logs
+src/backend/.env
+node_modules
