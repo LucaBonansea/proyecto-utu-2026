@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Edificio;
+use App\Services\EdificioService;
 use Illuminate\Http\Request;
 
 class EdificioController extends Controller
 {
-    public function index()
+    public function index(EdificioService $edificioService)
     {
-        return response()->json(
-            Edificio::all()
-        );
+        $edificios = $edificioService->obtenerTodos();
+
+        return response()->json($edificios);
     }
 
-
-
-    public function store(Request $request)
+    public function store(Request $request, EdificioService $edificioService)
     {
         $datos = $request->validate([
             'nombre' => [
@@ -32,15 +30,11 @@ class EdificioController extends Controller
             ],
         ]);
 
-        $edificio = Edificio::create([
-            'nombre' => $datos['nombre'],
-            'direccion' => $datos['direccion'],
-        ]);
+        $edificio = $edificioService->crear($datos);
 
         return response()->json([
             'message' => 'Edificio creado correctamente',
             'edificio' => $edificio,
         ], 201);
     }
-
 }

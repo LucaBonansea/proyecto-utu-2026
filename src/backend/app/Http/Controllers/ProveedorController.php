@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Proveedor;
+use App\Services\ProveedorService;
 use Illuminate\Http\Request;
 
 class ProveedorController extends Controller
 {
-    public function index()
+    public function index(ProveedorService $proveedorService)
     {
-        return response()->json(
-            Proveedor::all()
-        );
+        $proveedores = $proveedorService->obtenerTodos();
+
+        return response()->json($proveedores);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, ProveedorService $proveedorService)
     {
         $datos = $request->validate([
             'nombre' => ['required', 'string', 'max:255'],
@@ -28,23 +28,19 @@ class ProveedorController extends Controller
             'email_contacto' => ['required', 'email', 'max:255'],
         ]);
 
-        $proveedor = Proveedor::create($datos);
+        $proveedor = $proveedorService->crear($datos);
 
         return response()->json([
             'message' => 'Proveedor creado correctamente',
             'proveedor' => $proveedor,
         ], 201);
     }
-    public function cambiarEstado(string $id)
-    {
-        $proveedor = Proveedor::findOrFail($id);
 
-        $proveedor->estado =
-            $proveedor->estado === 'Activo'
-                ? 'Inactivo'
-                : 'Activo';
-
-        $proveedor->save();
+    public function cambiarEstado(
+        string $id,
+        ProveedorService $proveedorService
+    ) {
+        $proveedor = $proveedorService->cambiarEstado($id);
 
         return response()->json([
             'message' => 'Estado actualizado correctamente',
