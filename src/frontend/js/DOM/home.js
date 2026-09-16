@@ -29,9 +29,6 @@ export class Home{
 
     /*async */ obtener_usuario(){
         try{
-            // const request = await fetch("");
-            // const data = request.json();
-
             // Datos establecidos manualmente ya que no existe la api.
             // Representa al Usuario de edificio (encargado) que inició sesión.
             // "edificios" son EXCLUSIVAMENTE los que el Administrador le asignó
@@ -104,13 +101,6 @@ export class Home{
     // edificios que no le pertenecen (Cambio 2).
     /*async */ obtener_reclamos(){
         try{
-            // const request = await fetch("");
-            // const data = request.json();
-
-            /*  if(!request.ok){
-                throw new Error("Error al intentar comunicarse con la api!");
-            } */
-
             // Datos establecidos manualmente ya que no existe la api.
             // Cada reclamo pertenece a un edificio público (edificio_id) y está
             // clasificado según el tipo de problema, según el Cambio 2.
