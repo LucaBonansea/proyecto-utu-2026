@@ -128,21 +128,15 @@ async function iniciar_usuario(datos) {
             switch (usuario.rol) {
 
                 case "administrador":
-                    window.location.replace(
-                        "http://127.0.0.1:5500/proyecto-utu-2026/src/frontend/html/administrador.html"
-                    );
+                    window.location.replace("./administrador.html");
                     break;
 
                 case "usuario_proveedor":
-                    window.location.replace(
-                        "http://127.0.0.1:5500/proyecto-utu-2026/src/frontend/html/Provedores.html"
-                    );
+                    window.location.replace("./Provedores.html");
                     break;
 
                 default:
-                    window.location.replace(
-                        "http://127.0.0.1:5500/proyecto-utu-2026/src/frontend/html/inicio.html"
-                    );
+                    window.location.replace("./inicio.html");
                     break;
             }
         }, 2000);

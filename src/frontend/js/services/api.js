@@ -1,4 +1,8 @@
-export const API_URL = "http://127.0.0.1:8000";
+const USA_PROXY_DEL_CONTENEDOR = window.location.port === "5501";
+
+export const API_URL = USA_PROXY_DEL_CONTENEDOR
+    ? window.location.origin
+    : "http://127.0.0.1:8000";
 
 /**
  * Punto único de acceso HTTP al backend.
