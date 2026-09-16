@@ -1,3 +1,9 @@
+import {
+    crearReclamo,
+    obtenerClasificaciones,
+    obtenerEdificios
+} from "../services/reclamos-service.js";
+
 export class Nuevo_reclamos {
     constructor($btn_home_top, $btn_home, Main) {
         this.$btn_home_top = $btn_home_top;
@@ -65,7 +71,6 @@ export class Nuevo_reclamos {
 
         this.cargar_clasificaciones();
         this.cargar_edificios();
-        this.enviar_reclamo();
         this.subir_foto();
         this.enviar_reclamo();
     }
@@ -74,7 +79,7 @@ export class Nuevo_reclamos {
         const select = document.getElementById("tipo-reclamo");
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/clasificaciones");
+            const response = await obtenerClasificaciones();
 
 
             if (!response.ok) {
@@ -113,9 +118,7 @@ export class Nuevo_reclamos {
         const select = document.getElementById("edificio");
 
         try {
-            const response = await fetch(
-                "http://127.0.0.1:8000/api/edificios"
-            );
+            const response = await obtenerEdificios();
 
             if (!response.ok) {
                 throw new Error("Error al obtener edificios");
@@ -148,69 +151,6 @@ export class Nuevo_reclamos {
             `;
         }
     }
-
-
-
-    enviar_reclamo() {
-    const boton = document.querySelector(".enviarReclamo");
-
-    boton.addEventListener("click", async () => {
-
-        const archivo = document.getElementById("archivo").files[0];
-        const descripcion = document.getElementById("descripcion").value;
-        const clasificacion_id = document.getElementById("tipo-reclamo").value;
-        const edificio_id = document.getElementById("edificio").value;
-
-        if (!archivo) {
-            alert("Debes subir una foto como evidencia.");
-            return;
-        }
-
-        if (!clasificacion_id) {
-            alert("Debes seleccionar una clasificación.");
-            return;
-        }
-
-        if (!edificio_id) {
-            alert("Debes seleccionar un edificio.");
-            return;
-        }
-
-        const formData = new FormData();
-
-        formData.append("description", descripcion);
-        formData.append("clasificacion_id", clasificacion_id);
-        formData.append("edificio_id", edificio_id);
-        formData.append("photo", archivo);
-
-        try {
-            const response = await fetch("http://127.0.0.1:8000/api/reclamos", {
-                method: "POST",
-                body: formData
-            });
-
-            const data = await response.json();
-
-            console.log("STATUS:", response.status);
-            console.log("RESPUESTA:", data);
-
-            if (!response.ok) {
-                alert(data.message || "Error al crear el reclamo");
-                return;
-            }
-
-            alert("Reclamo creado correctamente.");
-
-        } catch (error) {
-            console.error("Error de conexión:", error);
-        }
-    });
-}
-
-
-
-
-
 
 
 
@@ -331,17 +271,6 @@ enviar_reclamo() {
             boton.disabled = true;
             boton.textContent = "Enviando...";
 
-            await this.obtener_csrf();
-
-            const csrfToken =
-                this.obtener_cookie("XSRF-TOKEN");
-
-            if (!csrfToken) {
-                throw new Error(
-                    "No se encontró el token CSRF"
-                );
-            }
-
             const formData = new FormData();
 
             formData.append(
@@ -364,18 +293,7 @@ enviar_reclamo() {
                 archivo
             );
 
-            const response = await fetch(
-                "http://127.0.0.1:8000/api/reclamos",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Accept": "application/json",
-                        "X-XSRF-TOKEN": csrfToken
-                    },
-                    body: formData
-                }
-            );
+            const response = await crearReclamo(formData);
 
             const data = await response.json();
 
@@ -455,41 +373,6 @@ enviar_reclamo() {
     });
 }
 
-
-obtener_cookie(nombre) {
-    const cookies = document.cookie.split("; ");
-
-    const cookie = cookies.find(
-        item => item.startsWith(nombre + "=")
-    );
-
-    if (!cookie) {
-        return null;
-    }
-
-    return decodeURIComponent(
-        cookie.substring(nombre.length + 1)
-    );
-}
-
-async obtener_csrf() {
-    const response = await fetch(
-        "http://127.0.0.1:8000/sanctum/csrf-cookie",
-        {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                "Accept": "application/json"
-            }
-        }
-    );
-
-    if (!response.ok) {
-        throw new Error(
-            "No se pudo obtener el token CSRF"
-        );
-    }
-}
 
     mostrarToast(tipo, mensaje) {
     if (mensaje === this.ultimoMensajeToast) {

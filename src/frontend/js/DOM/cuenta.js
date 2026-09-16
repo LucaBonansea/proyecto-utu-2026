@@ -1,3 +1,5 @@
+import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
+
 export class Cuenta {
     constructor(Main, button_restart_actives, $btn_cuenta_top, $btn_cuenta, irAInicioFiltrado) {
         this.Main = Main;
@@ -10,16 +12,7 @@ export class Cuenta {
 
     async obtener_informacion_cuenta() {
         try {
-            const request = await fetch(
-                "http://127.0.0.1:8000/api/auth/me",
-                {
-                    method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Accept": "application/json"
-                    }
-                }
-            );
+            const request = await obtenerSesion();
 
             if (!request.ok) {
                 throw new Error("No se pudo obtener la información de la cuenta");
@@ -141,65 +134,9 @@ eventos() {
     }
 }
 
-obtener_cookie(nombre) {
-    const cookies = document.cookie.split("; ");
-
-    const cookie = cookies.find(
-        item => item.startsWith(nombre + "=")
-    );
-
-    if (!cookie) {
-        return null;
-    }
-
-    return decodeURIComponent(
-        cookie.substring(nombre.length + 1)
-    );
-}
-
-async obtener_csrf() {
-    const response = await fetch(
-        "http://127.0.0.1:8000/sanctum/csrf-cookie",
-        {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                "Accept": "application/json"
-            }
-        }
-    );
-
-    if (!response.ok) {
-        throw new Error(
-            "No se pudo obtener el token CSRF"
-        );
-    }
-}
-
 async cerrar_sesion() {
     try {
-        await this.obtener_csrf();
-
-        const csrfToken =
-            this.obtener_cookie("XSRF-TOKEN");
-
-        if (!csrfToken) {
-            throw new Error(
-                "No se encontró el token CSRF"
-            );
-        }
-
-        const response = await fetch(
-            "http://127.0.0.1:8000/api/auth/logout",
-            {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Accept": "application/json",
-                    "X-XSRF-TOKEN": csrfToken
-                }
-            }
-        );
+        const response = await cerrarSesion();
 
         const data = await response.json();
 
