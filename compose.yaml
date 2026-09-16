@@ -1,8 +1,29 @@
 services:
 
+  frontend-beta:
+    build:
+      context: .
+      dockerfile: ./src/frontend/Dockerfile
+
+    ports:
+      - "5501:80"
+
+    depends_on:
+      - backend
+
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
   backend:
     build:
       context: ./src/backend
+
+    environment:
+      SANCTUM_STATEFUL_DOMAINS: 127.0.0.1:5500,localhost:5500,127.0.0.1:5501,localhost:5501
 
     ports:
       - "8000:8000"
