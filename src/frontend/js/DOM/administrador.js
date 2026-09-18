@@ -1,4 +1,5 @@
-import { obtenerSesion } from "../services/auth-service.js";
+import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
+import { notify } from "../utils/toast.js";
 import {
     cambiarEstadoProveedor as actualizarEstadoProveedor,
     cambiarPasswordUsuario,
@@ -15,8 +16,13 @@ const section = document.querySelector("section");
 const filtro_container = document.querySelector("#filtro-container");
 const proveedoresbtn = document.querySelector(".proveedores-btn");
 const usuariosbtn = document.querySelector(".usuarios-btn");
-const botones = document.querySelectorAll(".sidebar-btn");
+const botones = document.querySelectorAll(".sidebar-btn:not(.logout)");
 const edificiosbtn = document.querySelector(".edificios-btn");
+const accountMenuWrapper = document.querySelector(".account-menu-wrapper");
+const accountTrigger = document.querySelector(".account-trigger");
+const accountMenu = document.querySelector(".account-menu");
+const accountMenuContent = document.querySelector(".account-menu-content");
+const logoutbtn = document.querySelector(".account-logout");
 
 function quitarTildes(texto) {
 
@@ -61,7 +67,7 @@ async function cargarEdificios() {
 
         edificios = [];
 
-        alert("No se pudieron cargar los edificios.");
+        notify.error("No se pudieron cargar los edificios.");
     }
 }
 async function cargarUsuarios() {
@@ -89,7 +95,7 @@ async function cargarUsuarios() {
 
         usuarios = [];
 
-        alert("No se pudieron cargar los usuarios.");
+        notify.error("No se pudieron cargar los usuarios.");
     }
 }
 
@@ -121,7 +127,7 @@ async function cargarProveedores() {
 
         proveedores = [];
 
-        alert(
+        notify.error(
             "No se pudieron cargar los proveedores."
         );
 
@@ -191,6 +197,13 @@ async function iniciarAplicacion() {
         () => vistaUsuarios()
     );
 
+    accountTrigger.addEventListener("click", alternarMenuCuenta);
+
+    document.addEventListener("click", cerrarMenuCuentaAlHacerClickFuera);
+    document.addEventListener("keydown", cerrarMenuCuentaConEscape);
+
+    logoutbtn.addEventListener("click", cerrar_sesion);
+
     await cargarEdificios();
 
     await cargarUsuarios();
@@ -199,6 +212,152 @@ async function iniciarAplicacion() {
 
     vistaProveedores();
 
+}
+
+function alternarMenuCuenta(event) {
+    event.stopPropagation();
+
+    const estaAbierto = accountMenu.classList.toggle("open");
+    accountMenu.setAttribute("aria-hidden", String(!estaAbierto));
+    accountTrigger.setAttribute("aria-expanded", String(estaAbierto));
+
+    if (estaAbierto) {
+        cargarCuentaMenu();
+    }
+}
+
+function cerrarMenuCuenta() {
+    accountMenu.classList.remove("open");
+    accountMenu.setAttribute("aria-hidden", "true");
+    accountTrigger.setAttribute("aria-expanded", "false");
+}
+
+function cerrarMenuCuentaAlHacerClickFuera(event) {
+    if (!accountMenuWrapper.contains(event.target)) {
+        cerrarMenuCuenta();
+    }
+}
+
+function cerrarMenuCuentaConEscape(event) {
+    if (event.key === "Escape") {
+        cerrarMenuCuenta();
+        accountTrigger.focus();
+    }
+}
+
+async function cargarCuentaMenu() {
+    accountMenuContent.innerHTML = `
+        <div class="account-loading">
+            <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+            Cargando cuenta...
+        </div>
+    `;
+
+    try {
+        const response = await obtenerSesion();
+
+        if (response.status === 401) {
+            window.location.replace("./index.html");
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error("No se pudieron obtener los datos de la cuenta.");
+        }
+
+        const data = await response.json();
+
+        if (!data.usuario) {
+            throw new Error("La respuesta no contiene los datos del usuario.");
+        }
+
+        renderCuentaMenu(data.usuario);
+    } catch (error) {
+        console.error("Error cargando la cuenta:", error);
+        notify.error(error.message || "No se pudo cargar la cuenta.");
+
+        accountMenuContent.innerHTML = `
+            <div class="account-error">
+                <span class="material-symbols-outlined" aria-hidden="true">error</span>
+                <p>No se pudieron cargar los datos.</p>
+                <button type="button" class="account-retry">Reintentar</button>
+            </div>
+        `;
+
+        accountMenuContent
+            .querySelector(".account-retry")
+            .addEventListener("click", cargarCuentaMenu);
+    }
+}
+
+function renderCuentaMenu(usuario) {
+    const nombresRol = {
+        administrador: "Administrador departamental",
+        administrativo: "Administrativo",
+        usuario_edificio: "Usuario de edificio",
+        usuario_proveedor: "Usuario de proveedor"
+    };
+
+    accountMenuContent.innerHTML = `
+        <div class="account-profile">
+            <div class="account-avatar" aria-hidden="true">
+                <span class="material-symbols-outlined">person</span>
+            </div>
+            <div class="account-identity">
+                <strong class="account-name"></strong>
+                <span class="account-role"></span>
+            </div>
+        </div>
+
+        <div class="account-details">
+            <div class="account-detail">
+                <span class="material-symbols-outlined" aria-hidden="true">badge</span>
+                <div><small>Cédula</small><strong class="account-id"></strong></div>
+            </div>
+            <div class="account-detail">
+                <span class="material-symbols-outlined" aria-hidden="true">phone</span>
+                <div><small>Teléfono</small><strong class="account-phone"></strong></div>
+            </div>
+            <div class="account-detail">
+                <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+                <div><small>Correo electrónico</small><strong class="account-email"></strong></div>
+            </div>
+            <div class="account-detail">
+                <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
+                <div><small>Estado</small><strong class="account-status"></strong></div>
+            </div>
+        </div>
+    `;
+
+    accountMenuContent.querySelector(".account-name").textContent = usuario.nombre || "Nombre no registrado";
+    accountMenuContent.querySelector(".account-role").textContent = nombresRol[usuario.rol] || usuario.rol;
+    accountMenuContent.querySelector(".account-id").textContent = usuario.cedula || "No registrada";
+    accountMenuContent.querySelector(".account-phone").textContent = usuario.telefono || "No registrado";
+    accountMenuContent.querySelector(".account-email").textContent = usuario.email || "No registrado";
+    accountMenuContent.querySelector(".account-status").textContent = usuario.activo ? "Activa" : "Inactiva";
+}
+
+async function cerrar_sesion() {
+    logoutbtn.disabled = true;
+
+    try {
+        const response = await cerrarSesion();
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.mensaje || "No se pudo cerrar la sesión.");
+        }
+
+        notify.success(data.mensaje || "Sesión cerrada correctamente.");
+
+        setTimeout(() => {
+            window.location.replace("./index.html");
+        }, 800);
+    } catch (error) {
+        console.error("Error cerrando sesión:", error);
+        notify.error(error.message || "No se pudo cerrar la sesión.");
+        logoutbtn.disabled = false;
+    }
 }
 
 
@@ -490,7 +649,7 @@ function vistaProveedores(){
             emailContacto === ""
         ) {
 
-            alert("Completa todos los campos");
+            notify.warning("Completa todos los campos.");
 
             return;
 
@@ -524,7 +683,7 @@ function vistaProveedores(){
 
             if (!response.ok) {
 
-                alert(
+                notify.error(
                     data.message ||
                     "Error al crear el proveedor."
                 );
@@ -533,7 +692,7 @@ function vistaProveedores(){
             }
 
 
-            alert("Proveedor agregado correctamente.");
+            notify.success("Proveedor agregado correctamente.");
 
 
             formulario.classList.add("oculto");
@@ -553,7 +712,7 @@ function vistaProveedores(){
                 error
             );
 
-            alert(
+            notify.error(
                 "No se pudo conectar con el servidor."
             );
 
@@ -687,7 +846,7 @@ async function cambiarEstadoProveedor(id) {
         console.log("RESPUESTA:", data);
 
         if (!response.ok) {
-            alert(
+            notify.error(
                 data.message ||
                 "No se pudo actualizar el estado."
             );
@@ -705,7 +864,7 @@ async function cambiarEstadoProveedor(id) {
             error
         );
 
-        alert("No se pudo conectar con el servidor.");
+        notify.error("No se pudo conectar con el servidor.");
 
     }
 
@@ -995,7 +1154,7 @@ function vistaEdificios(){
 
         if (nombre === "" || direccion === "") {
 
-            alert("Completa todos los campos.");
+            notify.warning("Completa todos los campos.");
 
             return;
         }
@@ -1021,7 +1180,7 @@ function vistaEdificios(){
 
             if (!response.ok) {
 
-                alert(
+                notify.error(
                     data.message ||
                     "Error al crear el edificio."
                 );
@@ -1030,7 +1189,7 @@ function vistaEdificios(){
             }
 
 
-            alert("Edificio agregado correctamente.");
+            notify.success("Edificio agregado correctamente.");
 
 
             formulario.classList.add("oculto");
@@ -1054,7 +1213,7 @@ function vistaEdificios(){
                 error
             );
 
-            alert(
+            notify.error(
                 "No se pudo conectar con el servidor."
             );
 
@@ -1871,7 +2030,7 @@ function vistaUsuarios(filtro = "") {
             !rol
         ) {
 
-            alert("Completa los campos obligatorios.");
+            notify.warning("Completa los campos obligatorios.");
 
             return;
 
@@ -1891,7 +2050,7 @@ function vistaUsuarios(filtro = "") {
 
             if (edificiosSeleccionados.length === 0) {
 
-                alert(
+                notify.warning(
                     "Selecciona al menos un edificio para el usuario."
                 );
 
@@ -1910,7 +2069,7 @@ function vistaUsuarios(filtro = "") {
 
             if (!proveedorSelect.value) {
 
-                alert(
+                notify.warning(
                     "Selecciona el proveedor al que pertenece el usuario."
                 );
 
@@ -1988,7 +2147,7 @@ function vistaUsuarios(filtro = "") {
                     data
                 );
 
-                alert(
+                notify.error(
                     data.message ||
                     "Error al crear el usuario."
                 );
@@ -2002,7 +2161,7 @@ function vistaUsuarios(filtro = "") {
             // ÉXITO
             // ==================================
 
-            alert(
+            notify.success(
                 "Usuario agregado correctamente."
             );
 
@@ -2052,7 +2211,7 @@ function vistaUsuarios(filtro = "") {
                 error
             );
 
-            alert(
+            notify.error(
                 "No se pudo conectar con el servidor."
             );
 
@@ -2417,17 +2576,17 @@ function vistaUsuarios(filtro = "") {
                             nuevaPassword === "" ||
                             confirmarPassword === ""
                         ) {
-                            alert("Completa ambos campos.");
+                            notify.warning("Completa ambos campos.");
                             return;
                         }
 
                         if (nuevaPassword.length < 6) {
-                            alert("La contraseña debe tener al menos 6 caracteres.");
+                            notify.warning("La contraseña debe tener al menos 6 caracteres.");
                             return;
                         }
 
                         if (nuevaPassword !== confirmarPassword) {
-                            alert("Las contraseñas no coinciden.");
+                            notify.warning("Las contraseñas no coinciden.");
                             return;
                         }
 
@@ -2448,14 +2607,14 @@ function vistaUsuarios(filtro = "") {
                             console.log("RESPUESTA:", data);
 
                             if (!response.ok) {
-                                alert(
+                                notify.error(
                                     data.message ||
                                     "No se pudo actualizar la contraseña."
                                 );
                                 return;
                             }
 
-                            alert("Contraseña actualizada correctamente.");
+                            notify.success("Contraseña actualizada correctamente.");
 
                             formPassword.classList.add("oculto");
                             nuevaPasswordInput.value = "";
@@ -2468,7 +2627,7 @@ function vistaUsuarios(filtro = "") {
                                 error
                             );
 
-                            alert("No se pudo conectar con el servidor.");
+                            notify.error("No se pudo conectar con el servidor.");
 
                         } finally {
 
@@ -2546,7 +2705,7 @@ function vistaUsuarios(filtro = "") {
 
                         if (!nuevoRol) {
 
-                            alert(
+                            notify.warning(
                                 "Selecciona el nuevo tipo de usuario."
                             );
 
@@ -2570,7 +2729,7 @@ function vistaUsuarios(filtro = "") {
                             ).map(chk => Number(chk.value));
 
                             if (edificios_ids.length === 0) {
-                                alert("Selecciona al menos un edificio.");
+                                notify.warning("Selecciona al menos un edificio.");
                                 return;
                             }
                         }
@@ -2588,7 +2747,7 @@ function vistaUsuarios(filtro = "") {
 
                             if (!selectProveedor.value) {
 
-                                alert(
+                                notify.warning(
                                     "Selecciona el proveedor."
                                 );
 
@@ -2643,7 +2802,7 @@ function vistaUsuarios(filtro = "") {
 
                             if (!response.ok) {
 
-                                alert(
+                                notify.error(
                                     data.message ||
                                     "No se pudo actualizar el usuario."
                                 );
@@ -2673,7 +2832,7 @@ function vistaUsuarios(filtro = "") {
                             }
 
 
-                            alert(
+                            notify.success(
                                 "Usuario actualizado correctamente."
                             );
 
@@ -2694,7 +2853,7 @@ function vistaUsuarios(filtro = "") {
                                 error
                             );
 
-                            alert(
+                            notify.error(
                                 "No se pudo conectar con el servidor."
                             );
 

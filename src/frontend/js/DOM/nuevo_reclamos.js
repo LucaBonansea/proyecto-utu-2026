@@ -3,6 +3,7 @@ import {
     obtenerClasificaciones,
     obtenerEdificios
 } from "../services/reclamos-service.js";
+import { notify } from "../utils/toast.js";
 
 export class Nuevo_reclamos {
     constructor($btn_home_top, $btn_home, Main) {
@@ -194,7 +195,7 @@ export class Nuevo_reclamos {
         }
 
         if (!archivo.type.startsWith("image/")) {
-            alert("Solo se permiten archivos de imagen.");
+            notify.warning("Solo se permiten archivos de imagen.");
 
             input_subir.value = "";
             preview.src = "";
@@ -388,11 +389,11 @@ enviar_reclamo() {
     };
 
     if (tipo === "success") {
-        showToast.success(mensaje, opciones);
+        notify.success(mensaje, opciones);
     }
 
     if (tipo === "error") {
-        showToast.error(mensaje, opciones);
+        notify.error(mensaje, opciones);
     }
 
     setTimeout(() => {

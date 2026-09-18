@@ -20,16 +20,13 @@ Route::get('/proveedores', [ProveedorController::class, 'index']);
 Route::post('/proveedores', [ProveedorController::class, 'store']);
 Route::put('/proveedores/{id}/estado', [ProveedorController::class, 'cambiarEstado']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/reclamos', [ReclamoController::class, 'store']);
-});
-
 Route::middleware('web')->group(function () {
     Route::post('/auth/login', [AuthController::class, 'login']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
+        Route::post('/reclamos', [ReclamoController::class, 'store']);
     });
 });
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,16 +26,6 @@
                 <span class="material-symbols-outlined">manage_accounts</span>
                 Usuarios
             </button>
-            <button class="sidebar-btn reclamos-btn">
-                <span class="material-symbols-outlined">browse</span>
-                Reclamos
-            </button>
-        </div>
-        <div class="last-btns">
-            <button class="sidebar-btn logout">
-                <span class="material-symbols-outlined">logout</span>
-                Cerrar sesion
-            </button>
         </div>
     </aside>
 
@@ -53,6 +43,53 @@
             <div class="header-title">
                 <h1>Administrador Departamental</h1>
             </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    id="theme-toggle"
+                    type="button"
+                    aria-label="Activar modo claro"
+                    aria-pressed="true"
+                    title="Activar modo claro"
+                >
+                    <span class="material-symbols-outlined theme-icon theme-icon-moon" aria-hidden="true">dark_mode</span>
+                    <span class="material-symbols-outlined theme-icon theme-icon-sun" aria-hidden="true">light_mode</span>
+                    <span class="theme-toggle-thumb" aria-hidden="true"></span>
+                </button>
+
+                <div class="account-menu-wrapper">
+                    <button
+                        class="account-trigger"
+                        type="button"
+                        aria-label="Abrir menú de cuenta"
+                        aria-controls="account-menu"
+                        aria-expanded="false"
+                        title="Mi cuenta"
+                    >
+                        <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                    </button>
+
+                    <div class="account-menu" id="account-menu" aria-hidden="true">
+                        <div class="account-menu-content">
+                            <div class="account-loading">
+                                <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+                                Cargando cuenta...
+                            </div>
+                        </div>
+
+                        <button class="account-logout" type="button">
+                            <span class="logout-animation" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" class="logout-icon">
+                                    <path class="logout-door" d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4" />
+                                    <path class="logout-arrow" d="M13 8l4 4-4 4m4-4H8" />
+                                </svg>
+                            </span>
+                            Cerrar sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <div id="filtro-container"></div>
@@ -60,6 +97,8 @@
         <section></section>
     </main>
 
-    <script src="/proyecto-utu-2026/src/frontend/js/script-administrador.js" type="module"></script>
+    <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
+    <script src="/proyecto-utu-2026/src/frontend/js/theme-toggle.js"></script>
+    <script src="/proyecto-utu-2026/src/frontend/js/script-administrador.js?v=2" type="module"></script>
 </body>
 </html>

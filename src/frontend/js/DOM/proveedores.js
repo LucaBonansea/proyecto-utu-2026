@@ -1,3 +1,5 @@
+import { notify } from "../utils/toast.js";
+
 document.addEventListener("DOMContentLoaded", function () {
 
 
@@ -222,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!archivo.type.startsWith("image/")) {
 
-                alert(
+                notify.warning(
                     "El archivo seleccionado no es una imagen."
                 );
 
@@ -304,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 inputFoto.files.length === 0
             ) {
 
-                alert(
+                notify.warning(
                     "Debes agregar una foto de evidencia."
                 );
 
@@ -340,7 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Mensaje
 
-            alert(
+            notify.success(
                 "El reclamo fue resuelto correctamente."
             );
 
