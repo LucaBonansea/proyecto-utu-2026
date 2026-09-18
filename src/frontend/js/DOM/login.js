@@ -1,4 +1,5 @@
 import { iniciarSesion } from "../services/auth-service.js";
+import { notify } from "../utils/toast.js";
 
 const $input_ci = document.querySelector(".ci-input");
 const $input_password = document.querySelector(".pass-input");
@@ -48,7 +49,7 @@ async function iniciar_usuario(datos) {
                 $input_ci.classList.add("error");
                 $input_password.classList.add("error");
 
-                showToast.error(response.mensaje, {
+                notify.error(response.mensaje, {
                     duration: 4000,
                     progress: true,
                     position: "top-center",
@@ -62,7 +63,7 @@ async function iniciar_usuario(datos) {
                 if (response.errors?.cedula) {
                     $input_ci.classList.add("error");
 
-                    showToast.error(
+                    notify.error(
                         response.errors.cedula[0],
                         {
                             duration: 4000,
@@ -78,7 +79,7 @@ async function iniciar_usuario(datos) {
                 if (response.errors?.password) {
                     $input_password.classList.add("error");
 
-                    showToast.error(
+                    notify.error(
                         response.errors.password[0],
                         {
                             duration: 4000,
@@ -93,7 +94,7 @@ async function iniciar_usuario(datos) {
             }
 
             if (request.status === 419) {
-                showToast.error(
+                notify.error(
                     "La sesión de seguridad expiró. Intenta nuevamente.",
                     {
                         duration: 4000,
@@ -109,7 +110,7 @@ async function iniciar_usuario(datos) {
         $input_ci.classList.remove("error");
         $input_password.classList.remove("error");
 
-        showToast.success(
+        notify.success(
             "Usuario inició sesión correctamente",
             {
                 duration: 4000,
@@ -154,7 +155,7 @@ async function iniciar_usuario(datos) {
         $btn_login.style.background =
             "linear-gradient(135deg, #e64a23 0%, #d2731f 100%)";
 
-        showToast.error(
+        notify.error(
             "No se pudo conectar con el servidor",
             {
                 duration: 4000,

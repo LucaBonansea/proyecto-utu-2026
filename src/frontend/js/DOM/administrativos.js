@@ -1,4 +1,5 @@
 import { obtenerSesion } from "../services/auth-service.js";
+import { notify } from "../utils/toast.js";
 
 const section = document.querySelector("section");
 const filtro_container = document.querySelector("#filtro-container");
@@ -309,7 +310,7 @@ function vistaDetalle(id){
     card.querySelector(".btn-enviar-area").addEventListener("click", () => {
         const area = card.querySelector(".select-area").value;
         if(!area || area === "Seleccionar área"){
-            alert("Selecciona un área antes de enviar el reclamo.");
+            notify.warning("Selecciona un área antes de enviar el reclamo.");
             return;
         }
 

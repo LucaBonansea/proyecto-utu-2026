@@ -1,4 +1,5 @@
 import { obtenerSesion, registrarUsuario } from "../services/auth-service.js";
+import { notify } from "../utils/toast.js";
 
 let $btn_registro;
 let $input_name;
@@ -118,7 +119,7 @@ async function registrar_usuario(datos) {
             if (response.errors?.nombre) {
                 $input_name.classList.add("error");
 
-                showToast.error(response.errors.nombre[0], {
+                notify.error(response.errors.nombre[0], {
                         duration: 4000,
                         progress: true,
                         position: "top-center",
@@ -131,7 +132,7 @@ async function registrar_usuario(datos) {
             if (response.errors?.cedula) {
                 $input_ci.classList.add("error");
 
-                showToast.error(response.errors.cedula[0], {
+                notify.error(response.errors.cedula[0], {
                     duration: 4000,
                     progress: true,
                     position: "top-center",
@@ -143,7 +144,7 @@ async function registrar_usuario(datos) {
 
             if (response.errors?.edificio) {
                 $input_edificio.classList.add("error");
-                showToast.error(response.errors.edificio[0], {
+                notify.error(response.errors.edificio[0], {
                     duration: 4000,
                     progress: true,
                     position: "top-center",
@@ -157,7 +158,7 @@ async function registrar_usuario(datos) {
                 $input_password.classList.add("error");
                 $input_password_2.classList.add("error");
 
-                showToast.error(response.errors.password[0], {
+                notify.error(response.errors.password[0], {
                         duration: 4000,
                         progress: true,
                         position: "top-center",
@@ -171,7 +172,7 @@ async function registrar_usuario(datos) {
         }
 
         // Registro exitoso
-        showToast.success("Usuario registrado correctamente", {
+        notify.success("Usuario registrado correctamente", {
             duration: 4000,
             position: "top-center",
             transition: "bounceIn",
@@ -192,7 +193,7 @@ async function registrar_usuario(datos) {
         $btn_registro.style.background =
             "linear-gradient(135deg, #e64a23 0%, #d2731f 100%)";
 
-        showToast.error("No se pudo conectar al servidor", {
+        notify.error("No se pudo conectar al servidor", {
             duration: 4000,
             progress: true,
             position: "top-center"

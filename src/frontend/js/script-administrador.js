@@ -1,1 +1,1 @@
-import "./DOM/administrador.js";
+import "./DOM/administrador.js?v=2";
