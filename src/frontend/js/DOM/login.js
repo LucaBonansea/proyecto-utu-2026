@@ -131,6 +131,10 @@ async function iniciar_usuario(datos) {
                 case "administrador":
                     window.location.replace("./administrador.html");
                     break;
+                
+                case "administrativo":
+                    window.location.replace("./Administrativos.html");
+                    break;
 
                 case "usuario_proveedor":
                     window.location.replace("./Provedores.html");
