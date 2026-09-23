@@ -4,6 +4,7 @@
     box-sizing: border-box;
 }
 
+
 html{
     overflow-y:scroll;
     scrollbar-width:none;
@@ -91,7 +92,15 @@ body{
 }
 
 .error{
-    border: 1px solid red;
+    border-color: #E58A8A;
+    background: #FFF9F9;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.08);
+}
+
+.error:focus{
+    border-color: #D96C6C;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.10);
 }
 
 .ci-input:focus,
@@ -170,13 +179,277 @@ body{
         object-fit:cover;
         display:block;
     }
-    .image-overlay{
-        position:absolute;
-        inset:0;
-        background: linear-gradient(160deg, rgba(2,60,161,.35), rgba(0,40,111,.55));
-    }
+    .image-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            160deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(2, 60, 161, 0.18),
+            rgba(0, 40, 111, 0.30)
+        );
+}
 }
 
 @media (min-width:1400px){
     .login-card{ max-width:420px; }
+}
+/* =========================================================
+   TOASTS — Nextjs Toast Notify
+   ========================================================= */
+
+.toast-container.top-center {
+    top: 24px !important;
+    gap: 12px !important;
+    z-index: 99999 !important;
+}
+
+/* ---------------------------------------------------------
+   Toast base
+   --------------------------------------------------------- */
+
+.toast-nextjs {
+    position: relative !important;
+
+    width: min(390px, calc(100vw - 32px)) !important;
+    min-width: 0 !important;
+    max-width: 390px !important;
+
+    padding: 14px 42px 14px 14px !important;
+
+    background: rgba(255, 255, 255, 0.98) !important;
+
+    border: 1px solid #E8ECF3 !important;
+    border-radius: 16px !important;
+
+    box-shadow:
+        0 16px 40px rgba(0, 40, 111, 0.10),
+        0 4px 12px rgba(0, 0, 0, 0.04) !important;
+
+    backdrop-filter: blur(8px);
+
+    overflow: hidden !important;
+}
+
+/* ---------------------------------------------------------
+   Contenido
+   --------------------------------------------------------- */
+
+.toast-nextjs .toast-content {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+/* ---------------------------------------------------------
+   Icono
+   --------------------------------------------------------- */
+
+.toast-nextjs .check {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 12px !important;
+
+    transition: all .2s ease;
+}
+
+.toast-nextjs .check svg {
+    width: 19px !important;
+    height: 19px !important;
+
+    stroke-width: 1.8 !important;
+}
+
+/* ---------------------------------------------------------
+   Texto
+   --------------------------------------------------------- */
+
+.toast-nextjs .message {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    min-width: 0;
+}
+
+.toast-nextjs .text {
+    font-family: 'Inter', sans-serif !important;
+
+    font-size: 13.5px !important;
+    line-height: 1.45 !important;
+
+    font-weight: 500 !important;
+
+    color: #343B47 !important;
+}
+
+/* ---------------------------------------------------------
+   Botón cerrar
+   --------------------------------------------------------- */
+
+.toast-nextjs .close-toast {
+    position: absolute !important;
+
+    top: 13px !important;
+    right: 13px !important;
+
+    width: 18px !important;
+    height: 18px !important;
+
+    opacity: .45;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease !important;
+}
+
+.toast-nextjs .close-toast:hover {
+    opacity: .85;
+
+    transform: scale(1.08);
+}
+
+/* ---------------------------------------------------------
+   Barra de progreso
+   --------------------------------------------------------- */
+
+.toast-nextjs .progress {
+    position: absolute !important;
+    left: 0 !important;
+    bottom: 0 !important;
+
+    width: 100% !important;
+    height: 3px !important;
+
+    border-radius: 0 0 16px 16px !important;
+
+    transform-origin: left center;
+
+    animation: toastProgress var(--progress-duration, 4000ms) linear forwards !important;
+}
+
+@keyframes toastProgress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.toast-nextjs.error {
+    border-color: #F0DADA !important;
+}
+
+.toast-nextjs.error .check {
+    background: #FFF1F1 !important;
+    color: #D66A6A !important;
+}
+
+.toast-nextjs.error .progress {
+    background: #D66A6A !important;
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+.toast-nextjs.success {
+    border-color: #D8EDE1 !important;
+}
+
+.toast-nextjs.success .check {
+    background: #EDF9F2 !important;
+    color: #2D9966 !important;
+}
+
+.toast-nextjs.success .progress {
+    background: #2D9966 !important;
+}
+
+
+/* =========================================================
+   WARNING
+   ========================================================= */
+
+.toast-nextjs.warning {
+    border-color: #F1E2C5 !important;
+}
+
+.toast-nextjs.warning .check {
+    background: #FFF8E9 !important;
+    color: #D3973D !important;
+}
+
+.toast-nextjs.warning .progress {
+    background: #D3973D !important;
+}
+
+
+/* =========================================================
+   INFO
+   ========================================================= */
+
+.toast-nextjs.info {
+    border-color: #D9E5F6 !important;
+}
+
+.toast-nextjs.info .check {
+    background: #EEF5FF !important;
+    color: #2F6DB5 !important;
+}
+
+.toast-nextjs.info .progress {
+    background: #2F6DB5 !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .toast-container.top-center {
+        top: 16px !important;
+    }
+
+    .toast-nextjs {
+        width: calc(100vw - 24px) !important;
+        max-width: none !important;
+
+        border-radius: 14px !important;
+
+        padding: 13px 38px 13px 13px !important;
+    }
+
+    .toast-nextjs .check {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+
+        border-radius: 10px !important;
+    }
+
+    .toast-nextjs .check svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    .toast-nextjs .text {
+        font-size: 13px !important;
+    }
 }
