@@ -40,9 +40,9 @@ async function iniciar_usuario(datos) {
         console.log("LOGIN RESPONSE:", response);
 
         if (!request.ok) {
-            $btn_login.textContent = "[ERROR] Intentar de nuevo";
+            $btn_login.textContent = "Intentar nuevamente";
             $btn_login.style.background =
-                "linear-gradient(135deg, #e64a23 0%, #d2731f 100%)";
+                "linear-gradient(135deg, #023CA1 0%, #00286F 100%)";
             $btn_login.disabled = false;
 
             if (request.status === 401) {
