@@ -9,6 +9,7 @@
 * [ ] Puedo registrar un usuario de edificio ingresando nombre, cédula, número telefónico y contraseña.
 * [ ] El sistema valida que el número telefónico tenga 9 dígitos y comience con 09 antes de completar el registro.
 * [ ] El usuario registrado queda habilitado para acceder al sistema con el rol Usuario de edificio.
+* [ ] El registro puede completarse sin seleccionar edificios; el Administrador puede asociarlos posteriormente mediante HU25.
 **Puntos:** 8 **Prioridad:** Alta **Épica:** EP-01
  
 ---
@@ -47,6 +48,7 @@
 * [ ] Puedo ingresar una descripción del problema.
 * [ ] Puedo adjuntar una fotografía como evidencia.
 * [ ] El sistema muestra las clasificaciones disponibles para que pueda seleccionar la correspondiente al tipo de problema.
+* [ ] Debo seleccionar uno de los edificios a los que estoy asociado y el reclamo guarda obligatoriamente ese edificio.
 
 **Puntos:** 8 **Prioridad:** Alta **Épica:** EP-03
  
@@ -100,6 +102,8 @@
  
 * [ ] La notificación informa el cambio o actualización relevante producida sobre el reclamo.
 * [ ] Recibo una notificación cuando se registra la finalización del trabajo asociado a uno de mis reclamos.
+* [ ] Puedo consultar dentro de la aplicación el listado de notificaciones almacenadas en el sistema.
+* [ ] Las notificaciones se obtienen mediante la API y no requieren Web Push.
 
 **Puntos:** 5 **Prioridad:** Media **Épica:** EP-08
  
@@ -167,7 +171,8 @@
 **Criterios de aceptación:**
  
 * [ ] Puedo ver el listado de reclamos clasificados y sin asignar.
-* [ ] Puedo elegir proveedor para asignar el reclamo.
+* [ ] El sistema puede mostrarme un proveedor sugerido según la clasificación.
+* [ ] Puedo elegir y confirmar manualmente el proveedor al que se asignará el reclamo.
 
 **Puntos:** 8 **Prioridad:** Alta **Épica:** EP-05
  
@@ -175,12 +180,13 @@
  
 **ID: HU14**
  
-**Historia:** Como sistema, quiero sugerir automáticamente el proveedor correspondiente según la clasificación realizada, para agilizar la asignación que hace el Administrativo.
+**Historia:** Como sistema, quiero mostrar la lista de proveedores correspondientes según la clasificación realizada, para que el Administrativo pueda elegir a cuál asignar el reclamo.
  
 **Criterios de aceptación:**
 
-* [ ] La sugerencia respeta la relación entre clasificación y proveedor definida en el sistema.
-* [ ] Si no existe una relación definida para una clasificación, el sistema lo indica en vez de fallar silenciosamente.
+* [ ] La lista muestra únicamente los proveedores relacionados con la clasificación del reclamo.
+* [ ] Si no existen proveedores relacionados con la clasificación, el sistema lo indica en vez de fallar silenciosamente.
+* [ ] El sistema no asigna un proveedor automáticamente; el Administrativo debe seleccionar y confirmar uno de la lista.
 
 **Puntos:** 5 **Prioridad:** Media **Épica:** EP-05
  
@@ -208,6 +214,7 @@
 * [ ] Debo completar los materiales utilizados y las observaciones antes de finalizar la tarea.
 * [ ] Debo adjuntar al menos una evidencia fotográfica del trabajo realizado.
 * [ ] La solución y las evidencias quedan asociadas al reclamo correspondiente.
+* [ ] Al registrar la finalización, el reclamo queda en estado `PENDIENTE_APROBACION`.
 
 
 **Puntos:** 8 **Prioridad:** Alta **Épica:** EP-07
@@ -221,8 +228,10 @@
 **Criterios de aceptación:**
  
 * [ ] Las tareas rechazadas aparecen identificadas en el listado de tareas del proveedor.
-* [ ] Puedo visualizar el motivo del rechazo indicado por el Administrativo.
+* [ ] Puedo visualizar el motivo del rechazo indicado por el Usuario de edificio.
+* [ ] La tarea permanece asignada al mismo proveedor después del rechazo.
 * [ ] Puedo registrar nuevamente observaciones y evidencia fotográfica sobre la misma tarea.
+* [ ] Al presentar nuevamente la resolución, el reclamo vuelve a `PENDIENTE_APROBACION`.
 
 **Puntos:** 5 **Prioridad:** Media **Épica:** EP-07
  
@@ -244,7 +253,7 @@
  
 **ID: HU19**
  
-**Historia:** Como Proveedor, quiero registrar evidencia obligatoria del trabajo realizado, para dejar constancia de la solución aplicada al reclamo.
+**Historia:** Como Usuario de proveedor, quiero registrar evidencia obligatoria del trabajo realizado, para dejar constancia de la solución aplicada al reclamo.
  
 **Criterios de aceptación:**
  
@@ -263,9 +272,9 @@
 **Criterios de aceptación:**
  
 * [ ] Puedo revisar las observaciones y evidencia fotográfica registradas por el Usuario de proveedor.
-* [ ] Puedo aprobar el trabajo realizado y cerrar el reclamo como "Completado".
+* [ ] Puedo aprobar el trabajo realizado y cerrar el reclamo como `COMPLETADO`.
 * [ ] Puedo rechazar el trabajo indicando obligatoriamente un motivo.
-* [ ] Si el trabajo es rechazado, el reclamo vuelve a quedar disponible para el proveedor correspondiente.
+* [ ] Si el trabajo es rechazado, el reclamo pasa a `RECHAZADO` y vuelve a quedar disponible para el mismo proveedor.
 
 
 **Puntos:** 5 **Prioridad:** Alta **Épica:** EP-08
@@ -335,6 +344,7 @@
 **Criterios de aceptación:**
  
 * [ ] Puedo asociar un usuario de edificio existente a un edificio.
+* [ ] Puedo asociar los edificios después de haber registrado al usuario.
 * [ ] Puedo modificar o quitar la asociación de un usuario a un edificio.
 * [ ] Un reclamo creado por el usuario solo puede asociarse a alguno de los edificios a los que pertenece.
 
@@ -388,7 +398,7 @@
 | HU12 | Visualizar evidencias antes/después de resolución. | 5 | Media | EP-03 |
 | HU21 | Moderar contenido inválido o inapropiado. | 5 | Media | EP-04 |
 | HU13 | Asignar reclamos clasificados a proveedores. | 8 | Alta | EP-05 |
-| HU14 | Sugerencia automática de proveedor según clasificación. | 5 | Media | EP-05 |
+| HU14 | Mostrar proveedores correspondientes según clasificación. | 5 | Media | EP-05 |
 | HU22 | Registrar y administrar proveedores. | 5 | Baja | EP-05 |
 | HU27 | Registrar y administrar Usuarios de proveedor. | 5 | Media | EP-06 |
 | HU15 | Consultar tareas asignadas (proveedor). | 3 | Alta | EP-07 |
@@ -424,7 +434,7 @@
 | 12 | HU10 | Visualizar reclamos con filtros y búsqueda | 5 | Alta | EP-04 | Sprint 3 |
 | 13 | HU7 | Consultar estado y avance de reclamos propios | 5 | Alta | EP-03 | Sprint 3 |
 | 14 | HU13 | Asignar reclamos clasificados a proveedores | 8 | Alta | EP-05 | Sprint 3 |
-| 15 | HU14 | Sugerir proveedor según clasificación | 5 | Media | EP-05 | Sprint 3 |
+| 15 | HU14 | Mostrar proveedores correspondientes según clasificación | 5 | Media | EP-05 | Sprint 3 |
 | 16 | HU22 | Registrar y administrar proveedores | 5 | Baja | EP-05 | Sprint 3 |
 | 17 | HU27 | Registrar y administrar usuarios de proveedor | 5 | Media | EP-06 | Sprint 4 |
 | 18 | HU15 | Consultar tareas asignadas | 3 | Alta | EP-07 | Sprint 4 |
@@ -545,7 +555,7 @@ Implementar las funcionalidades administrativas necesarias para consultar, busca
 | HU7 | Consultar estado y avance de reclamos propios | 5 |
 | HU10 | Visualizar reclamos con filtros y búsqueda | 5 |
 | HU13 | Asignar reclamos clasificados a proveedores | 8 |
-| HU14 | Sugerir proveedor según clasificación | 5 |
+| HU14 | Mostrar proveedores correspondientes según clasificación | 5 |
 | HU22 | Registrar y administrar proveedores | 5 |
 | **Total** | | **28** |
 
@@ -562,7 +572,7 @@ Al finalizar el sprint, el cliente podrá:
 - Registrar y administrar proveedores.
 - Desactivar proveedores.
 - Asignar reclamos clasificados a proveedores.
-- Recibir una sugerencia automática de proveedor según la clasificación.
+- Visualizar la lista de proveedores correspondientes según la clasificación.
 
 ### Sprint Review 3
 
