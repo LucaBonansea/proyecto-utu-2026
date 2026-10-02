@@ -1,4 +1,4 @@
-**Nombre del proyecto:** Portal Ciudadano
+**Nombre del proyecto:** Sistema de Gestión de Reclamos en Edificios Públicos
 **Cliente / patrocinador (sponsor):** Andrea(Representante de la Intendencia)
 **Director del proyecto / Scrum Master:** Luca Bonansea (Lider)
 **Equipo:** Thiago Carbajal, Ariana Blanco, Nicolas Perez y Emanuel Trapolini
@@ -6,49 +6,49 @@
 **Duración estimada:**  3 meses aproximadamente
 
 **Situación inicial del cliente:**
-La Intendencia Departamental es el organismo responsable de la administración y gestión de los servicios públicos del departamento, teniendo entre sus principales cometidos el mantenimiento de la infraestructura urbana, el alumbrado público, los espacios verdes, la limpieza, el tránsito y otras tareas orientadas a mejorar la calidad de vida de la ciudadanía. Para cumplir con estas funciones, coordina el trabajo de diferentes áreas y equipos técnicos que intervienen diariamente en la atención de las necesidades de la población.
+La Intendencia Departamental administra distintos edificios públicos y coordina al personal administrativo y a los proveedores responsables de su mantenimiento. La información sobre problemas de iluminación, infraestructura, mantenimiento y otras incidencias de esos edificios se recibe por distintos canales, lo que dificulta su organización y seguimiento.
 
 **Necesidad planteada por el cliente:**
-> "Queremos contar con un sistema que nos permita mejorar la organización y el control de la información
-> relacionada con los reclamos ciudadanos. Actualmente, la diversidad de canales de comunicación y la falta
-> de una estructura formal para la gestión de las incidencias dificultan el seguimiento de cada caso, la coordinación entre las áreas involucradas y el acceso a información confiable sobre el estado de los reclamos. Por este motivo, necesitamos una herramienta que nos ayude a ordenar estos procesos y mejorar la gestión interna."
+Contar con un sistema que centralice los reclamos relacionados con edificios públicos, permita identificar el edificio afectado y facilite la coordinación entre Usuarios de edificio, personal administrativo y proveedores. La herramienta debe ofrecer información confiable sobre el estado de cada reclamo desde su registro hasta su resolución.
 
 **Objetivo del proyecto:**
-Desarrollar un sistema web para la gestión de reclamos ciudadanos que permita optimizar el registro, seguimiento y administración de las incidencias reportadas, mejorando la organización interna de la Intendencia y la comunicación con la ciudadanía.
+Desarrollar un sistema web para la gestión de reclamos asociados a edificios públicos que permita optimizar el registro, seguimiento y administración de las incidencias reportadas, mejorando la organización interna de la Intendencia y la comunicación con los Usuarios de edificio.
 
 **Justificación del proyecto:**
-La implementación de este proyecto permitirá mejorar la gestión de los reclamos ciudadanos mediante un proceso más organizado, trazable y eficiente. Contar con una plataforma centralizada facilitará la coordinación entre las distintas áreas de la Intendencia, reducirá la dispersión de la información y permitirá realizar un seguimiento adecuado de cada incidencia desde su registro hasta su resolución.
+La implementación de este proyecto permitirá mejorar la gestión de los reclamos de edificios públicos mediante un proceso más organizado, trazable y eficiente. Contar con una plataforma centralizada facilitará la coordinación entre los Usuarios de edificio, el personal administrativo y los proveedores, reducirá la dispersión de la información y permitirá realizar un seguimiento adecuado de cada incidencia desde su registro hasta su resolución.
 
 En caso de no llevarse a cabo, la gestión de los reclamos continuará dependiendo de múltiples canales de comunicación y procesos manuales, lo que puede generar demoras, pérdida de información, dificultades para el seguimiento de los reclamos y una menor eficiencia en la gestión interna.
 
 **Visión del producto:**
-El producto consiste en un sistema de gestión de reclamos ciudadanos compuesto por una aplicación web para la ciudadanía, un panel administrativo para la Intendencia y una interfaz para los equipos o proveedores encargados de resolver las incidencias. La solución permitirá registrar, asignar, gestionar y dar seguimiento a los reclamos mediante una plataforma centralizada, con control de estados, evidencias multimedia, geolocalización, facilitando una gestión más eficiente y transparente.
+El producto consiste en un sistema de gestión de reclamos de edificios públicos compuesto por una aplicación web para los Usuarios de edificio, un panel administrativo para la Intendencia y una interfaz para los Usuarios de proveedor encargados de resolver las incidencias. La solución permitirá registrar, asignar, gestionar y dar seguimiento a los reclamos mediante una plataforma centralizada, con asociación obligatoria a un edificio, control de estados y evidencias multimedia. La versión 1.0 no utilizará geolocalización, mapas ni coordenadas GPS.
 
 ## Alcance incluido (Primera versión)
 
 La primera versión del sistema incluirá las siguientes funcionalidades:
 
-1. Registro de reclamos con descripción, ubicación geográfica y evidencias fotográficas.
-2. Inicio de sesión con diferentes roles de usuario: **Administrador**, **Administrativo**, **Proveedor** y **Ciudadano**.
-3. Registro de ciudadanos mediante número telefónico, con validación de identidad desde el backend.
+1. Registro de reclamos con descripción, edificio obligatorio y evidencias fotográficas. El edificio deberá pertenecer al Usuario de edificio que crea el reclamo.
+2. Inicio de sesión con diferentes roles de usuario: **Administrador**, **Administrativo**, **Usuario de proveedor** y **Usuario de edificio**.
+3. Registro de Usuarios de edificio por parte del Administrador mediante número telefónico, cédula, nombre y contraseña. La asociación con uno o más edificios podrá realizarse posteriormente.
 4. Asignación de prioridad al reclamo por parte del Administrativo cuando corresponda.
-5. Asignación automática del reclamo al área o proveedor responsable según la clasificación realizada por el Administrativo.
-6. Seguimiento del estado de cada reclamo por parte del ciudadano.
-7. Visualización de reclamos públicos con distinto nivel de exposición según su estado.
-8. Gestión interna de los reclamos mediante un dashboard para el personal de la comuna.
-9. Organización de los reclamos mediante un tablero **Kanban**, utilizando los estados:
-   - Ingreso
-   - En proceso
-   - Resuelto
-   - Rechazado
-10. Visualización de evidencias antes y después de la resolución del reclamo por parte del personal autorizado.
-11. Notificaciones dentro de la aplicación ante cambios de estado del reclamo.
-12. Moderación manual de contenido por parte de un funcionario con rol **Administrativo**.
-13. Registro de evidencias de resolución, incluyendo fotografías y observaciones, antes del cierre del reclamo.
-14. Validación del cierre del reclamo por un funcionario autorizado.
-15. Consulta de tareas asignadas por parte de equipos internos o proveedores.
-16. Gestión de clasificaciones: Módulo para que el Administrador o Administrativo pueda crear, editar y administrar las clasificaciones disponibles.
-17. Administración de proveedores: Módulo para que el Administrativo registre, modifique y administre proveedores.
+5. Asignación manual del reclamo por parte del Administrativo, seleccionando un proveedor de la lista correspondiente a la clasificación.
+6. Seguimiento del estado de sus propios reclamos por parte del Usuario de edificio.
+7. Gestión interna de los reclamos mediante listados, filtros y búsqueda para el personal administrativo.
+8. Aplicación de la máquina de estados formal definida en `epicas_y_requerimientos.md`:
+   - `INGRESADO`
+   - `INVALIDO`
+   - `MODERADO`
+   - `ASIGNADO`
+   - `PENDIENTE_APROBACION`
+   - `COMPLETADO`
+   - `RECHAZADO`
+9. Visualización de evidencias antes y después de la resolución del reclamo por parte del personal autorizado.
+10. Notificaciones dentro de la aplicación, almacenadas en MySQL y consultadas mediante la API REST. No se utilizará Web Push.
+11. Moderación manual de contenido por parte de un funcionario con rol **Administrativo**.
+12. Registro de evidencias de resolución, incluyendo fotografías y observaciones, antes del cierre del reclamo.
+13. Aprobación o rechazo de la resolución por el Usuario de edificio. Cuando rechace una resolución, deberá indicar el motivo y el reclamo permanecerá asignado al mismo proveedor.
+14. Consulta de tareas asignadas por parte de los Usuarios de proveedor.
+15. Gestión de clasificaciones: módulo para que el Administrador pueda crear, editar y administrar las clasificaciones disponibles.
+16. Administración de proveedores: módulo para que el Administrador registre, modifique y administre proveedores.
 
 
 
@@ -98,6 +98,9 @@ Las siguientes funcionalidades no serán desarrolladas en la primera versión de
 14. **Visualización en tiempo real del recorrido del equipo responsable.**  
     **Justificación:** Necesita geolocalización continua del dispositivo del proveedor, actualización en tiempo real e infraestructura adicional, como WebSockets o mecanismos de actualización constante. Esto agrega complejidad y costo de desarrollo no viables para el plazo del proyecto.
 
+15. **Geolocalización, mapas y coordenadas GPS para ubicar reclamos.**
+    **Justificación:** La ubicación de cada reclamo se determina mediante la relación obligatoria con un edificio público registrado. La versión 1.0 no contempla incidencias generales en la vía pública ni campos genéricos de ubicación.
+
 **Plazo y metodología:**
 Scrum, 6 sprints de 2 semanas (12 semanas totales), con revisión del incremento junto al cliente al final de cada sprint. Fecha aproximada de finalizacion: 29 de octubre
 
@@ -105,6 +108,6 @@ Scrum, 6 sprints de 2 semanas (12 semanas totales), con revisión del incremento
 72 horas de esfuerzo aproximadas
 
 **Criterios de éxito:**
-El sistema permite gestionar todo el ciclo de vida de un reclamo ciudadano, desde su creación hasta su resolución final. Los ciudadanos pueden registrar sus reclamos incorporando información como  descripción, evidencias fotográficas y ubicación geográfica. Luego, el sistema facilita la clasificación del reclamo por parte del Administrativo, su asignación al área o proveedor correspondiente y el seguimiento de cada etapa del proceso.
+El sistema permite gestionar todo el ciclo de vida de un reclamo asociado a un edificio público, desde su creación hasta su resolución final. Los Usuarios de edificio pueden registrar sus reclamos incorporando una descripción, evidencias fotográficas y uno de los edificios a los que están asociados. Luego, el sistema facilita la clasificación del reclamo por parte del Administrativo, la asignación manual mediante una lista de proveedores correspondientes a la clasificación y el seguimiento de cada etapa del proceso.
 
 Además, la Intendencia valida la solución mediante la revisión del flujo completo, asegurando que el proceso funcione correctamente de principio a fin antes de aceptar la entrega final.
