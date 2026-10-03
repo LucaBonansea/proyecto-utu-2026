@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\ReclamoService;
 use Illuminate\Http\Request;
+use App\Models\Reclamo;
 
 class ReclamoController extends Controller
 {
@@ -82,20 +83,187 @@ class ReclamoController extends Controller
         ], 201);
     }
 
-    public function indexAdmin(
-    Request $request,
-    ReclamoService $reclamoService
-) {
+    public function indexAdmin(Request $request,ReclamoService $reclamoService) {
+        
+        if ($request->user()->rol !== 'administrador' && $request->user()->rol !== 'administrativo') {
+            return response()->json([
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        $reclamos = $reclamoService->obtenerPendientes();
+
+        return response()->json([
+            'reclamos' => $reclamos
+        ], 200);
+    }
+    public function asignarProveedor(
+        Request $request,
+        int $id
+    ) {
     if ($request->user()->rol !== 'administrador') {
         return response()->json([
             'message' => 'No autorizado'
         ], 403);
     }
 
-    $reclamos = $reclamoService->obtenerTodos();
+    $datos = $request->validate([
+        'proveedor_id' => [
+            'required',
+            'exists:proveedores,id'
+        ],
+    ]);
+
+    $reclamo = Reclamo::findOrFail($id);
+
+    $reclamo->update([
+        'proveedor_id' => $datos['proveedor_id'],
+    ]);
+
+    $reclamo->load([
+        'usuario',
+        'edificio',
+        'clasificacion',
+        'evidencia',
+        'proveedor'
+    ]);
 
     return response()->json([
-        'reclamos' => $reclamos
+        'message' => 'Proveedor asignado correctamente',
+        'reclamo' => $reclamo,
+    ], 200);
+}
+
+public function actualizar(
+    Request $request,
+    int $id
+) {
+    if ($request->user()->rol !== 'administrativo') {
+        return response()->json([
+            'message' => 'No autorizado'
+        ], 403);
+    }
+
+    $datos = $request->validate([
+        'description' => [
+            'required',
+            'string',
+            'max:200'
+        ],
+
+        'prioridad' => [
+            'required',
+            'string',
+            'in:Normal,Urgente'
+        ],
+
+        'proveedor_id' => [
+            'required',
+            'exists:proveedores,id'
+        ],
+    ]);
+
+    $reclamo = Reclamo::findOrFail($id);
+
+    $reclamo->update([
+        'description' => $datos['description'],
+        'prioridad' => $datos['prioridad'],
+        'proveedor_id' => $datos['proveedor_id'],
+        'estado' => 'aceptado',
+    ]);
+
+    $reclamo->load([
+        'usuario',
+        'edificio',
+        'clasificacion',
+        'evidencia',
+        'proveedor'
+    ]);
+
+    return response()->json([
+        'message' => 'Reclamo actualizado correctamente',
+        'reclamo' => $reclamo,
+    ], 200);
+}
+public function confirmarFinalizacion(
+    Request $request,
+    int $id
+) {
+    $reclamo = Reclamo::findOrFail($id);
+
+    if ($reclamo->usuario_cedula !== $request->user()->cedula) {
+        return response()->json([
+            'message' => 'No autorizado'
+        ], 403);
+    }
+
+    if ($reclamo->estado !== 'completado') {
+        return response()->json([
+            'message' => 'El reclamo no está pendiente de confirmación'
+        ], 422);
+    }
+
+    $reclamo->update([
+        'estado' => 'finalizacion_confirmada',
+        'motivo_rechazo' => null,
+    ]);
+
+    $reclamo->load([
+        'usuario',
+        'edificio',
+        'clasificacion',
+        'evidencia',
+        'proveedor'
+    ]);
+
+    return response()->json([
+        'message' => 'Finalización confirmada correctamente',
+        'reclamo' => $reclamo,
+    ], 200);
+}
+
+public function rechazarFinalizacion(
+    Request $request,
+    int $id
+) {
+    $reclamo = Reclamo::findOrFail($id);
+
+    if ($reclamo->usuario_cedula !== $request->user()->cedula) {
+        return response()->json([
+            'message' => 'No autorizado'
+        ], 403);
+    }
+
+    if ($reclamo->estado !== 'completado') {
+        return response()->json([
+            'message' => 'El reclamo no está pendiente de confirmación'
+        ], 422);
+    }
+
+    $datos = $request->validate([
+        'motivo_rechazo' => [
+            'required',
+            'string',
+            'max:500'
+        ],
+    ]);
+
+    $reclamo->update([
+        'estado' => 'rechazada',
+        'motivo_rechazo' => $datos['motivo_rechazo'],
+    ]);
+
+    $reclamo->load([
+        'usuario',
+        'edificio',
+        'clasificacion',
+        'evidencia',
+        'proveedor'
+    ]);
+
+    return response()->json([
+        'message' => 'Finalización rechazada correctamente',
+        'reclamo' => $reclamo,
     ], 200);
 }
 }

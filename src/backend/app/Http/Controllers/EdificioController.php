@@ -14,6 +14,15 @@ class EdificioController extends Controller
         return response()->json($edificios);
     }
 
+    public function misEdificios(Request $request)
+    {
+        $usuario = $request->user();
+
+        $edificios = $usuario->edificios()->get();
+
+        return response()->json($edificios);
+    }
+
     public function store(Request $request, EdificioService $edificioService)
     {
         $datos = $request->validate([

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Proveedor;
 
 class Reclamo extends Model
 {
@@ -12,6 +13,9 @@ class Reclamo extends Model
         'description',
         'clasificacion_id',
         'estado',
+        'prioridad',
+        'motivo_rechazo',
+        'proveedor_id',
     ];
 
     public function usuario()
@@ -30,11 +34,16 @@ class Reclamo extends Model
 
     public function evidencia()
     {
-        return $this->hasOne(Evidencia::class);
+        return $this->hasMany(Evidencia::class);
     }
 
     public function clasificacion()
     {
         return $this->belongsTo(Clasificacion::class);
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class);
     }
 }

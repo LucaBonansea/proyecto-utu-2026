@@ -191,6 +191,7 @@ export class Home{
     let reclamos_creados = [];
 
     data.forEach(reclamo => {
+        console.log("RECLAMO:", reclamo);
         const reclamo_container = document.createElement("div");
         reclamo_container.classList.add("primerdiv-reclamo");
 

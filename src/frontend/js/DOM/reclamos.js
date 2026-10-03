@@ -194,21 +194,19 @@ export class Reclamos {
         const estado = normalizarEstado(reclamo.estado);
         const claseEstado = CLASES_ESTADO[estado] ?? "estado-enviado";
         const descripcion = escaparHtml(reclamo.description || "Sin descripción");
-        const direccion = reclamo.edificio?.direccion || "";
+        const nombreEdificio = reclamo.edificio?.nombre || "Edificio no disponible";
         const imagen = obtenerUrlEvidencia(reclamo.evidencia?.ruta_archivo);
         const imagenHtml = imagen
             ? `<img src="${escaparHtml(imagen)}" alt="Evidencia del reclamo" loading="lazy">`
             : "";
-        const ubicacionHtml = direccion
-            ? `
-                <button
-                    class="reclamo-ubicacion"
-                    data-direccion="${escaparHtml(direccion)}"
-                >
-                    <p>Ver Ubicacion</p>
-                </button>
-            `
-            : "";
+        const edificioHtml = `
+            <p class="reclamo-edificio">
+                <span class="material-symbols-outlined">
+                    location_city
+                </span>
+                ${escaparHtml(nombreEdificio)}
+            </p>
+        `;
         const posicion = (
             (this.paginacion.pagina_actual - 1)
             * this.paginacion.por_pagina
@@ -222,7 +220,7 @@ export class Reclamos {
 
                 <div class="info-reclamo">
                     <p class="reclamo-titulo">${descripcion}</p>
-                    ${ubicacionHtml}
+                    ${edificioHtml}
                     ${this.renderEstado(estado)}
                     <p class="fecha-misreclamos">
                         ${formatearFecha(reclamo.created_at)}
@@ -333,15 +331,6 @@ export class Reclamos {
             }
         );
 
-        this.main.querySelectorAll(".reclamo-ubicacion").forEach(boton => {
-            boton.addEventListener("click", () => {
-                const direccion = encodeURIComponent(boton.dataset.direccion);
-                window.open(
-                    `https://www.google.com/maps/search/?api=1&query=${direccion}`,
-                    "_blank",
-                    "noopener,noreferrer"
-                );
-            });
-        });
+        
     }
 }

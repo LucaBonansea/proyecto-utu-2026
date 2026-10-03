@@ -8,7 +8,7 @@ class ProveedorService
 {
     public function obtenerTodos()
     {
-        return Proveedor::all();
+        return Proveedor::where('estado', 'Activo')->get();
     }
 
     public function crear(array $datos)
