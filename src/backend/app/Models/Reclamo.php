@@ -14,12 +14,18 @@ class Reclamo extends Model
         'estado',
     ];
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(
             Usuario::class,
             'usuario_cedula',
             'cedula'
         );
+    }
+
+    public function edificio()
+    {
+        return $this->belongsTo(Edificio::class);
     }
 
     public function evidencia()

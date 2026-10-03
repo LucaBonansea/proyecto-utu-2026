@@ -7,6 +7,42 @@ use Illuminate\Http\Request;
 
 class ReclamoController extends Controller
 {
+    public function index(
+        Request $request,
+        ReclamoService $reclamoService
+    ) {
+        $datos = $request->validate([
+            'page' => [
+                'sometimes',
+                'integer',
+                'min:1'
+            ],
+            'filtro' => [
+                'sometimes',
+                'string',
+                'in:todos,resueltos,proceso'
+            ],
+        ]);
+
+        $reclamos = $reclamoService->obtenerPorUsuario(
+            $request->user()->cedula,
+            $datos['filtro'] ?? 'todos',
+            12
+        );
+
+        return response()->json([
+            'reclamos' => $reclamos->items(),
+            'paginacion' => [
+                'pagina_actual' => $reclamos->currentPage(),
+                'ultima_pagina' => $reclamos->lastPage(),
+                'por_pagina' => $reclamos->perPage(),
+                'total' => $reclamos->total(),
+                'desde' => $reclamos->firstItem(),
+                'hasta' => $reclamos->lastItem(),
+            ],
+        ], 200);
+    }
+
     public function store(
         Request $request,
         ReclamoService $reclamoService
@@ -45,4 +81,21 @@ class ReclamoController extends Controller
             'reclamo' => $reclamo,
         ], 201);
     }
+
+    public function indexAdmin(
+    Request $request,
+    ReclamoService $reclamoService
+) {
+    if ($request->user()->rol !== 'administrador') {
+        return response()->json([
+            'message' => 'No autorizado'
+        ], 403);
+    }
+
+    $reclamos = $reclamoService->obtenerTodos();
+
+    return response()->json([
+        'reclamos' => $reclamos
+    ], 200);
+}
 }

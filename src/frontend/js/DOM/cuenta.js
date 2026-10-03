@@ -6,7 +6,7 @@ export class Cuenta {
         this.button_restart_actives = button_restart_actives;
         this.$btn_cuenta_top = $btn_cuenta_top;
         this.$btn_cuenta = $btn_cuenta;
-        this.irAInicioFiltrado = irAInicioFiltrado; // función que viene de script-inicio.js
+        this.irAInicioFiltrado = irAInicioFiltrado; // función que viene de DOM/inicio.js
     }
 
 

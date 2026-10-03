@@ -2647,3 +2647,334 @@ main{
         justify-content: center;
     }
 }
+
+/* Listado de reclamos del administrador */
+.lista-reclamos-admin{
+    width:100%;
+    max-width:1300px;
+    margin:0 auto;
+    padding:25px;
+    box-sizing:border-box;
+}
+
+.titulo-reclamos-admin{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.titulo-reclamos-admin h2{
+    margin:0;
+    color:var(--text-primary);
+    font-size:24px;
+}
+
+.titulo-reclamos-admin p{
+    margin:6px 0 0;
+    color:var(--text-secondary);
+    font-size:14px;
+}
+
+.controles-reclamos-admin{
+    display:flex;
+    gap:12px;
+    margin-bottom:22px;
+}
+
+.buscador-reclamos-admin,
+.selector-estado-reclamos{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-height:44px;
+    box-sizing:border-box;
+    border:1px solid var(--border-subtle);
+    border-radius:10px;
+    background:var(--bg-surface);
+    color:var(--text-secondary);
+}
+
+.buscador-reclamos-admin{
+    flex:1;
+    padding:0 13px;
+}
+
+.selector-estado-reclamos{
+    padding:0 10px 0 13px;
+}
+
+.buscador-reclamos-admin input,
+.selector-estado-reclamos select{
+    min-width:0;
+    border:0;
+    outline:0;
+    background:transparent;
+    color:var(--text-primary);
+    font:inherit;
+}
+
+.buscador-reclamos-admin input{
+    width:100%;
+}
+
+.selector-estado-reclamos select{
+    cursor:pointer;
+}
+
+.selector-estado-reclamos option{
+    background:var(--bg-surface);
+    color:var(--text-primary);
+}
+
+.buscador-reclamos-admin:focus-within,
+.selector-estado-reclamos:focus-within{
+    border-color:var(--azul-primario);
+    box-shadow:0 0 0 3px var(--azul-tint);
+}
+
+.contenedor-reclamos-admin{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));
+    gap:18px;
+}
+
+.reclamo-admin-card{
+    min-width:0;
+    overflow:hidden;
+    border:1px solid var(--border-subtle);
+    border-radius:15px;
+    background:var(--bg-surface);
+    box-shadow:0 5px 18px rgba(0,0,0,.18);
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.reclamo-admin-card:hover{
+    transform:translateY(-2px);
+    border-color:var(--border-strong);
+    box-shadow:0 9px 24px rgba(0,0,0,.28);
+}
+
+.reclamo-admin-imagen{
+    height:180px;
+    overflow:hidden;
+    background:var(--bg-elevated);
+}
+
+.reclamo-admin-imagen img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+}
+
+.reclamo-admin-imagen.sin-imagen{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-tertiary);
+}
+
+.reclamo-admin-imagen.sin-imagen .material-symbols-outlined{
+    font-size:48px;
+}
+
+.reclamo-admin-contenido{
+    padding:18px;
+}
+
+.reclamo-admin-encabezado{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.reclamo-admin-id{
+    color:var(--text-secondary);
+    font-size:12px;
+    font-weight:700;
+}
+
+.reclamo-admin-estado{
+    max-width:50%;
+    padding:5px 9px;
+    border-radius:999px;
+    background:var(--azul-tint);
+    color:var(--azul-primario);
+    font-size:11px;
+    font-weight:700;
+    text-align:center;
+}
+
+.reclamo-admin-estado.estado-completado,
+.reclamo-admin-estado.estado-terminado{
+    background:var(--verde-tint);
+    color:var(--verde);
+}
+
+.reclamo-admin-estado.estado-rechazado{
+    background:var(--rojo-tint);
+    color:var(--rojo);
+}
+
+.reclamo-admin-descripcion{
+    margin:14px 0 17px;
+    color:var(--text-primary);
+    font-size:15px;
+    line-height:1.45;
+    overflow-wrap:anywhere;
+}
+
+.reclamo-admin-datos{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:13px;
+    margin:0;
+}
+
+.reclamo-admin-datos div{
+    min-width:0;
+}
+
+.reclamo-admin-datos dt{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    margin-bottom:4px;
+    color:var(--text-tertiary);
+    font-size:11px;
+    font-weight:600;
+}
+
+.reclamo-admin-datos dt .material-symbols-outlined{
+    font-size:16px;
+}
+
+.reclamo-admin-datos dd{
+    margin:0;
+    color:var(--text-secondary);
+    font-size:13px;
+    overflow-wrap:anywhere;
+}
+
+.estado-carga-reclamos,
+.sin-reclamos-admin{
+    min-height:220px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    grid-column:1 / -1;
+    border:1px dashed var(--border-strong);
+    border-radius:15px;
+    color:var(--text-secondary);
+    text-align:center;
+}
+
+.estado-carga-reclamos > .material-symbols-outlined{
+    color:var(--azul-primario);
+    font-size:34px;
+    animation:account-loading-spin .9s linear infinite;
+}
+
+.estado-error-reclamos > .material-symbols-outlined{
+    color:var(--rojo);
+    animation:none;
+}
+
+.btn-reintentar-reclamos{
+    border:0;
+    border-radius:8px;
+    padding:9px 15px;
+    background:var(--azul-primario);
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.paginacion-admin{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    margin:24px 0 4px;
+}
+
+.btn-pagina-admin{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    min-width:112px;
+    min-height:40px;
+    border:1px solid var(--border-subtle);
+    border-radius:9px;
+    padding:8px 13px;
+    background:var(--bg-surface);
+    color:var(--text-primary);
+    font:inherit;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.btn-pagina-admin:hover:not(:disabled){
+    border-color:var(--azul-primario);
+    background:var(--azul-tint);
+    transform:translateY(-1px);
+}
+
+.btn-pagina-admin:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.btn-pagina-admin .material-symbols-outlined{
+    font-size:19px;
+}
+
+.resumen-paginacion-admin{
+    color:var(--text-secondary);
+    font-size:13px;
+    text-align:center;
+}
+
+@media (max-width: 700px){
+    .lista-reclamos-admin{
+        padding:15px;
+    }
+
+    .controles-reclamos-admin{
+        flex-direction:column;
+    }
+
+    .selector-estado-reclamos select{
+        width:100%;
+    }
+
+    .contenedor-reclamos-admin{
+        grid-template-columns:1fr;
+    }
+}
+
+@media (max-width: 430px){
+    .reclamo-admin-datos{
+        grid-template-columns:1fr;
+    }
+
+    .paginacion-admin{
+        gap:8px;
+    }
+
+    .btn-pagina-admin{
+        min-width:auto;
+        padding:8px 10px;
+    }
+
+    .resumen-paginacion-admin{
+        font-size:11px;
+    }
+}

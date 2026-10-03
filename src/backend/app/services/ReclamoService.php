@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Reclamo;
 use App\Models\Evidencia;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ReclamoService
 {
@@ -29,5 +30,48 @@ class ReclamoService
         ]);
 
         return $reclamo;
+    }
+
+    public function obtenerPorUsuario(
+        string $cedula,
+        string $filtro = 'todos',
+        int $porPagina = 12
+    ): LengthAwarePaginator {
+        $consulta = Reclamo::with([
+            'evidencia',
+            'clasificacion',
+            'edificio'
+        ])
+            ->where('usuario_cedula', $cedula);
+
+        if ($filtro === 'resueltos') {
+            $consulta->whereIn('estado', [
+                'completado',
+                'terminado'
+            ]);
+        }
+
+        if ($filtro === 'proceso') {
+            $consulta->whereNotIn('estado', [
+                'completado',
+                'terminado'
+            ]);
+        }
+
+        return $consulta
+            ->latest()
+            ->paginate($porPagina);
+    }
+
+    public function obtenerTodos()
+    {
+    return Reclamo::with([
+        'usuario',
+        'edificio',
+        'clasificacion',
+        'evidencia'
+    ])
+    ->latest()
+    ->get();
     }
 }

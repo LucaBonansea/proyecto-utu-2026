@@ -1,1 +1,0 @@
-import "./DOM/registro.js";
