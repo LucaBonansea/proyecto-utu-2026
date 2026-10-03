@@ -22,6 +22,9 @@ services:
     build:
       context: ./src/backend
 
+    volumes:
+      - backend_storage:/var/www/html/storage/app/public
+
     environment:
       SANCTUM_STATEFUL_DOMAINS: 127.0.0.1:5500,localhost:5500,127.0.0.1:5501,localhost:5501
 
@@ -47,3 +50,4 @@ services:
 
 volumes:
   mysql_data:
+  backend_storage:

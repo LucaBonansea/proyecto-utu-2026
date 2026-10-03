@@ -19,6 +19,8 @@ const enviarJsonConCsrf = (ruta, method, datos) => apiFetchConCsrf(ruta, {
 export const obtenerEdificios = () => obtenerListado("/api/edificios");
 export const obtenerUsuarios = () => obtenerListado("/api/usuarios");
 export const obtenerProveedores = () => obtenerListado("/api/proveedores");
+export const obtenerReclamosAdministrador = () =>
+    obtenerListado("/api/admin/reclamos");
 
 export const crearProveedor = datos =>
     enviarJsonConCsrf("/api/proveedores", "POST", datos);

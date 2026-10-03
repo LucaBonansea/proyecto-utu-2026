@@ -21,12 +21,41 @@ Route::post('/proveedores', [ProveedorController::class, 'store']);
 Route::put('/proveedores/{id}/estado', [ProveedorController::class, 'cambiarEstado']);
 
 Route::middleware('web')->group(function () {
-    Route::post('/auth/login', [AuthController::class, 'login']);
+
+    Route::post('/auth/login', [
+        AuthController::class,
+        'login'
+    ]);
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/auth/me', [AuthController::class, 'me']);
-        Route::post('/auth/logout', [AuthController::class, 'logout']);
-        Route::post('/reclamos', [ReclamoController::class, 'store']);
+
+        Route::get('/auth/me', [
+            AuthController::class,
+            'me'
+        ]);
+
+        Route::post('/auth/logout', [
+            AuthController::class,
+            'logout'
+        ]);
+
+        // Usuario de edificio: ve sus propios reclamos
+        Route::get('/reclamos', [
+            ReclamoController::class,
+            'index'
+        ]);
+
+        // Crear reclamo
+        Route::post('/reclamos', [
+            ReclamoController::class,
+            'store'
+        ]);
+
+        // Administrador: ve todos
+        Route::get('/admin/reclamos', [
+            ReclamoController::class,
+            'indexAdmin'
+        ]);
     });
 });
 

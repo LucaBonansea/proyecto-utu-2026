@@ -1,131 +1,347 @@
-export class Reclamos{
-    constructor(Main){
-        this.Main = Main;
+import {
+    obtenerReclamos,
+    obtenerUrlEvidencia
+} from "../services/reclamos-service.js";
+import { notify } from "../utils/toast.js";
 
-        this.reclamosData = [
-            { titulo: "Ascensor fuera de servicio",  estado: "terminado", fecha: "17/02/26 • Hace 2 dias" },
-            { titulo: "Luz de pasillo quemada",       estado: "terminado", fecha: "16/02/26 • Hace 3 dias" },
-            { titulo: "Filtración en el techo",       estado: "terminado", fecha: "15/02/26 • Hace 4 dias" },
-            { titulo: "Aire acondicionado roto",      estado: "terminado", fecha: "14/02/26 • Hace 5 dias" },
-            { titulo: "Puerta de emergencia trabada", estado: "terminado", fecha: "13/02/26 • Hace 6 dias" },
-            { titulo: "Baño sin agua",                estado: "terminado", fecha: "12/02/26 • Hace 7 dias" },
-            { titulo: "Cañería con pérdida",          estado: "terminado", fecha: "11/02/26 • Hace 8 dias" },
-            { titulo: "Extintor vencido",             estado: "terminado", fecha: "10/02/26 • Hace 9 dias" },
-            { titulo: "Enchufe dañado en oficina",    estado: "proceso",   fecha: "09/02/26 • Hace 10 dias" },
-            { titulo: "Ventana rota en sala 3",       estado: "proceso",   fecha: "08/02/26 • Hace 11 dias" },
-            { titulo: "Cielorraso con humedad",       estado: "aceptado",  fecha: "07/02/26 • Hace 12 dias" },
-            { titulo: "Sensor de humo desconectado",  estado: "enviado",   fecha: "06/02/26 • Hace 13 dias" },
-        ];
+const FILTROS = [
+    { id: "todos", label: "Todos" },
+    { id: "resueltos", label: "Resueltos" },
+    { id: "proceso", label: "En proceso" }
+];
 
-        this.imgPlaceholder = "https://imgs.search.brave.com/o7Hp6ebhqiOzB5Ng50bKejGy-Dy1clafDW8xSB0BfS8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi9jYXJy/ZXRlcmEtZGUtYXNm/YWx0by1hZ3JpZXRh/ZG8tY29uLWJhY2hl/cy1wcm9mdW5kb3Mt/bGxlbm9zLWFndWEt/cXVlLXJlZmxlamFu/LWxhcy1sdWNlcy1s/YS1jaXVkYWQtNDI4/Nzg5ODkzLmpwZw";
+const ESTADOS = [
+    { id: "pendiente", label: "Enviado" },
+    { id: "validado", label: "Aceptado" },
+    { id: "en_proceso", label: "En proceso" },
+    { id: "completado", label: "Terminado" }
+];
 
-        this.filtros = [
-            { id: "todos",     label: "Todos" },
-            { id: "resueltos", label: "Resueltos" },
-            { id: "proceso",   label: "En proceso" },
-        ];
+const ALIAS_ESTADOS = {
+    enviado: "pendiente",
+    aceptado: "validado",
+    proceso: "en_proceso",
+    terminado: "completado"
+};
 
-        this.estadoInfo = {
-            enviado:   { label: "Enviado",    clase: "estado-enviado" },
-            aceptado:  { label: "Aceptado",   clase: "estado-aceptado" },
-            proceso:   { label: "En proceso", clase: "estado-proceso" },
-            terminado: { label: "Resuelto",   clase: "estado-resuelto" },
+const CLASES_ESTADO = {
+    pendiente: "estado-enviado",
+    validado: "estado-aceptado",
+    en_proceso: "estado-proceso",
+    completado: "estado-resuelto"
+};
+
+function escaparHtml(valor = "") {
+    const elemento = document.createElement("div");
+    elemento.textContent = String(valor);
+    return elemento.innerHTML;
+}
+
+function normalizarEstado(estado) {
+    return ALIAS_ESTADOS[estado] ?? estado ?? "pendiente";
+}
+
+function formatearFecha(fecha) {
+    if (!fecha) {
+        return "Fecha no disponible";
+    }
+
+    const fechaReclamo = new Date(fecha);
+
+    if (Number.isNaN(fechaReclamo.getTime())) {
+        return "Fecha no disponible";
+    }
+
+    return new Intl.DateTimeFormat("es-UY", {
+        dateStyle: "short",
+        timeStyle: "short"
+    }).format(fechaReclamo);
+}
+
+export class Reclamos {
+    constructor(main) {
+        this.main = main;
+        this.reclamos = [];
+        this.filtroActual = "todos";
+        this.paginacion = {
+            pagina_actual: 1,
+            ultima_pagina: 1,
+            por_pagina: 12,
+            total: 0,
+            desde: 0,
+            hasta: 0
         };
     }
 
-    second_view(filtro = "todos"){
+    async second_view(filtro = "todos", pagina = 1) {
+        this.renderCargando();
 
-        const pasos = ["enviado", "aceptado", "proceso", "terminado"];
-
-        let lista = this.reclamosData;
-        let titulo = "Tus Reclamos";
-
-        if(filtro === "resueltos"){
-            lista = this.reclamosData.filter(r => r.estado === "terminado");
-            titulo = "Reclamos Resueltos";
-        } else if(filtro === "proceso"){
-            lista = this.reclamosData.filter(r => r.estado !== "terminado");
-            titulo = "Reclamos en Proceso";
+        try {
+            await this.cargarReclamos(filtro, pagina);
+            this.renderVista(filtro);
+        } catch (error) {
+            console.error("Error al cargar los reclamos:", error);
+            this.renderError();
+            notify.error("No se pudieron cargar tus reclamos.");
         }
-
-        const chipsHTML = this.filtros.map(f => `
-            <button class="edificio-chip ${f.id === filtro ? "active" : ""}" data-filtro="${f.id}">
-                ${f.label}
-            </button>
-        `).join("");
-
-        const tarjetas = lista.length
-            ? lista.map((r, i) => this.renderTarjeta(r, i, pasos)).join("")
-            : `<p class="sin-reclamos">No hay reclamos en esta categoría.</p>`;
-
-        this.Main.innerHTML = `
-        <div class="div-inicial">
-            <h2>${titulo}</h2>
-        </div>
-
-        <div class="edificios-chips">
-            ${chipsHTML}
-        </div>
-
-        <div class="reclamos-seccion">
-            ${tarjetas}
-        </div>
-        `;
-
-        const latitud = -34.603722;
-        const longitud = -58.381592;
-
-        this.Main.querySelectorAll(".reclamo-ubicacion").forEach(boton => {
-            boton.addEventListener("click", () => {
-                const url = `https://www.google.com/maps?q=${latitud},${longitud}`;
-                window.open(url, "_blank");
-            });
-        });
-
-        this.Main.querySelectorAll(".edificio-chip").forEach(chip => {
-            chip.addEventListener("click", () => {
-                this.second_view(chip.dataset.filtro);
-            });
-        });
-
     }
 
-    renderTarjeta(reclamo, index, pasos){
-        const estadoIndex = pasos.indexOf(reclamo.estado);
-        const nombresPasos = ["Enviado", "Aceptado", "En proceso", "Terminado"];
-        const info = this.estadoInfo[reclamo.estado];
+    async cargarReclamos(filtro, pagina) {
+        const response = await obtenerReclamos({ filtro, pagina });
 
-        const stepsHTML = nombresPasos.map((nombre, i) => {
-            const stepActive = i <= estadoIndex ? "active" : "";
-            const lineActive = i < estadoIndex ? "active" : "";
-            const line = i < nombresPasos.length - 1
-                ? `<div class="line ${lineActive}"></div>`
-                : "";
-            return `
-                <div class="step ${stepActive}">
-                    <div class="circle"></div>
-                    <span>${nombre}</span>
-                </div>
-                ${line}
-            `;
-        }).join("");
+        if (response.status === 401) {
+            window.location.replace("./index.html");
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error(`La API respondió con estado ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.reclamos = Array.isArray(data.reclamos) ? data.reclamos : [];
+        this.filtroActual = filtro;
+        this.paginacion = {
+            ...this.paginacion,
+            ...data.paginacion
+        };
+    }
+
+    renderCargando() {
+        this.main.innerHTML = `
+            <div class="div-inicial">
+                <h2>Tus Reclamos</h2>
+            </div>
+            <p class="sin-reclamos">Cargando reclamos...</p>
+        `;
+    }
+
+    renderError() {
+        this.main.innerHTML = `
+            <div class="div-inicial">
+                <h2>Tus Reclamos</h2>
+            </div>
+            <p class="sin-reclamos">
+                No fue posible cargar los reclamos. Intentá nuevamente.
+            </p>
+        `;
+    }
+
+    renderVista(filtro) {
+        const titulo = this.obtenerTitulo(filtro);
+        const chips = FILTROS
+            .map(item => this.renderFiltro(item, filtro))
+            .join("");
+        const tarjetas = this.reclamos.length > 0
+            ? this.reclamos
+                .map((reclamo, indice) => (
+                    this.renderTarjeta(
+                        reclamo,
+                        indice,
+                        this.paginacion.total
+                    )
+                ))
+                .join("")
+            : `<p class="sin-reclamos">No hay reclamos en esta categoría.</p>`;
+
+        this.main.innerHTML = `
+            <div class="div-inicial">
+                <h2>${titulo}</h2>
+            </div>
+
+            <div class="edificios-chips">
+                ${chips}
+            </div>
+
+            <div class="reclamos-seccion">
+                ${tarjetas}
+            </div>
+
+            ${this.renderPaginacion()}
+        `;
+
+        this.conectarEventos();
+    }
+
+    obtenerTitulo(filtro) {
+        if (filtro === "resueltos") {
+            return "Reclamos Resueltos";
+        }
+
+        if (filtro === "proceso") {
+            return "Reclamos en Proceso";
+        }
+
+        return "Tus Reclamos";
+    }
+
+    renderFiltro(filtro, filtroActivo) {
+        const claseActiva = filtro.id === filtroActivo ? "active" : "";
 
         return `
-            <div class="primerdiv-reclamo ${info.clase}">
+            <button
+                class="edificio-chip ${claseActiva}"
+                data-filtro="${filtro.id}"
+                aria-label="${filtro.label}"
+                title="${filtro.label}"
+            >
+                ${filtro.label}
+            </button>
+        `;
+    }
+
+    renderTarjeta(reclamo, indice, total) {
+        const estado = normalizarEstado(reclamo.estado);
+        const claseEstado = CLASES_ESTADO[estado] ?? "estado-enviado";
+        const descripcion = escaparHtml(reclamo.description || "Sin descripción");
+        const direccion = reclamo.edificio?.direccion || "";
+        const imagen = obtenerUrlEvidencia(reclamo.evidencia?.ruta_archivo);
+        const imagenHtml = imagen
+            ? `<img src="${escaparHtml(imagen)}" alt="Evidencia del reclamo" loading="lazy">`
+            : "";
+        const ubicacionHtml = direccion
+            ? `
+                <button
+                    class="reclamo-ubicacion"
+                    data-direccion="${escaparHtml(direccion)}"
+                >
+                    <p>Ver Ubicacion</p>
+                </button>
+            `
+            : "";
+        const posicion = (
+            (this.paginacion.pagina_actual - 1)
+            * this.paginacion.por_pagina
+        ) + indice + 1;
+
+        return `
+            <div class="primerdiv-reclamo ${claseEstado}">
                 <div class="foto-reclamo">
-                    <img src="${this.imgPlaceholder}" alt="">
+                    ${imagenHtml}
                 </div>
+
                 <div class="info-reclamo">
-                    <p class="reclamo-titulo">${reclamo.titulo}</p>
-                    <button class="reclamo-ubicacion"><p>Ver Ubicacion</p></button>
-                    <div class="stepper">
-                        ${stepsHTML}
-                    </div>
-                    <p class="fecha-misreclamos">${reclamo.fecha} <span>${index + 1}/${this.reclamosData.length}</span></p>
+                    <p class="reclamo-titulo">${descripcion}</p>
+                    ${ubicacionHtml}
+                    ${this.renderEstado(estado)}
+                    <p class="fecha-misreclamos">
+                        ${formatearFecha(reclamo.created_at)}
+                        <span>${posicion}/${total}</span>
+                    </p>
                 </div>
             </div>
         `;
     }
 
+    renderEstado(estadoActual) {
+        const indiceEstado = ESTADOS.findIndex(estado => (
+            estado.id === estadoActual
+        ));
+        const ultimoEstadoActivo = indiceEstado >= 0 ? indiceEstado : 0;
 
+        const pasos = ESTADOS.map((estado, indice) => {
+            const pasoActivo = indice <= ultimoEstadoActivo ? "active" : "";
+            const lineaActiva = indice < ultimoEstadoActivo ? "active" : "";
+            const linea = indice < ESTADOS.length - 1
+                ? `<div class="line ${lineaActiva}"></div>`
+                : "";
+
+            return `
+                <div class="step ${pasoActivo}">
+                    <div class="circle"></div>
+                    <span>${estado.label}</span>
+                </div>
+                ${linea}
+            `;
+        }).join("");
+
+        return `<div class="stepper">${pasos}</div>`;
+    }
+
+    renderPaginacion() {
+        const {
+            pagina_actual: paginaActual,
+            ultima_pagina: ultimaPagina,
+            total
+        } = this.paginacion;
+
+        if (total <= this.paginacion.por_pagina) {
+            return "";
+        }
+
+        const anteriorDeshabilitado = paginaActual <= 1 ? "disabled" : "";
+        const siguienteDeshabilitado = (
+            paginaActual >= ultimaPagina
+        ) ? "disabled" : "";
+
+        return `
+            <nav class="paginacion-reclamos" aria-label="Paginación de reclamos">
+                <button
+                    class="pagina-anterior"
+                    type="button"
+                    ${anteriorDeshabilitado}
+                >
+                    Anterior
+                </button>
+
+                <span>
+                    Página ${paginaActual} de ${ultimaPagina}
+                    · ${total} reclamo${total === 1 ? "" : "s"}
+                </span>
+
+                <button
+                    class="pagina-siguiente"
+                    type="button"
+                    ${siguienteDeshabilitado}
+                >
+                    Siguiente
+                </button>
+            </nav>
+        `;
+    }
+
+    conectarEventos() {
+        this.main.querySelectorAll(".foto-reclamo img").forEach(imagen => {
+            imagen.addEventListener("error", () => {
+                imagen.closest(".foto-reclamo").hidden = true;
+            });
+        });
+
+        this.main.querySelectorAll(".edificio-chip").forEach(chip => {
+            chip.addEventListener("click", () => {
+                this.second_view(chip.dataset.filtro, 1);
+            });
+        });
+
+        this.main.querySelector(".pagina-anterior")?.addEventListener(
+            "click",
+            () => {
+                this.second_view(
+                    this.filtroActual,
+                    this.paginacion.pagina_actual - 1
+                );
+            }
+        );
+
+        this.main.querySelector(".pagina-siguiente")?.addEventListener(
+            "click",
+            () => {
+                this.second_view(
+                    this.filtroActual,
+                    this.paginacion.pagina_actual + 1
+                );
+            }
+        );
+
+        this.main.querySelectorAll(".reclamo-ubicacion").forEach(boton => {
+            boton.addEventListener("click", () => {
+                const direccion = encodeURIComponent(boton.dataset.direccion);
+                window.open(
+                    `https://www.google.com/maps/search/?api=1&query=${direccion}`,
+                    "_blank",
+                    "noopener,noreferrer"
+                );
+            });
+        });
+    }
 }
