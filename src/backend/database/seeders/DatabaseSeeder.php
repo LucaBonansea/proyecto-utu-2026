@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             ProveedorSeeder::class,
             EdificioSeeder::class,
             UsuarioSeeder::class,
+            ClasificacionSeeder::class,
         ]);
     }
 }

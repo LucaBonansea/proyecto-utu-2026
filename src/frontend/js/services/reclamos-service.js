@@ -7,7 +7,7 @@ export function obtenerClasificaciones() {
 }
 
 export function obtenerEdificios() {
-    return apiFetch("/api/edificios", {
+    return apiFetch("/api/mis-edificios", {
         headers: { "Accept": "application/json" }
     });
 }

@@ -47,14 +47,15 @@ class ReclamoService
         if ($filtro === 'resueltos') {
             $consulta->whereIn('estado', [
                 'completado',
-                'terminado'
+                'finalizacion_confirmada',
+                'rechazada'
             ]);
         }
 
         if ($filtro === 'proceso') {
             $consulta->whereNotIn('estado', [
                 'completado',
-                'terminado'
+                'finalizacion_confirmada'
             ]);
         }
 
@@ -65,13 +66,28 @@ class ReclamoService
 
     public function obtenerTodos()
     {
-    return Reclamo::with([
-        'usuario',
-        'edificio',
-        'clasificacion',
-        'evidencia'
-    ])
-    ->latest()
-    ->get();
+        return Reclamo::with([
+            'usuario',
+            'edificio',
+            'clasificacion',
+            'evidencia',
+            'proveedor'
+        ])
+        ->latest()
+        ->get();
+    }
+
+    public function obtenerPendientes()
+    {
+        return Reclamo::where('estado', 'pendiente')
+            ->with([
+                'usuario',
+                'edificio',
+                'clasificacion',
+                'evidencia',
+                'proveedor'
+            ])
+            ->latest()
+            ->get();
     }
 }

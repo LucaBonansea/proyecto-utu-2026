@@ -28,6 +28,10 @@ Route::middleware('web')->group(function () {
     ]);
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/mis-edificios', [
+            EdificioController::class,
+            'misEdificios'
+        ]);
 
         Route::get('/auth/me', [
             AuthController::class,
@@ -52,10 +56,15 @@ Route::middleware('web')->group(function () {
         ]);
 
         // Administrador: ve todos
-        Route::get('/admin/reclamos', [
-            ReclamoController::class,
-            'indexAdmin'
-        ]);
+        Route::get('/admin/reclamos', [ReclamoController::class,'indexAdmin']);
+        Route::put('/admin/reclamos/{id}', [ReclamoController::class,'actualizar']);
+        Route::put('/admin/reclamos/{id}/proveedor', [ReclamoController::class,'asignarProveedor']);
+        Route::get('/proveedor/reclamos', [ProveedorController::class,'reclamos']);
+        Route::put('/proveedor/reclamos/{id}/aceptar', [ProveedorController::class, 'aceptarReclamo']);
+        Route::put('/proveedor/reclamos/{id}/aceptar-devolucion', [ProveedorController::class, 'aceptarDevolucion']);
+        Route::post('/proveedor/reclamos/{id}/finalizar', [ProveedorController::class, 'finalizarReclamo']);
+        Route::put('/reclamos/{id}/confirmar-finalizacion', [ReclamoController::class, 'confirmarFinalizacion']);
+        Route::put('/reclamos/{id}/rechazar-finalizacion', [ReclamoController::class, 'rechazarFinalizacion']);
     });
 });
 

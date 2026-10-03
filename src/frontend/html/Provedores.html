@@ -1,28 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Proveedores</title>
+    <title>Reclamos</title>
 
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0"
+    >
 
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap">
-
-    <link rel="stylesheet"
-        href="/proyecto-utu-2026/src/frontend/css/style-provedores.css">
-
-    <link rel="icon"
-        href="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png">
-
+    <link
+        rel="stylesheet"
+        href="/proyecto-utu-2026/src/frontend/css/style-proveedores.css"
+    >
 </head>
-
 
 <body>
 
@@ -31,22 +24,48 @@
         <div class="logos">
 
             <div class="logo-div">
-
-                <img class="logo"
-                    src="/proyecto-utu-2026/src/frontend/assets/imgs/intendencia-logo-inicio.png"
-                    alt="Logo">
-
+                <img
+                    class="logo"
+                    src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png"
+                    alt=""
+                >
             </div>
 
-
-            <a href="index.html"
-                class="int-logo-div">
-
-                <img class="int-logo"
+            <div class="int-logo-div">
+                <img
+                    class="int-logo"
                     src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png"
-                    alt="Logo de la intendencia">
+                    alt=""
+                >
+            </div>
 
-            </a>
+        </div>
+
+        <div class="header-actions">
+
+            <button
+                type="button"
+                id="btn-cuenta"
+                class="header-action"
+            >
+                <span class="material-symbols-outlined">
+                    account_circle
+                </span>
+
+                <span>Mi cuenta</span>
+            </button>
+
+            <button
+                type="button"
+                id="btn-logout"
+                class="header-action"
+            >
+                <span class="material-symbols-outlined">
+                    logout
+                </span>
+
+                <span>Cerrar sesión</span>
+            </button>
 
         </div>
 
@@ -55,361 +74,309 @@
 
     <main>
 
+        <section id="resumen-urgentes" class="urgentes-section">
 
-    
+            <div class="urgentes-header">
 
-        <section id="lista-reclamos">
+                <div class="urgentes-titulo">
 
-            <h1 class="title">
-                Reclamos a resolver
-            </h1>
+                    <span class="material-symbols-outlined">
+                        priority_high
+                    </span>
 
-
-
-            <div class="container-reclamos">
-
-                <div class="r">
-
-                    <div class="top-container">
-
-                        <div class="foto-reclamo">
-
-                            <img
-                                src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
-                                alt="Foto del reclamo">
-
-                        </div>
-
-
-                        <div class="info-reclamo">
-
-                            <h2 class="reclamos-title">
-                                Pozo en el Mallada
-                            </h2>
-
-                            <span class="reclamos-Ur">
-                                Urgente
-                            </span>
-
-                            <p class="reclamos-text">
-                                07/09/2026
-                            </p>
-
-                            <button
-                                class="btn-resolver"
-                                type="button"
-                                onclick="mostrarReclamo(1)">
-
-                                Ver mas
-
-                                <span class="material-symbols-outlined">
-                                    arrow_forward
-                                </span>
-
-                            </button>
-
-                        </div>
-
+                    <div>
+                        <h2>Reclamos urgentes</h2>
+                        <p id="cantidad-urgentes">
+                            0 reclamos requieren atención prioritaria
+                        </p>
                     </div>
 
                 </div>
 
             </div>
 
-
-
-            <div class="container-reclamos">
-
-                <div class="r">
-
-                    <div class="top-container">
-
-                        <div class="foto-reclamo">
-
-                            <img
-                                src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
-                                alt="Foto del reclamo">
-
-                        </div>
-
-
-                        <div class="info-reclamo">
-
-                            <h2 class="reclamos-title">
-                                Pozo en el Mallada
-                            </h2>
-
-                            <p class="reclamos-text">
-                                07/09/2026
-                            </p>
-
-                            <button
-                                class="btn-resolver"
-                                type="button"
-                                onclick="mostrarReclamo(2)">
-
-                                Ver mas
-
-                                <span class="material-symbols-outlined">
-                                    arrow_forward
-                                </span>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            
-
-            <div class="container-reclamos">
-
-                <div class="r">
-
-                    <div class="top-container">
-
-                        <div class="foto-reclamo">
-
-                            <img
-                                src="https://i.pinimg.com/1200x/71/eb/91/71eb913d4462981ad0fadc028ed4cd12.jpg"
-                                alt="Foto del reclamo">
-
-                        </div>
-
-
-                        <div class="info-reclamo">
-
-                            <h2 class="reclamos-title">
-                                Pozo en el Mallada
-                            </h2>
-
-                            <p class="reclamos-text">
-                                07/09/2026
-                            </p>
-
-                            <button
-                                class="btn-resolver"
-                                type="button"
-                                onclick="mostrarReclamo(3)">
-
-                                Ver mas
-
-                                <span class="material-symbols-outlined">
-                                    arrow_forward
-                                </span>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
+            <div
+                id="container-urgentes"
+                class="container-urgentes"
+            ></div>
 
         </section>
 
 
+        <section id="lista-reclamos">
 
- 
+            <div class="filtros-reclamos">
 
-        <section id="detalle-reclamo"
-            class="oculto">
+                <button
+                    type="button"
+                    class="filtro-activo"
+                    data-filtro="todos"
+                >
+                    Todos
+                </button>
+
+                <button
+                    type="button"
+                    data-filtro="pendientes"
+                >
+                    Pendientes
+                </button>
+
+                <button
+                    type="button"
+                    data-filtro="en_proceso"
+                >
+                    En proceso
+                </button>
+
+            </div>
+
+            <div
+                id="container-reclamos"
+                class="container-reclamos"
+            ></div>
+
+        </section>
 
 
+        <section
+            id="detalle-reclamo"
+            class="oculto"
+        >
 
             <button
-                type="button"
+                id="btn-volver"
                 class="btn-volver"
-                onclick="volverReclamos()">
-
+            >
                 <span class="material-symbols-outlined">
                     arrow_back
                 </span>
 
-                Volver a reclamos
-
+                Volver
             </button>
-
 
             <div class="detalle-card">
 
-
-             
                 <div class="detalle-imagen-container">
 
                     <img
                         id="detalle-imagen"
                         src=""
-                        alt="Imagen del reclamo">
+                        alt="Evidencia del reclamo"
+                    >
 
                 </div>
 
 
-          
+                <div class="detalle-contenido">
 
-                <div class="detalle-info">
+                    <div class="detalle-header">
 
-                    <h1 id="detalle-titulo">
-                        Pozo en el Mallada
-                    </h1>
+                        <div>
 
+                            <h2 id="detalle-titulo"></h2>
 
-                    <div class="detalle-datos">
+                            <span id="detalle-prioridad"></span>
 
-                        <span
-                            id="detalle-prioridad"
-                            class="reclamos-Ur">
+                        </div>
 
-                            Urgente
-
-                        </span>
-
-
-                        <span class="reclamos-text">
-
-                            Fecha:
-
-                            <strong id="detalle-fecha">
-                                07/09/2026
-                            </strong>
-
-                        </span>
+                        <span id="detalle-estado"></span>
 
                     </div>
 
 
+                    <p id="detalle-fecha"></p>
 
-                    <div class="descripcion">
 
-                        <h2>
-                            Descripción
-                        </h2>
+                    <div class="detalle-descripcion">
 
-                        <p id="detalle-descripcion">
-                        </p>
+                        <h3>Descripción</h3>
+
+                        <p id="detalle-descripcion"></p>
 
                     </div>
 
 
-                    <div class="resolucion">
+                    <div class="detalle-info">
 
-                        <h2>
-                            Resolución
-                        </h2>
+                        <div>
 
-                        <p class="resolucion-texto">
+                            <strong>Edificio</strong>
 
-                            Agrega una foto de evidencia
-                            cuando el reclamo haya sido
-                            solucionado.
+                            <p id="detalle-edificio"></p>
 
-                        </p>
+                        </div>
 
+                        <div>
 
-                        <form id="form-resolver">
+                            <strong>Dirección</strong>
 
+                            <p id="detalle-direccion"></p>
 
-                            <div
-                                id="upload-area"
-                                class="upload-area">
+                        </div>
 
-                                <span class="material-symbols-outlined">
-                                    add_a_photo
-                                </span>
+                        <div>
 
+                            <strong>Clasificación</strong>
 
-                                <p>
-                                    Agregar foto de evidencia
-                                </p>
+                            <p id="detalle-clasificacion"></p>
+
+                        </div>
+
+                    </div>
 
 
-                                <label
-                                    for="foto-evidencia"
-                                    class="btn-foto">
+                    <div
+                        id="aceptar-container"
+                    >
 
-                                    Seleccionar foto
+                        <button
+                            id="btn-aceptar"
+                            class="btn-aceptar"
+                        >
+                            Aceptar reclamo
+                        </button>
 
-                                </label>
-
-
-                                <input
-                                    type="file"
-                                    id="foto-evidencia"
-                                    accept="image/*">
-
-                            </div>
+                    </div>
 
 
-                         
+                    <form
+                        id="form-resolver"
+                        class="oculto"
+                    >
 
-                            <div
-                                id="preview-container"
-                                class="preview-container oculto">
-
-                                <img
-                                    id="preview-imagen"
-                                    src=""
-                                    alt="Vista previa">
+                        <h3>Finalizar reclamo</h3>
 
 
-                                <button
-                                    type="button"
-                                    class="btn-cambiar-foto"
-                                    onclick="eliminarFoto()">
+                        <div class="campo">
 
-                                    <span class="material-symbols-outlined">
-                                        delete
-                                    </span>
+                            <label for="foto-resolucion">
+                                Foto de resolución
+                            </label>
 
-                                    Cambiar foto
+                            <input
+                                type="file"
+                                id="foto-resolucion"
+                                accept="image/*"
+                            >
 
-                                </button>
-
-                            </div>
+                        </div>
 
 
-                       
+                        <div
+                            id="preview-container"
+                            class="oculto"
+                        >
+
+                            <img
+                                id="preview-resolucion"
+                                src=""
+                                alt="Vista previa"
+                            >
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="observaciones">
+                                Observaciones
+                            </label>
 
                             <textarea
                                 id="observaciones"
-                                placeholder="Observaciones de la resolución..."></textarea>
+                                maxlength="500"
+                                placeholder="Describe el trabajo realizado..."
+                            ></textarea>
+
+                        </div>
 
 
+                        <button
+                            id="btn-finalizar"
+                            class="btn-finalizar"
+                            type="submit"
+                        >
+                            Finalizar reclamo
+                        </button>
 
-                            <button
-                                type="submit"
-                                class="btn-resolver btn-resolver-final">
-
-                                <span class="material-symbols-outlined">
-                                    check_circle
-                                </span>
-
-                                Resolver reclamo
-
-                            </button>
-
-                        </form>
-
-                    </div>
+                    </form>
 
                 </div>
 
             </div>
 
         </section>
+        <section id="cuenta-panel" class="oculto">
+
+    <button id="btn-volver-cuenta" class="btn-volver">
+        ← Volver
+    </button>
+
+    <div class="cuenta-card">
+
+        <div class="cuenta-header">
+            <div class="cuenta-icono">
+                <span class="material-symbols-outlined">
+                    person
+                </span>
+            </div>
+
+            <div>
+                <h2>Mi cuenta</h2>
+                <p>Información de tu cuenta</p>
+            </div>
+        </div>
+
+        <div id="cuenta-mensaje" class="cuenta-mensaje oculto"></div>
+
+        <div class="cuenta-datos">
+
+            <div class="cuenta-dato">
+                <span>Nombre</span>
+                <strong id="cuenta-nombre">-</strong>
+            </div>
+
+            <div class="cuenta-dato">
+                <span>Cédula</span>
+                <strong id="cuenta-cedula">-</strong>
+            </div>
+
+            <div class="cuenta-dato">
+                <span>Correo electrónico</span>
+                <strong id="cuenta-email">-</strong>
+            </div>
+
+            <div class="cuenta-dato">
+                <span>Teléfono</span>
+                <strong id="cuenta-telefono">-</strong>
+            </div>
+
+            <div class="cuenta-dato">
+                <span>Proveedor</span>
+                <strong id="cuenta-proveedor">-</strong>
+            </div>
+
+            <div class="cuenta-dato">
+                <span>Rol</span>
+                <strong id="cuenta-rol">Usuario proveedor</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<div id="mensaje-pagina" class="mensaje-pagina oculto"></div>
 
     </main>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
-<script src="/proyecto-utu-2026/src/frontend/js/DOM/proveedores.js" type="module"></script>
+
+    <script
+        type="module"
+        src="/proyecto-utu-2026/src/frontend/js/DOM/proveedores.js"
+    ></script>
 
 </body>
 </html>
