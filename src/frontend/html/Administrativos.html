@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrativos - Reclamos</title>
     <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrativos.css">
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     
@@ -35,9 +36,9 @@
             </button>
         </div>
         <div class="last-btns">
-            <button class="sidebar-btn logout">
+            <button type="button" class="sidebar-btn logout">
                 <span class="material-symbols-outlined">logout</span>
-                Cerrar sesion
+                Cerrar sesión
             </button>
         </div>
     </aside>
@@ -52,6 +53,39 @@
                     <img class="int-logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png" alt="">
                 </a>
             </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    id="theme-toggle"
+                    type="button"
+                    aria-label="Cambiar tema"
+                >
+                    <span class="material-symbols-outlined">contrast</span>
+                </button>
+                <button
+                    class="notificaciones-btn-top"
+                    type="button"
+                    aria-label="Notificaciones"
+                    aria-controls="menu-top-notificaciones"
+                    aria-expanded="false"
+                    title="Notificaciones"
+                >
+                    <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+                </button>
+            </div>
+
+            <section
+                class="menu-top-notificaciones"
+                id="menu-top-notificaciones"
+                role="region"
+                aria-labelledby="titulo-notificaciones"
+            >
+                <div class="div-inicial">
+                    <h2 id="titulo-notificaciones">Notificaciones</h2>
+                </div>
+                <section class="notificaciones-lista" aria-label="Lista de notificaciones" aria-live="polite"></section>
+            </section>
         </header>
 
         <div id="filtro-container"></div>

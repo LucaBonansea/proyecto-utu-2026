@@ -1,26 +1,31 @@
 import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
 import { notify } from "../utils/toast.js";
+import { inicializarTema } from '../theme.js';
+import { inicializarNotificaciones } from './notifications.js';
 import {
     cambiarEstadoProveedor as actualizarEstadoProveedor,
     cambiarPasswordUsuario,
     cambiarRolUsuario,
+    crearClasificacion,
     crearEdificio,
     crearProveedor,
     crearUsuario,
     obtenerEdificios,
+    obtenerClasificaciones,
     obtenerProveedores,
     obtenerReclamosAdministrador,
     obtenerUsuarios
 } from "../services/administrador-service.js";
 import { obtenerUrlEvidencia } from "../services/reclamos-service.js";
 
-const section = document.querySelector("section");
+const section = document.querySelector("main > section");
 const filtro_container = document.querySelector("#filtro-container");
 const proveedoresbtn = document.querySelector(".proveedores-btn");
 const usuariosbtn = document.querySelector(".usuarios-btn");
 const botones = document.querySelectorAll(".sidebar-btn:not(.logout)");
 const edificiosbtn = document.querySelector(".edificios-btn");
 const reclamosbtn = document.querySelector(".reclamos-btn");
+const clasificacionesbtn = document.querySelector(".clasificaciones-btn");
 const accountMenuWrapper = document.querySelector(".account-menu-wrapper");
 const accountTrigger = document.querySelector(".account-trigger");
 const accountMenu = document.querySelector(".account-menu");
@@ -41,6 +46,7 @@ let edificios = [];
 let usuarios = [];
 let proveedores = [];
 let reclamos = [];
+let clasificaciones = [];
 let filtroEstadoProveedor = "todos";
 const LIMITE_PAGINACION_ADMIN = 6;
 let paginaReclamos = 1;
@@ -326,6 +332,11 @@ async function iniciarAplicacion() {
         }
     );
 
+    clasificacionesbtn.addEventListener(
+        "click",
+        () => vistaClasificaciones()
+    );
+
     accountTrigger.addEventListener("click", alternarMenuCuenta);
 
     document.addEventListener("click", cerrarMenuCuentaAlHacerClickFuera);
@@ -497,6 +508,8 @@ async function iniciar() {
         return;
     }
 
+    inicializarTema();
+    inicializarNotificaciones();
     await iniciarAplicacion();
 }
 
@@ -758,6 +771,105 @@ function renderCardReclamo(reclamo) {
             </div>
         </article>
     `;
+}
+
+async function vistaClasificaciones() {
+    filtro_container.innerHTML = "";
+    section.style.display = "grid";
+    section.style.gridTemplateColumns = "repeat(1, 1fr)";
+    section.innerHTML = `
+        <div class="lista-clasificaciones-admin">
+            <div class="titulo-clasificaciones-admin">
+                <div>
+                    <h2>Clasificaciones</h2>
+                    <p>Categorías disponibles para los reclamos</p>
+                </div>
+            </div>
+
+            <form class="form-clasificacion-admin">
+                <label for="nombre-clasificacion">Nueva clasificación</label>
+                <div>
+                    <input
+                        id="nombre-clasificacion"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Ej. Electricidad"
+                        required
+                    >
+                    <button type="submit">Crear clasificación</button>
+                </div>
+            </form>
+
+            <div class="contenedor-clasificaciones-admin">
+                Cargando clasificaciones...
+            </div>
+        </div>
+    `;
+
+    const formulario = section.querySelector(".form-clasificacion-admin");
+    const input = formulario.querySelector("input");
+    const boton = formulario.querySelector("button");
+
+    const cargarClasificaciones = async () => {
+        const contenedor = section.querySelector(".contenedor-clasificaciones-admin");
+
+        try {
+            const response = await obtenerClasificaciones();
+            const data = await response.json().catch(() => []);
+
+            if (!response.ok) {
+                throw new Error(data.message || "No se pudieron obtener las clasificaciones.");
+            }
+
+            clasificaciones = Array.isArray(data) ? data : [];
+            contenedor.innerHTML = clasificaciones.length
+                ? clasificaciones.map(item => `
+                    <div class="clasificacion-admin-item">
+                        <span class="material-symbols-outlined" aria-hidden="true">label</span>
+                        <span>${escaparHtml(item.clasificacion)}</span>
+                    </div>
+                `).join("")
+                : "<p>No hay clasificaciones registradas.</p>";
+        } catch (error) {
+            console.error("Error al cargar clasificaciones:", error);
+            contenedor.innerHTML = "<p>No se pudieron cargar las clasificaciones.</p>";
+            notify.error(error.message || "No se pudieron cargar las clasificaciones.");
+        }
+    };
+
+    formulario.addEventListener("submit", async event => {
+        event.preventDefault();
+        const nombre = input.value.trim();
+
+        if (!nombre) {
+            notify.warning("Escribe un nombre para la clasificación.");
+            return;
+        }
+
+        try {
+            boton.disabled = true;
+            boton.textContent = "Creando...";
+            const response = await crearClasificacion(nombre);
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                const mensajeValidacion = data.errors?.clasificacion?.[0];
+                throw new Error(mensajeValidacion || data.message || "No se pudo crear la clasificación.");
+            }
+
+            input.value = "";
+            notify.success(data.message || "Clasificación creada correctamente.");
+            await cargarClasificaciones();
+        } catch (error) {
+            console.error("Error al crear clasificación:", error);
+            notify.error(error.message || "No se pudo crear la clasificación.");
+        } finally {
+            boton.disabled = false;
+            boton.textContent = "Crear clasificación";
+        }
+    });
+
+    await cargarClasificaciones();
 }
 
 
@@ -3366,6 +3478,3 @@ function vistaUsuarios(filtro = "") {
     );
 
 }
-
-
-

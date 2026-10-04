@@ -158,6 +158,199 @@ body{
     box-shadow: 0 4px 10px rgba(2,60,161,.28);
 }
 
+.btn-login:disabled,
+.btn-politicas-aceptar:disabled{
+    cursor:not-allowed;
+    opacity:.58;
+    transform:none;
+    box-shadow:none;
+}
+
+.politicas-link{
+    align-self:center;
+    border:0;
+    background:transparent;
+    color:#526071;
+    font:inherit;
+    font-size:12.5px;
+    font-weight:500;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+}
+
+body.modal-abierto{ overflow:hidden; }
+
+.politicas-modal{
+    position:fixed;
+    inset:0;
+    z-index:10000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.politicas-modal[hidden]{ display:none; }
+
+.politicas-aceptacion[hidden],
+.btn-politicas-aceptar[hidden]{ display:none; }
+
+.politicas-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0, 24, 66, .48);
+    backdrop-filter:blur(3px);
+}
+
+.politicas-dialogo{
+    position:relative;
+    width:min(720px, 100%);
+    max-height:calc(100dvh - 40px);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    background:#fff;
+    border:1px solid #DDE3EC;
+    border-radius:16px;
+    box-shadow:0 24px 70px rgba(0, 40, 111, .24);
+    animation:aparecer .2s ease;
+}
+
+.politicas-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:20px;
+    padding:22px 24px 18px;
+    border-bottom:1px solid #E8ECF3;
+}
+
+.politicas-header h2{
+    color:#00286F;
+    font-size:20px;
+    line-height:1.25;
+    letter-spacing:-.2px;
+}
+
+.politicas-header p{
+    margin-top:6px;
+    color:#6B7482;
+    font-size:13px;
+    line-height:1.45;
+}
+
+.politicas-cerrar{
+    flex:0 0 auto;
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border:1px solid #E2E6EE;
+    border-radius:9px;
+    background:#fff;
+    color:#526071;
+    font-size:24px;
+    line-height:1;
+    cursor:pointer;
+}
+
+.politicas-contenido{
+    min-height:0;
+    overflow-y:auto;
+    padding:6px 24px;
+    scrollbar-color:#B8C2D1 transparent;
+    scrollbar-width:thin;
+}
+
+.politicas-seccion{
+    padding:17px 0;
+    border-bottom:1px solid #EDF0F5;
+}
+
+.politicas-seccion:last-child{ border-bottom:0; }
+
+.politicas-seccion h3{
+    margin-bottom:7px;
+    color:#163A70;
+    font-size:14px;
+    font-weight:700;
+}
+
+.politicas-seccion p{
+    color:#4C5665;
+    font-size:13.5px;
+    line-height:1.62;
+}
+
+.politicas-footer{
+    padding:18px 24px 20px;
+    border-top:1px solid #E8ECF3;
+    background:#FBFCFE;
+}
+
+.politicas-aceptacion{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    color:#3F4958;
+    font-size:13px;
+    line-height:1.45;
+    cursor:pointer;
+}
+
+.politicas-checkbox{
+    width:17px;
+    height:17px;
+    flex:0 0 auto;
+    margin-top:1px;
+    accent-color:#023CA1;
+}
+
+.politicas-acciones{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:17px;
+}
+
+.btn-politicas-secundario,
+.btn-politicas-aceptar{
+    min-height:40px;
+    padding:10px 16px;
+    border-radius:10px;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.btn-politicas-secundario{
+    border:1px solid #D8DEE8;
+    background:#fff;
+    color:#354052;
+}
+
+.btn-politicas-aceptar{
+    border:1px solid #023CA1;
+    background:linear-gradient(135deg, #023CA1 0%, #00286F 100%);
+    color:#fff;
+    box-shadow:0 6px 14px rgba(2, 60, 161, .2);
+}
+
+.politicas-link:focus-visible,
+.politicas-cerrar:focus-visible,
+.politicas-checkbox:focus-visible,
+.btn-politicas-secundario:focus-visible,
+.btn-politicas-aceptar:focus-visible,
+.politicas-contenido:focus-visible,
+.toggle-pass:focus-visible,
+.btn-login:focus-visible{
+    outline:3px solid rgba(2, 60, 161, .28);
+    outline-offset:2px;
+}
+
 /* Panel de imagen: oculto en mobile */
 .image-panel{ display:none; }
 
@@ -194,262 +387,22 @@ body{
 @media (min-width:1400px){
     .login-card{ max-width:420px; }
 }
-/* =========================================================
-   TOASTS — Nextjs Toast Notify
-   ========================================================= */
 
-.toast-container.top-center {
-    top: 24px !important;
-    gap: 12px !important;
-    z-index: 99999 !important;
-}
+@media (max-width:600px){
+    .politicas-modal{ padding:10px; }
 
-/* ---------------------------------------------------------
-   Toast base
-   --------------------------------------------------------- */
-
-.toast-nextjs {
-    position: relative !important;
-
-    width: min(390px, calc(100vw - 32px)) !important;
-    min-width: 0 !important;
-    max-width: 390px !important;
-
-    padding: 14px 42px 14px 14px !important;
-
-    background: rgba(255, 255, 255, 0.98) !important;
-
-    border: 1px solid #E8ECF3 !important;
-    border-radius: 16px !important;
-
-    box-shadow:
-        0 16px 40px rgba(0, 40, 111, 0.10),
-        0 4px 12px rgba(0, 0, 0, 0.04) !important;
-
-    backdrop-filter: blur(8px);
-
-    overflow: hidden !important;
-}
-
-/* ---------------------------------------------------------
-   Contenido
-   --------------------------------------------------------- */
-
-.toast-nextjs .toast-content {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-}
-
-/* ---------------------------------------------------------
-   Icono
-   --------------------------------------------------------- */
-
-.toast-nextjs .check {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    border-radius: 12px !important;
-
-    transition: all .2s ease;
-}
-
-.toast-nextjs .check svg {
-    width: 19px !important;
-    height: 19px !important;
-
-    stroke-width: 1.8 !important;
-}
-
-/* ---------------------------------------------------------
-   Texto
-   --------------------------------------------------------- */
-
-.toast-nextjs .message {
-    margin: 0 !important;
-    padding: 0 !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    min-width: 0;
-}
-
-.toast-nextjs .text {
-    font-family: 'Inter', sans-serif !important;
-
-    font-size: 13.5px !important;
-    line-height: 1.45 !important;
-
-    font-weight: 500 !important;
-
-    color: #343B47 !important;
-}
-
-/* ---------------------------------------------------------
-   Botón cerrar
-   --------------------------------------------------------- */
-
-.toast-nextjs .close-toast {
-    position: absolute !important;
-
-    top: 13px !important;
-    right: 13px !important;
-
-    width: 18px !important;
-    height: 18px !important;
-
-    opacity: .45;
-
-    transition:
-        opacity .2s ease,
-        transform .2s ease !important;
-}
-
-.toast-nextjs .close-toast:hover {
-    opacity: .85;
-
-    transform: scale(1.08);
-}
-
-/* ---------------------------------------------------------
-   Barra de progreso
-   --------------------------------------------------------- */
-
-.toast-nextjs .progress {
-    position: absolute !important;
-    left: 0 !important;
-    bottom: 0 !important;
-
-    width: 100% !important;
-    height: 3px !important;
-
-    border-radius: 0 0 16px 16px !important;
-
-    transform-origin: left center;
-
-    animation: toastProgress var(--progress-duration, 4000ms) linear forwards !important;
-}
-
-@keyframes toastProgress {
-    from {
-        transform: scaleX(1);
+    .politicas-dialogo{
+        width:100%;
+        max-height:calc(100dvh - 20px);
+        border-radius:14px;
     }
 
-    to {
-        transform: scaleX(0);
-    }
-}
-/* =========================================================
-   ERROR
-   ========================================================= */
-
-.toast-nextjs.error {
-    border-color: #F0DADA !important;
-}
-
-.toast-nextjs.error .check {
-    background: #FFF1F1 !important;
-    color: #D66A6A !important;
-}
-
-.toast-nextjs.error .progress {
-    background: #D66A6A !important;
-}
-
-
-/* =========================================================
-   SUCCESS
-   ========================================================= */
-
-.toast-nextjs.success {
-    border-color: #D8EDE1 !important;
-}
-
-.toast-nextjs.success .check {
-    background: #EDF9F2 !important;
-    color: #2D9966 !important;
-}
-
-.toast-nextjs.success .progress {
-    background: #2D9966 !important;
-}
-
-
-/* =========================================================
-   WARNING
-   ========================================================= */
-
-.toast-nextjs.warning {
-    border-color: #F1E2C5 !important;
-}
-
-.toast-nextjs.warning .check {
-    background: #FFF8E9 !important;
-    color: #D3973D !important;
-}
-
-.toast-nextjs.warning .progress {
-    background: #D3973D !important;
-}
-
-
-/* =========================================================
-   INFO
-   ========================================================= */
-
-.toast-nextjs.info {
-    border-color: #D9E5F6 !important;
-}
-
-.toast-nextjs.info .check {
-    background: #EEF5FF !important;
-    color: #2F6DB5 !important;
-}
-
-.toast-nextjs.info .progress {
-    background: #2F6DB5 !important;
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-    .toast-container.top-center {
-        top: 16px !important;
-    }
-
-    .toast-nextjs {
-        width: calc(100vw - 24px) !important;
-        max-width: none !important;
-
-        border-radius: 14px !important;
-
-        padding: 13px 38px 13px 13px !important;
-    }
-
-    .toast-nextjs .check {
-        width: 36px !important;
-        height: 36px !important;
-        min-width: 36px !important;
-
-        border-radius: 10px !important;
-    }
-
-    .toast-nextjs .check svg {
-        width: 18px !important;
-        height: 18px !important;
-    }
-
-    .toast-nextjs .text {
-        font-size: 13px !important;
-    }
+    .politicas-header{ padding:18px 16px 15px; }
+    .politicas-header h2{ font-size:18px; }
+    .politicas-contenido{ padding:4px 16px; }
+    .politicas-seccion{ padding:14px 0; }
+    .politicas-footer{ padding:15px 16px 16px; }
+    .politicas-acciones{ flex-direction:column-reverse; }
+    .btn-politicas-secundario,
+    .btn-politicas-aceptar{ width:100%; }
 }

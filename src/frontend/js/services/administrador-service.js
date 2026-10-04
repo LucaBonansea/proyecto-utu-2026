@@ -19,6 +19,8 @@ const enviarJsonConCsrf = (ruta, method, datos) => apiFetchConCsrf(ruta, {
 export const obtenerEdificios = () => obtenerListado("/api/edificios");
 export const obtenerUsuarios = () => obtenerListado("/api/usuarios");
 export const obtenerProveedores = () => obtenerListado("/api/proveedores");
+export const obtenerClasificaciones = () =>
+    obtenerListado("/api/clasificaciones");
 export const obtenerReclamosAdministrador = () =>
     obtenerListado("/api/admin/reclamos");
 
@@ -30,6 +32,9 @@ export const cambiarEstadoProveedor = id =>
 
 export const crearEdificio = datos =>
     enviarJsonConCsrf("/api/edificios", "POST", datos);
+
+export const crearClasificacion = clasificacion =>
+    enviarJsonConCsrf("/api/clasificaciones", "POST", { clasificacion });
 
 export const crearUsuario = datos =>
     enviarJsonConCsrf("/api/usuarios", "POST", datos);

@@ -11,7 +11,10 @@ export const API_URL = USA_PROXY_DEL_CONTENEDOR
 export function apiFetch(ruta, opciones = {}) {
     const url = ruta.startsWith("http") ? ruta : `${API_URL}${ruta}`;
 
-    return fetch(url, opciones);
+    return fetch(url, {
+        credentials: "include",
+        ...opciones
+    });
 }
 
 export function obtenerCookie(nombre) {

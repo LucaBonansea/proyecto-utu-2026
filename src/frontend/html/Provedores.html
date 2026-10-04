@@ -15,6 +15,10 @@
         rel="stylesheet"
         href="/proyecto-utu-2026/src/frontend/css/style-proveedores.css"
     >
+    <link
+        rel="stylesheet"
+        href="/proyecto-utu-2026/src/frontend/css/ui-common.css"
+    >
 </head>
 
 <body>
@@ -45,6 +49,29 @@
 
             <button
                 type="button"
+                id="theme-toggle"
+                class="theme-toggle"
+                aria-label="Cambiar tema"
+            >
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    contrast
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="notificaciones-btn-top"
+                aria-label="Notificaciones"
+                aria-controls="notificaciones-panel"
+                aria-expanded="false"
+            >
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    notifications
+                </span>
+            </button>
+
+            <button
+                type="button"
                 id="btn-cuenta"
                 class="header-action"
             >
@@ -70,6 +97,20 @@
         </div>
 
     </header>
+
+    <section
+        id="notificaciones-panel"
+        class="menu-top-notificaciones"
+        aria-labelledby="notificaciones-titulo"
+    >
+        <div class="div-inicial">
+            <h2 id="notificaciones-titulo">Notificaciones</h2>
+        </div>
+        <div
+            class="notificaciones-lista"
+            aria-live="polite"
+        ></div>
+    </section>
 
 
     <main>
@@ -373,6 +414,7 @@
     </main>
 
 
+    <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
     <script
         type="module"
         src="/proyecto-utu-2026/src/frontend/js/DOM/proveedores.js"

@@ -2,7 +2,8 @@
 import { Reclamos } from "./reclamos.js";
 import { Nuevo_reclamos } from "./nuevo_reclamos.js";
 import { Cuenta } from "./cuenta.js";
-import { Notificaciones } from "./notifications.js";
+import { inicializarNotificaciones } from "./notifications.js";
+import { inicializarTema } from "../theme.js";
 import { obtenerSesion } from "../services/auth-service.js";
 
 async function verificar_sesion() {
@@ -55,9 +56,6 @@ function iniciarAplicacion() {
     const $btn_newReclamo_top = document.querySelector(".new-reclamo-top");
     const $btn_cuenta = document.querySelector(".cuenta");
     const $btn_cuenta_top = document.querySelector(".cuenta-top");
-    const $notificaciones_btn_top = document.querySelector(".notificaciones-btn-top");
-    const $menu_top_notificaciones = document.querySelector(".menu-top-notificaciones");
-    const $notificaciones_lista = document.querySelector(".notificaciones-lista");
     const $btn_logout = document.querySelector("#btn-cerrar-sesion");
     
     function button_restart_actives() {
@@ -83,13 +81,11 @@ function iniciarAplicacion() {
             $btn_inicio_top.classList.add("active");
             $btn_inicio.classList.add("active");
             reclamos.second_view(filtro);
-        }
+        },
+        () => reclamos.actualizarEstadisticas()
     );
-    const notificaciones = new Notificaciones(
-        Main,
-        button_restart_actives,
-        $notificaciones_lista
-    );
+    inicializarTema();
+    inicializarNotificaciones();
 
     // Evento de los botones de arriba
     buttons_tops.forEach(button => {
@@ -145,30 +141,6 @@ function iniciarAplicacion() {
 
     // El botón de "Cerrar sesión" se renderiza y se conecta dentro de
     // cuenta.js (fifth_view / eventos), ya no vive en el header.
-    $notificaciones_btn_top.addEventListener("click", (event) => {
-        $menu_top_notificaciones.classList.add("active");
-        notificaciones.fourth_view_desktop();
-        event.stopPropagation();
-    });
-
-    $menu_top_notificaciones.addEventListener("click", (event) => {
-        event.stopPropagation();
-    });
-
-    document.addEventListener("click", () => {
-        $menu_top_notificaciones.classList.remove("active");
-    });
-
-    // Cerrar el menú de notificaciones al hacer scroll, salvo que el scroll
-    // sea el de la propia lista de notificaciones (para poder desplazarla)
-    window.addEventListener("scroll", (event) => {
-        if ($menu_top_notificaciones.contains(event.target)) {
-            return;
-        }
-
-        $menu_top_notificaciones.classList.remove("active");
-    }, { passive: true, capture: true });
-
     // Cuenta ya no es un menú flotante: es una vista completa en #main,
     // igual que Inicio y Nuevo Reclamo.
     $btn_cuenta.addEventListener("click", () => {

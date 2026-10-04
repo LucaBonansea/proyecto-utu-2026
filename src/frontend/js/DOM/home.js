@@ -1,4 +1,6 @@
 import {
+    confirmarFinalizacion,
+    rechazarFinalizacion,
     obtenerReclamos,
     obtenerUrlEvidencia
 } from "../services/reclamos-service.js";
@@ -187,15 +189,20 @@ export class Home{
         `).join("");
     }
 
-  crear_reclamos(data) {
+crear_reclamos(data) {
     let reclamos_creados = [];
 
     data.forEach(reclamo => {
         console.log("RECLAMO:", reclamo);
+
         const reclamo_container = document.createElement("div");
         reclamo_container.classList.add("primerdiv-reclamo");
 
-        // Imagen
+
+        // =========================
+        // IMAGEN
+        // =========================
+
         const img_container = document.createElement("div");
         img_container.classList.add("foto-reclamo");
 
@@ -210,12 +217,15 @@ export class Home{
         img_container.appendChild(img);
 
 
-        // Info
+        // =========================
+        // INFORMACIÓN
+        // =========================
+
         const info_container = document.createElement("div");
         info_container.classList.add("info-reclamo");
 
 
-        // Descripción / título
+        // Descripción
         const titulo = document.createElement("p");
         titulo.classList.add("reclamo-titulo");
         titulo.textContent = reclamo.description;
@@ -225,7 +235,8 @@ export class Home{
         const tipo = document.createElement("span");
         tipo.classList.add("reclamo-tipo");
 
-        tipo.textContent = reclamo.clasificacion?.clasificacion
+        tipo.textContent =
+            reclamo.clasificacion?.clasificacion
             || "Sin clasificación";
 
 
@@ -237,9 +248,11 @@ export class Home{
             <span class="material-symbols-outlined">
                 location_city
             </span>
-            ${reclamo.edificio
-                ? reclamo.edificio.nombre
-                : "Sin edificio"}
+            ${
+                reclamo.edificio
+                    ? reclamo.edificio.nombre
+                    : "Sin edificio"
+            }
         `;
 
         if (this.edificio_filtro) {
@@ -247,80 +260,13 @@ export class Home{
         }
 
 
-        // Estado
+        // =========================
+        // ESTADO
+        // =========================
+
         const estado = document.createElement("div");
 
         switch (reclamo.estado) {
-
-            case "en_proceso":
-                estado.innerHTML = `
-                    <div class="stepper">
-
-                        <div class="step active">
-                            <div class="circle"></div>
-                            <span>Ingresado</span>
-                        </div>
-
-                        <div class="line active"></div>
-
-                        <div class="step active">
-                            <div class="circle"></div>
-                            <span>Validado</span>
-                        </div>
-
-                        <div class="line active"></div>
-
-                        <div class="step active">
-                            <div class="circle"></div>
-                            <span>En proceso</span>
-                        </div>
-
-                        <div class="line"></div>
-
-                        <div class="step">
-                            <div class="circle"></div>
-                            <span>Completado</span>
-                        </div>
-
-                    </div>
-                `;
-                break;
-
-
-            case "validado":
-                estado.innerHTML = `
-                    <div class="stepper">
-
-                        <div class="step active">
-                            <div class="circle"></div>
-                            <span>Ingresado</span>
-                        </div>
-
-                        <div class="line active"></div>
-
-                        <div class="step active">
-                            <div class="circle"></div>
-                            <span>Validado</span>
-                        </div>
-
-                        <div class="line"></div>
-
-                        <div class="step">
-                            <div class="circle"></div>
-                            <span>En proceso</span>
-                        </div>
-
-                        <div class="line"></div>
-
-                        <div class="step">
-                            <div class="circle"></div>
-                            <span>Completado</span>
-                        </div>
-
-                    </div>
-                `;
-                break;
-
 
             case "pendiente":
                 estado.innerHTML = `
@@ -328,19 +274,89 @@ export class Home{
 
                         <div class="step active">
                             <div class="circle"></div>
-                            <span>Ingresado</span>
+                            <span>Pendiente</span>
                         </div>
 
                         <div class="line"></div>
 
                         <div class="step">
                             <div class="circle"></div>
-                            <span>Validado</span>
+                            <span>Aceptado</span>
                         </div>
 
                         <div class="line"></div>
 
                         <div class="step">
+                            <div class="circle"></div>
+                            <span>En proceso</span>
+                        </div>
+
+                        <div class="line"></div>
+
+                        <div class="step">
+                            <div class="circle"></div>
+                            <span>Completado</span>
+                        </div>
+
+                    </div>
+                `;
+                break;
+
+
+            case "aceptado":
+                estado.innerHTML = `
+                    <div class="stepper">
+
+                        <div class="step active">
+                            <div class="circle"></div>
+                            <span>Pendiente</span>
+                        </div>
+
+                        <div class="line active"></div>
+
+                        <div class="step active">
+                            <div class="circle"></div>
+                            <span>Aceptado</span>
+                        </div>
+
+                        <div class="line"></div>
+
+                        <div class="step">
+                            <div class="circle"></div>
+                            <span>En proceso</span>
+                        </div>
+
+                        <div class="line"></div>
+
+                        <div class="step">
+                            <div class="circle"></div>
+                            <span>Completado</span>
+                        </div>
+
+                    </div>
+                `;
+                break;
+
+
+            case "en_proceso":
+                estado.innerHTML = `
+                    <div class="stepper">
+
+                        <div class="step active">
+                            <div class="circle"></div>
+                            <span>Pendiente</span>
+                        </div>
+
+                        <div class="line active"></div>
+
+                        <div class="step active">
+                            <div class="circle"></div>
+                            <span>Aceptado</span>
+                        </div>
+
+                        <div class="line active"></div>
+
+                        <div class="step active">
                             <div class="circle"></div>
                             <span>En proceso</span>
                         </div>
@@ -361,91 +377,217 @@ export class Home{
                 estado.innerHTML = `
                     <div class="stepper">
 
-                        <div class="step">
-                            <div class="circle" style="background: #22c55e;"></div>
-                            <span>Ingresado</span>
+                        <div class="step active">
+                            <div class="circle"></div>
+                            <span>Pendiente</span>
                         </div>
 
-                        <div class="line" style="background: #22c55e;"></div>
+                        <div class="line active"></div>
 
-                        <div class="step">
-                            <div class="circle" style="background: #22c55e;"></div>
-                            <span>Validado</span>
+                        <div class="step active">
+                            <div class="circle"></div>
+                            <span>Aceptado</span>
                         </div>
 
-                        <div class="line" style="background: #22c55e;"></div>
+                        <div class="line active"></div>
 
-                        <div class="step">
-                            <div class="circle" style="background: #22c55e;"></div>
+                        <div class="step active">
+                            <div class="circle"></div>
                             <span>En proceso</span>
                         </div>
 
-                        <div class="line" style="background: #22c55e;"></div>
+                        <div class="line active"></div>
 
-                        <div class="step">
-                            <div class="circle" style="background: #22c55e;"></div>
+                        <div class="step active">
+                            <div class="circle"></div>
                             <span>Completado</span>
                         </div>
 
+                    </div>
+                `;
+                break;
+
+
+            case "finalizacion_confirmada":
+                estado.innerHTML = `
+                    <div class="estado-finalizacion-confirmada">
+                        <strong>Finalización confirmada</strong>
+                    </div>
+                `;
+                break;
+
+
+            case "rechazada":
+                estado.innerHTML = `
+                    <div class="estado-rechazado">
+                        <strong>Finalización rechazada</strong>
                     </div>
                 `;
                 break;
 
 
             default:
-                estado.innerHTML = `
-                    <div class="stepper">
-
-                        <div class="step">
-                            <div class="circle"></div>
-                            <span>Ingresado</span>
-                        </div>
-
-                        <div class="line"></div>
-
-                        <div class="step">
-                            <div class="circle"></div>
-                            <span>Validado</span>
-                        </div>
-
-                        <div class="line"></div>
-
-                        <div class="step">
-                            <div class="circle"></div>
-                            <span>En proceso</span>
-                        </div>
-
-                        <div class="line"></div>
-
-                        <div class="step">
-                            <div class="circle"></div>
-                            <span>Completado</span>
-                        </div>
-
-                    </div>
-                `;
+                estado.textContent = reclamo.estado;
                 break;
         }
 
 
-        // Fecha
+        // =========================
+        // FECHA
+        // =========================
+
         const fecha = document.createElement("p");
         fecha.classList.add("fecha");
 
         const fechaCreacion = new Date(reclamo.created_at);
 
-        fecha.textContent = fechaCreacion.toLocaleString("es-UY");
+        fecha.textContent =
+            fechaCreacion.toLocaleString("es-UY");
 
 
-        // Juntar info
+        // =========================
+        // ACCIONES DEL USUARIO
+        // =========================
+
+        const acciones = document.createElement("div");
+        acciones.classList.add("acciones-reclamo");
+
+
+        if (reclamo.estado === "completado") {
+
+            const btnConfirmar = document.createElement("button");
+            btnConfirmar.textContent = "Confirmar solución";
+            btnConfirmar.classList.add("btn-confirmar-solucion");
+
+
+            const btnRechazar = document.createElement("button");
+            btnRechazar.textContent = "Rechazar solución";
+            btnRechazar.classList.add("btn-rechazar-solucion");
+
+
+            // CONFIRMAR
+            btnConfirmar.addEventListener("click", async () => {
+
+                try {
+
+                    btnConfirmar.disabled = true;
+                    btnRechazar.disabled = true;
+
+                    const response =
+                        await confirmarFinalizacion(
+                            reclamo.id
+                        );
+
+                    const resultado =
+                        await response.json();
+
+                    if (!response.ok) {
+                        console.error(resultado);
+                        return;
+                    }
+
+                    await this.actualizar_vista();
+
+                } catch (error) {
+
+                    console.error(
+                        "Error al confirmar:",
+                        error
+                    );
+
+                } finally {
+
+                    btnConfirmar.disabled = false;
+                    btnRechazar.disabled = false;
+                }
+            });
+
+
+            // RECHAZAR
+            btnRechazar.addEventListener("click", async () => {
+
+                const motivo = prompt(
+                    "Escribí el motivo del rechazo"
+                );
+
+                if (!motivo || !motivo.trim()) {
+                    return;
+                }
+
+                try {
+
+                    btnConfirmar.disabled = true;
+                    btnRechazar.disabled = true;
+
+                    const response =
+                        await rechazarFinalizacion(
+                            reclamo.id,
+                            motivo.trim()
+                        );
+
+                    const resultado =
+                        await response.json();
+
+                    if (!response.ok) {
+                        console.error(resultado);
+                        return;
+                    }
+
+                    await this.actualizar_vista();
+
+                } catch (error) {
+
+                    console.error(
+                        "Error al rechazar:",
+                        error
+                    );
+
+                } finally {
+
+                    btnConfirmar.disabled = false;
+                    btnRechazar.disabled = false;
+                }
+            });
+
+
+            acciones.appendChild(btnConfirmar);
+            acciones.appendChild(btnRechazar);
+        }
+
+
+        // Si está rechazada, mostrar motivo
+        if (
+            reclamo.estado === "rechazada"
+            && reclamo.motivo_rechazo
+        ) {
+
+            const motivo = document.createElement("p");
+
+            motivo.classList.add("motivo-rechazo");
+
+            motivo.textContent =
+                `Motivo: ${reclamo.motivo_rechazo}`;
+
+            acciones.appendChild(motivo);
+        }
+
+
+        // =========================
+        // JUNTAR INFO
+        // =========================
+
         info_container.appendChild(titulo);
         info_container.appendChild(tipo);
         info_container.appendChild(edificio);
         info_container.appendChild(estado);
         info_container.appendChild(fecha);
+        info_container.appendChild(acciones);
 
 
-        // Juntar todo
+        // =========================
+        // JUNTAR TODO
+        // =========================
+
         reclamo_container.appendChild(img_container);
         reclamo_container.appendChild(info_container);
 
@@ -454,7 +596,6 @@ export class Home{
 
     return reclamos_creados;
 }
-
     cargar_reclamos(data){
         const reclamo_seccion = document.querySelector("#reclamos-seccion");
         reclamo_seccion.innerHTML = "";

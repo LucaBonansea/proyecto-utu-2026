@@ -37,6 +37,10 @@ class AuthController extends Controller
                     'integer',
                     'exists:edificios,id'
                 ],
+                'politicas_aceptadas' => [
+                    'required',
+                    'accepted'
+                ],
             ],
             [
                 'cedula.required' => 'Debes ingresar la cédula.',
@@ -50,7 +54,8 @@ class AuthController extends Controller
 
                 'password.required' => 'Debes ingresar una contraseña.',
                 'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
-                'password.confirmed' => 'Las contraseñas no coinciden.'
+                'password.confirmed' => 'Las contraseñas no coinciden.',
+                'politicas_aceptadas.accepted' => 'Debes aceptar las políticas de uso.'
             ]
         );
 
@@ -63,46 +68,69 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-{
-    $datos = $request->validate(
-        [
-            'cedula' => [
-                'required',
-                'string'
+    {
+        $datos = $request->validate(
+            [
+                'cedula' => [
+                    'required',
+                    'string'
+                ],
+
+                'password' => [
+                    'required',
+                    'string'
+                ],
             ],
-
-            'password' => [
-                'required',
-                'string'
+            [
+                'cedula.required' => 'Debes ingresar la cédula.',
+                'password.required' => 'Debes ingresar la contraseña.'
             ]
-        ],
-        [
-            'cedula.required' => 'Debes ingresar la cédula.',
-            'password.required' => 'Debes ingresar la contraseña.'
-        ]
-    );
+        );
 
-    $credenciales = [
-        'cedula' => $datos['cedula'],
-        'password' => $datos['password'],
-        'activo' => true
-    ];
+        $credenciales = [
+            'cedula' => $datos['cedula'],
+            'password' => $datos['password'],
+            'activo' => true
+        ];
 
-    if (!Auth::attempt($credenciales)) {
+        if (!Auth::attempt($credenciales)) {
+            return response()->json([
+                'mensaje' => 'Cédula o contraseña incorrectas.'
+            ], 401);
+        }
+
+        $request->session()->regenerate();
+
+        $usuario = Auth::user();
+
         return response()->json([
-            'mensaje' => 'Cédula o contraseña incorrectas.'
-        ], 401);
+            'mensaje' => 'Credenciales verificadas correctamente.',
+            'requiere_aceptar_politicas' => !$usuario->politicas_aceptadas,
+            'usuario' => $usuario
+        ], 200);
     }
 
-    $request->session()->regenerate();
+    public function aceptarPoliticas(Request $request, AuthService $authService)
+    {
+        $request->validate(
+            [
+                'acepta' => ['required', 'accepted'],
+            ],
+            [
+                'acepta.accepted' => 'Debes confirmar que leíste y aceptás las políticas.'
+            ]
+        );
 
-    return response()->json([
-        'mensaje' => 'Inicio de sesión correcto',
-        'usuario' => Auth::user()
-    ], 200);
-}
+        $usuario = $authService->aceptarPoliticas($request->user());
 
-    public function me(Request $request){
+        return response()->json([
+            'mensaje' => 'Políticas aceptadas correctamente.',
+            'usuario' => $usuario
+        ], 200);
+    }
+
+    public function me(Request $request)
+    {
         return response()->json([
             'usuario' => $request->user()
         ], 200);

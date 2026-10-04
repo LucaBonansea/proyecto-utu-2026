@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador</title>
     <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrador.css">
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
@@ -25,6 +26,11 @@
             <button class="sidebar-btn edificios-btn">
                 <span class="material-symbols-outlined">apartment</span>
                 Edificios
+            </button>
+
+            <button class="sidebar-btn clasificaciones-btn">
+                <span class="material-symbols-outlined">category</span>
+                Clasificaciones
             </button>
 
             <button class="sidebar-btn usuarios-btn">
@@ -50,17 +56,40 @@
             </div>
 
             <div class="header-actions">
+                <div class="notificaciones-wrapper">
+                    <button
+                        class="notificaciones-btn-top"
+                        id="notificaciones-toggle"
+                        type="button"
+                        aria-label="Notificaciones"
+                        aria-controls="menu-top-notificaciones"
+                        aria-expanded="false"
+                        title="Notificaciones"
+                    >
+                        <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+                    </button>
+
+                    <div
+                        class="menu-top-notificaciones"
+                        id="menu-top-notificaciones"
+                        role="region"
+                        aria-labelledby="notificaciones-titulo"
+                        aria-hidden="true"
+                    >
+                        <div class="div-inicial">
+                            <h2 id="notificaciones-titulo">Notificaciones</h2>
+                        </div>
+                        <section class="notificaciones-lista" aria-live="polite"></section>
+                    </div>
+                </div>
+
                 <button
                     class="theme-toggle"
                     id="theme-toggle"
                     type="button"
-                    aria-label="Activar modo claro"
-                    aria-pressed="true"
-                    title="Activar modo claro"
+                    aria-label="Cambiar tema"
                 >
-                    <span class="material-symbols-outlined theme-icon theme-icon-moon" aria-hidden="true">dark_mode</span>
-                    <span class="material-symbols-outlined theme-icon theme-icon-sun" aria-hidden="true">light_mode</span>
-                    <span class="theme-toggle-thumb" aria-hidden="true"></span>
+                    <span class="material-symbols-outlined" aria-hidden="true">contrast</span>
                 </button>
 
                 <div class="account-menu-wrapper">
@@ -101,9 +130,7 @@
 
         <section></section>
     </main>
-
     <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
-    <script src="/proyecto-utu-2026/src/frontend/js/theme-toggle.js"></script>
     <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=4" type="module"></script>
 </body>
 </html>

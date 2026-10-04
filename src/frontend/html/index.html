@@ -6,12 +6,13 @@
         <title>Portal Ciudadano</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style.css">
+        <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css">
         <link rel="icon" href="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png">
     </head>
 
     <body>
-        <main class="login-page">
-            <section class="login-panel">
+    <main class="login-page">
+        <section class="login-panel">
                 <div class="login-card">
                     <img class="brand-logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/intendencia-logo-inicio.png" alt="Intendencia">
 
@@ -48,12 +49,10 @@
                                     </svg>
                                 </button>
                             </div>
-                            <div class="olv-div">
-                                <a class="olvidaste" href="#">¿Olvidaste tu contraseña?</a>
-                            </div>
                         </div>
 
                         <button type="submit" class="btn-login">Iniciar sesión</button>
+                        <button type="button" class="politicas-link">Políticas y privacidad</button>
                     </form>
                 </div>
             </section>
@@ -63,6 +62,106 @@
                 <div class="image-overlay"></div>
             </aside>
         </main>
+
+        <div class="politicas-modal" hidden>
+            <div class="politicas-overlay" aria-hidden="true"></div>
+            <section
+                class="politicas-dialogo"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="politicas-titulo"
+                aria-describedby="politicas-descripcion"
+            >
+                <header class="politicas-header">
+                    <div>
+                        <h2 id="politicas-titulo">Políticas y condiciones de uso</h2>
+                        <p id="politicas-descripcion">
+                            Antes de continuar, revisá cómo se usa y protege la información del sistema.
+                        </p>
+                    </div>
+                    <button type="button" class="politicas-cerrar" aria-label="Cerrar políticas">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </header>
+
+                <div class="politicas-contenido" tabindex="0">
+                    <section class="politicas-seccion">
+                        <h3>Términos de uso</h3>
+                        <p>
+                            El sistema se utiliza para registrar y gestionar reclamos relacionados con
+                            edificios y sus incidencias. La información debe ser verdadera y pertinente.
+                            Las acciones quedan asociadas a la cuenta autenticada y cada rol solo puede
+                            utilizar las funciones que tiene autorizadas.
+                        </p>
+                    </section>
+
+                    <section class="politicas-seccion">
+                        <h3>Política de privacidad</h3>
+                        <p>
+                            El sistema maneja datos de identificación y contacto, como cédula, nombre,
+                            teléfono y correo cuando correspondan; también registra el rol, los edificios
+                            o proveedores asociados y la información necesaria para gestionar reclamos.
+                            La contraseña se almacena protegida mediante hash.
+                        </p>
+                    </section>
+
+                    <section class="politicas-seccion">
+                        <h3>Tratamiento de datos personales</h3>
+                        <p>
+                            Los datos se usan para identificar y autenticar usuarios, aplicar permisos,
+                            asociar edificios o proveedores, crear y seguir reclamos, asignar tareas y
+                            conservar la trazabilidad básica del proceso.
+                        </p>
+                    </section>
+
+                    <section class="politicas-seccion">
+                        <h3>Evidencias, imágenes y observaciones</h3>
+                        <p>
+                            Las fotografías son evidencias iniciales o de resolución y forman parte del
+                            historial del reclamo. Los usuarios autorizados pueden verlas según su rol y
+                            el flujo de trabajo. Las observaciones del proveedor y los motivos de rechazo
+                            también quedan asociados al reclamo. No cargues contenido ajeno al reclamo ni
+                            datos sensibles innecesarios.
+                        </p>
+                    </section>
+
+                    <section class="politicas-seccion">
+                        <h3>Seguridad de la cuenta</h3>
+                        <p>
+                            Las credenciales son personales: protegé tu contraseña y no compartas el
+                            acceso. El backend identifica la sesión y controla las operaciones protegidas
+                            de acuerdo con el rol de la cuenta.
+                        </p>
+                    </section>
+
+                    <section class="politicas-seccion">
+                        <h3>Responsabilidades del usuario</h3>
+                        <p>
+                            Usá la cuenta para los fines del proyecto, ingresá información relacionada con
+                            reclamos reales y evitá contenido falso u ofensivo. No intentes acceder a
+                            funciones no autorizadas ni incluyas información personal innecesaria en las
+                            evidencias.
+                        </p>
+                    </section>
+                </div>
+
+                <footer class="politicas-footer">
+                    <label class="politicas-aceptacion">
+                        <input type="checkbox" class="politicas-checkbox">
+                        <span>
+                            He leído y acepto los Términos de uso, la Política de privacidad y el
+                            tratamiento de datos personales.
+                        </span>
+                    </label>
+                    <div class="politicas-acciones">
+                        <button type="button" class="btn-politicas-secundario">Cancelar</button>
+                        <button type="button" class="btn-politicas-aceptar" disabled>
+                            Aceptar y continuar
+                        </button>
+                    </div>
+                </footer>
+            </section>
+        </div>
 
         <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
         <script src="/proyecto-utu-2026/src/frontend/js/DOM/login.js" type="module"></script>

@@ -1,12 +1,13 @@
-const defaultOptions = {
+const sharedOptions = {
     duration: 4000,
     progress: true,
     position: "top-center",
     transition: "swingInverted",
-    icon: ""
+    icon: "",
+    sound: false
 };
 
-function show(type, message, options = {}) {
+function show(type, message) {
     const toastMethod = window.showToast?.[type];
 
     if (typeof toastMethod !== "function") {
@@ -14,20 +15,23 @@ function show(type, message, options = {}) {
         return;
     }
 
-    toastMethod(message, { ...defaultOptions, ...options });
+    toastMethod(message, {
+        ...sharedOptions,
+        sound: type === "error"
+    });
 }
 
 export const notify = {
-    success(message, options) {
-        show("success", message, options);
+    success(message) {
+        show("success", message);
     },
-    error(message, options = {}) {
-        show("error", message, { ...options, sound: true });
+    error(message) {
+        show("error", message);
     },
-    warning(message, options) {
-        show("warning", message, options);
+    warning(message) {
+        show("warning", message);
     },
-    info(message, options) {
-        show("info", message, options);
+    info(message) {
+        show("info", message);
     }
 };

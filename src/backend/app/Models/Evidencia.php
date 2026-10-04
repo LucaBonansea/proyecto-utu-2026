@@ -10,6 +10,7 @@ class Evidencia extends Model
     protected $fillable = [
         'reclamo_id',
         'ruta_archivo',
+        'observaciones',
         'fecha_carga',
     ];
 

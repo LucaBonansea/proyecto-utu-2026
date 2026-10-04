@@ -20,8 +20,18 @@ export function iniciarSesion(datos) {
     });
 }
 
+export function aceptarPoliticas() {
+    return apiFetchConCsrf("/api/auth/aceptar-politicas", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ acepta: true })
+    });
+}
+
 export function registrarUsuario(datos) {
-    return apiFetch("/api/auth/register", {
+    return apiFetchConCsrf("/api/auth/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

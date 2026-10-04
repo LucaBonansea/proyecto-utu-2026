@@ -382,18 +382,12 @@ enviar_reclamo() {
 
     this.ultimoMensajeToast = mensaje;
 
-    const opciones = {
-        duration: 4000,
-        progress: true,
-        position: "top-center"
-    };
-
     if (tipo === "success") {
-        notify.success(mensaje, opciones);
+        notify.success(mensaje);
     }
 
     if (tipo === "error") {
-        notify.error(mensaje, opciones);
+        notify.error(mensaje);
     }
 
     setTimeout(() => {

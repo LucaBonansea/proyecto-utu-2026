@@ -7,6 +7,9 @@ import {
     obtenerUrlEvidencia
 } from "../services/reclamos-service.js";
 
+import { inicializarTema } from '../theme.js';
+import { inicializarNotificaciones } from './notifications.js';
+
 let reclamos = [];
 let reclamoActual = null;
 let filtroActual = "todos";
@@ -46,6 +49,50 @@ const detalleDescripcion = document.getElementById("detalle-descripcion");
 const detalleEdificio = document.getElementById("detalle-edificio");
 const detalleDireccion = document.getElementById("detalle-direccion");
 const detalleClasificacion = document.getElementById("detalle-clasificacion");
+const detalleSeccionDescripcion = detalleDescripcion.closest(
+    ".detalle-descripcion"
+);
+const detalleSeccionObservaciones = document.createElement("div");
+const detalleTituloObservaciones = document.createElement("h3");
+const detalleObservaciones = document.createElement("p");
+const detalleSeccionMotivoRechazo = document.createElement("div");
+const detalleTituloMotivoRechazo = document.createElement("h3");
+const detalleMotivoRechazo = document.createElement("p");
+
+detalleTituloObservaciones.textContent =
+    "Observaciones de la última resolución";
+
+detalleSeccionObservaciones.classList.add(
+    "detalle-descripcion",
+    "oculto"
+);
+
+detalleSeccionObservaciones.append(
+    detalleTituloObservaciones,
+    detalleObservaciones
+);
+
+detalleTituloMotivoRechazo.textContent = "Motivo del rechazo";
+
+detalleSeccionMotivoRechazo.classList.add(
+    "detalle-descripcion",
+    "oculto"
+);
+
+detalleSeccionMotivoRechazo.append(
+    detalleTituloMotivoRechazo,
+    detalleMotivoRechazo
+);
+
+detalleSeccionDescripcion.insertAdjacentElement(
+    "afterend",
+    detalleSeccionObservaciones
+);
+
+detalleSeccionObservaciones.insertAdjacentElement(
+    "afterend",
+    detalleSeccionMotivoRechazo
+);
 
 const aceptarContainer = document.getElementById("aceptar-container");
 const btnAceptar = document.getElementById("btn-aceptar");
@@ -179,6 +226,12 @@ function obtenerEstadoTexto(estado) {
         case "completado":
             return "Completado";
 
+        case "rechazada":
+            return "Finalización rechazada";
+
+        case "finalizacion_confirmada":
+            return "Finalización confirmada";
+
         default:
             return estado || "Sin estado";
     }
@@ -197,6 +250,12 @@ function obtenerClaseEstado(estado) {
 
         case "completado":
             return "estado-completado";
+
+        case "rechazada":
+            return "estado-rechazado";
+
+        case "finalizacion_confirmada":
+            return "estado-confirmado";
 
         default:
             return "";
@@ -269,7 +328,8 @@ function obtenerReclamosFiltrados() {
                 reclamo =>
                     reclamo.estado === "aceptado" ||
                     reclamo.estado === "en_proceso" ||
-                    reclamo.estado === "completado"
+                    reclamo.estado === "completado" ||
+                    reclamo.estado === "rechazada"
             );
     }
 }
@@ -505,6 +565,29 @@ function abrirDetalle(reclamo) {
     detalleClasificacion.textContent =
         obtenerNombreClasificacion(reclamo);
 
+    const observacionesUltimaResolucion =
+        reclamo.evidencia?.observaciones?.trim();
+
+    if (observacionesUltimaResolucion) {
+        detalleObservaciones.textContent =
+            observacionesUltimaResolucion;
+        detalleSeccionObservaciones.classList.remove("oculto");
+    } else {
+        detalleObservaciones.textContent = "";
+        detalleSeccionObservaciones.classList.add("oculto");
+    }
+
+    if (reclamo.estado === "rechazada") {
+        detalleMotivoRechazo.textContent =
+            reclamo.motivo_rechazo ||
+            "Motivo no informado";
+
+        detalleSeccionMotivoRechazo.classList.remove("oculto");
+    } else {
+        detalleMotivoRechazo.textContent = "";
+        detalleSeccionMotivoRechazo.classList.add("oculto");
+    }
+
     if (imagen) {
         detalleImagen.src = imagen;
         detalleImagen.style.display = "block";
@@ -531,6 +614,12 @@ function actualizarFormularioSegunEstado() {
 
     if (estado === "aceptado") {
         aceptarContainer.classList.remove("oculto");
+        btnAceptar.textContent = "Aceptar reclamo";
+    }
+
+    if (estado === "rechazada") {
+        aceptarContainer.classList.remove("oculto");
+        btnAceptar.textContent = "Aceptar devolución";
     }
 
     if (estado === "en_proceso") {
@@ -832,12 +921,29 @@ btnAceptar.addEventListener(
             return;
         }
 
+        let endpoint;
+        let mensajeExito;
+
+        if (reclamoActual.estado === "aceptado") {
+            endpoint = `/api/proveedor/reclamos/${reclamoActual.id}/aceptar`;
+            mensajeExito = "✓ Reclamo aceptado correctamente.";
+        }
+
+        if (reclamoActual.estado === "rechazada") {
+            endpoint = `/api/proveedor/reclamos/${reclamoActual.id}/aceptar-devolucion`;
+            mensajeExito = "✓ Devolución aceptada correctamente.";
+        }
+
+        if (!endpoint) {
+            return;
+        }
+
         btnAceptar.disabled = true;
 
         try {
             const response =
                 await apiFetchConCsrf(
-                    `/api/proveedor/reclamos/${reclamoActual.id}/aceptar`,
+                    endpoint,
                     {
                         method: "PUT"
                     }
@@ -871,12 +977,12 @@ btnAceptar.addEventListener(
             reclamoActual =
                 reclamoActualizado;
 
+            renderizarReclamos();
+            renderizarUrgentes();
             abrirDetalle(reclamoActual);
 
-            renderizarUrgentes();
-
             mostrarMensaje(
-                "✓ Reclamo aceptado correctamente."
+                mensajeExito
             );
 
         } catch (error) {
@@ -892,6 +998,7 @@ btnAceptar.addEventListener(
                 true
             );
 
+        } finally {
             btnAceptar.disabled = false;
         }
     }
@@ -1062,6 +1169,8 @@ formResolver.addEventListener(
 );
 
 async function iniciar() {
+    inicializarModuloSeguro("tema", inicializarTema);
+
     const sesionValida =
         await verificarSesion();
 
@@ -1069,7 +1178,18 @@ async function iniciar() {
         return;
     }
 
+    inicializarModuloSeguro("notificaciones", inicializarNotificaciones);
     await cargarReclamos();
+}
+
+function inicializarModuloSeguro(nombre, inicializador) {
+    try {
+        Promise.resolve(inicializador()).catch(error => {
+            console.error(`Error inicializando ${nombre}:`, error);
+        });
+    } catch (error) {
+        console.error(`Error inicializando ${nombre}:`, error);
+    }
 }
 
 iniciar();

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\NotificacionService;
 use App\Services\ReclamoService;
 use Illuminate\Http\Request;
 use App\Models\Reclamo;
+use App\Models\Usuario;
 
 class ReclamoController extends Controller
 {
@@ -30,9 +32,13 @@ class ReclamoController extends Controller
             $datos['filtro'] ?? 'todos',
             12
         );
+        $estadisticas = $reclamoService->obtenerEstadisticasPorUsuario(
+            $request->user()->cedula
+        );
 
         return response()->json([
             'reclamos' => $reclamos->items(),
+            'estadisticas' => $estadisticas,
             'paginacion' => [
                 'pagina_actual' => $reclamos->currentPage(),
                 'ultima_pagina' => $reclamos->lastPage(),
@@ -46,7 +52,8 @@ class ReclamoController extends Controller
 
     public function store(
         Request $request,
-        ReclamoService $reclamoService
+        ReclamoService $reclamoService,
+        NotificacionService $notificacionService
     ) {
         $datos = $request->validate([
             'edificio_id' => [
@@ -72,9 +79,28 @@ class ReclamoController extends Controller
             ],
         ]);
 
+        $edificioPerteneceAlUsuario = $request->user()
+            ->edificios()
+            ->whereKey($datos['edificio_id'])
+            ->exists();
+
+        if (!$edificioPerteneceAlUsuario) {
+            return response()->json([
+                'message' => 'El edificio seleccionado no pertenece al usuario.',
+            ], 403);
+        }
+
         $reclamo = $reclamoService->crear(
             $datos,
             $request->user()->cedula
+        );
+
+        $notificacionService->crear(
+            $request->user()->cedula,
+            'Reclamo recibido',
+            'Tu reclamo fue registrado correctamente.',
+            'reclamo_creado',
+            $reclamo->id
         );
 
         return response()->json([
@@ -136,58 +162,81 @@ class ReclamoController extends Controller
 
 public function actualizar(
     Request $request,
-    int $id
+    int $id,
+    NotificacionService $notificacionService
 ) {
-    if ($request->user()->rol !== 'administrativo') {
-        return response()->json([
-            'message' => 'No autorizado'
-        ], 403);
-    }
-
-    $datos = $request->validate([
-        'description' => [
-            'required',
-            'string',
-            'max:200'
-        ],
-
-        'prioridad' => [
-            'required',
-            'string',
-            'in:Normal,Urgente'
-        ],
-
-        'proveedor_id' => [
-            'required',
-            'exists:proveedores,id'
-        ],
-    ]);
-
-    $reclamo = Reclamo::findOrFail($id);
-
-    $reclamo->update([
-        'description' => $datos['description'],
-        'prioridad' => $datos['prioridad'],
-        'proveedor_id' => $datos['proveedor_id'],
-        'estado' => 'aceptado',
-    ]);
-
-    $reclamo->load([
-        'usuario',
-        'edificio',
-        'clasificacion',
-        'evidencia',
-        'proveedor'
-    ]);
-
+if ($request->user()->rol !== 'administrativo') {
     return response()->json([
-        'message' => 'Reclamo actualizado correctamente',
-        'reclamo' => $reclamo,
-    ], 200);
+        'message' => 'No autorizado'
+    ], 403);
+}
+
+$datos = $request->validate([
+    'description' => [
+        'required',
+        'string',
+        'max:200'
+    ],
+
+    'prioridad' => [
+        'required',
+        'string',
+        'in:Normal,Urgente'
+    ],
+
+    'proveedor_id' => [
+        'required',
+        'exists:proveedores,id'
+    ],
+]);
+
+$reclamo = Reclamo::findOrFail($id);
+
+$reclamo->update([
+    'description' => $datos['description'],
+    'prioridad' => $datos['prioridad'],
+    'proveedor_id' => $datos['proveedor_id'],
+    'estado' => 'aceptado',
+]);
+
+$notificacionService->crear(
+    $reclamo->usuario_cedula,
+    'Reclamo aceptado',
+    'Tu reclamo fue revisado y asignado a un proveedor.',
+    'reclamo_aceptado',
+    $reclamo->id
+);
+
+if ($reclamo->proveedor_id) {
+    $proveedorUsuario = Usuario::where('proveedor_id', $reclamo->proveedor_id)->first();
+    if ($proveedorUsuario) {
+        $notificacionService->crear(
+            $proveedorUsuario->cedula,
+            'Nuevo trabajo asignado',
+            'Tenés un nuevo reclamo asignado.',
+            'nuevo_trabajo_asignado',
+            $reclamo->id
+        );
+    }
+}
+
+$reclamo->load([
+    'usuario',
+    'edificio',
+    'clasificacion',
+    'evidencia',
+    'proveedor'
+]);
+
+return response()->json([
+    'message' => 'Reclamo actualizado correctamente',
+    'reclamo' => $reclamo,
+], 200);
 }
 public function confirmarFinalizacion(
     Request $request,
-    int $id
+    int $id,
+    NotificacionService $notificacionService
 ) {
     $reclamo = Reclamo::findOrFail($id);
 
@@ -208,6 +257,14 @@ public function confirmarFinalizacion(
         'motivo_rechazo' => null,
     ]);
 
+    $notificacionService->crear(
+        $reclamo->usuario_cedula,
+        'Reclamo finalizado',
+        'La solución quedó confirmada.',
+        'finalizacion_confirmada',
+        $reclamo->id
+    );
+
     $reclamo->load([
         'usuario',
         'edificio',
@@ -224,7 +281,8 @@ public function confirmarFinalizacion(
 
 public function rechazarFinalizacion(
     Request $request,
-    int $id
+    int $id,
+    NotificacionService $notificacionService
 ) {
     $reclamo = Reclamo::findOrFail($id);
 
@@ -252,6 +310,19 @@ public function rechazarFinalizacion(
         'estado' => 'rechazada',
         'motivo_rechazo' => $datos['motivo_rechazo'],
     ]);
+
+    if ($reclamo->proveedor_id) {
+        $proveedorUsuario = Usuario::where('proveedor_id', $reclamo->proveedor_id)->first();
+        if ($proveedorUsuario) {
+            $notificacionService->crear(
+                $proveedorUsuario->cedula,
+                'Solución rechazada',
+                'El usuario rechazó la solución. Revisá el motivo.',
+                'reclamo_rechazado',
+                $reclamo->id
+            );
+        }
+    }
 
     $reclamo->load([
         'usuario',
