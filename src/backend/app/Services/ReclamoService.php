@@ -8,6 +8,11 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ReclamoService
 {
+    private const ESTADOS_RESUELTOS = [
+        'completado',
+        'finalizacion_confirmada',
+    ];
+
     public function crear(array $datos, string $cedula)
     {
         $reclamo = Reclamo::create([
@@ -45,23 +50,31 @@ class ReclamoService
             ->where('usuario_cedula', $cedula);
 
         if ($filtro === 'resueltos') {
-            $consulta->whereIn('estado', [
-                'completado',
-                'finalizacion_confirmada',
-                'rechazada'
-            ]);
+            $consulta->whereIn('estado', self::ESTADOS_RESUELTOS);
         }
 
         if ($filtro === 'proceso') {
-            $consulta->whereNotIn('estado', [
-                'completado',
-                'finalizacion_confirmada'
-            ]);
+            $consulta->whereNotIn('estado', self::ESTADOS_RESUELTOS);
         }
 
         return $consulta
             ->latest()
             ->paginate($porPagina);
+    }
+
+    public function obtenerEstadisticasPorUsuario(string $cedula): array
+    {
+        $consulta = Reclamo::where('usuario_cedula', $cedula);
+        $total = (clone $consulta)->count();
+        $resueltos = (clone $consulta)
+            ->whereIn('estado', self::ESTADOS_RESUELTOS)
+            ->count();
+
+        return [
+            'total' => $total,
+            'resueltos' => $resueltos,
+            'en_proceso' => $total - $resueltos,
+        ];
     }
 
     public function obtenerTodos()

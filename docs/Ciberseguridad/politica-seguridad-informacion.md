@@ -276,3 +276,45 @@ Los siguientes principios guían toda esta política:
 - **Fecha de aprobación:** [pendiente]
 - **Frecuencia de revisión:** esta política deberá revisarse periódicamente, y toda vez que se produzcan cambios relevantes en las actividades u operaciones de Nexaris.
 - **Responsables de revisión y aprobación:** los propietarios de Nexaris (Luca Bonansea, Thiago Carbajal, Ariana Blanco, Nicolás Pérez y Emanuel Trapolini), junto con los responsables de gestión que ellos designen.
+
+---
+
+## Términos, privacidad y tratamiento de datos
+
+SIRED muestra un resumen de sus términos de uso, privacidad y tratamiento de datos
+cuando una cuenta con credenciales válidas inicia sesión por primera vez y todavía no
+registró su aceptación. El contenido informa sobre el uso correcto de la plataforma,
+los permisos según el rol, el tratamiento de datos personales, las evidencias e
+imágenes, la seguridad de la cuenta y las responsabilidades del usuario.
+
+Los datos principales tratados por el sistema son la cédula, el nombre, los datos de
+contacto opcionales, la contraseña almacenada mediante hash, el rol y las asociaciones
+con edificios o proveedores. Para gestionar el proceso también se conservan la
+descripción, clasificación, prioridad y estado de los reclamos, sus evidencias, las
+observaciones de resolución y los motivos de rechazo cuando correspondan. Estos datos
+permiten autenticar e identificar al usuario, aplicar permisos, gestionar y asignar
+reclamos y mantener la trazabilidad de su resolución.
+
+La aceptación no se guarda en el navegador. El frontend presenta la información y
+envía la confirmación; el backend identifica la cuenta autenticada, valida la solicitud
+y registra en MySQL `politicas_aceptadas = true` junto con
+`politicas_aceptadas_at`, cuya fecha y hora se generan en el servidor. Por eso, cambiar
+de navegador, borrar la caché o usar otro equipo no obliga a aceptar nuevamente.
+
+El flujo de primer acceso es:
+
+```text
+Login
+  → validación de credenciales en el backend
+  → comprobación de la aceptación en la cuenta
+  → modal obligatorio si falta la aceptación
+  → confirmación del usuario
+  → registro de aceptación y fecha en MySQL
+  → acceso y redirección según el rol
+```
+
+Mientras la aceptación está pendiente, el backend bloquea las operaciones protegidas.
+Si el usuario cancela, la sesión pendiente se cierra y permanece en el login. En los
+accesos posteriores, una cuenta que ya aceptó se redirige directamente. Las políticas
+también pueden abrirse desde el login en modo de consulta; esa acción no cambia el
+estado ni la fecha guardados.

@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Proveedor;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Reclamo extends Model
 {
@@ -32,7 +33,18 @@ class Reclamo extends Model
         return $this->belongsTo(Edificio::class);
     }
 
-    public function evidencia()
+    /**
+     * Evidencia más reciente que se muestra como imagen principal del reclamo.
+     */
+    public function evidencia(): HasOne
+    {
+        return $this->hasOne(Evidencia::class)->latestOfMany();
+    }
+
+    /**
+     * Historial completo de evidencias, incluidas las fotos de resolución.
+     */
+    public function evidencias(): HasMany
     {
         return $this->hasMany(Evidencia::class);
     }

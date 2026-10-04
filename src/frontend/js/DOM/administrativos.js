@@ -1,4 +1,4 @@
-import { obtenerSesion } from "../services/auth-service.js";
+import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
 import {
     obtenerReclamosAdministrativo,
     obtenerProveedoresAdministrativo,
@@ -6,13 +6,16 @@ import {
 } from "../services/administrativo-service.js";
 import { obtenerUrlEvidencia } from "../services/reclamos-service.js";
 import { notify } from "../utils/toast.js";
+import { inicializarTema } from "../theme.js";
+import { inicializarNotificaciones } from "./notifications.js";
 
-const section = document.querySelector("section");
+const section = document.querySelector("main > section");
 const filtro_container = document.querySelector("#filtro-container");
 const modal = document.querySelector("#modal-reclamo");
 const contenidoModal = document.querySelector("#contenido-modal");
 const cerrarModal = modal.querySelector(".cerrar-modal");
 const fondoModal = modal.querySelector(".fondo-modal");
+const logoutbtn = document.querySelector(".logout");
 
 function cerrarDetalle() {
     modal.classList.remove("activo");
@@ -20,6 +23,7 @@ function cerrarDetalle() {
 }
 cerrarModal.addEventListener("click", cerrarDetalle);
 fondoModal.addEventListener("click", cerrarDetalle);
+logoutbtn.addEventListener("click", cerrar_sesion);
 
 let reclamosAValidar = [];
 
@@ -79,6 +83,29 @@ async function iniciarAplicacion() {
     }
 }
 
+async function cerrar_sesion() {
+    logoutbtn.disabled = true;
+
+    try {
+        const request = await cerrarSesion();
+        const response = await request.json();
+
+        if (!request.ok) {
+            throw new Error(response.mensaje || "No se pudo cerrar la sesión.");
+        }
+
+        notify.success(response.mensaje || "Sesión cerrada correctamente.");
+
+        setTimeout(() => {
+            window.location.replace("./index.html");
+        }, 800);
+    } catch (error) {
+        console.error("Error cerrando sesión:", error);
+        notify.error(error.message || "No se pudo cerrar la sesión.");
+        logoutbtn.disabled = false;
+    }
+}
+
 async function iniciar() {
     const usuario = await verificar_sesion();
 
@@ -86,6 +113,8 @@ async function iniciar() {
         return;
     }
 
+    inicializarTema();
+    inicializarNotificaciones();
     iniciarAplicacion();
 }
 
@@ -231,10 +260,6 @@ async function vistaDetalle(id) {
                             ${reclamo.prioridad === "Urgente"
                                 ? "Quitar urgencia"
                                 : "Marcar urgencia"}
-                        </button>
-
-                        <button class="denegar">
-                            Denegar
                         </button>
 
                     </div>
@@ -407,25 +432,6 @@ async function vistaDetalle(id) {
                 "Quitar urgencia";
         }
     });
-
-    /*
-     * Denegar
-     */
-    card.querySelector(".denegar")
-        .addEventListener("click", () => {
-
-            if (confirm("¿Denegar este reclamo?")) {
-
-                reclamosAValidar =
-                    reclamosAValidar.filter(
-                        r => r.id != reclamo.id
-                    );
-
-                cerrarDetalle();
-
-                vistaLista();
-            }
-        });
 
     /*
      * Validar y asignar proveedor

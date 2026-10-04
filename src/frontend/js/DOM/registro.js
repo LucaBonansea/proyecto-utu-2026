@@ -119,65 +119,32 @@ async function registrar_usuario(datos) {
             if (response.errors?.nombre) {
                 $input_name.classList.add("error");
 
-                notify.error(response.errors.nombre[0], {
-                        duration: 4000,
-                        progress: true,
-                        position: "top-center",
-                        transition: "swingInverted",
-                        icon: '',
-                        sound: true,
-                    });
+                notify.error(response.errors.nombre[0]);
             }
 
             if (response.errors?.cedula) {
                 $input_ci.classList.add("error");
 
-                notify.error(response.errors.cedula[0], {
-                    duration: 4000,
-                    progress: true,
-                    position: "top-center",
-                    transition: "swingInverted",
-                    icon: '',
-                    sound: true,
-                });
+                notify.error(response.errors.cedula[0]);
             }
 
             if (response.errors?.edificio) {
                 $input_edificio.classList.add("error");
-                notify.error(response.errors.edificio[0], {
-                    duration: 4000,
-                    progress: true,
-                    position: "top-center",
-                    transition: "swingInverted",
-                    icon: '',
-                    sound: true,
-                });
+                notify.error(response.errors.edificio[0]);
             }
 
             if (response.errors?.password) {
                 $input_password.classList.add("error");
                 $input_password_2.classList.add("error");
 
-                notify.error(response.errors.password[0], {
-                        duration: 4000,
-                        progress: true,
-                        position: "top-center",
-                        transition: "swingInverted",
-                        icon: '',
-                        sound: true,
-                });
+                notify.error(response.errors.password[0]);
             }
 
             return;
         }
 
         // Registro exitoso
-        notify.success("Usuario registrado correctamente", {
-            duration: 4000,
-            position: "top-center",
-            transition: "bounceIn",
-            progress: true
-        });
+        notify.success("Usuario registrado correctamente");
 
         setTimeout(() => {
             window.location.replace("./index.html");
@@ -193,10 +160,6 @@ async function registrar_usuario(datos) {
         $btn_registro.style.background =
             "linear-gradient(135deg, #e64a23 0%, #d2731f 100%)";
 
-        notify.error("No se pudo conectar al servidor", {
-            duration: 4000,
-            progress: true,
-            position: "top-center"
-        });
+        notify.error("No se pudo conectar al servidor");
     }
 }

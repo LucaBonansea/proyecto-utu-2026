@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
     <title>Portal de Reclamos - Edificios Públicos</title>
     <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-inicio.css">
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
@@ -43,18 +44,21 @@
             </button>
         </section>
         <section class="nav-perfil">
-            <button class="notificaciones-btn-top">
+            <button class="theme-toggle" type="button" aria-label="Cambiar tema" title="Cambiar tema">
+                <span class="material-symbols-outlined" aria-hidden="true">contrast</span>
+            </button>
+            <button class="notificaciones-btn-top" type="button" aria-label="Notificaciones">
                 <span class="material-symbols-outlined">notifications</span>
             </button>
         </section>
         
         
     </header>
-    <section class="menu-top-notificaciones">
+    <section class="menu-top-notificaciones" aria-label="Notificaciones">
             <div class="div-inicial">
                 <h2>Notificaciones</h2>
             </div>
-            <section class="notificaciones-lista">
+            <section class="notificaciones-lista" aria-live="polite">
            
             </section>
     </section>

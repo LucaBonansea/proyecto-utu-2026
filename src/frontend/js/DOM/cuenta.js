@@ -1,12 +1,21 @@
 import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
+import { notify } from "../utils/toast.js";
 
 export class Cuenta {
-    constructor(Main, button_restart_actives, $btn_cuenta_top, $btn_cuenta, irAInicioFiltrado) {
+    constructor(
+        Main,
+        button_restart_actives,
+        $btn_cuenta_top,
+        $btn_cuenta,
+        irAInicioFiltrado,
+        obtenerEstadisticasReclamos
+    ) {
         this.Main = Main;
         this.button_restart_actives = button_restart_actives;
         this.$btn_cuenta_top = $btn_cuenta_top;
         this.$btn_cuenta = $btn_cuenta;
         this.irAInicioFiltrado = irAInicioFiltrado; // función que viene de DOM/inicio.js
+        this.obtenerEstadisticasReclamos = obtenerEstadisticasReclamos;
     }
 
 
@@ -87,15 +96,15 @@ export class Cuenta {
 
                 <div class="perfil-stats">
                     <button class="stat-item" data-filtro="todos">
-                        <p class="stat-numero">12</p>
+                        <p class="stat-numero" data-estadistica="total">…</p>
                         <p class="stat-label">Reclamos totales</p>
                     </button>
                     <button class="stat-item" data-filtro="resueltos">
-                        <p class="stat-numero">8</p>
+                        <p class="stat-numero" data-estadistica="resueltos">…</p>
                         <p class="stat-label">Resueltos</p>
                     </button>
                     <button class="stat-item" data-filtro="proceso">
-                        <p class="stat-numero">4</p>
+                        <p class="stat-numero" data-estadistica="en_proceso">…</p>
                         <p class="stat-label">En proceso</p>
                     </button>
                 </div>
@@ -118,12 +127,38 @@ export class Cuenta {
         this.Main.querySelector(".perfil-rol").textContent =
             this.obtener_nombre_rol(usuario.rol);
 
+        try {
+            const estadisticas = await this.obtenerEstadisticasReclamos();
+
+            for (const [campo, valor] of Object.entries(estadisticas)) {
+                const elemento = this.Main.querySelector(
+                    `[data-estadistica="${campo}"]`
+                );
+
+                if (elemento) {
+                    elemento.textContent = String(valor);
+                }
+            }
+        } catch (error) {
+            console.error("Error obteniendo estadísticas de reclamos:", error);
+            this.Main.querySelectorAll("[data-estadistica]").forEach(elemento => {
+                elemento.textContent = "—";
+            });
+            notify.error("No se pudieron actualizar las estadísticas de reclamos.");
+        }
+
         this.eventos();
     }
 
     
 
 eventos() {
+    this.Main.querySelectorAll(".stat-item").forEach(boton => {
+        boton.addEventListener("click", () => {
+            this.irAInicioFiltrado(boton.dataset.filtro);
+        });
+    });
+
     const $btn_logout = this.Main.querySelector("#btn-cerrar-sesion");
 
     if ($btn_logout) {

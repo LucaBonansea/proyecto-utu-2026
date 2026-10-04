@@ -1,4 +1,6 @@
 import {
+    confirmarFinalizacion,
+    rechazarFinalizacion,
     obtenerReclamos,
     obtenerUrlEvidencia
 } from "../services/reclamos-service.js";
@@ -12,23 +14,34 @@ const FILTROS = [
 
 const ESTADOS = [
     { id: "pendiente", label: "Enviado" },
-    { id: "validado", label: "Aceptado" },
+    { id: "aceptado", label: "Aceptado" },
     { id: "en_proceso", label: "En proceso" },
     { id: "completado", label: "Terminado" }
 ];
 
 const ALIAS_ESTADOS = {
     enviado: "pendiente",
-    aceptado: "validado",
+    validado: "aceptado",
     proceso: "en_proceso",
     terminado: "completado"
 };
 
 const CLASES_ESTADO = {
     pendiente: "estado-enviado",
-    validado: "estado-aceptado",
+    aceptado: "estado-aceptado",
     en_proceso: "estado-proceso",
-    completado: "estado-resuelto"
+    completado: "estado-resuelto",
+    finalizacion_confirmada: "estado-confirmado",
+    rechazada: "estado-rechazado"
+};
+
+const ETIQUETAS_ESTADO = {
+    pendiente: "Enviado",
+    aceptado: "Aceptado",
+    en_proceso: "En proceso",
+    completado: "Esperando revisión",
+    finalizacion_confirmada: "Solución confirmada",
+    rechazada: "Solución rechazada"
 };
 
 function escaparHtml(valor = "") {
@@ -58,10 +71,29 @@ function formatearFecha(fecha) {
     }).format(fechaReclamo);
 }
 
+function validarEstadisticas(estadisticas) {
+    const campos = ["total", "resueltos", "en_proceso"];
+
+    if (!estadisticas || campos.some(campo => (
+        !Number.isInteger(estadisticas[campo]) || estadisticas[campo] < 0
+    ))) {
+        throw new Error("La respuesta no contiene estadísticas válidas de reclamos.");
+    }
+
+    return Object.fromEntries(
+        campos.map(campo => [campo, estadisticas[campo]])
+    );
+}
+
 export class Reclamos {
     constructor(main) {
         this.main = main;
         this.reclamos = [];
+        this.estadisticas = {
+            total: 0,
+            resueltos: 0,
+            en_proceso: 0
+        };
         this.filtroActual = "todos";
         this.paginacion = {
             pagina_actual: 1,
@@ -100,11 +132,34 @@ export class Reclamos {
 
         const data = await response.json();
         this.reclamos = Array.isArray(data.reclamos) ? data.reclamos : [];
+        this.estadisticas = validarEstadisticas(data.estadisticas);
         this.filtroActual = filtro;
         this.paginacion = {
             ...this.paginacion,
             ...data.paginacion
         };
+    }
+
+    async actualizarEstadisticas() {
+        const response = await obtenerReclamos({ filtro: "todos", pagina: 1 });
+
+        if (response.status === 401) {
+            window.location.replace("./index.html");
+            throw new Error("La sesión expiró al actualizar las estadísticas.");
+        }
+
+        if (!response.ok) {
+            throw new Error(`La API respondió con estado ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.estadisticas = validarEstadisticas(data.estadisticas);
+
+        return this.obtenerEstadisticas();
+    }
+
+    obtenerEstadisticas() {
+        return { ...this.estadisticas };
     }
 
     renderCargando() {
@@ -195,10 +250,16 @@ export class Reclamos {
         const claseEstado = CLASES_ESTADO[estado] ?? "estado-enviado";
         const descripcion = escaparHtml(reclamo.description || "Sin descripción");
         const nombreEdificio = reclamo.edificio?.nombre || "Edificio no disponible";
+        const clasificacion = (
+            reclamo.clasificacion?.clasificacion || "Sin clasificación"
+        );
+        const etiquetaEstado = ETIQUETAS_ESTADO[estado] ?? estado;
         const imagen = obtenerUrlEvidencia(reclamo.evidencia?.ruta_archivo);
         const imagenHtml = imagen
             ? `<img src="${escaparHtml(imagen)}" alt="Evidencia del reclamo" loading="lazy">`
-            : "";
+            : `<span class="material-symbols-outlined" aria-hidden="true">
+                image_not_supported
+            </span>`;
         const edificioHtml = `
             <p class="reclamo-edificio">
                 <span class="material-symbols-outlined">
@@ -207,34 +268,60 @@ export class Reclamos {
                 ${escaparHtml(nombreEdificio)}
             </p>
         `;
+        const motivoRechazoHtml = (
+            reclamo.estado === "rechazada" && reclamo.motivo_rechazo
+        )
+            ? `<p class="motivo-rechazo">
+                Motivo: ${escaparHtml(reclamo.motivo_rechazo)}
+            </p>`
+            : "";
         const posicion = (
             (this.paginacion.pagina_actual - 1)
             * this.paginacion.por_pagina
         ) + indice + 1;
 
         return `
-            <div class="primerdiv-reclamo ${claseEstado}">
-                <div class="foto-reclamo">
+            <article class="primerdiv-reclamo ${claseEstado}">
+                <div class="foto-reclamo ${imagen ? "" : "sin-imagen"}">
                     ${imagenHtml}
                 </div>
 
                 <div class="info-reclamo">
-                    <p class="reclamo-titulo">${descripcion}</p>
+                    <div class="reclamo-card-meta">
+                        <span class="reclamo-tipo">
+                            ${escaparHtml(clasificacion)}
+                        </span>
+                        <span class="reclamo-estado-actual">
+                            ${escaparHtml(etiquetaEstado)}
+                        </span>
+                    </div>
+                    <h3 class="reclamo-titulo">${descripcion}</h3>
                     ${edificioHtml}
                     ${this.renderEstado(estado)}
+                    ${motivoRechazoHtml}
+                    ${this.renderAccionesFinalizacion(reclamo)}
                     <p class="fecha-misreclamos">
-                        ${formatearFecha(reclamo.created_at)}
-                        <span>${posicion}/${total}</span>
+                        <span class="fecha-reclamo">
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                calendar_today
+                            </span>
+                            ${formatearFecha(reclamo.created_at)}
+                        </span>
+                        <span>Reclamo ${posicion} de ${total}</span>
                     </p>
                 </div>
-            </div>
+            </article>
         `;
     }
 
     renderEstado(estadoActual) {
-        const indiceEstado = ESTADOS.findIndex(estado => (
-            estado.id === estadoActual
-        ));
+        const estadoFinal = [
+            "finalizacion_confirmada",
+            "rechazada"
+        ].includes(estadoActual);
+        const indiceEstado = estadoFinal
+            ? ESTADOS.length - 1
+            : ESTADOS.findIndex(estado => estado.id === estadoActual);
         const ultimoEstadoActivo = indiceEstado >= 0 ? indiceEstado : 0;
 
         const pasos = ESTADOS.map((estado, indice) => {
@@ -253,7 +340,68 @@ export class Reclamos {
             `;
         }).join("");
 
-        return `<div class="stepper">${pasos}</div>`;
+        return `
+            <div
+                class="stepper"
+                aria-label="Progreso del reclamo: ${escaparHtml(
+                    ETIQUETAS_ESTADO[estadoActual] ?? estadoActual
+                )}"
+            >
+                ${pasos}
+            </div>
+        `;
+    }
+
+    renderAccionesFinalizacion(reclamo) {
+        if (reclamo.estado !== "completado") {
+            return "";
+        }
+
+        return `
+            <div
+                class="acciones-finalizacion"
+                data-reclamo-id="${escaparHtml(reclamo.id)}"
+            >
+                <div class="botones-finalizacion">
+                    <button
+                        type="button"
+                        class="btn-confirmar-solucion"
+                        data-accion="confirmar"
+                    >
+                        Confirmar solución
+                    </button>
+                    <button
+                        type="button"
+                        class="btn-rechazar-solucion"
+                        data-accion="mostrar-rechazo"
+                        aria-expanded="false"
+                    >
+                        Rechazar solución
+                    </button>
+                </div>
+
+                <form class="form-rechazo-solucion" hidden>
+                    <label>
+                        Motivo del rechazo
+                        <textarea
+                            name="motivo"
+                            maxlength="500"
+                            required
+                            placeholder="Explicá por qué la solución no es satisfactoria"
+                        ></textarea>
+                    </label>
+                    <div class="botones-rechazo">
+                        <button type="submit">Enviar rechazo</button>
+                        <button
+                            type="button"
+                            data-accion="cancelar-rechazo"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
     }
 
     renderPaginacion() {
@@ -301,7 +449,13 @@ export class Reclamos {
     conectarEventos() {
         this.main.querySelectorAll(".foto-reclamo img").forEach(imagen => {
             imagen.addEventListener("error", () => {
-                imagen.closest(".foto-reclamo").hidden = true;
+                const contenedor = imagen.closest(".foto-reclamo");
+                contenedor.classList.add("sin-imagen");
+                contenedor.innerHTML = `
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        broken_image
+                    </span>
+                `;
             });
         });
 
@@ -310,6 +464,10 @@ export class Reclamos {
                 this.second_view(chip.dataset.filtro, 1);
             });
         });
+
+        this.main.querySelectorAll(".acciones-finalizacion").forEach(
+            acciones => this.conectarAccionesFinalizacion(acciones)
+        );
 
         this.main.querySelector(".pagina-anterior")?.addEventListener(
             "click",
@@ -331,6 +489,128 @@ export class Reclamos {
             }
         );
 
-        
+    }
+
+    conectarAccionesFinalizacion(acciones) {
+        const reclamo = this.reclamos.find(item => (
+            String(item.id) === acciones.dataset.reclamoId
+        ));
+
+        if (!reclamo || reclamo.estado !== "completado") {
+            return;
+        }
+
+        const botonConfirmar = acciones.querySelector(
+            '[data-accion="confirmar"]'
+        );
+        const botonMostrarRechazo = acciones.querySelector(
+            '[data-accion="mostrar-rechazo"]'
+        );
+        const botonCancelarRechazo = acciones.querySelector(
+            '[data-accion="cancelar-rechazo"]'
+        );
+        const formularioRechazo = acciones.querySelector(
+            ".form-rechazo-solucion"
+        );
+        const campoMotivo = formularioRechazo.querySelector(
+            '[name="motivo"]'
+        );
+
+        botonConfirmar.addEventListener("click", () => {
+            this.confirmarSolucion(reclamo, acciones);
+        });
+
+        botonMostrarRechazo.addEventListener("click", () => {
+            formularioRechazo.hidden = false;
+            botonMostrarRechazo.setAttribute("aria-expanded", "true");
+            campoMotivo.focus();
+        });
+
+        botonCancelarRechazo.addEventListener("click", () => {
+            formularioRechazo.reset();
+            formularioRechazo.hidden = true;
+            botonMostrarRechazo.setAttribute("aria-expanded", "false");
+        });
+
+        formularioRechazo.addEventListener("submit", event => {
+            event.preventDefault();
+
+            const motivo = campoMotivo.value.trim();
+
+            if (!motivo) {
+                notify.warning("Ingresá el motivo del rechazo.");
+                campoMotivo.focus();
+                return;
+            }
+
+            this.rechazarSolucion(reclamo, motivo, acciones);
+        });
+    }
+
+    async confirmarSolucion(reclamo, acciones) {
+        this.cambiarEstadoAcciones(acciones, true);
+
+        try {
+            const response = await confirmarFinalizacion(reclamo.id);
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "No se pudo confirmar la solución."
+                );
+            }
+
+            notify.success(
+                data.message || "Solución confirmada correctamente."
+            );
+            await this.refrescarListaActual();
+        } catch (error) {
+            console.error("Error al confirmar la solución:", error);
+            notify.error(
+                error.message || "No se pudo confirmar la solución."
+            );
+        } finally {
+            this.cambiarEstadoAcciones(acciones, false);
+        }
+    }
+
+    async rechazarSolucion(reclamo, motivo, acciones) {
+        this.cambiarEstadoAcciones(acciones, true);
+
+        try {
+            const response = await rechazarFinalizacion(reclamo.id, motivo);
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "No se pudo rechazar la solución."
+                );
+            }
+
+            notify.success(
+                data.message || "Solución rechazada correctamente."
+            );
+            await this.refrescarListaActual();
+        } catch (error) {
+            console.error("Error al rechazar la solución:", error);
+            notify.error(
+                error.message || "No se pudo rechazar la solución."
+            );
+        } finally {
+            this.cambiarEstadoAcciones(acciones, false);
+        }
+    }
+
+    cambiarEstadoAcciones(acciones, procesando) {
+        acciones.querySelectorAll("button, textarea").forEach(control => {
+            control.disabled = procesando;
+        });
+    }
+
+    refrescarListaActual() {
+        return this.second_view(
+            this.filtroActual,
+            this.paginacion.pagina_actual
+        );
     }
 }

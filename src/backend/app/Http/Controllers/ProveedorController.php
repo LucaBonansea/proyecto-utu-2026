@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\NotificacionService;
 use App\Services\ProveedorService;
 use Illuminate\Http\Request;
 use App\Models\Reclamo;
@@ -82,7 +83,7 @@ class ProveedorController extends Controller
         'reclamos' => $reclamos
     ], 200);
 }
-public function aceptarReclamo(Request $request, string $id)
+public function aceptarReclamo(Request $request, string $id, NotificacionService $notificacionService)
 {
     $usuario = $request->user();
 
@@ -121,6 +122,14 @@ public function aceptarReclamo(Request $request, string $id)
     $reclamo->estado = 'en_proceso';
     $reclamo->save();
 
+    $notificacionService->crear(
+        $reclamo->usuario_cedula,
+        'Trabajo en proceso',
+        'El proveedor comenzó a trabajar en tu reclamo.',
+        'trabajo_iniciado',
+        $reclamo->id
+    );
+
     $reclamo->load([
         'usuario',
         'edificio',
@@ -134,7 +143,7 @@ public function aceptarReclamo(Request $request, string $id)
         'reclamo' => $reclamo
     ], 200);
 }
-public function finalizarReclamo(Request $request, string $id)
+public function finalizarReclamo(Request $request, string $id, NotificacionService $notificacionService)
 {
     $usuario = $request->user();
 
@@ -180,11 +189,20 @@ public function finalizarReclamo(Request $request, string $id)
     Evidencia::create([
         'reclamo_id' => $reclamo->id,
         'ruta_archivo' => $ruta,
+        'observaciones' => $datos['observaciones'],
         'fecha_carga' => now(),
     ]);
 
     $reclamo->estado = 'completado';
     $reclamo->save();
+
+    $notificacionService->crear(
+        $reclamo->usuario_cedula,
+        'Trabajo finalizado',
+        'El proveedor marcó el trabajo como terminado. Revisá la solución.',
+        'trabajo_completado',
+        $reclamo->id
+    );
 
     $reclamo->load([
         'usuario',
@@ -199,7 +217,7 @@ public function finalizarReclamo(Request $request, string $id)
         'reclamo' => $reclamo
     ], 200);
 }
-public function aceptarDevolucion(Request $request, string $id)
+public function aceptarDevolucion(Request $request, string $id, NotificacionService $notificacionService)
 {
     $usuario = $request->user();
 
@@ -238,6 +256,14 @@ public function aceptarDevolucion(Request $request, string $id)
     $reclamo->estado = 'en_proceso';
     $reclamo->motivo_rechazo = null;
     $reclamo->save();
+
+    $notificacionService->crear(
+        $reclamo->usuario_cedula,
+        'Reclamo nuevamente en proceso',
+        'El proveedor retomó el trabajo.',
+        'devolucion',
+        $reclamo->id
+    );
 
     $reclamo->load([
         'usuario',

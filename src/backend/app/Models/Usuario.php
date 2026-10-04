@@ -27,11 +27,19 @@ class Usuario extends Authenticatable
         'password',
         'rol',
         'activo',
+        'politicas_aceptadas',
+        'politicas_aceptadas_at',
         'proveedor_id',
     ];
 
     protected $hidden = [
         'password'
+    ];
+
+    protected $casts = [
+        'activo' => 'boolean',
+        'politicas_aceptadas' => 'boolean',
+        'politicas_aceptadas_at' => 'datetime',
     ];
 
     public function edificios()
