@@ -256,7 +256,7 @@ export class Reclamos {
         const etiquetaEstado = ETIQUETAS_ESTADO[estado] ?? estado;
         const imagen = obtenerUrlEvidencia(reclamo.evidencia?.ruta_archivo);
         const imagenHtml = imagen
-            ? `<img src="${escaparHtml(imagen)}" alt="Evidencia del reclamo" loading="lazy">`
+            ? `<img src="${escaparHtml(imagen)}" alt="Evidencia del reclamo" loading="${indice < 3 ? "eager" : "lazy"}" decoding="async">`
             : `<span class="material-symbols-outlined" aria-hidden="true">
                 image_not_supported
             </span>`;
