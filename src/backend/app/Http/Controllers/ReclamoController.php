@@ -76,7 +76,7 @@ class ReclamoController extends Controller
 
             'photo' => [
                 'required',
-                'image',
+                'mimes:jpg,jpeg,png,bmp,gif,svg,webp,avif,heic,heif',
                 'max:10000'
             ],
         ]);
@@ -90,6 +90,15 @@ class ReclamoController extends Controller
             return response()->json([
                 'message' => 'El edificio seleccionado no pertenece al usuario.',
             ], 403);
+        }
+
+        if ($reclamoService->existeDuplicadoActivo(
+            $datos,
+            $request->user()->cedula
+        )) {
+            return response()->json([
+                'message' => 'Ya existe un reclamo activo con la misma descripción, edificio y clasificación.',
+            ], 422);
         }
 
         $reclamo = $reclamoService->crear(

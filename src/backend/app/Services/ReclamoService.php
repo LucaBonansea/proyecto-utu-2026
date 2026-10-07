@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Reclamo;
 use App\Models\Evidencia;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
 
 class ReclamoService
 {
@@ -13,12 +14,35 @@ class ReclamoService
         'finalizacion_confirmada',
     ];
 
+    private const ESTADOS_CERRADOS = [
+        'finalizacion_confirmada',
+    ];
+
+    public function existeDuplicadoActivo(array $datos, string $cedula): bool
+    {
+        $descripcion = Str::lower(
+            Str::squish($datos['description'])
+        );
+
+        return Reclamo::query()
+            ->where('usuario_cedula', $cedula)
+            ->where('edificio_id', $datos['edificio_id'])
+            ->where('clasificacion_id', $datos['clasificacion_id'])
+            ->whereNotIn('estado', self::ESTADOS_CERRADOS)
+            ->pluck('description')
+            ->contains(
+                fn (string $existente): bool => Str::lower(
+                    Str::squish($existente)
+                ) === $descripcion
+            );
+    }
+
     public function crear(array $datos, string $cedula)
     {
         $reclamo = Reclamo::create([
             'usuario_cedula' => $cedula,
             'edificio_id' => $datos['edificio_id'],
-            'description' => $datos['description'],
+            'description' => Str::squish($datos['description']),
             'clasificacion_id' => $datos['clasificacion_id'],
             'estado' => 'pendiente',
         ]);

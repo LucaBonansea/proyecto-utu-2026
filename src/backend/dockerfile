@@ -5,7 +5,10 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libsqlite3-dev \
     libzip-dev \
-    && docker-php-ext-install pdo_mysql pdo_sqlite zip
+    && docker-php-ext-install pdo_mysql zip
+
+RUN printf "upload_max_filesize=12M\npost_max_size=12M\n" \
+    > /usr/local/etc/php/conf.d/uploads.ini
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -19,4 +22,4 @@ RUN php artisan storage:link
 
 EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--no-reload", "--host=0.0.0.0", "--port=8000"]
+CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"]

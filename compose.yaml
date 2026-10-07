@@ -38,14 +38,14 @@ services:
       DB_PASSWORD: root
       SESSION_DRIVER: database
       SESSION_COOKIE: proyecto_utu_session
-      SANCTUM_STATEFUL_DOMAINS: 127.0.0.1:5500,localhost:5500,127.0.0.1:5501,localhost:5501,10.244.237.181:5501
+      SANCTUM_STATEFUL_DOMAINS: 127.0.0.1:5500,localhost:5500,127.0.0.1:5501,localhost:5501,10.244.237.220:5501,192.168.*:5501,10.*:5501,172.*:5501,10.244.237.220:5501
 
     ports:
       - "8000:8000"
 
-
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
   database:
     image: mysql:8.0
@@ -59,6 +59,13 @@ services:
 
     volumes:
       - mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
 volumes:
   mysql_data:

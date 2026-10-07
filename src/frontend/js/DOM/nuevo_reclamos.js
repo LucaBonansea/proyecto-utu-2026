@@ -22,7 +22,13 @@ export class Nuevo_reclamos {
         </div>
 
 
-        <input type="file" id="archivo" class="input-subir" hidden>
+        <input
+            type="file"
+            id="archivo"
+            class="input-subir"
+            accept="image/*"
+            hidden
+        >
 
         <section class="top-new-reclamo">
             <label for="archivo" class="icono-subir">
@@ -194,7 +200,7 @@ export class Nuevo_reclamos {
             return;
         }
 
-        if (!archivo.type.startsWith("image/")) {
+        if (!this.esArchivoImagen(archivo)) {
             notify.warning("Solo se permiten archivos de imagen.");
 
             input_subir.value = "";
@@ -211,6 +217,11 @@ export class Nuevo_reclamos {
         preview.style.display = "block";
     });
 }
+
+    esArchivoImagen(archivo) {
+        return archivo.type.startsWith("image/")
+            || /\.(heic|heif)$/i.test(archivo.name);
+    }
 
 enviar_reclamo() {
     const boton = document.querySelector(".enviarReclamo");
@@ -236,10 +247,18 @@ enviar_reclamo() {
             return;
         }
 
-        if (!archivo.type.startsWith("image/")) {
+        if (!this.esArchivoImagen(archivo)) {
             this.mostrarToast(
                 "error",
                 "El archivo debe ser una imagen."
+            );
+            return;
+        }
+
+        if (archivo.size > 10 * 1024 * 1024) {
+            this.mostrarToast(
+                "error",
+                "La imagen no puede superar los 10 MB."
             );
             return;
         }
