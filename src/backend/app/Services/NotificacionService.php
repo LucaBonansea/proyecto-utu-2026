@@ -50,4 +50,15 @@ class NotificacionService
                 'leida' => true,
             ]);
     }
+
+    public function eliminarDeReclamo(
+        int $reclamoId,
+        string $usuarioCedula,
+        string $tipo
+    ): int {
+        return Notificacion::where('reclamo_id', $reclamoId)
+            ->where('usuario_cedula', $usuarioCedula)
+            ->where('tipo', $tipo)
+            ->delete();
+    }
 }
