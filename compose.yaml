@@ -38,7 +38,7 @@ services:
       DB_PASSWORD: root
       SESSION_DRIVER: database
       SESSION_COOKIE: proyecto_utu_session
-      SANCTUM_STATEFUL_DOMAINS: localhost:5501,127.0.0.1:5501,192.168.*:5501,10.*:5501,172.*:5501
+      SANCTUM_STATEFUL_DOMAINS: 127.0.0.1:5500,localhost:5500,127.0.0.1:5501,localhost:5501,10.244.237.220:5501,192.168.*:5501,10.*:5501,172.*:5501
 
     ports:
       - "8000:8000"
