@@ -1,4 +1,5 @@
 import {
+    cancelarReclamo,
     confirmarFinalizacion,
     rechazarFinalizacion,
     obtenerReclamos,
@@ -115,6 +116,52 @@ export class Reclamos {
             console.error("Error al cargar los reclamos:", error);
             this.renderError();
             notify.error("No se pudieron cargar tus reclamos.");
+        }
+    }
+
+    async mostrarReclamo(reclamoId) {
+        this.renderCargando();
+
+        try {
+            await this.cargarReclamos("todos", 1);
+            let encontrado = this.reclamos.some((reclamo) => (
+                Number(reclamo.id) === Number(reclamoId)
+            ));
+
+            for (
+                let pagina = 2;
+                pagina <= this.paginacion.ultima_pagina && !encontrado;
+                pagina += 1
+            ) {
+                await this.cargarReclamos("todos", pagina);
+                encontrado = this.reclamos.some((reclamo) => (
+                    Number(reclamo.id) === Number(reclamoId)
+                ));
+            }
+
+            if (!encontrado) {
+                await this.second_view("todos", 1);
+                notify.warning("El reclamo asociado ya no está disponible.");
+                return;
+            }
+
+            this.renderVista("todos");
+            window.requestAnimationFrame(() => {
+                const tarjeta = [...this.main.querySelectorAll("[data-reclamo-id]")]
+                    .find((elemento) => Number(elemento.dataset.reclamoId) === Number(reclamoId));
+
+                if (!tarjeta) {
+                    return;
+                }
+
+                tarjeta.classList.add("reclamo-destacado");
+                tarjeta.scrollIntoView({ behavior: "smooth", block: "center" });
+                window.setTimeout(() => tarjeta.classList.remove("reclamo-destacado"), 2400);
+            });
+        } catch (error) {
+            console.error("Error al abrir el reclamo de la notificación:", error);
+            this.renderError();
+            notify.error("No se pudo abrir el reclamo asociado.");
         }
     }
 
@@ -281,7 +328,10 @@ export class Reclamos {
         ) + indice + 1;
 
         return `
-            <article class="primerdiv-reclamo ${claseEstado}">
+            <article
+                class="primerdiv-reclamo ${claseEstado}"
+                data-reclamo-id="${escaparHtml(reclamo.id)}"
+            >
                 <div class="foto-reclamo ${imagen ? "" : "sin-imagen"}">
                     ${imagenHtml}
                 </div>
@@ -299,6 +349,7 @@ export class Reclamos {
                     ${edificioHtml}
                     ${this.renderEstado(estado)}
                     ${motivoRechazoHtml}
+                    ${this.renderAccionCancelacion(reclamo, estado)}
                     ${this.renderAccionesFinalizacion(reclamo)}
                     <p class="fecha-misreclamos">
                         <span class="fecha-reclamo">
@@ -311,6 +362,26 @@ export class Reclamos {
                     </p>
                 </div>
             </article>
+        `;
+    }
+
+    renderAccionCancelacion(reclamo, estado) {
+        if (estado !== "pendiente") {
+            return "";
+        }
+
+        return `
+            <div
+                class="acciones-cancelacion"
+                data-reclamo-id="${escaparHtml(reclamo.id)}"
+            >
+                <button type="button" class="btn-cancelar-reclamo">
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        delete
+                    </span>
+                    Cancelar reclamo
+                </button>
+            </div>
         `;
     }
 
@@ -469,6 +540,10 @@ export class Reclamos {
             acciones => this.conectarAccionesFinalizacion(acciones)
         );
 
+        this.main.querySelectorAll(".acciones-cancelacion").forEach(
+            acciones => this.conectarAccionCancelacion(acciones)
+        );
+
         this.main.querySelector(".pagina-anterior")?.addEventListener(
             "click",
             () => {
@@ -489,6 +564,71 @@ export class Reclamos {
             }
         );
 
+    }
+
+    conectarAccionCancelacion(acciones) {
+        const reclamo = this.reclamos.find(item => (
+            String(item.id) === acciones.dataset.reclamoId
+        ));
+
+        if (!reclamo || normalizarEstado(reclamo.estado) !== "pendiente") {
+            return;
+        }
+
+        const boton = acciones.querySelector(".btn-cancelar-reclamo");
+
+        boton.addEventListener("click", async () => {
+            const confirmado = await notify.confirm(
+                "¿Querés cancelar este reclamo? Se eliminará definitivamente.",
+                {
+                    confirmText: "Sí, eliminar",
+                    cancelText: "No, volver"
+                }
+            );
+
+            if (!confirmado) {
+                return;
+            }
+
+            await this.cancelar(reclamo, boton);
+        });
+    }
+
+    async cancelar(reclamo, boton) {
+        const textoOriginal = boton.innerHTML;
+        boton.disabled = true;
+        boton.textContent = "Cancelando...";
+
+        try {
+            const response = await cancelarReclamo(reclamo.id);
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "No se pudo cancelar el reclamo."
+                );
+            }
+
+            notify.success(
+                data.message || "Reclamo cancelado correctamente.",
+                { duration: 2000 }
+            );
+            document.dispatchEvent(
+                new CustomEvent("notificaciones:actualizar")
+            );
+            await this.refrescarListaActual();
+        } catch (error) {
+            console.error("Error al cancelar el reclamo:", error);
+            notify.error(
+                error.message || "No se pudo cancelar el reclamo."
+            );
+            boton.disabled = false;
+            boton.innerHTML = textoOriginal;
+
+            if (error.message.includes("Solo se puede cancelar")) {
+                await this.refrescarListaActual();
+            }
+        }
     }
 
     conectarAccionesFinalizacion(acciones) {
