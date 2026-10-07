@@ -1,6 +1,9 @@
 :root{
     color-scheme: dark;
 
+    --admin-action-gradient:linear-gradient(125deg, #052A70 0%, #0865CE 42%, #27B6EA 76%, #E9FAFF 118%);
+    --admin-action-shadow:0 10px 24px rgba(6,79,177,.28), inset 0 1px 0 rgba(255,255,255,.72), inset -1px -1px 0 rgba(255,255,255,.14);
+
     /* Fondos */
     --bg-app:#0A0C10;
     --bg-surface:#15181D;
@@ -3161,4 +3164,23 @@ main{
     .resumen-paginacion-admin{
         font-size:11px;
     }
+}
+
+:root[data-theme] .admin-page {
+    --azul-primario: #0a45ac;
+    --azul-oscuro: #06327d;
+    --azul-glow: rgba(10,69,172,.28);
+    --azul-tint: rgba(10,69,172,.14);
+}
+
+:root[data-theme] .admin-page .edificio-icono-div {
+    border-color: rgba(255,255,255,.24);
+    background: var(--admin-action-gradient);
+    color: #ffffff;
+    box-shadow: var(--admin-action-shadow);
+}
+
+:root[data-theme] .admin-page .edificio-icono-div .material-symbols-outlined {
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,29,81,.35);
 }
