@@ -1542,12 +1542,7 @@ main{
     border: 1px solid var(--border-subtle);
     border-radius: 12px;
     padding: 20px;
-    transition: 0.2s;
-}
-
-.proveedor-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,.4);
+    transition: border-color .2s ease;
 }
 
 .proveedor-card-top {
