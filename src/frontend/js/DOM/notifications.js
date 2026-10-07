@@ -55,10 +55,11 @@ function formatearFecha(fecha) {
 }
 
 class Notificaciones {
-    constructor(boton, panel, lista) {
+    constructor(boton, panel, lista, alSeleccionarReclamo) {
         this.boton = boton;
         this.panel = panel;
         this.lista = lista;
+        this.alSeleccionarReclamo = alSeleccionarReclamo;
         this.notificaciones = [];
         this.idsConocidos = new Set();
         this.cargaInicial = true;
@@ -152,7 +153,9 @@ class Notificaciones {
         return `
             <button class="notificacion-item ${clase}" data-id="${escaparHtml(notificacion.id)}" type="button">
                 <span class="notificacion-header">
-                    <span class="notificacion-tipo-icono material-symbols-outlined" aria-hidden="true">${icono}</span>
+                    <span class="notificacion-tipo-icono" aria-hidden="true">
+                        <span class="material-symbols-outlined">${icono}</span>
+                    </span>
                     <strong>${escaparHtml(notificacion.titulo)}</strong>
                     ${notificacion.leida ? "" : '<span class="notificacion-punto" aria-label="No leída"></span>'}
                 </span>
@@ -201,8 +204,21 @@ class Notificaciones {
         this.lista.querySelector(".notificaciones-activar-permiso")
             ?.addEventListener("click", () => this.solicitarPermiso());
         this.lista.querySelectorAll(".notificacion-item").forEach((boton) => {
-            boton.addEventListener("click", () => this.marcarLeida(Number(boton.dataset.id)));
+            boton.addEventListener("click", () => this.seleccionar(Number(boton.dataset.id)));
         });
+    }
+
+    async seleccionar(id) {
+        const notificacion = this.notificaciones.find((item) => Number(item.id) === id);
+        await this.marcarLeida(id);
+
+        const reclamoId = Number(notificacion?.reclamo_id);
+        if (!Number.isInteger(reclamoId) || reclamoId <= 0) {
+            return;
+        }
+
+        this.cerrar();
+        await this.alSeleccionarReclamo?.(reclamoId);
     }
 
     async solicitarPermiso() {
@@ -268,7 +284,7 @@ class Notificaciones {
     }
 }
 
-export function inicializarNotificaciones() {
+export function inicializarNotificaciones(alSeleccionarReclamo) {
     const boton = document.querySelector(".notificaciones-btn-top");
     const panel = document.querySelector(".menu-top-notificaciones");
     const lista = panel?.querySelector(".notificaciones-lista");
@@ -284,7 +300,12 @@ export function inicializarNotificaciones() {
     boton.setAttribute("aria-controls", panel.id);
     boton.setAttribute("aria-expanded", "false");
 
-    const component = new Notificaciones(boton, panel, lista);
+    const component = new Notificaciones(
+        boton,
+        panel,
+        lista,
+        alSeleccionarReclamo
+    );
     component.inicializar();
 
     boton.addEventListener("click", (event) => {
@@ -297,6 +318,9 @@ export function inicializarNotificaciones() {
     });
     panel.addEventListener("click", (event) => event.stopPropagation());
     document.addEventListener("click", () => component.cerrar());
+    document.addEventListener("notificaciones:actualizar", () => {
+        component.cargar();
+    });
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && panel.classList.contains("active")) {
             component.cerrar();

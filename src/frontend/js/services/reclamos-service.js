@@ -43,6 +43,12 @@ export function crearReclamo(formData) {
     });
 }
 
+export function cancelarReclamo(id) {
+    return apiFetchConCsrf(`/api/reclamos/${id}`, {
+        method: "DELETE"
+    });
+}
+
 export function confirmarFinalizacion(id) {
     return apiFetchConCsrf(
         `/api/reclamos/${id}/confirmar-finalizacion`,

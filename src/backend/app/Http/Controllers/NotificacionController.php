@@ -55,4 +55,5 @@ class NotificacionController extends Controller
             'actualizadas' => $cantidad,
         ], 200);
     }
+
 }

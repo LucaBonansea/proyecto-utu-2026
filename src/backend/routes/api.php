@@ -70,6 +70,11 @@ Route::middleware('auth:sanctum')->group(function () {
             'store'
         ]);
 
+        Route::delete('/reclamos/{id}', [
+            ReclamoController::class,
+            'destroy'
+        ]);
+
         // Administrador: ve todos
         Route::get('/admin/reclamos', [ReclamoController::class,'indexAdmin']);
         Route::put('/admin/reclamos/{id}', [ReclamoController::class,'actualizar']);
