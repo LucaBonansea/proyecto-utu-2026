@@ -76,7 +76,7 @@ class ReclamoController extends Controller
 
             'photo' => [
                 'required',
-                'image',
+                'mimes:jpg,jpeg,png,bmp,gif,svg,webp,avif,heic,heif',
                 'max:10000'
             ],
         ]);

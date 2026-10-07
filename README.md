@@ -35,6 +35,22 @@ Uso y desarrollo (frontend)
 ---------------------------
 El repositorio contiene la interfaz cliente y la documentación asociada. Para trabajar y probar el frontend, abra `src/frontend/html/index.html` en un navegador para pruebas estáticas, o sirva la carpeta `src/frontend` desde un servidor estático para evaluar rutas relativas y solicitudes asíncronas.
 
+### Ejecución local con Docker
+
+Con Docker Desktop en ejecución, desde la raíz del repositorio:
+
+```bash
+docker compose up --build -d
+```
+
+La aplicación queda disponible en `http://localhost:5501`; el backend y MySQL se inician junto con el frontend, y las migraciones se aplican automáticamente. Para abrirla desde un iPhone conectado a la misma red Wi-Fi, visitá `http://<IP-del-PC>:5501` (obtené la IPv4 del PC con `ipconfig`). Si Windows Firewall lo solicita, permití el acceso en la red privada. El formulario de reclamos permite tomar una foto con la cámara trasera y subir imágenes HEIC/HEIF de hasta 10 MB.
+
+Para detener los contenedores sin borrar los datos guardados:
+
+```bash
+docker compose down
+```
+
 Estructura de `src/frontend` relevante:
 
 - `html/` — páginas principales: `index.html`, `inicio.html`, `login-personal.html`.
