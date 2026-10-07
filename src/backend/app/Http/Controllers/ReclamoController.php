@@ -92,6 +92,15 @@ class ReclamoController extends Controller
             ], 403);
         }
 
+        if ($reclamoService->existeDuplicadoActivo(
+            $datos,
+            $request->user()->cedula
+        )) {
+            return response()->json([
+                'message' => 'Ya existe un reclamo activo con la misma descripción, edificio y clasificación.',
+            ], 422);
+        }
+
         $reclamo = $reclamoService->crear(
             $datos,
             $request->user()->cedula
