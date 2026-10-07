@@ -1290,3 +1290,213 @@ header {
         grid-template-columns: 1fr;
     }
 }
+
+:root[data-theme="dark"] .proveedores-page {
+    background: var(--ui-bg);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .proveedores-page .logos {
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: linear-gradient(135deg, #0a45ac 0%, #06327d 100%);
+}
+
+:root[data-theme="dark"] .proveedores-page .logos img {
+    filter: none !important;
+    mix-blend-mode: normal;
+}
+
+:root[data-theme="dark"] .proveedores-page .int-logo-div {
+    background: #ffffff;
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .reclamo-card,
+    .detalle-card,
+    .urgente-item,
+    .sin-urgentes,
+    .cuenta-card
+) {
+    border: 1px solid var(--border-strong);
+    background-color: var(--ui-surface);
+    color: var(--ui-text);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, .28), 0 0 0 1px rgba(139, 184, 255, .05);
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .foto-reclamo,
+    .detalle-imagen-container,
+    .detalle-info > div,
+    .cuenta-dato
+) {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface-soft);
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .reclamos-title,
+    .detalle-header h2,
+    .detalle-descripcion h3,
+    #form-resolver h3,
+    .urgentes-titulo h2,
+    .urgente-titulo,
+    .cuenta-header h2,
+    .cuenta-dato strong,
+    .campo label,
+    .detalle-info strong,
+    .reclamo-vacio h2
+) {
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .reclamos-text,
+    .reclamos-clasificacion,
+    #detalle-fecha,
+    .detalle-descripcion p,
+    .detalle-info p,
+    .urgentes-titulo p,
+    .urgente-edificio,
+    .urgente-flecha,
+    .cuenta-header p,
+    .cuenta-dato span,
+    .sin-foto,
+    .sin-urgentes,
+    .reclamo-vacio,
+    .cargando
+) {
+    color: var(--ui-muted);
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .detalle-descripcion,
+    #aceptar-container,
+    #form-resolver
+) {
+    border-color: var(--ui-border);
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    #foto-resolucion,
+    #observaciones
+) {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    #foto-resolucion,
+    #observaciones
+):focus,
+:root[data-theme="dark"] .proveedores-page :is(
+    #foto-resolucion,
+    #observaciones
+):focus-visible {
+    border-color: var(--border-strong);
+    outline: none;
+    box-shadow: none;
+}
+
+:root[data-theme="dark"] .proveedores-page #observaciones::placeholder {
+    color: var(--ui-muted);
+    opacity: 1;
+}
+
+:root[data-theme="dark"] .proveedores-page .filtros-reclamos button {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface);
+    color: var(--ui-muted);
+}
+
+:root[data-theme="dark"] .proveedores-page .filtros-reclamos button:hover {
+    border-color: var(--border-strong);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .proveedores-page .filtros-reclamos button.filtro-activo {
+    border-color: #3978d5;
+    background: #2f6fcf;
+    color: #ffffff;
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .header-action,
+    .theme-toggle,
+    .notificaciones-btn-top
+) {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .header-action,
+    .theme-toggle,
+    .notificaciones-btn-top
+):hover {
+    border-color: var(--border-strong);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .proveedores-page .btn-volver {
+    color: var(--ui-focus);
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .reclamos-normal,
+    .estado-completado,
+    #detalle-prioridad.reclamos-normal,
+    #detalle-estado.estado-completado
+) {
+    background: #364152;
+    color: #e2e8f0;
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .estado-pendiente,
+    #detalle-estado.estado-pendiente
+) {
+    background: #4a3216;
+    color: #fcd34d;
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .estado-aceptado,
+    #detalle-estado.estado-aceptado
+) {
+    background: #173f2a;
+    color: #86efac;
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .estado-en-proceso,
+    #detalle-estado.estado-en-proceso
+) {
+    background: #1e3a5f;
+    color: #93c5fd;
+}
+
+:root[data-theme="dark"] .proveedores-page :is(
+    .reclamos-Ur,
+    #detalle-prioridad.reclamos-Ur,
+    .urgentes-titulo > .material-symbols-outlined,
+    .urgente-icono
+) {
+    background: #4c1d2a;
+    color: #fda4af;
+}
+
+:root[data-theme="dark"] .proveedores-page .cuenta-icono {
+    border: 1px solid var(--ui-border);
+    background: #273b5b;
+    color: var(--ui-focus);
+}
+
+:root[data-theme="dark"] .proveedores-page .cuenta-mensaje {
+    border: 1px solid #71303b;
+    background: #4c1d2a;
+    color: #fecaca;
+}

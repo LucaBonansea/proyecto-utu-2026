@@ -108,7 +108,7 @@ main{
     min-height:0;
 }
 .logos{
-    background: linear-gradient(to bottom, #0b3d5c 0%, #0380a6 100%);
+    background: linear-gradient(135deg, #0a45ac 0%, #06327d 100%);
     display: flex;
     border-radius: 1000px;
     padding:5px;
@@ -1106,4 +1106,212 @@ main{
 
 .cerrar-modal:hover {
     background: #e5e5e5;
+}
+
+:root[data-theme="dark"] .administrativo-page {
+    background: var(--ui-bg);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page .sidebar {
+    border-right: 1px solid var(--ui-border);
+    background: linear-gradient(180deg, var(--ui-surface) 0%, var(--ui-bg) 100%);
+    box-shadow: 8px 0 28px rgba(0, 0, 0, .24);
+}
+
+:root[data-theme="dark"] .administrativo-page .sidebar-btn {
+    color: var(--ui-muted);
+}
+
+:root[data-theme="dark"] .administrativo-page .sidebar-btn:hover {
+    border-radius: 15px;
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page .sidebar-btn.active {
+    border: 1px solid var(--border-strong);
+    background: var(--brand-soft);
+    color: var(--ui-text);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .28), 0 0 0 1px rgba(139, 184, 255, .06);
+}
+
+:root[data-theme="dark"] .administrativo-page .sidebar-btn.logout {
+    color: #fda4af;
+}
+
+:root[data-theme="dark"] .administrativo-page .logos {
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: linear-gradient(135deg, #0a45ac 0%, #06327d 100%);
+}
+
+:root[data-theme="dark"] .administrativo-page .logos img {
+    filter: none !important;
+    mix-blend-mode: normal;
+}
+
+:root[data-theme="dark"] .administrativo-page .int-logo-div {
+    background: #ffffff;
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    .reclamo-card-basica,
+    .primerdiv-reclamo,
+    .card-detalle-modal,
+    .filtro-reclamos,
+    .form-proveedor,
+    .proveedor-card,
+    .form-area,
+    .lista-areas,
+    .buscador-usuarios,
+    .usuario-card
+) {
+    border: 1px solid var(--border-strong);
+    background: var(--ui-surface);
+    color: var(--ui-text);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, .28), 0 0 0 1px rgba(139, 184, 255, .05);
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    .area-card,
+    .usuario-rol-actual,
+    .reclamo-titulo.editando
+) {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    .reclamos-text,
+    .reclamo-titulo,
+    .reclamo-titulo-basico,
+    .user-p,
+    .estado,
+    .estado-text,
+    .titulo-proveedores,
+    .titulo-areas,
+    .titulo-usuarios,
+    .proveedor-card h3,
+    .area-card h3,
+    .usuario-info h3
+) {
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    .fecha,
+    .info-basica p,
+    .reclamo-ubicacion,
+    .prioridad,
+    .proveedor-card p,
+    .usuario-info p
+) {
+    color: var(--ui-muted);
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    input,
+    select,
+    textarea,
+    .filtro-area,
+    .filtro-estado,
+    .select-area,
+    .select-rol,
+    .nombre-area
+) {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    input,
+    select,
+    textarea,
+    .filtro-area,
+    .filtro-estado,
+    .select-area,
+    .select-rol,
+    .nombre-area
+):focus,
+:root[data-theme="dark"] .administrativo-page :is(
+    input,
+    select,
+    textarea,
+    .filtro-area,
+    .filtro-estado,
+    .select-area,
+    .select-rol,
+    .nombre-area
+):focus-visible {
+    border-color: var(--border-strong);
+    outline: none;
+    box-shadow: none;
+}
+
+:root[data-theme="dark"] .administrativo-page :is(input, textarea)::placeholder {
+    color: var(--ui-muted);
+    opacity: 1;
+}
+
+:root[data-theme="dark"] .administrativo-page select option {
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    .filtro-area,
+    .filtro-estado
+):hover {
+    background: var(--bg-elevated-hover);
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    .theme-toggle,
+    .notificaciones-btn-top,
+    .cerrar-modal,
+    .btn-volver-lista
+) {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page :is(
+    .theme-toggle,
+    .notificaciones-btn-top,
+    .cerrar-modal,
+    .btn-volver-lista
+):hover {
+    border-color: var(--border-strong);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page .filtro-titulo {
+    color: var(--ui-focus);
+}
+
+:root[data-theme="dark"] .administrativo-page .usuario-rol-actual {
+    color: var(--ui-focus);
+}
+
+:root[data-theme="dark"] .administrativo-page .badge-urgente,
+:root[data-theme="dark"] .administrativo-page .btn-prioridad:not(.urgente) {
+    border: 1px solid #71303b;
+    background: #4c1d2a;
+    color: #fecaca;
+}
+
+:root[data-theme="dark"] .administrativo-page .Urgente:not(.urgencia-activa) {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .administrativo-page .leaflet-popup-content-wrapper,
+:root[data-theme="dark"] .administrativo-page .leaflet-popup-tip {
+    background: var(--ui-surface);
+    color: var(--ui-text);
 }

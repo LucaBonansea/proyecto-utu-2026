@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIRE - Nexaris Presentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0B0F17;
+            color: #F3F4F6;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+        .slide {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            padding: 3rem 5rem;
+            box-sizing: border-box;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .accent-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+        }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+        .nav-btn:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: #38BDF8;
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Controls Header -->
+    <div class="absolute top-6 right-8 z-50 flex items-center gap-4 bg-slate-900 px-4 py-2 rounded-full border border-slate-800">
+        <span class="text-xs uppercase tracking-widest text-slate-400 font-semibold" id="slide-indicator">Slide 1 / 10</span>
+        <button onclick="prevSlide()" class="nav-btn p-2 rounded-full text-slate-300"><i class="fas fa-chevron-left"></i></button>
+        <button onclick="nextSlide()" class="nav-btn p-2 rounded-full text-slate-300"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- Slide 1 -->
+    <div class="slide active">
+        <div class="max-w-4xl mx-auto text-center space-y-6">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 1 • Intro</span>
+            <h1 class="text-5xl font-extrabold tracking-tight">El Costo del <span class="gradient-text">Descontrol</span></h1>
+            <p class="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                Las reparaciones de emergencia y la falta de mantenimiento preventivo le cuestan <span class="text-white font-semibold">hasta 3 veces más</span> a las organizaciones.
+            </p>
+            <div class="grid grid-cols-2 gap-6 pt-8 text-left max-w-2xl mx-auto">
+                <div class="accent-card p-6 border-l-4 border-l-amber-500">
+                    <i class="fas fa-triangle-exclamation text-amber-400 text-2xl mb-2"></i>
+                    <h3 class="font-bold text-lg">Falla inadvertida</h3>
+                    <p class="text-sm text-slate-400">Filtraciones o fallas no registradas a tiempo.</p>
+                </div>
+                <div class="accent-card p-6 border-l-4 border-l-red-500">
+                    <i class="fas fa-arrow-trend-up text-red-400 text-2xl mb-2"></i>
+                    <h3 class="font-bold text-lg">Gasto Multiplicado</h3>
+                    <p class="text-sm text-slate-400">Reparaciones de urgencia con sobrecostos altos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 2 • Problema</span>
+            <h2 class="text-4xl font-bold">Información <span class="text-red-400">Dispersa e Informal</span></h2>
+            <p class="text-lg text-slate-400">Gestionar múltiples sucursales sin un canal centralizado genera pérdidas críticas.</p>
+            <div class="grid grid-cols-3 gap-6">
+                <div class="accent-card p-6 text-center space-y-3">
+                    <div class="w-12 h-12 bg-red-950 text-red-400 rounded-full flex items-center justify-center mx-auto text-xl"><i class="fas fa-phone-slash"></i></div>
+                    <h4 class="font-semibold">Llamadas y Chats</h4>
+                    <p class="text-xs text-slate-400">Reportes informales que se traspapelan sin responsable claro.</p>
+                </div>
+                <div class="accent-card p-6 text-center space-y-3">
+                    <div class="w-12 h-12 bg-red-950 text-red-400 rounded-full flex items-center justify-center mx-auto text-xl"><i class="fas fa-database"></i></div>
+                    <h4 class="font-semibold">Sin Historial</h4>
+                    <p class="text-xs text-slate-400">Imposibilidad de auditar la frecuencia o costos de reparaciones.</p>
+                </div>
+                <div class="accent-card p-6 text-center space-y-3">
+                    <div class="w-12 h-12 bg-red-950 text-red-400 rounded-full flex items-center justify-center mx-auto text-xl"><i class="fas fa-clock text-amber-400"></i></div>
+                    <h4 class="font-semibold">Respuestas Lentas</h4>
+                    <p class="text-xs text-slate-400">El deterioro avanza antes de que la solución sea aprobada.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 3 • Solución</span>
+            <h2 class="text-4xl font-bold">La Necesidad: <span class="gradient-text">Trazabilidad Total</span></h2>
+            <div class="grid grid-cols-4 gap-4 pt-6">
+                <div class="accent-card p-5 text-center space-y-2 relative">
+                    <span class="text-xs font-bold text-sky-400">PASO 1</span>
+                    <h4 class="font-semibold text-sm">Reporte</h4>
+                    <p class="text-xs text-slate-400">Notificación inmediata desde la sede.</p>
+                </div>
+                <div class="accent-card p-5 text-center space-y-2">
+                    <span class="text-xs font-bold text-sky-400">PASO 2</span>
+                    <h4 class="font-semibold text-sm">Asignación</h4>
+                    <p class="text-xs text-slate-400">Derivación directa al técnico a cargo.</p>
+                </div>
+                <div class="accent-card p-5 text-center space-y-2">
+                    <span class="text-xs font-bold text-sky-400">PASO 3</span>
+                    <h4 class="font-semibold text-sm">Reparación</h4>
+                    <p class="text-xs text-slate-400">Monitoreo en tiempo real del trabajo.</p>
+                </div>
+                <div class="accent-card p-5 text-center space-y-2 border-emerald-500/40">
+                    <span class="text-xs font-bold text-emerald-400">PASO 4</span>
+                    <h4 class="font-semibold text-sm">Conformidad</h4>
+                    <p class="text-xs text-slate-400">Confirmación final de resolución.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-12">
+            <div class="space-y-6 max-w-lg">
+                <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 4 • Presentación</span>
+                <h2 class="text-6xl font-black tracking-tight gradient-text">SIRE</h2>
+                <p class="text-xl text-slate-300 font-medium">Sistema Integral de Reclamos Edilicios</p>
+                <p class="text-sm text-slate-400 leading-relaxed">Plataforma centralizada diseñada para controlar el mantenimiento y garantizar que ningún problema quede sin resolver.</p>
+                <div class="pt-2 text-xs font-mono text-slate-500">Desarrollado por <span class="text-sky-400 font-bold">NEXARIS</span> • UTU</div>
+            </div>
+            <div class="accent-card p-8 text-center space-y-4 w-72 border-sky-500/30">
+                <i class="fas fa-mobile-screen-button text-6xl text-sky-400"></i>
+                <div class="text-sm font-semibold">Gestión Ágil</div>
+                <div class="text-xs text-slate-400">Interfaz simple para usuarios, operarios y supervisores.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 5 • Escalabilidad</span>
+            <h2 class="text-4xl font-bold">Arquitectura <span class="gradient-text">Escalable</span></h2>
+            <div class="grid grid-cols-2 gap-8 pt-4">
+                <div class="accent-card p-6 space-y-3">
+                    <div class="text-xs font-mono text-sky-400 uppercase">Primer Validación</div>
+                    <h3 class="text-xl font-bold">La Intendencia</h3>
+                    <p class="text-sm text-slate-400">Implementación inicial para la gestión de infraestructura departamental pública.</p>
+                </div>
+                <div class="accent-card p-6 space-y-3">
+                    <div class="text-xs font-mono text-emerald-400 uppercase">Proyección B2B</div>
+                    <h3 class="text-xl font-bold">Cualquier Organización</h3>
+                    <p class="text-sm text-slate-400">Diseñado para adaptarse a empresas o instituciones con **1 o cientos de sucursales**.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 6 • Modelo de Negocio</span>
+            <h2 class="text-4xl font-bold">Modelo de Negocio <span class="text-emerald-400">Sostenible</span></h2>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="accent-card p-6 space-y-3">
+                    <i class="fas fa-rocket text-2xl text-sky-400"></i>
+                    <h3 class="font-bold text-lg">1. Implementación Inicial</h3>
+                    <p class="text-xs text-slate-400">Despliegue y configuración adaptada a los flujos de trabajo del cliente.</p>
+                </div>
+                <div class="accent-card p-6 space-y-3 border-emerald-500/40">
+                    <i class="fas fa-arrows-rotate text-2xl text-emerald-400"></i>
+                    <h3 class="font-bold text-lg">2. Suscripción Recurrente</h3>
+                    <p class="text-xs text-slate-400">Ingresos continuos post-venta por contratos de soporte, mantenimiento y actualizaciones.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 7 • Funcionalidades</span>
+            <h2 class="text-4xl font-bold">Personalizable e <span class="gradient-text">Inteligente</span></h2>
+            <div class="grid grid-cols-3 gap-6">
+                <div class="accent-card p-6 space-y-2">
+                    <i class="fas fa-sliders text-xl text-sky-400"></i>
+                    <h4 class="font-semibold text-sm">Modular</h4>
+                    <p class="text-xs text-slate-400">Permisos por sedes, roles de mantenimiento y flujos a medida.</p>
+                </div>
+                <div class="accent-card p-6 space-y-2">
+                    <i class="fas fa-chart-pie text-xl text-sky-400"></i>
+                    <h4 class="font-semibold text-sm">Analítica en Vivo</h4>
+                    <p class="text-xs text-slate-400">Métricas en tiempo real para tomar decisiones estratégicas.</p>
+                </div>
+                <div class="accent-card p-6 space-y-2">
+                    <i class="fas fa-shield-halved text-xl text-sky-400"></i>
+                    <h4 class="font-semibold text-sm">Auditoría</h4>
+                    <p class="text-xs text-slate-400">Registro histórico inalterable de cada reclamo resuelto.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 8 • Valor</span>
+            <h2 class="text-4xl font-bold">Impacto en la <span class="text-emerald-400">Organización</span></h2>
+            <div class="space-y-4 max-w-2xl">
+                <div class="accent-card p-4 flex items-center gap-4">
+                    <i class="fas fa-circle-check text-emerald-400 text-xl"></i>
+                    <span class="text-sm font-medium">Reducción drástica de costos por reparaciones tardías.</span>
+                </div>
+                <div class="accent-card p-4 flex items-center gap-4">
+                    <i class="fas fa-circle-check text-emerald-400 text-xl"></i>
+                    <span class="text-sm font-medium">Protección y prolongación de la vida útil del patrimonio edilicio.</span>
+                </div>
+                <div class="accent-card p-4 flex items-center gap-4">
+                    <i class="fas fa-circle-check text-emerald-400 text-xl"></i>
+                    <span class="text-sm font-medium">Garantía de entornos de trabajo seguros y funcionales.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 9 • Transformación</span>
+            <h2 class="text-4xl font-bold">Del Caos al <span class="gradient-text">Control Digital</span></h2>
+            <div class="grid grid-cols-2 gap-8 pt-2">
+                <div class="p-6 rounded-xl border border-red-500/20 bg-red-950/10 space-y-3">
+                    <h4 class="font-bold text-red-400">Gestión Tradicional</h4>
+                    <p class="text-xs text-slate-400">Informal, reactiva, desorganizada y sin métricas para auditar.</p>
+                </div>
+                <div class="p-6 rounded-xl border border-emerald-500/30 bg-emerald-950/10 space-y-3">
+                    <h4 class="font-bold text-emerald-400">Con SIRE</h4>
+                    <p class="text-xs text-slate-400">Digital, transparente, medible, ágil y con trazabilidad 100% verificada.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="slide">
+        <div class="max-w-4xl mx-auto text-center space-y-8">
+            <span class="text-sky-400 font-mono text-sm tracking-wider uppercase bg-sky-950 px-4 py-1.5 rounded-full border border-sky-800">Intervención 10 • Cierre</span>
+            <h2 class="text-6xl font-black gradient-text">NEXARIS</h2>
+            <p class="text-xl text-slate-300">Devolvemos el control operativo a su organización.</p>
+            <div class="pt-6">
+                <span class="text-sm font-bold text-sky-400 bg-sky-950/60 px-6 py-3 rounded-full border border-sky-500/30">
+                    SIRE — Sistema Integral de Reclamos Edilicios
+                </span>
+            </div>
+            <p class="text-xs text-slate-500 pt-8">Estudiantes de UTU • ¡Muchas Gracias!</p>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const indicator = document.getElementById('slide-indicator');
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+            indicator.textContent = `Slide ${currentSlide + 1} / ${slides.length}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
