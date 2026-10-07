@@ -155,6 +155,10 @@ textarea:focus-visible,
     outline-offset: 2px;
 }
 
+.descripcion textarea:focus-visible {
+    outline: none;
+}
+
 .theme-toggle,
 .notificaciones-btn-top,
 .notificaciones-header-button {
@@ -193,7 +197,6 @@ textarea:focus-visible,
 }
 
 .header-actions {
-    flex-wrap: wrap;
 }
 
 .notificaciones-wrapper {
@@ -273,6 +276,7 @@ textarea:focus-visible,
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 8px;
     padding: 10px 14px;
     border-bottom: 1px solid var(--ui-border);
@@ -337,14 +341,32 @@ textarea:focus-visible,
 }
 
 .notificacion-tipo-icono {
-    display: grid;
+    display: inline-flex;
     width: 30px;
     height: 30px;
     flex: 0 0 30px;
-    place-items: center;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     border-radius: 9px;
     background: var(--ui-surface-soft);
     color: var(--ui-focus);
+}
+
+.notificacion-tipo-icono .material-symbols-outlined {
+    display: block;
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    line-height: 22px;
+    text-align: center;
+}
+
+.primerdiv-reclamo.reclamo-destacado {
+    outline: 3px solid var(--ui-focus);
+    outline-offset: 3px;
+    box-shadow: 0 16px 38px color-mix(in srgb, var(--ui-focus) 28%, transparent);
+    scroll-margin-block: 24px;
 }
 
 .notificacion-header strong {
@@ -447,6 +469,17 @@ textarea:focus-visible,
     color: var(--ui-text);
 }
 
+:root[data-theme="dark"] .descripcion textarea {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+:root[data-theme="dark"] .btn-cancelar-reclamo {
+    border-color: #7f1d1d;
+    color: #fecaca;
+    background-color: #451a1a;
+}
+
 :root[data-theme="dark"] input::placeholder,
 :root[data-theme="dark"] textarea::placeholder {
     color: var(--ui-muted);
@@ -493,10 +526,294 @@ textarea:focus-visible,
     color: #9be0b5;
 }
 
+:root[data-theme="dark"] .noti,
+:root[data-theme="dark"] .edificio-chip,
+:root[data-theme="dark"] .edificio-info-card,
+:root[data-theme="dark"] .icono-subir,
+:root[data-theme="dark"] #tipo-reclamo,
+:root[data-theme="dark"] #edificio,
+:root[data-theme="dark"] .categoria,
+:root[data-theme="dark"] .descripcion,
+:root[data-theme="dark"] .busqueda,
+:root[data-theme="dark"] .sugerencias-lista,
+:root[data-theme="dark"] .notification,
+:root[data-theme="dark"] .perfil-card,
+:root[data-theme="dark"] .stat-item,
+:root[data-theme="dark"] .cuenta-opcion {
+    border-color: var(--ui-border);
+    background-color: var(--ui-surface);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .edificio-chip:hover,
+:root[data-theme="dark"] .icono-subir:hover,
+:root[data-theme="dark"] #tipo-reclamo:hover,
+:root[data-theme="dark"] #edificio:hover,
+:root[data-theme="dark"] .sugerencia-item:hover,
+:root[data-theme="dark"] .sugerencia-item.activa,
+:root[data-theme="dark"] .stat-item:hover,
+:root[data-theme="dark"] .cuenta-opcion:hover {
+    background-color: var(--ui-surface-soft);
+}
+
+:root[data-theme="dark"] .icono-subir,
+:root[data-theme="dark"] #tipo-reclamo,
+:root[data-theme="dark"] #edificio,
+:root[data-theme="dark"] .descripcion,
+:root[data-theme="dark"] .perfil-card,
+:root[data-theme="dark"] .stat-item,
+:root[data-theme="dark"] .cuenta-opcion {
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, .28), 0 0 0 1px rgba(139, 184, 255, .05);
+}
+
+:root[data-theme="dark"] .descripcion.enfocado {
+    border-color: var(--ui-focus);
+    box-shadow: 0 0 0 3px rgba(139, 184, 255, .18), 0 10px 26px rgba(0, 0, 0, .28);
+}
+
+:root[data-theme="dark"] .edificio-chip,
+:root[data-theme="dark"] .edificio-info-card .material-symbols-outlined,
+:root[data-theme="dark"] .notification span .material-symbols-outlined,
+:root[data-theme="dark"] .stat-numero,
+:root[data-theme="dark"] .perfil-badge {
+    color: var(--ui-focus);
+}
+
+:root[data-theme="dark"] .edificio-chip.active {
+    background-color: #2f6fcf;
+    color: #ffffff;
+}
+
+:root[data-theme="dark"] .reclamo-ubicacion {
+    color: var(--ui-focus);
+}
+
+:root[data-theme="dark"] .edificio-info-texto strong,
+:root[data-theme="dark"] .estado-text,
+:root[data-theme="dark"] .perfil-nombre,
+:root[data-theme="dark"] .notification-title,
+:root[data-theme="dark"] .sugerencia-item,
+:root[data-theme="dark"] .busqueda input,
+:root[data-theme="dark"] .textarea-container textarea {
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .edificio-info-texto p,
+:root[data-theme="dark"] .sin-reclamos,
+:root[data-theme="dark"] .fecha,
+:root[data-theme="dark"] #contador,
+:root[data-theme="dark"] .notification-content,
+:root[data-theme="dark"] .notification-time,
+:root[data-theme="dark"] .perfil-telefono,
+:root[data-theme="dark"] .perfil-telefono .material-symbols-outlined,
+:root[data-theme="dark"] .stat-label {
+    color: var(--ui-muted);
+}
+
+:root[data-theme="dark"] .icono-subir,
+:root[data-theme="dark"] .icono-subir .material-symbols-outlined,
+:root[data-theme="dark"] .descripcion .material-symbols-outlined,
+:root[data-theme="dark"] .busqueda .material-symbols-outlined,
+:root[data-theme="dark"] .cuenta-opcion .material-symbols-outlined {
+    color: var(--ui-muted);
+}
+
+:root[data-theme="dark"] #tipo-reclamo,
+:root[data-theme="dark"] #edificio {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23b4bfd0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+}
+
+:root[data-theme="dark"] .foto-reclamo {
+    background: linear-gradient(145deg, #27364c, #1b2738);
+}
+
+:root[data-theme="dark"] .foto-reclamo.sin-imagen .material-symbols-outlined {
+    color: #9db0cb;
+}
+
+:root[data-theme="dark"] .circle {
+    border-color: var(--ui-surface);
+    background: #69768a;
+    box-shadow: 0 0 0 2px #69768a;
+}
+
+:root[data-theme="dark"] .line {
+    background: #526075;
+}
+
+:root[data-theme="dark"] .estado-enviado .reclamo-estado-actual {
+    background: #364152;
+    color: #e2e8f0;
+}
+
+:root[data-theme="dark"] .estado-aceptado .reclamo-estado-actual {
+    background: #1e3a5f;
+    color: #bfdbfe;
+}
+
+:root[data-theme="dark"] .estado-proceso .reclamo-estado-actual {
+    background: #4a2a16;
+    color: #fed7aa;
+}
+
+:root[data-theme="dark"] .estado-resuelto .reclamo-estado-actual,
+:root[data-theme="dark"] .estado-confirmado .reclamo-estado-actual {
+    background: #173f2a;
+    color: #bbf7d0;
+}
+
+:root[data-theme="dark"] .estado-rechazado .reclamo-estado-actual {
+    background: #4c1d2a;
+    color: #fecdd3;
+}
+
+:root[data-theme="dark"] .acciones-finalizacion {
+    border-color: var(--ui-border);
+    background: var(--ui-surface-soft);
+}
+
+:root[data-theme="dark"] .motivo-rechazo {
+    border-color: #7f3345;
+    background: #4c1d2a;
+    color: #fecdd3;
+}
+
+:root[data-theme="dark"] .btn-rechazar-solucion {
+    border-color: #7f3345 !important;
+    background: #4c1d2a;
+    color: #fecdd3;
+}
+
+:root[data-theme="dark"] .form-rechazo-solucion button[data-accion="cancelar-rechazo"] {
+    background: #3c4859;
+    color: #f2f5fa;
+}
+
+:root[data-theme="dark"] .perfil-badge {
+    background: #273b5b;
+}
+
+:root[data-theme="dark"] .cuenta-opcion.cerrar-sesion,
+:root[data-theme="dark"] .cuenta-opcion.cerrar-sesion .material-symbols-outlined {
+    color: #fda4af;
+}
+
+:root[data-theme="dark"] .btn-cancelar-reclamo:hover:not(:disabled) {
+    background: #5f2027;
+}
+
+:root[data-theme="dark"] .stat-item:hover .stat-numero {
+    color: #a8c9ff;
+}
+
+:root[data-theme="dark"] .material-symbols-outlined.confirmacion-toast-icono {
+    background: #4c1d2a;
+    color: #fecaca;
+}
+
+:root[data-theme="dark"] .toast-nextjs.error { border-color: #71303b !important; }
+:root[data-theme="dark"] .toast-nextjs.error .check { background: #4c1d2a !important; color: #fda4af !important; }
+:root[data-theme="dark"] .toast-nextjs.success { border-color: #285941 !important; }
+:root[data-theme="dark"] .toast-nextjs.success .check { background: #173f2a !important; color: #86efac !important; }
+:root[data-theme="dark"] .toast-nextjs.warning { border-color: #755224 !important; }
+:root[data-theme="dark"] .toast-nextjs.warning .check { background: #4a3216 !important; color: #fcd34d !important; }
+:root[data-theme="dark"] .toast-nextjs.info { border-color: #315781 !important; }
+:root[data-theme="dark"] .toast-nextjs.info .check { background: #1e3a5f !important; color: #93c5fd !important; }
+
 .toast-container.top-center {
     top: 24px !important;
     gap: 12px !important;
     z-index: 99999 !important;
+}
+
+.confirmacion-toast-container {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    z-index: 100000;
+    width: min(390px, calc(100vw - 32px));
+    transform: translateX(-50%);
+}
+
+.confirmacion-toast {
+    padding: 14px;
+    border: 1px solid var(--ui-border);
+    border-left: 4px solid #dc2626;
+    border-radius: 16px;
+    background: var(--ui-surface);
+    box-shadow: 0 16px 40px rgba(0, 40, 111, .14), 0 4px 12px rgba(0, 0, 0, .06);
+    color: var(--ui-text);
+    animation: confirmacion-toast-entrada .2s ease-out;
+}
+
+.confirmacion-toast-contenido {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.material-symbols-outlined.confirmacion-toast-icono {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: #b91c1c;
+    background: #fee2e2;
+    font-size: 28px;
+    line-height: 1;
+    text-align: center;
+}
+
+.confirmacion-toast p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.confirmacion-toast-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.confirmacion-toast-acciones button {
+    min-height: 36px;
+    border: 1px solid transparent;
+    border-radius: 100px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.confirmacion-toast-cancelar {
+    border-color: var(--ui-border) !important;
+    color: var(--ui-text);
+    background: var(--ui-surface-soft);
+}
+
+.confirmacion-toast-confirmar {
+    color: #fff;
+    background: #dc2626;
+}
+
+@keyframes confirmacion-toast-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .toast-nextjs {

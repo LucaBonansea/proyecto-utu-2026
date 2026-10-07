@@ -7,6 +7,8 @@ use App\Services\ReclamoService;
 use Illuminate\Http\Request;
 use App\Models\Reclamo;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ReclamoController extends Controller
 {
@@ -107,6 +109,55 @@ class ReclamoController extends Controller
             'message' => 'Reclamo creado correctamente',
             'reclamo' => $reclamo,
         ], 201);
+    }
+
+    public function destroy(
+        Request $request,
+        int $id,
+        NotificacionService $notificacionService
+    ) {
+        $rutasEvidencias = DB::transaction(function () use (
+            $request,
+            $id,
+            $notificacionService
+        ) {
+            $reclamo = Reclamo::query()
+                ->with('evidencias')
+                ->lockForUpdate()
+                ->findOrFail($id);
+
+            if ($reclamo->usuario_cedula !== $request->user()->cedula) {
+                abort(403, 'No autorizado');
+            }
+
+            if ($reclamo->estado !== 'pendiente') {
+                abort(422, 'Solo se puede cancelar un reclamo que esté enviado.');
+            }
+
+            $rutas = $reclamo->evidencias
+                ->pluck('ruta_archivo')
+                ->filter()
+                ->values()
+                ->all();
+
+            $notificacionService->eliminarDeReclamo(
+                $reclamo->id,
+                $request->user()->cedula,
+                'reclamo_creado'
+            );
+
+            $reclamo->delete();
+
+            return $rutas;
+        });
+
+        if ($rutasEvidencias !== []) {
+            Storage::disk('public')->delete($rutasEvidencias);
+        }
+
+        return response()->json([
+            'message' => 'Reclamo cancelado correctamente.',
+        ], 200);
     }
 
     public function indexAdmin(Request $request,ReclamoService $reclamoService) {

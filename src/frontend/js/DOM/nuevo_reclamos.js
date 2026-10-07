@@ -402,7 +402,7 @@ enviar_reclamo() {
     this.ultimoMensajeToast = mensaje;
 
     if (tipo === "success") {
-        notify.success(mensaje);
+        notify.success(mensaje, { duration: 2000 });
     }
 
     if (tipo === "error") {

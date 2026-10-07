@@ -442,10 +442,6 @@ header{
     border-radius:11px;
 }
 
-.account-detail:hover{
-    background:var(--bg-elevated-hover);
-}
-
 .account-detail > .material-symbols-outlined{
     flex:0 0 25px;
     color:var(--text-secondary);
@@ -1546,12 +1542,7 @@ main{
     border: 1px solid var(--border-subtle);
     border-radius: 12px;
     padding: 20px;
-    transition: 0.2s;
-}
-
-.proveedor-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,.4);
+    transition: border-color .2s ease;
 }
 
 .proveedor-card-top {
@@ -1856,12 +1847,7 @@ main{
     border: 1px solid var(--border-subtle);
     border-radius: 12px;
     padding: 20px;
-    transition: 0.2s;
-}
-
-.edificio-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,.4);
+    transition: border-color .2s ease;
 }
 
 .edificio-icono-div{
@@ -2670,22 +2656,22 @@ main{
 .selector-estado-reclamos{
     display:flex;
     align-items:center;
-    gap:9px;
-    min-height:44px;
+    gap:13px;
+    min-height:56px;
     box-sizing:border-box;
     border:1px solid var(--border-subtle);
-    border-radius:10px;
+    border-radius:18px;
     background:var(--bg-surface);
     color:var(--text-secondary);
 }
 
 .buscador-reclamos-admin{
     flex:1;
-    padding:0 13px;
+    padding:0 20px;
 }
 
 .selector-estado-reclamos{
-    padding:0 10px 0 13px;
+    padding:0 16px 0 20px;
 }
 
 .buscador-reclamos-admin input,
@@ -2696,6 +2682,7 @@ main{
     background:transparent;
     color:var(--text-primary);
     font:inherit;
+    font-size:16px;
 }
 
 .buscador-reclamos-admin input{
@@ -2704,6 +2691,11 @@ main{
 
 .selector-estado-reclamos select{
     cursor:pointer;
+}
+
+.buscador-reclamos-admin > .material-symbols-outlined,
+.selector-estado-reclamos > .material-symbols-outlined{
+    font-size:27px;
 }
 
 .selector-estado-reclamos option{
@@ -2942,6 +2934,214 @@ main{
     .contenedor-reclamos-admin{
         grid-template-columns:1fr;
     }
+}
+
+:root[data-theme="dark"] .admin-page {
+    background: var(--ui-bg);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .admin-page .sidebar {
+    border-right-color: var(--ui-border);
+    background: linear-gradient(180deg, var(--ui-surface) 0%, var(--ui-bg) 100%);
+    box-shadow: 8px 0 28px rgba(0, 0, 0, .24);
+}
+
+:root[data-theme="dark"] .admin-page .sidebar-btn {
+    color: var(--ui-muted);
+}
+
+:root[data-theme="dark"] .admin-page .sidebar-btn:hover {
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+    border-radius: 15px;
+}
+
+:root[data-theme="dark"] .admin-page .sidebar-btn.active {
+    border: 1px solid var(--border-strong);
+    background: var(--brand-soft);
+    color: var(--ui-text);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .28), 0 0 0 1px rgba(139, 184, 255, .06);
+}
+
+:root[data-theme="dark"] .admin-page .logos {
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: linear-gradient(135deg, #0a45ac 0%, #06327d 100%);
+}
+
+:root[data-theme="dark"] .admin-page .logos img {
+    filter: none !important;
+    mix-blend-mode: normal;
+}
+
+:root[data-theme="dark"] .admin-page .int-logo-div {
+    background: #ffffff;
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .form-clasificacion-admin,
+    .clasificacion-admin-item,
+    .primerdiv-reclamo,
+    .filtro-reclamos,
+    .form-proveedor,
+    .proveedor-card,
+    .area-card,
+    .buscador-usuarios,
+    .usuario-card,
+    .proveedor-detalle-info,
+    .form-edificio,
+    .edificio-card,
+    .form-usuario,
+    .edificio-detalle-info,
+    .contenedor-usuarios-edificio .usuario-card,
+    .form-cambiar-password,
+    .buscador-reclamos-admin,
+    .selector-estado-reclamos,
+    .reclamo-admin-card,
+    .account-menu
+) {
+    border-color: var(--border-strong);
+    background-color: var(--ui-surface);
+    color: var(--ui-text);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, .28), 0 0 0 1px rgba(139, 184, 255, .05);
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .account-profile,
+    .proveedor-detalle-info,
+    .detalle-edificio-grid p,
+    .checkboxes-edificios,
+    .checkboxes-edificios-cambio,
+    .form-cambiar-password,
+    .reclamo-admin-imagen,
+    .sin-usuarios
+) {
+    border-color: var(--ui-border);
+    background-color: var(--ui-surface-soft);
+}
+
+:root[data-theme="dark"] .admin-page :is(input, select, textarea) {
+    border: 1px solid var(--ui-border);
+    background-color: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .admin-page :is(input, select, textarea):focus {
+    border-color: var(--border-strong);
+    outline: none;
+    box-shadow: none;
+}
+
+:root[data-theme="dark"] .admin-page .buscador-reclamos-admin input,
+:root[data-theme="dark"] .admin-page .selector-estado-reclamos select,
+:root[data-theme="dark"] .admin-page .buscador-reclamos-admin input:focus,
+:root[data-theme="dark"] .admin-page .selector-estado-reclamos select:focus {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+:root[data-theme="dark"] .admin-page :is(input, textarea)::placeholder {
+    color: var(--ui-muted);
+    opacity: 1;
+}
+
+:root[data-theme="dark"] .admin-page select option {
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .cancelar-proveedor,
+    .cancelar-edificio,
+    .cancelar-usuario,
+    .cancelar-password,
+    .btn-cambiar-password,
+    .btn-toggle-estado-proveedor,
+    .btn-pagina-admin,
+    .btn-detalle-proveedor
+) {
+    border: 1px solid var(--ui-border);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .cancelar-proveedor,
+    .cancelar-edificio,
+    .cancelar-usuario,
+    .cancelar-password,
+    .btn-cambiar-password,
+    .btn-toggle-estado-proveedor,
+    .btn-pagina-admin,
+    .btn-detalle-proveedor
+):hover:not(:disabled) {
+    border-color: var(--border-strong);
+    background: var(--bg-elevated-hover);
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .header-title h1,
+    .titulo-clasificaciones-admin h2,
+    .titulo-proveedores h2,
+    .titulo-areas h2,
+    .titulo-usuarios h2,
+    .titulo-edificios h2,
+    .titulo-reclamos-admin h2,
+    .proveedor-card h3,
+    .usuario-card h3,
+    .edificio-card h3,
+    label
+) {
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .titulo-clasificaciones-admin p,
+    .subtitulo-usuarios,
+    .subtitulo-edificios,
+    .titulo-reclamos-admin p,
+    .proveedor-card p,
+    .usuario-card p,
+    .edificio-info p,
+    .resumen-paginacion-admin
+) {
+    color: var(--ui-muted);
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .account-trigger,
+    .theme-toggle,
+    .notificaciones-btn-top
+) {
+    border-color: var(--ui-border);
+    background: var(--ui-surface);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .account-trigger,
+    .theme-toggle,
+    .notificaciones-btn-top
+):hover {
+    border-color: var(--border-strong);
+    background: var(--ui-surface-soft);
+}
+
+:root[data-theme] .admin-page :is(input, select, textarea):focus,
+:root[data-theme] .admin-page :is(input, select, textarea):focus-visible {
+    border-color: var(--border-strong);
+    outline: none;
+    box-shadow: none;
+}
+
+:root[data-theme] .admin-page :is(
+    .buscador-reclamos-admin,
+    .selector-estado-reclamos
+):focus-within {
+    border-color: var(--border-strong);
+    box-shadow: none;
 }
 
 @media (max-width: 430px){

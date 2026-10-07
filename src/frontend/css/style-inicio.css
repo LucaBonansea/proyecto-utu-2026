@@ -809,14 +809,43 @@ main{
     opacity: .6;
 }
 
-.eliminar-rec{
-    font-size: 14px;
+.acciones-cancelacion{
+    display: flex;
+    margin-top: 2px;
+}
+
+.btn-cancelar-reclamo{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    border: 1px solid #fecdd3;
     border-radius: 100px;
-    width:calc(100% - 12px) ;
-    border: none;
-    background-color: rgb(225, 7, 68);
-    color: white;
+    padding: 8px 13px;
+    color: #9f1239;
+    background: #fff1f2;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
     cursor:pointer;
+    transition: background-color .2s ease, transform .2s ease;
+}
+
+.btn-cancelar-reclamo .material-symbols-outlined{
+    font-size: 17px;
+}
+
+.btn-cancelar-reclamo:disabled{
+    cursor: wait;
+    opacity: .6;
+}
+
+@media (hover: hover) {
+    .btn-cancelar-reclamo:hover:not(:disabled){
+        background: #ffe4e6;
+        transform: translateY(-1px);
+    }
 }
 .icono-subir{
     cursor: pointer;

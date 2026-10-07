@@ -2,7 +2,7 @@
 import { Reclamos } from "./reclamos.js";
 import { Nuevo_reclamos } from "./nuevo_reclamos.js";
 import { Cuenta } from "./cuenta.js";
-import { inicializarNotificaciones } from "./notifications.js";
+import { inicializarNotificaciones } from "./notifications.js?v=20261007-3";
 import { inicializarTema } from "../theme.js";
 import { obtenerSesion } from "../services/auth-service.js";
 
@@ -85,7 +85,12 @@ function iniciarAplicacion() {
         () => reclamos.actualizarEstadisticas()
     );
     inicializarTema();
-    inicializarNotificaciones();
+    inicializarNotificaciones(async (reclamoId) => {
+        button_restart_actives();
+        $btn_inicio_top.classList.add("active");
+        $btn_inicio.classList.add("active");
+        await reclamos.mostrarReclamo(reclamoId);
+    });
 
     // Evento de los botones de arriba
     buttons_tops.forEach(button => {
