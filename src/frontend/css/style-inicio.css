@@ -885,6 +885,12 @@ main{
     font-weight: 600;
 }
 
+/* En Nuevo Reclamo la evidencia se confirma en el selector, sin mostrarla. */
+.inicio-page .preview-foto-container,
+.inicio-page .preview-foto{
+    display: none !important;
+}
+
 #tipo-reclamo,
 #edificio{
     width: calc(100% - 50px);
