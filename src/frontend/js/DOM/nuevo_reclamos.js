@@ -31,7 +31,7 @@ export class Nuevo_reclamos {
         >
 
         <section class="top-new-reclamo">
-            <label for="archivo" class="icono-subir">
+            <label for="archivo" class="icono-subir" aria-live="polite">
                 <span class="material-symbols-outlined">add_photo_alternate</span>
                 Sube aquí tu evidencia
             </label>
@@ -47,7 +47,7 @@ export class Nuevo_reclamos {
                 </div>
             </label>
         </section>
-<section class="tipo-reclamo">
+        <section class="tipo-reclamo">
             <label for="tipo-reclamo" class="tipo-reclamo-label">
                 Tipo de reclamo
             </label>

@@ -1,6 +1,6 @@
 // import (importaciones de los objetos)
 import { Reclamos } from "./reclamos.js";
-import { Nuevo_reclamos } from "./nuevo_reclamos.js";
+import { Nuevo_reclamos } from "./nuevo_reclamos.js?v=20261009-2";
 import { Cuenta } from "./cuenta.js";
 import { inicializarNotificaciones } from "./notifications.js?v=20261007-3";
 import { inicializarTema } from "../theme.js";
