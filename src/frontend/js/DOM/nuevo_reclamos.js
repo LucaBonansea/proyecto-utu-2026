@@ -47,11 +47,7 @@ export class Nuevo_reclamos {
                 </div>
             </label>
         </section>
-
-        <div class="preview-foto-container">
-                    <img class="preview-foto" src="https://previews.123rf.com/images/synell/synell2205/synell220500005/189187581-smashed-window-broken-glass-break-destroyed-building-broken-frame-window-plastic-aftermath-bombed.jpg" alt="Vista previa" accept="image/*">
-            </div>
-        <section class="tipo-reclamo">
+<section class="tipo-reclamo">
             <label for="tipo-reclamo" class="tipo-reclamo-label">
                 Tipo de reclamo
             </label>
@@ -185,39 +181,33 @@ export class Nuevo_reclamos {
     }
 
     subir_foto() {
-    const input_subir =
-        document.querySelector(".input-subir");
+        const input_subir = document.querySelector(".input-subir");
+        const etiquetaSubir = document.querySelector(".icono-subir");
+        const textoOriginal = etiquetaSubir.innerHTML;
 
-    const preview =
-        document.querySelector(".preview-foto");
+        input_subir.addEventListener("change", () => {
+            const archivo = input_subir.files[0];
 
-    input_subir.addEventListener("change", () => {
-        const archivo = input_subir.files[0];
+            if (!archivo) {
+                etiquetaSubir.innerHTML = textoOriginal;
+                etiquetaSubir.classList.remove("imagen-cargada");
+                return;
+            }
 
-        if (!archivo) {
-            preview.src = "";
-            preview.style.display = "none";
-            return;
-        }
+            if (!this.esArchivoImagen(archivo)) {
+                notify.warning("Solo se permiten archivos de imagen.");
+                input_subir.value = "";
+                etiquetaSubir.innerHTML = textoOriginal;
+                etiquetaSubir.classList.remove("imagen-cargada");
+                return;
+            }
 
-        if (!this.esArchivoImagen(archivo)) {
-            notify.warning("Solo se permiten archivos de imagen.");
-
-            input_subir.value = "";
-            preview.src = "";
-            preview.style.display = "none";
-
-            return;
-        }
-
-        const urlTemporal =
-            URL.createObjectURL(archivo);
-
-        preview.src = urlTemporal;
-        preview.style.display = "block";
-    });
-}
-
+            etiquetaSubir.innerHTML = `
+                <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+                Imagen cargada`;
+            etiquetaSubir.classList.add("imagen-cargada");
+        });
+    }
     esArchivoImagen(archivo) {
         return archivo.type.startsWith("image/")
             || /\.(heic|heif)$/i.test(archivo.name);

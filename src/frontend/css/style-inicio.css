@@ -876,6 +876,15 @@ main{
     color: #535353;
 }
 
+.icono-subir.imagen-cargada,
+.icono-subir.imagen-cargada .material-symbols-outlined{
+    color: #0a45ac;
+}
+
+.icono-subir.imagen-cargada{
+    font-weight: 600;
+}
+
 #tipo-reclamo,
 #edificio{
     width: calc(100% - 50px);
