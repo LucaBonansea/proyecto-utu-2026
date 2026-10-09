@@ -6,10 +6,11 @@ import {
 import { notify } from "../utils/toast.js";
 
 export class Nuevo_reclamos {
-    constructor($btn_home_top, $btn_home, Main) {
+    constructor($btn_home_top, $btn_home, Main, volverAInicio) {
         this.$btn_home_top = $btn_home_top;
         this.$btn_home = $btn_home;
         this.Main = Main;
+        this.volverAInicio = volverAInicio;
         this.ultimoMensajeToast = "";
     }
 
@@ -364,6 +365,10 @@ enviar_reclamo() {
                 "success",
                 "Reclamo creado correctamente."
             );
+
+            if (this.volverAInicio) {
+                await this.volverAInicio();
+            }
 
         } catch (error) {
             console.error(

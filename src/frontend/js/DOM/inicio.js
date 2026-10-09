@@ -1,6 +1,6 @@
 // import (importaciones de los objetos)
 import { Reclamos } from "./reclamos.js";
-import { Nuevo_reclamos } from "./nuevo_reclamos.js?v=20261009-2";
+import { Nuevo_reclamos } from "./nuevo_reclamos.js?v=20261009-3";
 import { Cuenta } from "./cuenta.js";
 import { inicializarNotificaciones } from "./notifications.js?v=20261007-3";
 import { inicializarTema } from "../theme.js";
@@ -70,7 +70,17 @@ function iniciarAplicacion() {
 
     // Objetos
     const reclamos = new Reclamos(Main);
-    const nuevo_reclamos = new Nuevo_reclamos($btn_inicio_top, $btn_inicio, Main);
+    const nuevo_reclamos = new Nuevo_reclamos(
+        $btn_inicio_top,
+        $btn_inicio,
+        Main,
+        async () => {
+            button_restart_actives();
+            $btn_inicio_top.classList.add("active");
+            $btn_inicio.classList.add("active");
+            await reclamos.second_view();
+        }
+    );
     const cuenta = new Cuenta(
         Main,
         button_restart_actives,
@@ -172,3 +182,4 @@ async function iniciar() {
 }
 
 document.addEventListener("DOMContentLoaded", iniciar);
+
