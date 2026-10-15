@@ -848,6 +848,7 @@ main{
     }
 }
 .icono-subir{
+    position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;

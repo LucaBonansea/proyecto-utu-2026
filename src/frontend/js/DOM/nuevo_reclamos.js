@@ -38,8 +38,8 @@ export class Nuevo_reclamos {
                 <span class="evidencia-cargada" hidden>
                     <span class="texto-evidencia-cargada">Imagen cargada</span>
                 </span>
+                <button class="extension-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
             </label>
-            <button class="extension-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
             <img class="vista-evidencia" alt="Vista previa de la evidencia" hidden>
             <label class="descripcion">
                 <span class="material-symbols-outlined">description</span>
@@ -192,7 +192,7 @@ export class Nuevo_reclamos {
         const textoEvidencia = etiqueta.querySelector(".texto-evidencia");
         const evidenciaCargada = etiqueta.querySelector(".evidencia-cargada");
         const textoCargada = etiqueta.querySelector(".texto-evidencia-cargada");
-        const extension = document.querySelector(".extension-evidencia");
+        const extension = etiqueta.querySelector(".extension-evidencia");
         const vista = document.querySelector(".vista-evidencia");
         let urlImagen = null;
 
