@@ -1701,16 +1701,17 @@ footer{
     }
 
     .nombre-archivo-evidencia{
-        right: 48px;
-        width: min(35%, 180px);
-        padding: 6px 3px;
-        font-size: 9px;
+        right: 42px;
+        width: min(28%, 130px);
+        padding: 4px 2px;
+        font-size: 8px;
     }
 
     .eliminar-evidencia{
-        right: 10px;
-        width: 32px;
-        height: 32px;
+        right: 9px;
+        width: 26px;
+        height: 26px;
+        font-size: 16px;
     }
 
     .reclamo-nuevo-evidencia .vista-evidencia{
@@ -1728,9 +1729,16 @@ footer{
     }
 
     .nombre-archivo-evidencia{
-        right: 45px;
-        width: 30%;
-        font-size: 8px;
+        right: 38px;
+        width: 25%;
+        font-size: 7px;
+    }
+
+    .eliminar-evidencia{
+        right: 7px;
+        width: 24px;
+        height: 24px;
+        font-size: 15px;
     }
 }
 
