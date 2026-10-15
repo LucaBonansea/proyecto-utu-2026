@@ -95,4 +95,13 @@ class UsuarioService
             'proveedor'
         ]);
     }
+
+    public function desactivar(string $cedula): Usuario
+    {
+        $usuario = Usuario::findOrFail($cedula);
+
+        $usuario->update(['activo' => false]);
+
+        return $usuario;
+    }
 }
