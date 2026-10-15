@@ -31,11 +31,16 @@ export class Nuevo_reclamos {
             hidden
         >
 
-        <section class="top-new-reclamo">
+        <section class="top-new-reclamo reclamo-nuevo-evidencia">
             <label for="archivo" class="icono-subir" aria-live="polite">
                 <span class="material-symbols-outlined">add_photo_alternate</span>
-                Sube aquÃ­ tu evidencia
+                <span class="texto-evidencia">Sube aquí tu evidencia</span>
+                <span class="evidencia-cargada" hidden>
+                    <span class="texto-evidencia-cargada">Imagen cargada</span>
+                    <button class="extension-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
+                </span>
             </label>
+            <img class="vista-evidencia" alt="Vista previa de la evidencia" hidden>
             <label class="descripcion">
                 <span class="material-symbols-outlined">description</span>
                 <div class="textarea-box">
@@ -182,31 +187,81 @@ export class Nuevo_reclamos {
     }
 
     subir_foto() {
-        const input_subir = document.querySelector(".input-subir");
-        const etiquetaSubir = document.querySelector(".icono-subir");
-        const textoOriginal = etiquetaSubir.innerHTML;
+        const inputSubir = document.querySelector(".input-subir");
+        const etiqueta = document.querySelector(".icono-subir");
+        const textoEvidencia = etiqueta.querySelector(".texto-evidencia");
+        const evidenciaCargada = etiqueta.querySelector(".evidencia-cargada");
+        const textoCargada = etiqueta.querySelector(".texto-evidencia-cargada");
+        const extension = etiqueta.querySelector(".extension-evidencia");
+        const vista = document.querySelector(".vista-evidencia");
+        let urlImagen = null;
 
-        input_subir.addEventListener("change", () => {
-            const archivo = input_subir.files[0];
+        const cerrarVista = () => {
+            vista.hidden = true;
+            vista.removeAttribute("src");
+            extension.setAttribute("aria-expanded", "false");
+        };
+
+        const alternarVista = (evento) => {
+            evento.preventDefault();
+            evento.stopPropagation();
+            if (vista.hidden && urlImagen) {
+                vista.src = urlImagen;
+                vista.hidden = false;
+                extension.setAttribute("aria-expanded", "true");
+            } else {
+                cerrarVista();
+            }
+        };
+
+        extension.addEventListener("mouseenter", () => {
+            if (!urlImagen) return;
+            vista.src = urlImagen;
+            vista.hidden = false;
+            extension.setAttribute("aria-expanded", "true");
+        });
+        extension.addEventListener("mouseleave", cerrarVista);
+        extension.addEventListener("click", alternarVista);
+        extension.addEventListener("touchstart", alternarVista, { passive: false });
+        document.addEventListener("click", (evento) => {
+            if (!vista.contains(evento.target) && !extension.contains(evento.target)) cerrarVista();
+        });
+
+        inputSubir.addEventListener("change", () => {
+            const archivo = inputSubir.files[0];
+            cerrarVista();
+            if (urlImagen) URL.revokeObjectURL(urlImagen);
+            urlImagen = null;
 
             if (!archivo) {
-                etiquetaSubir.innerHTML = textoOriginal;
-                etiquetaSubir.classList.remove("imagen-cargada");
+                textoEvidencia.hidden = false;
+                evidenciaCargada.hidden = true;
+                extension.hidden = true;
+                etiqueta.classList.remove("imagen-cargada");
                 return;
             }
 
             if (!this.esArchivoImagen(archivo)) {
                 notify.warning("Solo se permiten archivos de imagen.");
-                input_subir.value = "";
-                etiquetaSubir.innerHTML = textoOriginal;
-                etiquetaSubir.classList.remove("imagen-cargada");
+                inputSubir.value = "";
+                textoEvidencia.hidden = false;
+                evidenciaCargada.hidden = true;
+                extension.hidden = true;
+                etiqueta.classList.remove("imagen-cargada");
                 return;
             }
 
-            etiquetaSubir.innerHTML = `
-                <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-                Imagen cargada`;
-            etiquetaSubir.classList.add("imagen-cargada");
+            urlImagen = URL.createObjectURL(archivo);
+            const extensionArchivo = archivo.name.includes(".")
+                ? archivo.name.split(".").pop().toUpperCase()
+                : "IMAGEN";
+            textoEvidencia.hidden = true;
+            evidenciaCargada.hidden = false;
+            textoCargada.textContent = "Imagen cargada";
+            extension.textContent = extensionArchivo;
+            extension.title = `Toca o pasa el puntero para ver la imagen (${extensionArchivo})`;
+            extension.hidden = false;
+            etiqueta.classList.add("imagen-cargada");
         });
     }
     esArchivoImagen(archivo) {

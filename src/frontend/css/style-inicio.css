@@ -885,6 +885,61 @@ main{
     font-weight: 600;
 }
 
+.evidencia-cargada{
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.evidencia-cargada[hidden],
+.extension-evidencia[hidden],
+.vista-evidencia[hidden]{
+    display: none;
+}
+
+.texto-evidencia-cargada{
+    color: #0a45ac;
+}
+
+.extension-evidencia{
+    border: 1px solid #b9cdf3;
+    border-radius: 999px;
+    padding: 6px 10px;
+    color: #0a45ac;
+    background: #edf3ff;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.extension-evidencia:hover,
+.extension-evidencia[aria-expanded="true"]{
+    color: #fff;
+    background: #0a45ac;
+}
+
+.reclamo-nuevo-evidencia{
+    position: relative;
+}
+
+.reclamo-nuevo-evidencia .vista-evidencia{
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 8px);
+    left: 25px;
+    max-width: min(320px, calc(100vw - 50px));
+    max-height: 240px;
+    object-fit: contain;
+    padding: 6px;
+    border: 1px solid #d7e2f5;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(0, 29, 81, .22);
+    pointer-events: none;
+}
+
 /* En Nuevo Reclamo la evidencia se confirma en el selector, sin mostrarla. */
 .inicio-page .preview-foto-container,
 .inicio-page .preview-foto{
