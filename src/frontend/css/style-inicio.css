@@ -904,10 +904,10 @@ main{
 
 .nombre-archivo-evidencia{
     position: absolute;
-    right: 58px;
+    right: 56px;
     top: 50%;
     transform: translateY(-50%);
-    max-width: min(38%, 220px);
+    width: min(38%, 220px);
     overflow: hidden;
     border: none;
     padding: 5px 8px;
@@ -922,6 +922,12 @@ main{
     cursor: pointer;
 }
 
+.nombre-archivo-evidencia:focus-visible,
+.eliminar-evidencia:focus-visible{
+    outline: 3px solid rgba(10, 69, 172, .35);
+    outline-offset: 2px;
+}
+
 .nombre-archivo-evidencia:hover,
 .nombre-archivo-evidencia[aria-expanded="true"]{
     color: #06327d;
@@ -933,8 +939,8 @@ main{
     top: 50%;
     transform: translateY(-50%);
     display: inline-flex;
-    width: 27px;
-    height: 27px;
+    width: 32px;
+    height: 32px;
     align-items: center;
     justify-content: center;
     border: 0;
@@ -1669,6 +1675,62 @@ footer{
     .notificaciones-lista {
         overflow-y: none;
         max-height: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .icono-subir{
+        min-height: 60px;
+        height: auto;
+        padding: 10px 52px 10px 14px;
+        gap: 7px;
+        font-size: 13px;
+    }
+
+    .icono-subir > .material-symbols-outlined{
+        flex: 0 0 auto;
+        font-size: 27px;
+    }
+
+    .evidencia-cargada{
+        min-width: 0;
+        max-width: 42%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .nombre-archivo-evidencia{
+        right: 48px;
+        width: min(35%, 180px);
+        padding: 6px 3px;
+        font-size: 9px;
+    }
+
+    .eliminar-evidencia{
+        right: 10px;
+        width: 32px;
+        height: 32px;
+    }
+
+    .reclamo-nuevo-evidencia .vista-evidencia{
+        left: 12px;
+        max-width: calc(100vw - 48px);
+        max-height: 35vh;
+    }
+}
+
+@media (max-width: 340px) {
+    .icono-subir{
+        padding-left: 10px;
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .nombre-archivo-evidencia{
+        right: 45px;
+        width: 30%;
+        font-size: 8px;
     }
 }
 
