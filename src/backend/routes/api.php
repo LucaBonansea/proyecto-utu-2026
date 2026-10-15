@@ -9,6 +9,7 @@ use App\Http\Controllers\ReclamoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Middleware\Administrador;
 use App\Http\Middleware\PoliticasAceptadas;
+use App\Http\Middleware\UsuarioActivo;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -32,12 +33,13 @@ Route::middleware('auth:sanctum')->group(function () {
         'logout'
     ]);
 
-    Route::middleware(PoliticasAceptadas::class)->group(function () {
+    Route::middleware([UsuarioActivo::class, PoliticasAceptadas::class])->group(function () {
         Route::middleware(Administrador::class)->group(function () {
             Route::get('/usuarios', [UsuarioController::class, 'index']);
             Route::post('/usuarios', [UsuarioController::class, 'store']);
             Route::put('/usuarios/{cedula}/password', [UsuarioController::class, 'updatePassword']);
             Route::put('/usuarios/{cedula}/rol', [UsuarioController::class, 'updateRol']);
+            Route::put('/usuarios/{cedula}/desactivar', [UsuarioController::class, 'desactivar']);
             Route::post('/edificios', [EdificioController::class, 'store']);
             Route::post('/proveedores', [ProveedorController::class, 'store']);
             Route::put('/proveedores/{id}/estado', [ProveedorController::class, 'cambiarEstado']);
