@@ -39,7 +39,7 @@ export class Nuevo_reclamos {
                     <span class="texto-evidencia-cargada">Imagen cargada</span>
                 </span>
                 <button class="nombre-archivo-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
-                <button class="eliminar-evidencia" type="button" hidden aria-label="Eliminar imagen cargada">Borrar imagen</button>
+                <button class="eliminar-evidencia" type="button" hidden aria-label="Eliminar imagen cargada" title="Eliminar imagen">×</button>
             </label>
             <img class="vista-evidencia" alt="Vista previa de la evidencia" hidden>
             <label class="descripcion">
