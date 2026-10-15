@@ -1,4 +1,4 @@
-*{
+﻿*{
     margin: 0;
     padding: 0;
     
@@ -440,7 +440,7 @@ main{
 
 .reclamo-ubicacion{
     width: fit-content;
-    font-size: 11px;
+    font-size: 10px;
     display: flex;
     align-items: flex-start;
     background: transparent;
@@ -885,12 +885,7 @@ main{
     font-weight: 600;
 }
 
-.evidencia-cargada{
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: auto;
-}
+.evidencia-cargada{`r`n    display: inline-flex;`r`n    align-items: center;`r`n}
 
 .evidencia-cargada[hidden],
 .extension-evidencia[hidden],
@@ -902,14 +897,13 @@ main{
     color: #0a45ac;
 }
 
-.extension-evidencia{
-    border: 1px solid #b9cdf3;
+ .extension-evidencia{`r`n    position: absolute;`r`n    right: 20px;`r`n    top: 50%;`r`n    transform: translateY(-50%);`r`n    border: 1px solid #b9cdf3;
     border-radius: 999px;
-    padding: 6px 10px;
+    padding: 4px 8px;
     color: #0a45ac;
     background: #edf3ff;
     font: inherit;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     cursor: pointer;
 }
@@ -927,10 +921,10 @@ main{
 .reclamo-nuevo-evidencia .vista-evidencia{
     position: absolute;
     z-index: 20;
-    top: calc(100% + 8px);
+    top: 75px;
     left: 25px;
-    max-width: min(320px, calc(100vw - 50px));
-    max-height: 240px;
+    max-width: min(240px, calc(100vw - 50px));
+    max-height: 180px;
     object-fit: contain;
     padding: 6px;
     border: 1px solid #d7e2f5;
@@ -1803,3 +1797,4 @@ footer{
         transform: none;
     }
 }
+

@@ -1,4 +1,4 @@
-import {
+﻿import {
     crearReclamo,
     obtenerClasificaciones,
     obtenerEdificios
@@ -34,12 +34,12 @@ export class Nuevo_reclamos {
         <section class="top-new-reclamo reclamo-nuevo-evidencia">
             <label for="archivo" class="icono-subir" aria-live="polite">
                 <span class="material-symbols-outlined">add_photo_alternate</span>
-                <span class="texto-evidencia">Sube aqu� tu evidencia</span>
+                <span class="texto-evidencia">Sube aquí tu evidencia</span>
                 <span class="evidencia-cargada" hidden>
                     <span class="texto-evidencia-cargada">Imagen cargada</span>
-                    <button class="extension-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
                 </span>
             </label>
+            <button class="extension-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
             <img class="vista-evidencia" alt="Vista previa de la evidencia" hidden>
             <label class="descripcion">
                 <span class="material-symbols-outlined">description</span>
@@ -192,7 +192,7 @@ export class Nuevo_reclamos {
         const textoEvidencia = etiqueta.querySelector(".texto-evidencia");
         const evidenciaCargada = etiqueta.querySelector(".evidencia-cargada");
         const textoCargada = etiqueta.querySelector(".texto-evidencia-cargada");
-        const extension = etiqueta.querySelector(".extension-evidencia");
+        const extension = document.querySelector(".extension-evidencia");
         const vista = document.querySelector(".vista-evidencia");
         let urlImagen = null;
 
@@ -214,13 +214,6 @@ export class Nuevo_reclamos {
             }
         };
 
-        extension.addEventListener("mouseenter", () => {
-            if (!urlImagen) return;
-            vista.src = urlImagen;
-            vista.hidden = false;
-            extension.setAttribute("aria-expanded", "true");
-        });
-        extension.addEventListener("mouseleave", cerrarVista);
         extension.addEventListener("click", alternarVista);
         extension.addEventListener("touchstart", alternarVista, { passive: false });
         document.addEventListener("click", (evento) => {
@@ -312,7 +305,7 @@ enviar_reclamo() {
         if (!descripcion) {
             this.mostrarToast(
                 "error",
-                "Debes escribir una descripción."
+                "Debes escribir una descripciÃ³n."
             );
             return;
         }
@@ -320,7 +313,7 @@ enviar_reclamo() {
         if (!clasificacion_id) {
             this.mostrarToast(
                 "error",
-                "Debes seleccionar una clasificación."
+                "Debes seleccionar una clasificaciÃ³n."
             );
             return;
         }
@@ -378,7 +371,7 @@ enviar_reclamo() {
                 if (response.status === 401) {
                     this.mostrarToast(
                         "error",
-                        "Tu sesión expiró. Inicia sesión nuevamente."
+                        "Tu sesiÃ³n expirÃ³. Inicia sesiÃ³n nuevamente."
                     );
 
                     setTimeout(() => {
@@ -391,7 +384,7 @@ enviar_reclamo() {
                 if (response.status === 419) {
                     this.mostrarToast(
                         "error",
-                        "La sesión de seguridad expiró."
+                        "La sesiÃ³n de seguridad expirÃ³."
                     );
 
                     return;
@@ -401,7 +394,7 @@ enviar_reclamo() {
                     this.mostrarToast(
                         "error",
                         data.message ||
-                        "Hay datos inválidos en el reclamo."
+                        "Hay datos invÃ¡lidos en el reclamo."
                     );
 
                     return;
@@ -466,3 +459,4 @@ enviar_reclamo() {
     }, 4000);
 }
 }
+
