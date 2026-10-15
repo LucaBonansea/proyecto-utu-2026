@@ -38,7 +38,8 @@ export class Nuevo_reclamos {
                 <span class="evidencia-cargada" hidden>
                     <span class="texto-evidencia-cargada">Imagen cargada</span>
                 </span>
-                <button class="extension-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
+                <button class="nombre-archivo-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
+                <button class="eliminar-evidencia" type="button" hidden aria-label="Eliminar imagen cargada" title="Eliminar imagen">×</button>
             </label>
             <img class="vista-evidencia" alt="Vista previa de la evidencia" hidden>
             <label class="descripcion">
@@ -191,15 +192,15 @@ export class Nuevo_reclamos {
         const etiqueta = document.querySelector(".icono-subir");
         const textoEvidencia = etiqueta.querySelector(".texto-evidencia");
         const evidenciaCargada = etiqueta.querySelector(".evidencia-cargada");
-        const textoCargada = etiqueta.querySelector(".texto-evidencia-cargada");
-        const extension = etiqueta.querySelector(".extension-evidencia");
+        const nombreArchivo = etiqueta.querySelector(".nombre-archivo-evidencia");
+        const eliminarArchivo = etiqueta.querySelector(".eliminar-evidencia");
         const vista = document.querySelector(".vista-evidencia");
         let urlImagen = null;
 
         const cerrarVista = () => {
             vista.hidden = true;
             vista.removeAttribute("src");
-            extension.setAttribute("aria-expanded", "false");
+            nombreArchivo.setAttribute("aria-expanded", "false");
         };
 
         const alternarVista = (evento) => {
@@ -208,16 +209,21 @@ export class Nuevo_reclamos {
             if (vista.hidden && urlImagen) {
                 vista.src = urlImagen;
                 vista.hidden = false;
-                extension.setAttribute("aria-expanded", "true");
+                nombreArchivo.setAttribute("aria-expanded", "true");
             } else {
                 cerrarVista();
             }
         };
 
-        extension.addEventListener("click", alternarVista);
-        extension.addEventListener("touchstart", alternarVista, { passive: false });
+        nombreArchivo.addEventListener("click", alternarVista);
+        eliminarArchivo.addEventListener("click", (evento) => {
+            evento.preventDefault();
+            evento.stopPropagation();
+            inputSubir.value = "";
+            inputSubir.dispatchEvent(new Event("change", { bubbles: true }));
+        });
         document.addEventListener("click", (evento) => {
-            if (!vista.contains(evento.target) && !extension.contains(evento.target)) cerrarVista();
+            if (!vista.contains(evento.target) && !nombreArchivo.contains(evento.target)) cerrarVista();
         });
 
         inputSubir.addEventListener("change", () => {
@@ -229,7 +235,8 @@ export class Nuevo_reclamos {
             if (!archivo) {
                 textoEvidencia.hidden = false;
                 evidenciaCargada.hidden = true;
-                extension.hidden = true;
+                nombreArchivo.hidden = true;
+                eliminarArchivo.hidden = true;
                 etiqueta.classList.remove("imagen-cargada");
                 return;
             }
@@ -239,21 +246,20 @@ export class Nuevo_reclamos {
                 inputSubir.value = "";
                 textoEvidencia.hidden = false;
                 evidenciaCargada.hidden = true;
-                extension.hidden = true;
+                nombreArchivo.hidden = true;
+                eliminarArchivo.hidden = true;
                 etiqueta.classList.remove("imagen-cargada");
                 return;
             }
 
             urlImagen = URL.createObjectURL(archivo);
-            const extensionArchivo = archivo.name.includes(".")
-                ? archivo.name.split(".").pop().toUpperCase()
-                : "IMAGEN";
             textoEvidencia.hidden = true;
             evidenciaCargada.hidden = false;
-            textoCargada.textContent = "Imagen cargada";
-            extension.textContent = extensionArchivo;
-            extension.title = `Toca o pasa el puntero para ver la imagen (${extensionArchivo})`;
-            extension.hidden = false;
+            nombreArchivo.textContent = archivo.name;
+            nombreArchivo.title = "Toca para ver la imagen";
+            nombreArchivo.setAttribute("aria-expanded", "false");
+            nombreArchivo.hidden = false;
+            eliminarArchivo.hidden = false;
             etiqueta.classList.add("imagen-cargada");
         });
     }

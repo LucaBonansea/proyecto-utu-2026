@@ -892,7 +892,8 @@ main{
 }
 
 .evidencia-cargada[hidden],
-.extension-evidencia[hidden],
+.nombre-archivo-evidencia[hidden],
+.eliminar-evidencia[hidden],
 .vista-evidencia[hidden]{
     display: none;
 }
@@ -901,26 +902,53 @@ main{
     color: #0a45ac;
 }
 
-.extension-evidencia{
+.nombre-archivo-evidencia{
+    position: absolute;
+    right: 58px;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: min(38%, 220px);
+    overflow: hidden;
+    border: none;
+    padding: 5px 8px;
+    color: #0a45ac;
+    background: transparent;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.nombre-archivo-evidencia:hover,
+.nombre-archivo-evidencia[aria-expanded="true"]{
+    color: #06327d;
+}
+
+.eliminar-evidencia{
     position: absolute;
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
-    border: 1px solid #b9cdf3;
-    border-radius: 999px;
-    padding: 4px 8px;
-    color: #0a45ac;
-    background: #edf3ff;
+    display: inline-flex;
+    width: 27px;
+    height: 27px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    background: #dc2626;
     font: inherit;
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 20px;
+    line-height: 1;
     cursor: pointer;
 }
 
-.extension-evidencia:hover,
-.extension-evidencia[aria-expanded="true"]{
-    color: #fff;
-    background: #0a45ac;
+.eliminar-evidencia:hover{
+    background: #b91c1c;
 }
 
 .reclamo-nuevo-evidencia{
