@@ -152,4 +152,16 @@ class UsuarioController extends Controller
             'usuario' => $usuario,
         ]);
     }
+
+    public function desactivar(
+        string $cedula,
+        UsuarioService $usuarioService
+    ) {
+        $usuario = $usuarioService->desactivar($cedula);
+
+        return response()->json([
+            'message' => 'Usuario desactivado correctamente',
+            'usuario' => $usuario,
+        ]);
+    }
 }
