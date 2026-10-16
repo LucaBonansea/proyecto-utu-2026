@@ -3,7 +3,7 @@ import {
     cerrarSesion,
     iniciarSesion
 } from "../services/auth-service.js";
-import { notify } from "../utils/toast.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 
 const $form_login = document.querySelector(".login-form");
 const $input_ci = document.querySelector(".ci-input");

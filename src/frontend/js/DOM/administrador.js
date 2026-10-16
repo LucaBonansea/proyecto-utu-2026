@@ -1,5 +1,5 @@
 import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
-import { notify } from "../utils/toast.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 import { inicializarTema } from '../theme.js';
 import { inicializarNotificaciones } from './notifications.js';
 import {
@@ -2180,6 +2180,24 @@ function vistaUsuarios(filtro = "") {
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
     filtro_container.innerHTML = "";
 
+    const etiquetasRoles = {
+        administrador: "Administrador",
+        administrativo: "Administrativo",
+        usuario_edificio: "Usuario de edificio",
+        usuario_proveedor: "Usuario de proveedor"
+    };
+
+    const rolesDisponibles = [...new Set([
+        ...Object.keys(etiquetasRoles),
+        ...usuarios.map(usuario => String(usuario.rol || "").trim()).filter(Boolean)
+    ])].sort();
+
+    const opcionesFiltroRoles = rolesDisponibles.map(rol => `
+        <option value="${escaparHtml(rol)}">
+            ${escaparHtml(etiquetasRoles[rol] || rol.replaceAll("_", " "))}
+        </option>
+    `).join("");
+
     section.innerHTML = `
         <div class="lista-usuarios">
 
@@ -2405,6 +2423,14 @@ function vistaUsuarios(filtro = "") {
 
                 </button>
 
+                <label class="filtro-rol-usuarios">
+                    <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
+                    <select class="filtro-rol-usuario" aria-label="Filtrar por tipo de usuario">
+                        <option value="todos">Todos los tipos</option>
+                        ${opcionesFiltroRoles}
+                    </select>
+                </label>
+
             </div>
 
 
@@ -2467,6 +2493,9 @@ function vistaUsuarios(filtro = "") {
 
     const btnBuscar =
         document.querySelector(".btn-buscar-usuario");
+
+    const filtroRolSelect =
+        document.querySelector(".filtro-rol-usuario");
 
     const contenedor =
         document.querySelector(".contenedor-usuarios");
@@ -2744,7 +2773,8 @@ function vistaUsuarios(filtro = "") {
             // ==================================
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
 
@@ -2774,7 +2804,7 @@ function vistaUsuarios(filtro = "") {
     // RENDERIZAR LISTA
     // ==========================================
 
-    function renderLista(valorFiltro = "") {
+    function renderLista(valorFiltro = "", filtroRol = "todos") {
 
         const filtroNormalizado =
             quitarTildes(
@@ -2782,12 +2812,12 @@ function vistaUsuarios(filtro = "") {
             );
 
 
-        const usuariosFiltrados =
-            valorFiltro
+        const usuariosFiltrados = usuarios.filter(u => {
+            const coincideRol = filtroRol === "todos" || u.rol === filtroRol;
 
-            ?
+            if (!coincideRol) return false;
 
-            usuarios.filter(u => {
+            if (!valorFiltro) return true;
 
                 const nombre =
                     quitarTildes(
@@ -2807,11 +2837,7 @@ function vistaUsuarios(filtro = "") {
                     cedula.includes(valorFiltro)
                 );
 
-            })
-
-            :
-
-            usuarios;
+        });
 
 
         // ======================================
@@ -3006,7 +3032,7 @@ function vistaUsuarios(filtro = "") {
                             </select>
 
 
-                            <button class="btn-guardar-cambio">
+                            <button class="btn-guardar-cambio oculto" type="button">
 
                                 Guardar
 
@@ -3036,11 +3062,11 @@ function vistaUsuarios(filtro = "") {
 
                                 <div class="acciones-cambiar-password">
 
-                                    <button class="cancelar-password">
+                                    <button class="cancelar-password" type="button">
                                         Cancelar
                                     </button>
 
-                                    <button class="guardar-password">
+                                    <button class="guardar-password oculto" type="button">
                                         Guardar
                                     </button>
 
@@ -3090,9 +3116,23 @@ function vistaUsuarios(filtro = "") {
                 btnCambiarPassword.addEventListener(
                     "click",
                     () => {
-                        formPassword.classList.toggle("oculto");
+                        const formularioAbierto = formPassword.classList.toggle("oculto") === false;
+                        if (!formularioAbierto) {
+                            btnGuardarPassword.classList.add("oculto");
+                        }
                     }
                 );
+
+                const actualizarVisibilidadGuardarPassword = () => {
+                    const hayCambios =
+                        nuevaPasswordInput.value.trim() !== "" ||
+                        confirmarPasswordInput.value.trim() !== "";
+
+                    btnGuardarPassword.classList.toggle("oculto", !hayCambios);
+                };
+
+                nuevaPasswordInput.addEventListener("input", actualizarVisibilidadGuardarPassword);
+                confirmarPasswordInput.addEventListener("input", actualizarVisibilidadGuardarPassword);
 
 
                 btnCancelarPassword.addEventListener(
@@ -3101,6 +3141,7 @@ function vistaUsuarios(filtro = "") {
                         formPassword.classList.add("oculto");
                         nuevaPasswordInput.value = "";
                         confirmarPasswordInput.value = "";
+                        btnGuardarPassword.classList.add("oculto");
                     }
                 );
 
@@ -3163,6 +3204,7 @@ function vistaUsuarios(filtro = "") {
                             formPassword.classList.add("oculto");
                             nuevaPasswordInput.value = "";
                             confirmarPasswordInput.value = "";
+                            btnGuardarPassword.classList.add("oculto");
 
                         } catch (error) {
 
@@ -3220,6 +3262,8 @@ function vistaUsuarios(filtro = "") {
                 selectRol.addEventListener("change", () => {
 
                     const nuevoRol = selectRol.value;
+
+                    btnGuardarCambio.classList.toggle("oculto", nuevoRol === usuario.rol);
 
                     contenedorEdificiosCambio.classList.add("oculto");
                     selectProveedor.classList.add("oculto");
@@ -3386,7 +3430,8 @@ function vistaUsuarios(filtro = "") {
                             // ==========================
 
                             renderLista(
-                                inputBuscar.value.trim()
+                                inputBuscar.value.trim(),
+                                filtroRolSelect.value
                             );
 
 
@@ -3435,7 +3480,8 @@ function vistaUsuarios(filtro = "") {
         () => {
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
         }
@@ -3451,7 +3497,8 @@ function vistaUsuarios(filtro = "") {
         () => {
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
         }
@@ -3469,12 +3516,17 @@ function vistaUsuarios(filtro = "") {
             if (e.key === "Enter") {
 
                 renderLista(
-                    inputBuscar.value.trim()
+                    inputBuscar.value.trim(),
+                    filtroRolSelect.value
                 );
 
             }
 
         }
     );
+
+    filtroRolSelect.addEventListener("change", () => {
+        renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
+    });
 
 }
