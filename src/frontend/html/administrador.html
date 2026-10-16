@@ -47,9 +47,9 @@
                 <div class="logo-div">
                     <img class="logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png" alt="">
                 </div>
-                <a href="index.html" class="int-logo-div">
+                <div class="int-logo-div">
                     <img class="int-logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png" alt="">
-                </a>
+                </div>
             </div>
 
             <div class="header-title">
@@ -57,6 +57,15 @@
             </div>
 
             <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    id="theme-toggle"
+                    type="button"
+                    aria-label="Cambiar tema"
+                >
+                    <span class="material-symbols-outlined" aria-hidden="true">contrast</span>
+                </button>
+
                 <div class="notificaciones-wrapper">
                     <button
                         class="notificaciones-btn-top"
@@ -83,15 +92,6 @@
                         <section class="notificaciones-lista" aria-live="polite"></section>
                     </div>
                 </div>
-
-                <button
-                    class="theme-toggle"
-                    id="theme-toggle"
-                    type="button"
-                    aria-label="Cambiar tema"
-                >
-                    <span class="material-symbols-outlined" aria-hidden="true">contrast</span>
-                </button>
 
                 <div class="account-menu-wrapper">
                     <button
@@ -131,8 +131,8 @@
 
         <section></section>
     </main>
+
     <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
     <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=4" type="module"></script>
 </body>
 </html>
-

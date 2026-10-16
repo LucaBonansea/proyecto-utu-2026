@@ -1,7 +1,7 @@
 const sharedOptions = {
     duration: 4000,
     progress: true,
-    position: "top-center",
+    position: "bottom-right",
     transition: "swingInverted",
     icon: "",
     sound: false

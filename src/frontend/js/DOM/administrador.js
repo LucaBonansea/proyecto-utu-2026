@@ -3006,7 +3006,7 @@ function vistaUsuarios(filtro = "") {
                             </select>
 
 
-                            <button class="btn-guardar-cambio">
+                            <button class="btn-guardar-cambio oculto" type="button">
 
                                 Guardar
 
@@ -3036,11 +3036,11 @@ function vistaUsuarios(filtro = "") {
 
                                 <div class="acciones-cambiar-password">
 
-                                    <button class="cancelar-password">
+                                    <button class="cancelar-password" type="button">
                                         Cancelar
                                     </button>
 
-                                    <button class="guardar-password">
+                                    <button class="guardar-password oculto" type="button">
                                         Guardar
                                     </button>
 
@@ -3090,9 +3090,23 @@ function vistaUsuarios(filtro = "") {
                 btnCambiarPassword.addEventListener(
                     "click",
                     () => {
-                        formPassword.classList.toggle("oculto");
+                        const formularioAbierto = formPassword.classList.toggle("oculto") === false;
+                        if (!formularioAbierto) {
+                            btnGuardarPassword.classList.add("oculto");
+                        }
                     }
                 );
+
+                const actualizarVisibilidadGuardarPassword = () => {
+                    const hayCambios =
+                        nuevaPasswordInput.value.trim() !== "" ||
+                        confirmarPasswordInput.value.trim() !== "";
+
+                    btnGuardarPassword.classList.toggle("oculto", !hayCambios);
+                };
+
+                nuevaPasswordInput.addEventListener("input", actualizarVisibilidadGuardarPassword);
+                confirmarPasswordInput.addEventListener("input", actualizarVisibilidadGuardarPassword);
 
 
                 btnCancelarPassword.addEventListener(
@@ -3101,6 +3115,7 @@ function vistaUsuarios(filtro = "") {
                         formPassword.classList.add("oculto");
                         nuevaPasswordInput.value = "";
                         confirmarPasswordInput.value = "";
+                        btnGuardarPassword.classList.add("oculto");
                     }
                 );
 
@@ -3163,6 +3178,7 @@ function vistaUsuarios(filtro = "") {
                             formPassword.classList.add("oculto");
                             nuevaPasswordInput.value = "";
                             confirmarPasswordInput.value = "";
+                            btnGuardarPassword.classList.add("oculto");
 
                         } catch (error) {
 
@@ -3220,6 +3236,8 @@ function vistaUsuarios(filtro = "") {
                 selectRol.addEventListener("change", () => {
 
                     const nuevoRol = selectRol.value;
+
+                    btnGuardarCambio.classList.toggle("oculto", nuevoRol === usuario.rol);
 
                     contenedorEdificiosCambio.classList.add("oculto");
                     selectProveedor.classList.add("oculto");

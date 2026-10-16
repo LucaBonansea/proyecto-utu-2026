@@ -3211,3 +3211,71 @@ main{
     color: #ffffff;
     text-shadow: 0 1px 2px rgba(0,29,81,.35);
 }
+
+/* Ajustes solicitados para el avatar y la posición de las notificaciones. */
+.admin-page .account-trigger,
+.admin-page .account-trigger:hover,
+.admin-page .account-trigger[aria-expanded="true"] {
+    box-shadow: none;
+}
+
+.admin-page .account-trigger {
+    transition: transform .2s ease, border-color .2s ease;
+}
+
+:is(.toast-container, .toast-stack, .notificaciones-toast, .toast-notifications, .toast) {
+    position: fixed !important;
+    inset: auto 24px 24px auto !important;
+    top: auto !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    left: auto !important;
+    z-index: 9999;
+}
+
+@media (max-width: 600px) {
+    :is(.toast-container, .toast-stack, .notificaciones-toast, .toast-notifications, .toast) {
+        right: 12px !important;
+        bottom: 12px !important;
+        left: 12px !important;
+        width: auto;
+    }
+}
+.admin-page .header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.admin-page .theme-toggle {
+    order: 1;
+}
+
+.admin-page .notificaciones-wrapper {
+    order: 2;
+}
+
+.admin-page .account-menu-wrapper {
+    order: 3;
+}
+
+.admin-page .logos,
+.admin-page .logos * {
+    cursor: default;
+}
+
+.admin-page .toast-container.top-right {
+    position: fixed !important;
+    inset: auto 24px 24px auto !important;
+    top: auto !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    left: auto !important;
+    z-index: 9999;
+}
+
+@media (max-width: 600px) {
+    .admin-page .toast-container.top-right {
+        right: 12px !important;
+        bottom: 12px !important;
+    }
+}
