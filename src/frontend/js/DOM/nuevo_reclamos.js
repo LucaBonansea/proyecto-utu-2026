@@ -1,4 +1,4 @@
-import {
+﻿import {
     crearReclamo,
     obtenerClasificaciones,
     obtenerEdificios
@@ -31,11 +31,17 @@ export class Nuevo_reclamos {
             hidden
         >
 
-        <section class="top-new-reclamo">
+        <section class="top-new-reclamo reclamo-nuevo-evidencia">
             <label for="archivo" class="icono-subir" aria-live="polite">
                 <span class="material-symbols-outlined">add_photo_alternate</span>
-                Sube aquí tu evidencia
+                <span class="texto-evidencia">Sube aquí tu evidencia</span>
+                <span class="evidencia-cargada" hidden>
+                    <span class="texto-evidencia-cargada">Imagen cargada</span>
+                </span>
+                <button class="nombre-archivo-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
+                <button class="eliminar-evidencia" type="button" hidden aria-label="Eliminar imagen cargada" title="Eliminar imagen">×</button>
             </label>
+            <img class="vista-evidencia" alt="Vista previa de la evidencia" hidden>
             <label class="descripcion">
                 <span class="material-symbols-outlined">description</span>
                 <div class="textarea-box">
@@ -182,31 +188,79 @@ export class Nuevo_reclamos {
     }
 
     subir_foto() {
-        const input_subir = document.querySelector(".input-subir");
-        const etiquetaSubir = document.querySelector(".icono-subir");
-        const textoOriginal = etiquetaSubir.innerHTML;
+        const inputSubir = document.querySelector(".input-subir");
+        const etiqueta = document.querySelector(".icono-subir");
+        const textoEvidencia = etiqueta.querySelector(".texto-evidencia");
+        const evidenciaCargada = etiqueta.querySelector(".evidencia-cargada");
+        const nombreArchivo = etiqueta.querySelector(".nombre-archivo-evidencia");
+        const eliminarArchivo = etiqueta.querySelector(".eliminar-evidencia");
+        const vista = document.querySelector(".vista-evidencia");
+        let urlImagen = null;
 
-        input_subir.addEventListener("change", () => {
-            const archivo = input_subir.files[0];
+        const cerrarVista = () => {
+            vista.hidden = true;
+            vista.removeAttribute("src");
+            nombreArchivo.setAttribute("aria-expanded", "false");
+        };
+
+        const alternarVista = (evento) => {
+            evento.preventDefault();
+            evento.stopPropagation();
+            if (vista.hidden && urlImagen) {
+                vista.src = urlImagen;
+                vista.hidden = false;
+                nombreArchivo.setAttribute("aria-expanded", "true");
+            } else {
+                cerrarVista();
+            }
+        };
+
+        nombreArchivo.addEventListener("click", alternarVista);
+        eliminarArchivo.addEventListener("click", (evento) => {
+            evento.preventDefault();
+            evento.stopPropagation();
+            inputSubir.value = "";
+            inputSubir.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+        document.addEventListener("click", (evento) => {
+            if (!vista.contains(evento.target) && !nombreArchivo.contains(evento.target)) cerrarVista();
+        });
+
+        inputSubir.addEventListener("change", () => {
+            const archivo = inputSubir.files[0];
+            cerrarVista();
+            if (urlImagen) URL.revokeObjectURL(urlImagen);
+            urlImagen = null;
 
             if (!archivo) {
-                etiquetaSubir.innerHTML = textoOriginal;
-                etiquetaSubir.classList.remove("imagen-cargada");
+                textoEvidencia.hidden = false;
+                evidenciaCargada.hidden = true;
+                nombreArchivo.hidden = true;
+                eliminarArchivo.hidden = true;
+                etiqueta.classList.remove("imagen-cargada");
                 return;
             }
 
             if (!this.esArchivoImagen(archivo)) {
                 notify.warning("Solo se permiten archivos de imagen.");
-                input_subir.value = "";
-                etiquetaSubir.innerHTML = textoOriginal;
-                etiquetaSubir.classList.remove("imagen-cargada");
+                inputSubir.value = "";
+                textoEvidencia.hidden = false;
+                evidenciaCargada.hidden = true;
+                nombreArchivo.hidden = true;
+                eliminarArchivo.hidden = true;
+                etiqueta.classList.remove("imagen-cargada");
                 return;
             }
 
-            etiquetaSubir.innerHTML = `
-                <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-                Imagen cargada`;
-            etiquetaSubir.classList.add("imagen-cargada");
+            urlImagen = URL.createObjectURL(archivo);
+            textoEvidencia.hidden = true;
+            evidenciaCargada.hidden = false;
+            nombreArchivo.textContent = archivo.name;
+            nombreArchivo.title = "Toca para ver la imagen";
+            nombreArchivo.setAttribute("aria-expanded", "false");
+            nombreArchivo.hidden = false;
+            eliminarArchivo.hidden = false;
+            etiqueta.classList.add("imagen-cargada");
         });
     }
     esArchivoImagen(archivo) {
@@ -257,7 +311,7 @@ enviar_reclamo() {
         if (!descripcion) {
             this.mostrarToast(
                 "error",
-                "Debes escribir una descripción."
+                "Debes escribir una descripciÃ³n."
             );
             return;
         }
@@ -265,7 +319,7 @@ enviar_reclamo() {
         if (!clasificacion_id) {
             this.mostrarToast(
                 "error",
-                "Debes seleccionar una clasificación."
+                "Debes seleccionar una clasificaciÃ³n."
             );
             return;
         }
@@ -323,7 +377,7 @@ enviar_reclamo() {
                 if (response.status === 401) {
                     this.mostrarToast(
                         "error",
-                        "Tu sesión expiró. Inicia sesión nuevamente."
+                        "Tu sesiÃ³n expirÃ³. Inicia sesiÃ³n nuevamente."
                     );
 
                     setTimeout(() => {
@@ -336,7 +390,7 @@ enviar_reclamo() {
                 if (response.status === 419) {
                     this.mostrarToast(
                         "error",
-                        "La sesión de seguridad expiró."
+                        "La sesiÃ³n de seguridad expirÃ³."
                     );
 
                     return;
@@ -346,7 +400,7 @@ enviar_reclamo() {
                     this.mostrarToast(
                         "error",
                         data.message ||
-                        "Hay datos inválidos en el reclamo."
+                        "Hay datos invÃ¡lidos en el reclamo."
                     );
 
                     return;
