@@ -95,9 +95,18 @@ section::-webkit-scrollbar{
 
 header{
     display: flex;
-    justify-content: space-between;
+    gap: 15px;
     align-items: center;
     margin:15px 25px;
+}
+
+.header-title h1{
+    color: inherit;
+    font-size: 18px;
+}
+
+.header-actions{
+    margin-left: auto;
 }
 
 main{

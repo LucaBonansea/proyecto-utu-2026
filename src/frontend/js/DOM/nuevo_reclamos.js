@@ -1,4 +1,4 @@
-import {
+﻿import {
     crearReclamo,
     obtenerClasificaciones,
     obtenerEdificios
@@ -6,10 +6,11 @@ import {
 import { notify } from "../utils/toast.js";
 
 export class Nuevo_reclamos {
-    constructor($btn_home_top, $btn_home, Main) {
+    constructor($btn_home_top, $btn_home, Main, volverAInicio) {
         this.$btn_home_top = $btn_home_top;
         this.$btn_home = $btn_home;
         this.Main = Main;
+        this.volverAInicio = volverAInicio;
         this.ultimoMensajeToast = "";
     }
 
@@ -30,11 +31,17 @@ export class Nuevo_reclamos {
             hidden
         >
 
-        <section class="top-new-reclamo">
-            <label for="archivo" class="icono-subir">
+        <section class="top-new-reclamo reclamo-nuevo-evidencia">
+            <label for="archivo" class="icono-subir" aria-live="polite">
                 <span class="material-symbols-outlined">add_photo_alternate</span>
-                Sube aquí tu evidencia
+                <span class="texto-evidencia">Sube aquí tu evidencia</span>
+                <span class="evidencia-cargada" hidden>
+                    <span class="texto-evidencia-cargada">Imagen cargada</span>
+                </span>
+                <button class="nombre-archivo-evidencia" type="button" hidden aria-label="Ver imagen cargada"></button>
+                <button class="eliminar-evidencia" type="button" hidden aria-label="Eliminar imagen cargada" title="Eliminar imagen">×</button>
             </label>
+            <img class="vista-evidencia" alt="Vista previa de la evidencia" hidden>
             <label class="descripcion">
                 <span class="material-symbols-outlined">description</span>
                 <div class="textarea-box">
@@ -47,10 +54,6 @@ export class Nuevo_reclamos {
                 </div>
             </label>
         </section>
-
-        <div class="preview-foto-container">
-                    <img class="preview-foto" src="https://previews.123rf.com/images/synell/synell2205/synell220500005/189187581-smashed-window-broken-glass-break-destroyed-building-broken-frame-window-plastic-aftermath-bombed.jpg" alt="Vista previa" accept="image/*">
-            </div>
         <section class="tipo-reclamo">
             <label for="tipo-reclamo" class="tipo-reclamo-label">
                 Tipo de reclamo
@@ -185,39 +188,81 @@ export class Nuevo_reclamos {
     }
 
     subir_foto() {
-    const input_subir =
-        document.querySelector(".input-subir");
+        const inputSubir = document.querySelector(".input-subir");
+        const etiqueta = document.querySelector(".icono-subir");
+        const textoEvidencia = etiqueta.querySelector(".texto-evidencia");
+        const evidenciaCargada = etiqueta.querySelector(".evidencia-cargada");
+        const nombreArchivo = etiqueta.querySelector(".nombre-archivo-evidencia");
+        const eliminarArchivo = etiqueta.querySelector(".eliminar-evidencia");
+        const vista = document.querySelector(".vista-evidencia");
+        let urlImagen = null;
 
-    const preview =
-        document.querySelector(".preview-foto");
+        const cerrarVista = () => {
+            vista.hidden = true;
+            vista.removeAttribute("src");
+            nombreArchivo.setAttribute("aria-expanded", "false");
+        };
 
-    input_subir.addEventListener("change", () => {
-        const archivo = input_subir.files[0];
+        const alternarVista = (evento) => {
+            evento.preventDefault();
+            evento.stopPropagation();
+            if (vista.hidden && urlImagen) {
+                vista.src = urlImagen;
+                vista.hidden = false;
+                nombreArchivo.setAttribute("aria-expanded", "true");
+            } else {
+                cerrarVista();
+            }
+        };
 
-        if (!archivo) {
-            preview.src = "";
-            preview.style.display = "none";
-            return;
-        }
+        nombreArchivo.addEventListener("click", alternarVista);
+        eliminarArchivo.addEventListener("click", (evento) => {
+            evento.preventDefault();
+            evento.stopPropagation();
+            inputSubir.value = "";
+            inputSubir.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+        document.addEventListener("click", (evento) => {
+            if (!vista.contains(evento.target) && !nombreArchivo.contains(evento.target)) cerrarVista();
+        });
 
-        if (!this.esArchivoImagen(archivo)) {
-            notify.warning("Solo se permiten archivos de imagen.");
+        inputSubir.addEventListener("change", () => {
+            const archivo = inputSubir.files[0];
+            cerrarVista();
+            if (urlImagen) URL.revokeObjectURL(urlImagen);
+            urlImagen = null;
 
-            input_subir.value = "";
-            preview.src = "";
-            preview.style.display = "none";
+            if (!archivo) {
+                textoEvidencia.hidden = false;
+                evidenciaCargada.hidden = true;
+                nombreArchivo.hidden = true;
+                eliminarArchivo.hidden = true;
+                etiqueta.classList.remove("imagen-cargada");
+                return;
+            }
 
-            return;
-        }
+            if (!this.esArchivoImagen(archivo)) {
+                notify.warning("Solo se permiten archivos de imagen.");
+                inputSubir.value = "";
+                textoEvidencia.hidden = false;
+                evidenciaCargada.hidden = true;
+                nombreArchivo.hidden = true;
+                eliminarArchivo.hidden = true;
+                etiqueta.classList.remove("imagen-cargada");
+                return;
+            }
 
-        const urlTemporal =
-            URL.createObjectURL(archivo);
-
-        preview.src = urlTemporal;
-        preview.style.display = "block";
-    });
-}
-
+            urlImagen = URL.createObjectURL(archivo);
+            textoEvidencia.hidden = true;
+            evidenciaCargada.hidden = false;
+            nombreArchivo.textContent = archivo.name;
+            nombreArchivo.title = "Toca para ver la imagen";
+            nombreArchivo.setAttribute("aria-expanded", "false");
+            nombreArchivo.hidden = false;
+            eliminarArchivo.hidden = false;
+            etiqueta.classList.add("imagen-cargada");
+        });
+    }
     esArchivoImagen(archivo) {
         return archivo.type.startsWith("image/")
             || /\.(heic|heif)$/i.test(archivo.name);
@@ -266,7 +311,7 @@ enviar_reclamo() {
         if (!descripcion) {
             this.mostrarToast(
                 "error",
-                "Debes escribir una descripción."
+                "Debes escribir una descripciÃ³n."
             );
             return;
         }
@@ -274,7 +319,7 @@ enviar_reclamo() {
         if (!clasificacion_id) {
             this.mostrarToast(
                 "error",
-                "Debes seleccionar una clasificación."
+                "Debes seleccionar una clasificaciÃ³n."
             );
             return;
         }
@@ -332,7 +377,7 @@ enviar_reclamo() {
                 if (response.status === 401) {
                     this.mostrarToast(
                         "error",
-                        "Tu sesión expiró. Inicia sesión nuevamente."
+                        "Tu sesiÃ³n expirÃ³. Inicia sesiÃ³n nuevamente."
                     );
 
                     setTimeout(() => {
@@ -345,7 +390,7 @@ enviar_reclamo() {
                 if (response.status === 419) {
                     this.mostrarToast(
                         "error",
-                        "La sesión de seguridad expiró."
+                        "La sesiÃ³n de seguridad expirÃ³."
                     );
 
                     return;
@@ -355,7 +400,7 @@ enviar_reclamo() {
                     this.mostrarToast(
                         "error",
                         data.message ||
-                        "Hay datos inválidos en el reclamo."
+                        "Hay datos invÃ¡lidos en el reclamo."
                     );
 
                     return;
@@ -374,6 +419,10 @@ enviar_reclamo() {
                 "success",
                 "Reclamo creado correctamente."
             );
+
+            if (this.volverAInicio) {
+                await this.volverAInicio();
+            }
 
         } catch (error) {
             console.error(
