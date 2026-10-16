@@ -574,6 +574,10 @@ main{
     color: #ffffff;
 }
 
+.edificio-chip[data-filtro]{
+    box-shadow: none;
+}
+
 .edificio-info{
     display: flex;
     flex-direction: column;
@@ -617,6 +621,28 @@ main{
     font-size: 13px;
     color: rgb(128, 127, 127);
     margin-left: 20px;
+}
+
+.reclamos-vacio{
+    min-height: clamp(300px, 58vh, 620px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.reclamos-vacio .material-symbols-outlined{
+    color: var(--brand);
+    font-size: 46px;
+}
+
+.reclamos-vacio p{
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .paginacion-reclamos{
@@ -1867,42 +1893,5 @@ footer{
     .edificio-chip {
         font-size: 12px;
         padding: 7px 12px;
-    }
-}
-
-.inicio-page .toast-container.top-center {
-    top: auto !important;
-    right: 24px !important;
-    bottom: 24px !important;
-    left: auto !important;
-    align-items: flex-end !important;
-    transform: none !important;
-}
-
-.inicio-page .confirmacion-toast-container {
-    top: auto;
-    right: 24px;
-    bottom: 24px;
-    left: auto;
-    transform: none;
-}
-
-@media (max-width: 600px) {
-    .inicio-page .toast-container.top-center {
-        top: auto !important;
-        right: 12px !important;
-        bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
-        left: 12px !important;
-        width: auto !important;
-        align-items: stretch !important;
-    }
-
-    .inicio-page .confirmacion-toast-container {
-        top: auto;
-        right: 12px;
-        bottom: calc(82px + env(safe-area-inset-bottom, 0px));
-        left: 12px;
-        width: auto;
-        transform: none;
     }
 }

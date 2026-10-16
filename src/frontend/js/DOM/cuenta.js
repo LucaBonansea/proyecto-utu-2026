@@ -1,5 +1,5 @@
 import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
-import { notify } from "../utils/toast.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 
 export class Cuenta {
     constructor(
