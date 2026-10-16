@@ -3,7 +3,7 @@
     obtenerClasificaciones,
     obtenerEdificios
 } from "../services/reclamos-service.js";
-import { notify } from "../utils/toast.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 
 export class Nuevo_reclamos {
     constructor($btn_home_top, $btn_home, Main, volverAInicio) {

@@ -1,7 +1,7 @@
 ﻿// import (importaciones de los objetos)
-import { Reclamos } from "./reclamos.js";
-import { Nuevo_reclamos } from "./nuevo_reclamos.js?v=20261015-5";
-import { Cuenta } from "./cuenta.js";
+import { Reclamos } from "./reclamos.js?v=20261016-3";
+import { Nuevo_reclamos } from "./nuevo_reclamos.js?v=20261016-1";
+import { Cuenta } from "./cuenta.js?v=20261016-1";
 import { inicializarNotificaciones } from "./notifications.js?v=20261007-3";
 import { inicializarTema } from "../theme.js";
 import { obtenerSesion } from "../services/auth-service.js";

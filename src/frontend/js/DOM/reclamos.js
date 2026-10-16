@@ -5,7 +5,7 @@ import {
     obtenerReclamos,
     obtenerUrlEvidencia
 } from "../services/reclamos-service.js";
-import { notify } from "../utils/toast.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 
 const FILTROS = [
     { id: "todos", label: "Todos" },
@@ -96,6 +96,7 @@ export class Reclamos {
             en_proceso: 0
         };
         this.filtroActual = "todos";
+        this.cargando = false;
         this.paginacion = {
             pagina_actual: 1,
             ultima_pagina: 1,
@@ -107,7 +108,21 @@ export class Reclamos {
     }
 
     async second_view(filtro = "todos", pagina = 1) {
-        this.renderCargando();
+        if (this.cargando) {
+            return;
+        }
+
+        const mantenerVista = Boolean(
+            this.main.querySelector(".edificio-chip[data-filtro]")
+        );
+
+        this.cargando = true;
+
+        if (mantenerVista) {
+            this.main.setAttribute("aria-busy", "true");
+        } else {
+            this.renderCargando();
+        }
 
         try {
             await this.cargarReclamos(filtro, pagina);
@@ -116,6 +131,9 @@ export class Reclamos {
             console.error("Error al cargar los reclamos:", error);
             this.renderError();
             notify.error("No se pudieron cargar tus reclamos.");
+        } finally {
+            this.cargando = false;
+            this.main.removeAttribute("aria-busy");
         }
     }
 
@@ -211,25 +229,33 @@ export class Reclamos {
 
     renderCargando() {
         this.main.innerHTML = `
-            <div class="div-inicial">
-                <h2>Tus Reclamos</h2>
+            <div class="reclamos-vacio" role="status">
+                <p>Cargando reclamos...</p>
             </div>
-            <p class="sin-reclamos">Cargando reclamos...</p>
         `;
     }
 
     renderError() {
         this.main.innerHTML = `
-            <div class="div-inicial">
-                <h2>Tus Reclamos</h2>
+            <div class="reclamos-vacio" role="alert">
+                <p>No fue posible cargar los reclamos. Intentá nuevamente.</p>
             </div>
-            <p class="sin-reclamos">
-                No fue posible cargar los reclamos. Intentá nuevamente.
-            </p>
         `;
     }
 
     renderVista(filtro) {
+        if (this.estadisticas.total === 0) {
+            this.main.innerHTML = `
+                <div class="reclamos-vacio" role="status">
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        assignment
+                    </span>
+                    <p>No hay reclamos todavía.</p>
+                </div>
+            `;
+            return;
+        }
+
         const titulo = this.obtenerTitulo(filtro);
         const chips = FILTROS
             .map(item => this.renderFiltro(item, filtro))
@@ -532,6 +558,13 @@ export class Reclamos {
 
         this.main.querySelectorAll(".edificio-chip").forEach(chip => {
             chip.addEventListener("click", () => {
+                if (this.cargando || chip.classList.contains("active")) {
+                    return;
+                }
+
+                this.main.querySelectorAll(".edificio-chip").forEach(item => {
+                    item.classList.toggle("active", item === chip);
+                });
                 this.second_view(chip.dataset.filtro, 1);
             });
         });

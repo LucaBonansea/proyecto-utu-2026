@@ -1,5 +1,5 @@
 import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
-import { notify } from "../utils/toast.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 import { inicializarTema } from '../theme.js';
 import { inicializarNotificaciones } from './notifications.js';
 import {
@@ -2180,6 +2180,24 @@ function vistaUsuarios(filtro = "") {
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
     filtro_container.innerHTML = "";
 
+    const etiquetasRoles = {
+        administrador: "Administrador",
+        administrativo: "Administrativo",
+        usuario_edificio: "Usuario de edificio",
+        usuario_proveedor: "Usuario de proveedor"
+    };
+
+    const rolesDisponibles = [...new Set([
+        ...Object.keys(etiquetasRoles),
+        ...usuarios.map(usuario => String(usuario.rol || "").trim()).filter(Boolean)
+    ])].sort();
+
+    const opcionesFiltroRoles = rolesDisponibles.map(rol => `
+        <option value="${escaparHtml(rol)}">
+            ${escaparHtml(etiquetasRoles[rol] || rol.replaceAll("_", " "))}
+        </option>
+    `).join("");
+
     section.innerHTML = `
         <div class="lista-usuarios">
 
@@ -2405,6 +2423,14 @@ function vistaUsuarios(filtro = "") {
 
                 </button>
 
+                <label class="filtro-rol-usuarios">
+                    <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
+                    <select class="filtro-rol-usuario" aria-label="Filtrar por tipo de usuario">
+                        <option value="todos">Todos los tipos</option>
+                        ${opcionesFiltroRoles}
+                    </select>
+                </label>
+
             </div>
 
 
@@ -2467,6 +2493,9 @@ function vistaUsuarios(filtro = "") {
 
     const btnBuscar =
         document.querySelector(".btn-buscar-usuario");
+
+    const filtroRolSelect =
+        document.querySelector(".filtro-rol-usuario");
 
     const contenedor =
         document.querySelector(".contenedor-usuarios");
@@ -2744,7 +2773,8 @@ function vistaUsuarios(filtro = "") {
             // ==================================
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
 
@@ -2774,7 +2804,7 @@ function vistaUsuarios(filtro = "") {
     // RENDERIZAR LISTA
     // ==========================================
 
-    function renderLista(valorFiltro = "") {
+    function renderLista(valorFiltro = "", filtroRol = "todos") {
 
         const filtroNormalizado =
             quitarTildes(
@@ -2782,12 +2812,12 @@ function vistaUsuarios(filtro = "") {
             );
 
 
-        const usuariosFiltrados =
-            valorFiltro
+        const usuariosFiltrados = usuarios.filter(u => {
+            const coincideRol = filtroRol === "todos" || u.rol === filtroRol;
 
-            ?
+            if (!coincideRol) return false;
 
-            usuarios.filter(u => {
+            if (!valorFiltro) return true;
 
                 const nombre =
                     quitarTildes(
@@ -2807,11 +2837,7 @@ function vistaUsuarios(filtro = "") {
                     cedula.includes(valorFiltro)
                 );
 
-            })
-
-            :
-
-            usuarios;
+        });
 
 
         // ======================================
@@ -3404,7 +3430,8 @@ function vistaUsuarios(filtro = "") {
                             // ==========================
 
                             renderLista(
-                                inputBuscar.value.trim()
+                                inputBuscar.value.trim(),
+                                filtroRolSelect.value
                             );
 
 
@@ -3453,7 +3480,8 @@ function vistaUsuarios(filtro = "") {
         () => {
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
         }
@@ -3469,7 +3497,8 @@ function vistaUsuarios(filtro = "") {
         () => {
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
         }
@@ -3487,12 +3516,17 @@ function vistaUsuarios(filtro = "") {
             if (e.key === "Enter") {
 
                 renderLista(
-                    inputBuscar.value.trim()
+                    inputBuscar.value.trim(),
+                    filtroRolSelect.value
                 );
 
             }
 
         }
     );
+
+    filtroRolSelect.addEventListener("change", () => {
+        renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
+    });
 
 }
