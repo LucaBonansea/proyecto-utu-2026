@@ -3263,7 +3263,7 @@ main{
     cursor: default;
 }
 
-.admin-page .toast-container.top-right {
+.admin-page .toast-container.bottom-right {
     position: fixed !important;
     inset: auto 24px 24px auto !important;
     top: auto !important;
@@ -3274,8 +3274,70 @@ main{
 }
 
 @media (max-width: 600px) {
-    .admin-page .toast-container.top-right {
+    .admin-page .toast-container.bottom-right {
         right: 12px !important;
         bottom: 12px !important;
+    }
+}
+
+/* Filtro por tipo de usuario junto al buscador. */
+.admin-page .buscador-usuarios {
+    width: min(100%, 980px);
+    max-width: 980px;
+    box-sizing: border-box;
+}
+
+.admin-page .input-buscar-usuario {
+    min-width: 0;
+}
+
+.admin-page .filtro-rol-usuarios {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    flex: 0 0 auto;
+    padding: 0 15px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+}
+
+.admin-page .filtro-rol-usuarios > .material-symbols-outlined {
+    font-size: 24px;
+}
+
+.admin-page .filtro-rol-usuarios select {
+    min-width: 160px;
+    border: 0 !important;
+    outline: 0;
+    background: transparent !important;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: none !important;
+}
+
+.admin-page .filtro-rol-usuarios option {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+}
+
+@media (max-width: 600px) {
+    .admin-page .buscador-usuarios {
+        width: 100%;
+        max-width: none;
+    }
+
+    .admin-page .filtro-rol-usuarios {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .admin-page .filtro-rol-usuarios select {
+        flex: 1;
+        min-width: 0;
     }
 }
