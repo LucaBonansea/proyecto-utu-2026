@@ -1,4 +1,4 @@
-*{
+﻿*{
     margin: 0;
     padding: 0;
     
@@ -440,7 +440,7 @@ main{
 
 .reclamo-ubicacion{
     width: fit-content;
-    font-size: 11px;
+    font-size: 10px;
     display: flex;
     align-items: flex-start;
     background: transparent;
@@ -848,6 +848,7 @@ main{
     }
 }
 .icono-subir{
+    position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -883,6 +884,99 @@ main{
 
 .icono-subir.imagen-cargada{
     font-weight: 600;
+}
+
+.evidencia-cargada{
+    display: inline-flex;
+    align-items: center;
+}
+
+.evidencia-cargada[hidden],
+.nombre-archivo-evidencia[hidden],
+.eliminar-evidencia[hidden],
+.vista-evidencia[hidden]{
+    display: none;
+}
+
+.texto-evidencia-cargada{
+    color: #0a45ac;
+}
+
+.nombre-archivo-evidencia{
+    position: absolute;
+    right: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(38%, 220px);
+    overflow: hidden;
+    border: none;
+    padding: 5px 8px;
+    color: #0a45ac;
+    background: transparent;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.nombre-archivo-evidencia:focus-visible,
+.eliminar-evidencia:focus-visible{
+    outline: 3px solid rgba(10, 69, 172, .35);
+    outline-offset: 2px;
+}
+
+.nombre-archivo-evidencia:hover,
+.nombre-archivo-evidencia[aria-expanded="true"]{
+    color: #06327d;
+}
+
+.eliminar-evidencia{
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    color: #dc2626;
+    background: none !important;
+    font: inherit;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.eliminar-evidencia:hover{
+    color: #991b1b;
+    background: none !important;
+}
+
+.reclamo-nuevo-evidencia{
+    position: relative;
+}
+
+.reclamo-nuevo-evidencia .vista-evidencia{
+    position: absolute;
+    z-index: 20;
+    top: 75px;
+    left: 25px;
+    max-width: min(240px, calc(100vw - 50px));
+    max-height: 180px;
+    object-fit: contain;
+    padding: 6px;
+    border: 1px solid #d7e2f5;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(0, 29, 81, .22);
+    pointer-events: none;
 }
 
 /* En Nuevo Reclamo la evidencia se confirma en el selector, sin mostrarla. */
@@ -1582,6 +1676,70 @@ footer{
     .notificaciones-lista {
         overflow-y: none;
         max-height: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .icono-subir{
+        min-height: 60px;
+        height: auto;
+        padding: 10px 52px 10px 14px;
+        gap: 7px;
+        font-size: 13px;
+    }
+
+    .icono-subir > .material-symbols-outlined{
+        flex: 0 0 auto;
+        font-size: 27px;
+    }
+
+    .evidencia-cargada{
+        min-width: 0;
+        max-width: 42%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .nombre-archivo-evidencia{
+        right: 42px;
+        width: min(28%, 130px);
+        padding: 4px 2px;
+        font-size: 8px;
+    }
+
+    .eliminar-evidencia{
+        right: 9px;
+        width: 26px;
+        height: 26px;
+        font-size: 16px;
+    }
+
+    .reclamo-nuevo-evidencia .vista-evidencia{
+        left: 12px;
+        max-width: calc(100vw - 48px);
+        max-height: 35vh;
+    }
+}
+
+@media (max-width: 340px) {
+    .icono-subir{
+        padding-left: 10px;
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .nombre-archivo-evidencia{
+        right: 38px;
+        width: 25%;
+        font-size: 7px;
+    }
+
+    .eliminar-evidencia{
+        right: 7px;
+        width: 24px;
+        height: 24px;
+        font-size: 15px;
     }
 }
 
