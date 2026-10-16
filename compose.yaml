@@ -26,9 +26,9 @@ services:
       - backend_storage:/var/www/html/storage/app/public
 
     environment:
-      APP_ENV: local
+      APP_ENV: ${APP_ENV}
       APP_KEY: base64:yx31sN/m5zhk/IoHU1C7eh6MuKTlkuzBiAs6YKgOFtg=
-      APP_DEBUG: "true"
+      APP_DEBUG: ${APP_DEBUG}
       APP_URL: http://localhost:5501
       DB_CONNECTION: mysql
       DB_HOST: database
