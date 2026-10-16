@@ -5,7 +5,7 @@ import {
     actualizarReclamo
 } from "../services/administrativo-service.js";
 import { obtenerUrlEvidencia } from "../services/reclamos-service.js";
-import { notify } from "../utils/toast.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 import { inicializarTema } from "../theme.js";
 import { inicializarNotificaciones } from "./notifications.js";
 
