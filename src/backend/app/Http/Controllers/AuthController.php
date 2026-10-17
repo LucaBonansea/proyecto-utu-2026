@@ -37,10 +37,6 @@ class AuthController extends Controller
                     'integer',
                     'exists:edificios,id'
                 ],
-                'politicas_aceptadas' => [
-                    'required',
-                    'accepted'
-                ],
             ],
             [
                 'cedula.required' => 'Debes ingresar la cédula.',
@@ -55,7 +51,6 @@ class AuthController extends Controller
                 'password.required' => 'Debes ingresar una contraseña.',
                 'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
                 'password.confirmed' => 'Las contraseñas no coinciden.',
-                'politicas_aceptadas.accepted' => 'Debes aceptar las políticas de uso.'
             ]
         );
 

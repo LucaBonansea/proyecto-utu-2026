@@ -12,15 +12,10 @@ use App\Http\Middleware\PoliticasAceptadas;
 use App\Http\Middleware\UsuarioActivo;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/auth/register', [AuthController::class, 'register']);
 Route::get('/clasificaciones', [ClasificacionController::class, 'index']);
 Route::get('/edificios', [EdificioController::class, 'index']);
 Route::get('/proveedores', [ProveedorController::class, 'index']);
 
-Route::post('/auth/login', [
-    AuthController::class,
-    'login'
-]);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/aceptar-politicas', [
@@ -28,13 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
         'aceptarPoliticas'
     ]);
 
-    Route::post('/auth/logout', [
-        AuthController::class,
-        'logout'
-    ]);
-
     Route::middleware([UsuarioActivo::class, PoliticasAceptadas::class])->group(function () {
         Route::middleware(Administrador::class)->group(function () {
+            Route::post('/auth/register', [AuthController::class, 'register']);
             Route::get('/usuarios', [UsuarioController::class, 'index']);
             Route::post('/usuarios', [UsuarioController::class, 'store']);
             Route::put('/usuarios/{cedula}/password', [UsuarioController::class, 'updatePassword']);

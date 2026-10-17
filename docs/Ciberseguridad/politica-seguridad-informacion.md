@@ -297,9 +297,12 @@ reclamos y mantener la trazabilidad de su resolución.
 
 La aceptación no se guarda en el navegador. El frontend presenta la información y
 envía la confirmación; el backend identifica la cuenta autenticada, valida la solicitud
-y registra en MySQL `politicas_aceptadas = true` junto con
-`politicas_aceptadas_at`, cuya fecha y hora se generan en el servidor. Por eso, cambiar
-de navegador, borrar la caché o usar otro equipo no obliga a aceptar nuevamente.
+y registra mediante `POST /api/auth/aceptar-politicas` en MySQL
+`politicas_aceptadas = true` junto con `politicas_aceptadas_at`, cuya fecha y hora se
+generan en el servidor. Las cuentas nuevas, tanto las creadas por un administrador
+como las registradas desde el sistema, quedan pendientes hasta confirmar desde el
+modal. Por eso, cambiar de navegador, borrar la caché o usar otro equipo no obliga a
+aceptar nuevamente.
 
 El flujo de primer acceso es:
 
