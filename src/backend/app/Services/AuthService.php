@@ -15,8 +15,8 @@ class AuthService
             'password' => Hash::make($datos['password']),
             'rol' => 'usuario_edificio',
             'activo' => true,
-            'politicas_aceptadas' => true,
-            'politicas_aceptadas_at' => now(),
+            'politicas_aceptadas' => false,
+            'politicas_aceptadas_at' => null,
         ]);
 
         $usuario->edificios()->attach($datos['edificio']);
