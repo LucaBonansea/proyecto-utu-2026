@@ -301,12 +301,70 @@ export class Reclamos {
             reclamo.clasificacion?.clasificacion || "Sin clasificación"
         );
         const etiquetaEstado = ETIQUETAS_ESTADO[estado] ?? estado;
-        const imagen = obtenerUrlEvidencia(reclamo.evidencia?.ruta_archivo);
-        const imagenHtml = imagen
-            ? `<img src="${escaparHtml(imagen)}" alt="Evidencia del reclamo" loading="${indice < 3 ? "eager" : "lazy"}" decoding="async">`
-            : `<span class="material-symbols-outlined" aria-hidden="true">
-                image_not_supported
-            </span>`;
+        
+        const imagenOriginal = obtenerUrlEvidencia(
+            reclamo.evidenciaOriginal?.ruta_archivo
+        );
+
+        const imagenResolucion = obtenerUrlEvidencia(
+            reclamo.evidencia?.ruta_archivo
+        );
+
+        const tieneResolucion = [
+            "completado",
+            "finalizacion_confirmada"
+        ].includes(estado);
+
+        // Evita mostrar dos veces la misma foto si todavía no hay resolución.
+        const mostrarDosFotos = (
+            tieneResolucion &&
+            imagenOriginal &&
+            imagenResolucion &&
+            reclamo.evidenciaOriginal?.ruta_archivo !== reclamo.evidencia?.ruta_archivo
+        );
+
+        const imagen = mostrarDosFotos
+            ? imagenOriginal
+            : (imagenOriginal || imagenResolucion);
+
+        const imagenHtml = mostrarDosFotos
+            ? `
+                <div class="fotos-comparacion">
+                    <div class="foto-comparacion">
+                        <span class="etiqueta-foto">ANTES</span>
+                        <img
+                            src="${escaparHtml(imagenOriginal)}"
+                            alt="Foto original del reclamo"
+                            loading="${indice < 3 ? "eager" : "lazy"}"
+                            decoding="async"
+                        >
+                    </div>
+                    <div class="foto-comparacion">
+                        <span class="etiqueta-foto">DESPUÉS</span>
+                        <img
+                            src="${escaparHtml(imagenResolucion)}"
+                            alt="Foto de resolución del proveedor"
+                            loading="${indice < 3 ? "eager" : "lazy"}"
+                            decoding="async"
+                        >
+                    </div>
+                </div>
+            `
+            : imagen
+                ? `
+                    <img
+                        src="${escaparHtml(imagen)}"
+                        alt="Foto del reclamo"
+                        loading="${indice < 3 ? "eager" : "lazy"}"
+                        decoding="async"
+                    >
+                `
+                : `
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        image_not_supported
+                    </span>
+                `;
+
         const edificioHtml = `
             <p class="reclamo-edificio">
                 <span class="material-symbols-outlined">
@@ -332,7 +390,7 @@ export class Reclamos {
                 class="primerdiv-reclamo ${claseEstado}"
                 data-reclamo-id="${escaparHtml(reclamo.id)}"
             >
-                <div class="foto-reclamo ${imagen ? "" : "sin-imagen"}">
+                <div class="foto-reclamo ${imagen ? "" : "sin-imagen"} ${mostrarDosFotos ? "foto-reclamo-comparacion" : ""}">
                     ${imagenHtml}
                 </div>
 

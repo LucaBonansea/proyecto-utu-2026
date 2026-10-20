@@ -152,7 +152,7 @@ main{
     gap: clamp(10px, 2vw, 50px);
     background:linear-gradient(180deg,#023ca1cf,#001844e4);
     min-height: 60px;
-    padding: 0px 25px;
+    padding: 0px 8px;
     border-radius:100px;
     box-shadow:0 8px 25px rgba(0,0,0,.25);
 }
@@ -1618,7 +1618,7 @@ footer{
 @media (max-width: 1024px) {
     .top-nav {
         gap: 10px;
-        padding: 0px 10px;
+        padding: 0px 8px;
     }
     .menu-top-cuenta {
         right: 20px;
@@ -1904,5 +1904,51 @@ footer{
         left: 12px;
         width: auto;
         transform: none;
+    }
+}
+
+.foto-reclamo-comparacion {
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    display: block;
+    overflow: hidden;
+}
+
+.fotos-comparacion {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+}
+
+.foto-comparacion {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.etiqueta-foto {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.foto-comparacion img {
+    display: block;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+    .fotos-comparacion {
+        gap: 6px;
+    }
+
+    .foto-comparacion img {
+        height: 110px;
     }
 }
