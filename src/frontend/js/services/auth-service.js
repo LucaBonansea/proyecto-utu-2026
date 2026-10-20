@@ -30,16 +30,6 @@ export function aceptarPoliticas() {
     });
 }
 
-export function registrarUsuario(datos) {
-    return apiFetchConCsrf("/api/auth/register", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(datos)
-    });
-}
 
 export function cerrarSesion() {
     return apiFetchConCsrf("/api/auth/logout", {

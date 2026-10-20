@@ -183,49 +183,10 @@ class ReclamoController extends Controller
             'reclamos' => $reclamos
         ], 200);
     }
-    public function asignarProveedor(
-        Request $request,
-        int $id
-    ) {
-    if ($request->user()->rol !== 'administrador') {
-        return response()->json([
-            'message' => 'No autorizado'
-        ], 403);
-    }
+    
 
-    $datos = $request->validate([
-        'proveedor_id' => [
-            'required',
-            'exists:proveedores,id'
-        ],
-    ]);
-
-    $reclamo = Reclamo::findOrFail($id);
-
-    $reclamo->update([
-        'proveedor_id' => $datos['proveedor_id'],
-    ]);
-
-    $reclamo->load([
-        'usuario',
-        'edificio',
-        'clasificacion',
-        'evidencia',
-        'proveedor'
-    ]);
-
-    return response()->json([
-        'message' => 'Proveedor asignado correctamente',
-        'reclamo' => $reclamo,
-    ], 200);
-}
-
-public function actualizar(
-    Request $request,
-    int $id,
-    NotificacionService $notificacionService
-) {
-if ($request->user()->rol !== 'administrativo') {
+public function actualizar(Request $request,int $id,NotificacionService $notificacionService) 
+{ if ($request->user()->rol !== 'administrativo') {
     return response()->json([
         'message' => 'No autorizado'
     ], 403);

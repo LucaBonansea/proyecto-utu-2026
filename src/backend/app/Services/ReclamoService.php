@@ -68,6 +68,7 @@ class ReclamoService
     ): LengthAwarePaginator {
         $consulta = Reclamo::with([
             'evidencia',
+            'evidenciaOriginal',
             'clasificacion',
             'edificio'
         ])
