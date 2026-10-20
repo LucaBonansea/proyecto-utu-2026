@@ -17,6 +17,8 @@ class Reclamo extends Model
         'prioridad',
         'motivo_rechazo',
         'proveedor_id',
+        'costo_mano_obra',
+        'costo_materiales',
     ];
 
     public function usuario()

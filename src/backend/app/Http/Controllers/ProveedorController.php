@@ -143,6 +143,7 @@ public function aceptarReclamo(Request $request, string $id, NotificacionService
         'reclamo' => $reclamo
     ], 200);
 }
+
 public function finalizarReclamo(Request $request, string $id, NotificacionService $notificacionService)
 {
     $usuario = $request->user();
@@ -182,6 +183,8 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
     $datos = $request->validate([
         'foto' => ['required', 'image', 'max:10240'],
         'observaciones' => ['required', 'string', 'max:500'],
+        'costo_mano_obra' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
+        'costo_materiales' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
     ]);
 
     $ruta = $request->file('foto')->store('evidencias', 'public');
@@ -193,6 +196,8 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
         'fecha_carga' => now(),
     ]);
 
+    $reclamo->costo_mano_obra = $datos['costo_mano_obra'];
+    $reclamo->costo_materiales = $datos['costo_materiales'];
     $reclamo->estado = 'completado';
     $reclamo->save();
 
@@ -217,6 +222,7 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
         'reclamo' => $reclamo
     ], 200);
 }
+
 public function aceptarDevolucion(Request $request, string $id, NotificacionService $notificacionService)
 {
     $usuario = $request->user();
