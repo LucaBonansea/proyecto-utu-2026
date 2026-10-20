@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Hash;
 class AuthService
 {
     
-
     public function login(array $datos)
     {
         $usuario = Usuario::where('cedula', $datos['cedula'])->first();
