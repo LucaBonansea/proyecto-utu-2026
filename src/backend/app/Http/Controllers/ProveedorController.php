@@ -74,7 +74,8 @@ class ProveedorController extends Controller
             'edificio',
             'clasificacion',
             'evidencia',
-            'proveedor'
+            'proveedor',
+            'area'
         ])
         ->latest()
         ->get();
@@ -99,7 +100,7 @@ public function aceptarReclamo(Request $request, string $id, NotificacionService
         ], 422);
     }
 
-    $reclamo = Reclamo::find($id);
+    $reclamo = Reclamo::with('area')->find($id);
 
     if (!$reclamo) {
         return response()->json([
@@ -135,7 +136,8 @@ public function aceptarReclamo(Request $request, string $id, NotificacionService
         'edificio',
         'clasificacion',
         'evidencia',
-        'proveedor'
+        'proveedor',
+        'area'
     ]);
 
     return response()->json([
@@ -214,7 +216,8 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
         'edificio',
         'clasificacion',
         'evidencia',
-        'proveedor'
+        'proveedor',
+        'area'
     ]);
 
     return response()->json([
@@ -276,7 +279,8 @@ public function aceptarDevolucion(Request $request, string $id, NotificacionServ
         'edificio',
         'clasificacion',
         'evidencia',
-        'proveedor'
+        'proveedor',
+        'area'
     ]);
 
     return response()->json([

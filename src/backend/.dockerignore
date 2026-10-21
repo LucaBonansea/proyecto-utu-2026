@@ -10,3 +10,4 @@ storage/framework/cache/data/*
 storage/framework/sessions/*
 .phpunit.cache
 .phpunit.result.cache
+public/storage
