@@ -9,6 +9,7 @@ use App\Models\Reclamo;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ReclamoController extends Controller
 {
@@ -60,6 +61,7 @@ class ReclamoController extends Controller
         $datos = $request->validate([
             'edificio_id' => [
                 'required',
+                'integer',
                 'exists:edificios,id'
             ],
 
@@ -71,16 +73,19 @@ class ReclamoController extends Controller
 
             'clasificacion_id' => [
                 'required',
+                'integer',
                 'exists:clasificaciones,id'
             ],
             
             'area_id' => [
                 'required',
+                'integer',
                 'exists:areas,id'
             ],
 
             'photo' => [
                 'required',
+                'file',
                 'mimes:jpg,jpeg,png,bmp,gif,svg,webp,avif,heic,heif',
                 'max:10000'
             ],
@@ -233,7 +238,8 @@ $datos = $request->validate([
 
     'proveedor_id' => [
         'required',
-        'exists:proveedores,id'
+        'integer',
+        Rule::exists('proveedores', 'id')->where('estado', 'Activo')
     ],
 ]);
 

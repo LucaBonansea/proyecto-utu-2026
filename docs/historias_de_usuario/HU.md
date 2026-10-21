@@ -381,6 +381,55 @@
  
 ---
 
+**ID: HU28**
+
+**Historia:** Como Administrador, quiero visualizar estadísticas de los reclamos según su estado, edificio y área afectada, para realizar un seguimiento de los problemas registrados y facilitar la toma de decisiones.
+
+**Criterios de aceptación:**
+
+* [ ] Puedo visualizar la cantidad total de reclamos registrados.
+* [ ] Puedo consultar la cantidad de reclamos aprobados, rechazados y pendientes.
+* [ ] Puedo visualizar la cantidad de reclamos registrados por edificio.
+* [ ] Puedo consultar la cantidad de reclamos por área afectada dentro de cada edificio.
+* [ ] Las estadísticas se actualizan según la información registrada en el sistema.
+
+**Puntos:** 8 **Prioridad:** Media **Épica:** EP-04
+
+---
+
+**ID: HU29**
+
+**Historia:** Como Usuario de proveedor, quiero registrar los costos de materiales y mano de obra al finalizar una tarea, para dejar constancia de los gastos asociados a la resolución del reclamo y permitir su consulta por parte del Administrador.
+
+**Criterios de aceptación:**
+
+* [ ] Puedo registrar el costo de los materiales utilizados al finalizar una tarea.
+* [ ] Puedo registrar el costo de mano de obra correspondiente al trabajo realizado.
+* [ ] Los costos quedan asociados al reclamo y al proveedor correspondiente.
+* [ ] El sistema calcula el costo total sumando materiales y mano de obra.
+* [ ] El Administrador puede consultar los costos registrados en cada reclamo.
+* [ ] El Administrador puede visualizar el costo total acumulado de los reclamos por edificio.
+
+**Puntos:** 5 **Prioridad:** Media **Épica:** EP-07
+
+---
+
+**ID: HU31**
+
+**Historia:** Como Usuario de edificio, quiero indicar el área específica afectada al registrar un reclamo, para que el proveedor pueda identificar dónde debe realizar el trabajo y evitar demoras en la búsqueda del lugar.
+
+**Criterios de aceptación:**
+
+* [ ] Puedo seleccionar el área afectada dentro del edificio al registrar un reclamo.
+* [ ] El área seleccionada queda asociada al reclamo correspondiente.
+* [ ] El Usuario de proveedor puede visualizar el área afectada al consultar una tarea asignada.
+* [ ] El sistema permite identificar el edificio y el sector donde ocurrió el problema.
+
+**Puntos:** 5 **Prioridad:** Alta **Épica:** EP-03
+
+---
+
+
 
 | ID | Historia de usuario | Puntos | Prioridad | Épica |
 |---|---|---:|---|---|
@@ -392,11 +441,13 @@
 | HU25 | Asociar usuarios a uno o más edificios. | 5 | Media | EP-02 |
 | HU4 | Crear reclamo (Usuario de edificio). | 8 | Alta | EP-03 |
 | HU7 | Consultar estado y avance de mis reclamos. | 5 | Alta | EP-03 |
+| HU12 | Visualizar evidencias antes/después de resolución. | 5 | Media | EP-03 |
+| HU31 | Asociar reclamos a áreas específicas del edificio. | 5 | Alta | EP-03 |
 | HU5 | Moderar y clasificar reclamos. | 5 | Baja | EP-04 |
 | HU6 | Asignar prioridad a un reclamo. | 3 | Baja | EP-04 |
 | HU10 | Visualizar reclamos con filtro por categoría. | 5 | Alta | EP-04 |
-| HU12 | Visualizar evidencias antes/después de resolución. | 5 | Media | EP-03 |
 | HU21 | Moderar contenido inválido o inapropiado. | 5 | Media | EP-04 |
+| HU28 | Visualizar estadísticas de reclamos por estado, edificio y área. | 8 | Media | EP-04 |
 | HU13 | Asignar reclamos clasificados a proveedores. | 8 | Alta | EP-05 |
 | HU14 | Mostrar proveedores correspondientes según clasificación. | 5 | Media | EP-05 |
 | HU22 | Registrar y administrar proveedores. | 5 | Baja | EP-05 |
@@ -404,12 +455,15 @@
 | HU15 | Consultar tareas asignadas (proveedor). | 3 | Alta | EP-07 |
 | HU16 | Registrar finalización de una tarea. | 8 | Alta | EP-07 |
 | HU17 | Reprocesar tarea rechazada. | 5 | Media | EP-07 |
+| HU29 | Registrar y consultar costos de materiales y mano de obra. | 5 | Media | EP-07 |
 | HU8 | Notificaciones dentro de la aplicación. | 5 | Media | EP-08 |
 | HU9 | Visualizar evidencias de mis reclamos. | 5 | Baja | EP-08 |
 | HU18 | Almacenar y consultar archivos multimedia. | 5 | Alta | EP-08 |
 | HU19 | Evidencia obligatoria del trabajo realizado. | 3 | Alta | EP-08 |
 | HU20 | Aprobar o rechazar el trabajo del proveedor. | 5 | Alta | EP-08 |
 | HU23 | Gestionar clasificaciones del sistema. | 3 | Media | EP-09 |
+
+
  
 *HU11 fue cancelada (tablero Kanban) y no se incluye en este resumen.*
 
@@ -712,18 +766,19 @@ Además, durante este sprint se realizarán:
 - Validación del flujo completo.
 - Ajustes finales.
 
-### Sprint Review 6
+### Sprint Review 7: Mejoras en el sistema
+
+### Objetivo del sprint
+
+Realizar una reunión con el cliente para presentar los avances y funcionalidades desarrolladas durante el último mes, mostrar las interfaces y el funcionamiento del sistema, recopilar su opinión sobre el trabajo realizado e identificar posibles mejoras a partir de sus comentarios y sugerencias.
 
 El cliente revisa el incremento y responde:
 
-### Feedback del cliente
+> “El avance presentado es bueno, pero nos gustaría incorporar estadísticas de los reclamos, como la cantidad de aprobados y rechazados. Además, sería útil registrar los costos de materiales y mano de obra de cada proveedor. También proponemos que, al registrar un reclamo, este quede asociado al edificio y al área específica afectada, por ejemplo, Edificio Polo Tecnológico, Planta Alta. Estas mejoras permitirían aumentar la eficiencia del sistema y garantizar una mayor trazabilidad de los reclamos.”
 
+### Resultado del Sprint
 
+Se realizó una reunión con el cliente en la que se presentaron los avances desarrollados durante el último mes, mostrando las interfaces y el funcionamiento del sistema. El cliente valoró positivamente el trabajo realizado y propuso nuevas funcionalidades para mejorar la gestión de los reclamos, como la visualización de estadísticas, el registro de costos de materiales y mano de obra, y la asociación de reclamos a edificios y áreas específicas.
 
-### Resultado del sprint
-
-
-
----
-
+- Se incorporan **5 nuevos requerimientos funcionales (RF01 a RF05)** y **3 historias de usuario (HU28, HU29 y HU31)**, con un total estimado de **18 puntos de historia**, que serán considerados para su priorización en los próximos Sprints.
 

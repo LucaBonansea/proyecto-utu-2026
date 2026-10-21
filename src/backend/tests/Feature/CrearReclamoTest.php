@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Area;
 use App\Models\Clasificacion;
 use App\Models\Edificio;
 use App\Models\Reclamo;
@@ -19,7 +20,7 @@ class CrearReclamoTest extends TestCase
     public function test_no_permite_crear_un_reclamo_activo_duplicado(): void
     {
         Storage::fake('public');
-        [$usuario, $edificio, $clasificacion] = $this->crearDatosBase();
+        [$usuario, $edificio, $clasificacion, $area] = $this->crearDatosBase();
 
         Reclamo::create([
             'usuario_cedula' => $usuario->cedula,
@@ -35,6 +36,7 @@ class CrearReclamoTest extends TestCase
             'edificio_id' => $edificio->id,
             'description' => '  PÉRDIDA   DE AGUA EN EL BAÑO  ',
             'clasificacion_id' => $clasificacion->id,
+            'area_id' => $area->id,
             'photo' => $this->crearImagen(),
         ])
             ->assertUnprocessable()
@@ -49,7 +51,7 @@ class CrearReclamoTest extends TestCase
     public function test_permite_repetir_un_reclamo_cerrado(): void
     {
         Storage::fake('public');
-        [$usuario, $edificio, $clasificacion] = $this->crearDatosBase();
+        [$usuario, $edificio, $clasificacion, $area] = $this->crearDatosBase();
 
         Reclamo::create([
             'usuario_cedula' => $usuario->cedula,
@@ -65,6 +67,7 @@ class CrearReclamoTest extends TestCase
             'edificio_id' => $edificio->id,
             'description' => 'Pérdida de agua en el baño',
             'clasificacion_id' => $clasificacion->id,
+            'area_id' => $area->id,
             'photo' => $this->crearImagen(),
         ])
             ->assertCreated()
@@ -97,9 +100,14 @@ class CrearReclamoTest extends TestCase
             'clasificacion' => 'Sanitaria',
         ]);
 
+        $area = Area::create([
+            'edificio_id' => $edificio->id,
+            'nombre' => 'Baño',
+        ]);
+
         $usuario->edificios()->attach($edificio->id);
 
-        return [$usuario, $edificio, $clasificacion];
+        return [$usuario, $edificio, $clasificacion, $area];
     }
 
     private function crearImagen(): UploadedFile

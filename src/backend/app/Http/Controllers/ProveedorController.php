@@ -7,6 +7,7 @@ use App\Services\ProveedorService;
 use Illuminate\Http\Request;
 use App\Models\Reclamo;
 use App\Models\Evidencia;
+use Illuminate\Validation\Rule;
 
 
 class ProveedorController extends Controller
@@ -20,15 +21,27 @@ class ProveedorController extends Controller
 
     public function store(Request $request, ProveedorService $proveedorService)
     {
+        $camposNormalizados = [];
+
+        foreach (['rut', 'telefono', 'telefono_contacto'] as $campo) {
+            $valor = $request->input($campo);
+
+            if (is_string($valor)) {
+                $camposNormalizados[$campo] = preg_replace('/[\s().-]+/u', '', $valor);
+            }
+        }
+
+        $request->merge($camposNormalizados);
+
         $datos = $request->validate([
             'nombre' => ['required', 'string', 'max:255'],
             'razon_social' => ['required', 'string', 'max:255'],
-            'rut' => ['required', 'string', 'max:20', 'unique:proveedores,rut'],
-            'telefono' => ['required', 'string', 'max:20'],
+            'rut' => ['bail', 'required', 'string', 'regex:/^\d{12}$/', Rule::unique('proveedores', 'rut')],
+            'telefono' => ['required', 'string', 'regex:/^(?:\d{8,9}|\+598\d{8})$/'],
             'direccion' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'contacto_responsable' => ['required', 'string', 'max:255'],
-            'telefono_contacto' => ['required', 'string', 'max:20'],
+            'telefono_contacto' => ['required', 'string', 'regex:/^(?:\d{8,9}|\+598\d{8})$/'],
             'email_contacto' => ['required', 'email', 'max:255'],
         ]);
 
@@ -185,8 +198,8 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
     $datos = $request->validate([
         'foto' => ['required', 'image', 'max:10240'],
         'observaciones' => ['required', 'string', 'max:500'],
-        'costo_mano_obra' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
-        'costo_materiales' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
+        'costo_mano_obra' => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:99999999.99'],
+        'costo_materiales' => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:99999999.99'],
     ]);
 
     $ruta = $request->file('foto')->store('evidencias', 'public');
