@@ -27,6 +27,12 @@
 | RF-23 | Registrar datos de Usuarios de proveedor | El sistema deberá permitir registrar para cada Usuario de proveedor datos como cédula, nombre, teléfono y contraseña. | Control de cambios 2 | Cada Usuario de proveedor deberá estar asociado a un proveedor. |
 | RF-24 | Registrar finalización del trabajo | El Usuario de proveedor podrá registrar la finalización de un trabajo indicando las observaciones correspondientes y adjuntando la evidencia del trabajo realizado. | Control de cambios 2; Doc. proyecto 2.1 | Al registrar la finalización, el reclamo pasa a `PENDIENTE_APROBACION`; todavía no queda completado. |
 | RF-25 | Asociar reclamos a edificios | El sistema deberá asociar obligatoriamente cada reclamo con uno de los edificios a los que pertenece el usuario de edificio que lo realiza. | Control de cambios 2 | `edificio_id` es obligatorio. La versión 1.0 no utiliza mapas, coordenadas GPS ni campos genéricos de ubicación. |
+| RF-26 | Consulta de estadísticas de reclamos | El Administrador podrá consultar estadísticas de los reclamos según su estado (aprobados, rechazados y pendientes), edificio y área afectada. | Control de cambios 3; Sprint Review 7 | Las estadísticas estarán disponibles en la interfaz del Administrador y se actualizarán según la información registrada en el sistema. |
+| RF-27 | Registrar costos de materiales | El Usuario de proveedor podrá registrar los costos de los materiales utilizados al finalizar una tarea. | Control de cambios 3; Sprint Review 7 | Los costos quedarán asociados al reclamo y al proveedor correspondiente. |
+| RF-28 | Registrar costos de mano de obra | El Usuario de proveedor podrá registrar los costos de mano de obra correspondientes al trabajo realizado al finalizar una tarea. | Control de cambios 3; Sprint Review 7 | Los costos quedarán asociados al reclamo y al proveedor correspondiente. |
+| RF-29 | Asociar reclamos a áreas específicas | El Usuario de edificio deberá indicar el área específica afectada dentro del edificio al registrar un reclamo. | Control de cambios 3; Sprint Review 7 | El área quedará asociada al reclamo y será visible para el Usuario de proveedor asignado, facilitando la localización del lugar donde debe realizarse el trabajo. |
+| RF-30 | Consultar costos de reclamos | El sistema deberá calcular el costo total de cada reclamo sumando los costos de materiales y mano de obra, permitiendo al Administrador consultar los gastos individuales y el costo acumulado por edificio. | Control de cambios 3; Sprint Review 7 | Los costos podrán consultarse desde la interfaz del Administrador. |
+
 
 
 ## Máquina de estados de los reclamos
@@ -92,11 +98,11 @@ No se permiten transiciones distintas de las indicadas en esta tabla. Un reclamo
 |---|---|---|---|---|
 | EP-01 | Gestión de usuarios y autenticación | Gestionar el acceso al sistema, autenticación, roles, permisos y recuperación de credenciales. | HU1, HU2, HU3, HU26 | RF-01, RF-02, RF-03, RF-15, RF-16, RF-21 |
 | EP-02 | Gestión de edificios y asociaciones | Administrar los edificios y las asociaciones entre usuarios de edificio y los edificios a los que pertenecen. | HU24, HU25 | RF-19, RF-20, RF-25 | 
-| EP-03 | Gestión de reclamos del usuario de edificio | Permitir a los usuarios de edificio registrar reclamos y consultar su estado, avance y evidencias. | HU4, HU7, HU12 | RF-04, RF-08, RF-11, RF-25 |
-| EP-04 | Moderación y gestión administrativa de reclamos | Permitir al personal administrativo revisar, moderar, clasificar, priorizar y consultar los reclamos. | HU5, HU6, HU10, HU21, HU11* | RF-05, RF-06, RF-10 |
+| EP-03 | Gestión de reclamos del usuario de edificio | Permitir a los usuarios de edificio registrar reclamos, indicar el área afectada y consultar su estado, avance y evidencias. | HU4, HU7, HU12, HU31 | RF-04, RF-08, RF-11, RF-25, RF-29 |
+| EP-04 | Moderación y gestión administrativa de reclamos | Permitir al personal administrativo revisar, moderar, clasificar, priorizar y consultar los reclamos, incluyendo estadísticas para el Administrador. | HU5, HU6, HU10, HU21, HU28, HU11 | RF-05, RF-06, RF-10, RF-26 |
 | EP-05 | Asignación y gestión de proveedores | Administrar proveedores y asignar reclamos a los proveedores correspondientes. | HU13, HU14, HU22 | RF-07, RF-17, RF-18 |
 | EP-06 | Gestión de usuarios de proveedor | Administrar los usuarios que trabajan en representación de cada proveedor. | HU27 | RF-22, RF-23 |
-| EP-07 | Gestión de tareas y resolución por proveedores | Permitir a los usuarios de proveedor consultar sus tareas, realizar trabajos y registrar su finalización. | HU15, HU16, HU17 | RF-12, RF-13, RF-14, RF-24 | 
+| EP-07 | Gestión de tareas y resolución por proveedores | Permitir a los usuarios de proveedor consultar sus tareas, realizar trabajos, registrar su finalización y los costos de materiales y mano de obra correspondientes. | HU15, HU16, HU17, HU29 | RF-12, RF-13, RF-14, RF-24, RF-27, RF-28, RF-30 |
 | EP-08 | Evidencias, notificaciones y aprobación de reclamos | Gestionar evidencias, notificaciones y la aprobación o rechazo de los trabajos realizados por proveedores. | HU8, HU9, HU18, HU19, HU20 | RF-09, RF-11, RF-12, RF-24 | 
 | EP-09 | Administración y configuración del sistema | Administrar las clasificaciones disponibles y otros elementos de configuración del sistema. | HU23 | RF-05 |
 

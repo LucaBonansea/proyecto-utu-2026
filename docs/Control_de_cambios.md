@@ -43,3 +43,22 @@ El proyecto, originalmente orientado a la gestión de reclamos ciudadanos, pasa 
 - La solución y las evidencias registradas por el **Usuario de proveedor** serán comunicadas al **Usuario de edificio** que realizó el reclamo.
 - El **Usuario de edificio** podrá consultar el estado y avance de sus reclamos y visualizar la información y evidencias relacionadas con la resolución del reclamo.
 - Se eliminan del alcance las funcionalidades relacionadas con la visualización pública de reclamos de otros ciudadanos, dado que los reclamos estarán vinculados a usuarios y edificios específicos.
+
+
+## Cambio 3
+
+### Fecha: 21/10/2026
+
+**Cambio:** Incorporación de 5 nuevos requerimientos funcionales y 5 historias de usuario al Product Backlog, a partir de la retroalimentación recibida durante la Sprint Review 1.
+
+**Justificación:**
+
+Durante la Sprint Review 7, el cliente propuso incorporar nuevas funcionalidades para mejorar la gestión, el control de costos y la trazabilidad de los reclamos. Se identificó la necesidad de visualizar estadísticas de reclamos aprobados, rechazados y pendientes, registrar los costos de materiales y mano de obra de los proveedores, y asociar cada reclamo a un área específica dentro del edificio afectado.
+
+**Impacto:**
+
+- El **Administrador** podrá visualizar estadísticas generales de los reclamos, incluyendo la cantidad de reclamos aprobados, rechazados y pendientes, facilitando su seguimiento y la toma de decisiones.
+- El **Administrador** podrá consultar los costos de materiales y mano de obra asociados a cada proveedor, permitiendo un mayor control de los gastos.
+- Los **Usuarios de proveedor** podrán registrar los costos de materiales y mano de obra utilizados al momento de finalizar un reclamo, quedando asociados al proveedor y al trabajo realizado.
+- El **Usuario de edificio** deberá seleccionar el área específica afectada al registrar un reclamo, quedando asociada al edificio correspondiente.
+- Se incorporan 4 nuevos requerimientos funcionales y 4 historias de usuario (HU28 a HU31), con un total estimado de 16 puntos de historia.

@@ -1,3 +1,10 @@
+<!--
+    VISTA: Panel de administrador departamental.
+    El HTML define la estructura visible (menú, encabezado y áreas vacías).
+    administrador.js completa esas áreas con datos y conecta las acciones.
+    Flujo: navegador carga esta página -> JavaScript consulta sesión/datos ->
+    el administrador elige una sección desde la barra lateral.
+-->
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -10,6 +17,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
 <body class="admin-page">
+    <!-- Navegación entre las secciones que administra este rol. -->
     <div class="sidebar-box">
         <aside class="sidebar">
             <div class="first-btns">
@@ -127,12 +135,15 @@
             </div>
         </header>
 
+        <!-- Contenedores dinámicos: JS inserta aquí filtros y contenido. -->
         <div id="filtro-container"></div>
 
         <section></section>
     </main>
 
     <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
+    <!-- Scripts del panel; administrador.js es el controlador principal. -->
+    <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=5" type="module"></script>
     <script src="/proyecto-utu-2026/src/frontend/js/global-loading.js?v=20261016-1"></script>
     <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=20261016-1" type="module"></script>
 </body>

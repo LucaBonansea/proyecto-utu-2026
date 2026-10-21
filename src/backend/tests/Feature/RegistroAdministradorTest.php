@@ -15,7 +15,7 @@ class RegistroAdministradorTest extends TestCase
 
     public function test_registro_no_esta_disponible_sin_sesion(): void
     {
-        $this->postJson('/api/auth/register', $this->datosRegistro())
+        $this->postJson('/api/usuarios', $this->datosRegistro())
             ->assertUnauthorized();
     }
 
@@ -23,7 +23,7 @@ class RegistroAdministradorTest extends TestCase
     {
         Sanctum::actingAs($this->crearUsuario('10000000', 'usuario_edificio'));
 
-        $this->postJson('/api/auth/register', $this->datosRegistro())
+        $this->postJson('/api/usuarios', $this->datosRegistro())
             ->assertForbidden();
     }
 
@@ -31,7 +31,7 @@ class RegistroAdministradorTest extends TestCase
     {
         Sanctum::actingAs($this->crearUsuario('20000000', 'usuario_proveedor'));
 
-        $this->postJson('/api/auth/register', $this->datosRegistro())
+        $this->postJson('/api/usuarios', $this->datosRegistro())
             ->assertForbidden();
     }
 
@@ -39,7 +39,7 @@ class RegistroAdministradorTest extends TestCase
     {
         Sanctum::actingAs($this->crearUsuario('30000000', 'administrador'));
 
-        $this->postJson('/api/auth/register', $this->datosRegistro())
+        $this->postJson('/api/usuarios', $this->datosRegistro())
             ->assertCreated()
             ->assertJsonPath('usuario.politicas_aceptadas', false)
             ->assertJsonPath('usuario.politicas_aceptadas_at', null);
@@ -63,9 +63,10 @@ class RegistroAdministradorTest extends TestCase
         return [
             'cedula' => '40000000',
             'nombre' => 'Usuario nuevo',
+            'telefono' => '099123456',
             'password' => 'password-prueba',
-            'password_confirmation' => 'password-prueba',
-            'edificio' => $edificioId,
+            'rol' => 'usuario_edificio',
+            'edificios' => [$edificioId],
         ];
     }
 

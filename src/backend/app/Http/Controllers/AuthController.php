@@ -8,19 +8,75 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function register(Request $request, AuthService $authService)
+    {
+        $datos = $request->validate(
+            [
+                'cedula' => [
+                    'bail',
+                    'required',
+                    'string',
+                    'regex:/^\d{7,8}$/',
+                    'unique:usuarios,cedula'
+                ],
+
+                'nombre' => [
+                    'required',
+                    'string',
+                    'max:100'
+                ],
+
+
+                'password' => [
+                    'required',
+                    'string',
+                    'min:8',
+                    'max:255',
+                    'confirmed'
+                ],
+                'edificio' => [
+                    'required',
+                    'integer',
+                    'exists:edificios,id'
+                ],
+            ],
+            [
+                'cedula.required' => 'Debes ingresar la cédula.',
+                'cedula.unique' => 'Ya existe un usuario con esa cédula.',
+
+                'nombre.required' => 'Debes ingresar el nombre.',
+                'edificio.required' => 'Debes seleccionar un edificio.',
+                'edificio.exists' => 'El edificio seleccionado no existe.',
+
+                'password.required' => 'Debes ingresar una contraseña.',
+                'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+                'password.confirmed' => 'Las contraseñas no coinciden.',
+            ]
+        );
+
+        $usuario = $authService->registrar($datos);
+
+        return response()->json([
+            'mensaje' => 'Usuario registrado correctamente',
+            'usuario' => $usuario
+        ], 201);
+    }
 
     public function login(Request $request)
     {
         $datos = $request->validate(
             [
                 'cedula' => [
+                    'bail',
                     'required',
-                    'string'
+                    'string',
+                    'regex:/^\d{7,8}$/',
                 ],
 
                 'password' => [
                     'required',
-                    'string'
+                    'string',
+                    'max:255',
                 ],
             ],
             [
