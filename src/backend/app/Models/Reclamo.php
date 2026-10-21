@@ -19,6 +19,7 @@ class Reclamo extends Model
         'proveedor_id',
         'costo_mano_obra',
         'costo_materiales',
+        'area_id',
     ];
 
     public function usuario()
@@ -60,5 +61,10 @@ class Reclamo extends Model
 
     public function evidenciaOriginal(): HasOne{
         return $this->hasOne(Evidencia::class)->oldestOfMany();
+    }
+
+    public function area()
+    {
+    return $this->belongsTo(Area::class);
     }
 }

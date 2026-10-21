@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\EdificioController;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 // Única ruta pública: inicia la sesión (el usuario todavía no está autenticado)
 Route::post('/auth/login', [AuthController::class,'login']);
-
+Route::get('/edificios/{edificio}/areas', [AreaController::class, 'porEdificio']);
 // Todo lo de abajo exige sesión iniciada (Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
 
