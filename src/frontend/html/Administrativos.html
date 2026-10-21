@@ -1,3 +1,9 @@
+<!--
+    VISTA: Bandeja de trabajo del rol administrativo.
+    Esta plantilla aporta el encabezado, el listado y el modal de detalle.
+    El archivo administrativos.js consulta los reclamos pendientes y los
+    presenta para que el administrativo los revise y asigne a un proveedor.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +18,7 @@
 </head>
 <body class="administrativo-page">
    
+    <!-- Ventana emergente que JS rellena al abrir un reclamo. -->
     <div id="modal-reclamo" class="modal-reclamo">
 
         <div class="fondo-modal"></div>
@@ -90,12 +97,14 @@
             </section>
         </header>
 
+        <!-- El controlador inserta filtros/listado dentro de estos espacios. -->
         <div id="filtro-container"></div>
 
         <section></section>
     </main>
 
     <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
+    <!-- Carga compartida y lógica específica de revisión de reclamos. -->
     <script src="/proyecto-utu-2026/src/frontend/js/global-loading.js?v=20261016-1"></script>
     <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrativos.js?v=20261016-1" type="module"></script>
 </body>
