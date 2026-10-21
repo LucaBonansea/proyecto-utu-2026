@@ -73,6 +73,11 @@ class ReclamoController extends Controller
                 'required',
                 'exists:clasificaciones,id'
             ],
+            
+            'area_id' => [
+                'required',
+                'exists:areas,id'
+            ],
 
             'photo' => [
                 'required',
@@ -98,6 +103,16 @@ class ReclamoController extends Controller
         )) {
             return response()->json([
                 'message' => 'Ya existe un reclamo activo con la misma descripción, edificio y clasificación.',
+            ], 422);
+        }
+
+        $areaPerteneceAlEdificio = \App\Models\Area::where('id', $datos['area_id'])
+            ->where('edificio_id', $datos['edificio_id'])
+            ->exists();
+
+        if (!$areaPerteneceAlEdificio) {
+            return response()->json([
+                'message' => 'El área seleccionada no pertenece al edificio.'
             ], 422);
         }
 
@@ -169,63 +184,35 @@ class ReclamoController extends Controller
         ], 200);
     }
 
-    public function indexAdmin(Request $request,ReclamoService $reclamoService) {
-        
-        if ($request->user()->rol !== 'administrador' && $request->user()->rol !== 'administrativo') {
-            return response()->json([
-                'message' => 'No autorizado'
-            ], 403);
-        }
+    public function indexAdmin(
+    Request $request,
+    ReclamoService $reclamoService
+) {
+    $usuario = $request->user();
 
-        $reclamos = $reclamoService->obtenerPendientes();
-
-        return response()->json([
-            'reclamos' => $reclamos
-        ], 200);
-    }
-    public function asignarProveedor(
-        Request $request,
-        int $id
+    if (
+        $usuario->rol !== 'administrador' &&
+        $usuario->rol !== 'administrativo'
     ) {
-    if ($request->user()->rol !== 'administrador') {
         return response()->json([
             'message' => 'No autorizado'
         ], 403);
     }
 
-    $datos = $request->validate([
-        'proveedor_id' => [
-            'required',
-            'exists:proveedores,id'
-        ],
-    ]);
-
-    $reclamo = Reclamo::findOrFail($id);
-
-    $reclamo->update([
-        'proveedor_id' => $datos['proveedor_id'],
-    ]);
-
-    $reclamo->load([
-        'usuario',
-        'edificio',
-        'clasificacion',
-        'evidencia',
-        'proveedor'
-    ]);
+    if ($usuario->rol === 'administrador') {
+        $reclamos = $reclamoService->obtenerTodos();
+    } else {
+        $reclamos = $reclamoService->obtenerPendientes();
+    }
 
     return response()->json([
-        'message' => 'Proveedor asignado correctamente',
-        'reclamo' => $reclamo,
+        'reclamos' => $reclamos
     ], 200);
 }
+    
 
-public function actualizar(
-    Request $request,
-    int $id,
-    NotificacionService $notificacionService
-) {
-if ($request->user()->rol !== 'administrativo') {
+public function actualizar(Request $request,int $id,NotificacionService $notificacionService) 
+{ if ($request->user()->rol !== 'administrativo') {
     return response()->json([
         'message' => 'No autorizado'
     ], 403);
@@ -250,7 +237,7 @@ $datos = $request->validate([
     ],
 ]);
 
-$reclamo = Reclamo::findOrFail($id);
+$reclamo = Reclamo::with('area')->findOrFail($id);
 
 $reclamo->update([
     'description' => $datos['description'],
@@ -285,7 +272,8 @@ $reclamo->load([
     'edificio',
     'clasificacion',
     'evidencia',
-    'proveedor'
+    'proveedor',
+    'area'
 ]);
 
 return response()->json([
@@ -330,7 +318,8 @@ public function confirmarFinalizacion(
         'edificio',
         'clasificacion',
         'evidencia',
-        'proveedor'
+        'proveedor',
+        'area'
     ]);
 
     return response()->json([
@@ -389,7 +378,8 @@ public function rechazarFinalizacion(
         'edificio',
         'clasificacion',
         'evidencia',
-        'proveedor'
+        'proveedor',
+        'area'
     ]);
 
     return response()->json([

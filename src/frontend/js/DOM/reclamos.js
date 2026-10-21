@@ -318,78 +318,142 @@ export class Reclamos {
         `;
     }
 
-    renderTarjeta(reclamo, indice, total) {
-        const estado = normalizarEstado(reclamo.estado);
-        const claseEstado = CLASES_ESTADO[estado] ?? "estado-enviado";
-        const descripcion = escaparHtml(reclamo.description || "Sin descripción");
-        const nombreEdificio = reclamo.edificio?.nombre || "Edificio no disponible";
-        const clasificacion = (
-            reclamo.clasificacion?.clasificacion || "Sin clasificación"
-        );
-        const etiquetaEstado = ETIQUETAS_ESTADO[estado] ?? estado;
-        const imagen = obtenerUrlEvidencia(reclamo.evidencia?.ruta_archivo);
-        const imagenHtml = imagen
-            ? `<img src="${escaparHtml(imagen)}" alt="Evidencia del reclamo" loading="${indice < 3 ? "eager" : "lazy"}" decoding="async">`
-            : `<span class="material-symbols-outlined" aria-hidden="true">
-                image_not_supported
-            </span>`;
-        const edificioHtml = `
-            <p class="reclamo-edificio">
-                <span class="material-symbols-outlined">
-                    location_city
-                </span>
-                ${escaparHtml(nombreEdificio)}
-            </p>
-        `;
-        const motivoRechazoHtml = (
-            reclamo.estado === "rechazada" && reclamo.motivo_rechazo
-        )
-            ? `<p class="motivo-rechazo">
-                Motivo: ${escaparHtml(reclamo.motivo_rechazo)}
-            </p>`
-            : "";
-        const posicion = (
-            (this.paginacion.pagina_actual - 1)
-            * this.paginacion.por_pagina
-        ) + indice + 1;
+    
+renderTarjeta(reclamo, indice, total) {
+    const estado = normalizarEstado(reclamo.estado);
+    const claseEstado = CLASES_ESTADO[estado] ?? "estado-enviado";
+    const descripcion = escaparHtml(
+        reclamo.description || "Sin descripción"
+    );
+    const nombreEdificio = reclamo.edificio?.nombre
+        || "Edificio no disponible";
+    const clasificacion = (
+        reclamo.clasificacion?.clasificacion || "Sin clasificación"
+    );
+    const etiquetaEstado = ETIQUETAS_ESTADO[estado] ?? estado;
 
-        return `
-            <article
-                class="primerdiv-reclamo ${claseEstado}"
-                data-reclamo-id="${escaparHtml(reclamo.id)}"
+    const rutaOriginal = reclamo.evidencia_original?.ruta_archivo;
+    const rutaResolucion = reclamo.evidencia?.ruta_archivo;
+
+    const imagenOriginal = obtenerUrlEvidencia(rutaOriginal);
+    const imagenResolucion = obtenerUrlEvidencia(rutaResolucion);
+
+    const tieneResolucion = [
+        "completado",
+        "finalizacion_confirmada"
+    ].includes(estado);
+
+    const hayDosFotos = Boolean(
+        tieneResolucion &&
+        imagenOriginal &&
+        imagenResolucion &&
+        rutaOriginal !== rutaResolucion
+    );
+
+    // Mostrar primero la foto del proveedor; si no existe, la original.
+    const imagen = imagenResolucion || imagenOriginal;
+
+    const imagenHtml = imagen
+        ? `
+            <img
+                src="${escaparHtml(imagen)}"
+                alt="${imagenResolucion
+                    ? "Foto de resolución del proveedor"
+                    : "Foto original del reclamo"}"
+                loading="${indice < 3 ? "eager" : "lazy"}"
+                decoding="async"
             >
-                <div class="foto-reclamo ${imagen ? "" : "sin-imagen"}">
-                    ${imagenHtml}
+            ${
+                hayDosFotos
+                    ? `
+                        <button
+                            type="button"
+                            class="btn-alternar-foto"
+                            data-foto-actual="proveedor"
+                            aria-label="Ver foto original del reclamo"
+                        >
+                            <span
+                                class="material-symbols-outlined"
+                                aria-hidden="true"
+                            >compare</span>
+                            Ver foto original
+                        </button>
+                    `
+                    : ""
+            }
+        `
+        : `
+            <span
+                class="material-symbols-outlined"
+                aria-hidden="true"
+            >image_not_supported</span>
+        `;
+
+    const edificioHtml = `
+        <p class="reclamo-edificio">
+            <span class="material-symbols-outlined">
+                location_city
+            </span>
+            ${escaparHtml(nombreEdificio)}
+        </p>
+    `;
+
+    const motivoRechazoHtml = (
+        reclamo.estado === "rechazada" && reclamo.motivo_rechazo
+    )
+        ? `<p class="motivo-rechazo">
+            Motivo: ${escaparHtml(reclamo.motivo_rechazo)}
+        </p>`
+        : "";
+
+    const posicion = (
+        (this.paginacion.pagina_actual - 1)
+        * this.paginacion.por_pagina
+    ) + indice + 1;
+
+    return `
+        <article
+            class="primerdiv-reclamo ${claseEstado}"
+            data-reclamo-id="${escaparHtml(reclamo.id)}"
+        >
+            <div class="foto-reclamo ${imagen ? "" : "sin-imagen"}">
+                ${imagenHtml}
+            </div>
+
+            <div class="info-reclamo">
+                <div class="reclamo-card-meta">
+                    <span class="reclamo-tipo">
+                        ${escaparHtml(clasificacion)}
+                    </span>
+                    <span class="reclamo-estado-actual">
+                        ${escaparHtml(etiquetaEstado)}
+                    </span>
                 </div>
 
-                <div class="info-reclamo">
-                    <div class="reclamo-card-meta">
-                        <span class="reclamo-tipo">
-                            ${escaparHtml(clasificacion)}
-                        </span>
-                        <span class="reclamo-estado-actual">
-                            ${escaparHtml(etiquetaEstado)}
-                        </span>
-                    </div>
-                    <h3 class="reclamo-titulo">${descripcion}</h3>
-                    ${edificioHtml}
-                    ${this.renderEstado(estado)}
-                    ${motivoRechazoHtml}
-                    ${this.renderAccionCancelacion(reclamo, estado)}
-                    ${this.renderAccionesFinalizacion(reclamo)}
-                    <p class="fecha-misreclamos">
-                        <span class="fecha-reclamo">
-                            <span class="material-symbols-outlined" aria-hidden="true">
-                                calendar_today
-                            </span>
-                            ${formatearFecha(reclamo.created_at)}
-                        </span>
-                        <span>Reclamo ${posicion} de ${total}</span>
-                    </p>
-                </div>
-            </article>
-        `;
-    }
+                <h3 class="reclamo-titulo">${descripcion}</h3>
+
+                ${edificioHtml}
+
+                ${this.renderEstado(estado)}
+                ${motivoRechazoHtml}
+                ${this.renderAccionCancelacion(reclamo, estado)}
+                ${this.renderAccionesFinalizacion(reclamo)}
+
+                <p class="fecha-misreclamos">
+                    <span class="fecha-reclamo">
+                        <span
+                            class="material-symbols-outlined"
+                            aria-hidden="true"
+                        >calendar_today</span>
+                        ${formatearFecha(reclamo.created_at)}
+                    </span>
+                    <span>Reclamo ${posicion} de ${total}</span>
+                </p>
+            </div>
+        </article>
+    `;
+}
+
 
     renderAccionCancelacion(reclamo, estado) {
         if (estado !== "pendiente") {
@@ -543,61 +607,136 @@ export class Reclamos {
         `;
     }
 
-    conectarEventos() {
-        this.main.querySelectorAll(".foto-reclamo img").forEach(imagen => {
-            imagen.addEventListener("error", () => {
-                const contenedor = imagen.closest(".foto-reclamo");
-                contenedor.classList.add("sin-imagen");
-                contenedor.innerHTML = `
-                    <span class="material-symbols-outlined" aria-hidden="true">
-                        broken_image
-                    </span>
+    
+conectarEventos() {
+    // Alternar entre la foto del proveedor y la original.
+    this.main.querySelectorAll(".btn-alternar-foto").forEach(boton => {
+        boton.addEventListener("click", () => {
+            const tarjeta = boton.closest(".primerdiv-reclamo");
+            const reclamoId = tarjeta?.dataset.reclamoId;
+
+            const reclamo = this.reclamos.find(item =>
+                String(item.id) === String(reclamoId)
+            );
+
+            if (!reclamo) {
+                return;
+            }
+
+            const imagenOriginal = obtenerUrlEvidencia(
+                reclamo.evidencia_original?.ruta_archivo
+            );
+
+            const imagenResolucion = obtenerUrlEvidencia(
+                reclamo.evidencia?.ruta_archivo
+            );
+
+            const imagen = tarjeta.querySelector(".foto-reclamo img");
+
+            if (!imagen || !imagenOriginal || !imagenResolucion) {
+                return;
+            }
+
+            const mostrandoProveedor =
+                boton.dataset.fotoActual === "proveedor";
+
+            if (mostrandoProveedor) {
+                imagen.src = imagenOriginal;
+                imagen.alt = "Foto original del reclamo";
+
+                boton.dataset.fotoActual = "original";
+                boton.setAttribute(
+                    "aria-label",
+                    "Ver foto del proveedor"
+                );
+                boton.innerHTML = `
+                    <span
+                        class="material-symbols-outlined"
+                        aria-hidden="true"
+                    >compare</span>
+                    Ver foto del proveedor
                 `;
-            });
-        });
+            } else {
+                imagen.src = imagenResolucion;
+                imagen.alt = "Foto de resolución del proveedor";
 
-        this.main.querySelectorAll(".edificio-chip").forEach(chip => {
-            chip.addEventListener("click", () => {
-                if (this.cargando || chip.classList.contains("active")) {
-                    return;
-                }
-
-                this.main.querySelectorAll(".edificio-chip").forEach(item => {
-                    item.classList.toggle("active", item === chip);
-                });
-                this.second_view(chip.dataset.filtro, 1);
-            });
-        });
-
-        this.main.querySelectorAll(".acciones-finalizacion").forEach(
-            acciones => this.conectarAccionesFinalizacion(acciones)
-        );
-
-        this.main.querySelectorAll(".acciones-cancelacion").forEach(
-            acciones => this.conectarAccionCancelacion(acciones)
-        );
-
-        this.main.querySelector(".pagina-anterior")?.addEventListener(
-            "click",
-            () => {
-                this.second_view(
-                    this.filtroActual,
-                    this.paginacion.pagina_actual - 1
+                boton.dataset.fotoActual = "proveedor";
+                boton.setAttribute(
+                    "aria-label",
+                    "Ver foto original del reclamo"
                 );
+                boton.innerHTML = `
+                    <span
+                        class="material-symbols-outlined"
+                        aria-hidden="true"
+                    >compare</span>
+                    Ver foto original
+                `;
             }
-        );
+        });
+    });
 
-        this.main.querySelector(".pagina-siguiente")?.addEventListener(
-            "click",
-            () => {
-                this.second_view(
-                    this.filtroActual,
-                    this.paginacion.pagina_actual + 1
-                );
+    // Manejar errores de carga de imágenes.
+    this.main.querySelectorAll(".foto-reclamo img").forEach(imagen => {
+        imagen.addEventListener("error", () => {
+            const contenedor = imagen.closest(".foto-reclamo");
+
+            contenedor.classList.add("sin-imagen");
+            contenedor.innerHTML = `
+                <span
+                    class="material-symbols-outlined"
+                    aria-hidden="true"
+                >broken_image</span>
+            `;
+        });
+    });
+
+    // Filtros.
+    this.main.querySelectorAll(".edificio-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            if (this.cargando || chip.classList.contains("active")) {
+                return;
             }
-        );
 
-    }
+            this.main.querySelectorAll(".edificio-chip").forEach(item => {
+                item.classList.toggle("active", item === chip);
+            });
+
+            this.second_view(chip.dataset.filtro, 1);
+        });
+    });
+
+    // Acciones de finalización y cancelación.
+    this.main.querySelectorAll(".acciones-finalizacion").forEach(
+        acciones => this.conectarAccionesFinalizacion(acciones)
+    );
+
+    this.main.querySelectorAll(".acciones-cancelacion").forEach(
+        acciones => this.conectarAccionCancelacion(acciones)
+    );
+
+    // Paginación.
+    this.main.querySelector(".pagina-anterior")?.addEventListener(
+        "click",
+        () => {
+            this.second_view(
+                this.filtroActual,
+                this.paginacion.pagina_actual - 1
+            );
+        }
+    );
+
+    this.main.querySelector(".pagina-siguiente")?.addEventListener(
+        "click",
+        () => {
+            this.second_view(
+                this.filtroActual,
+                this.paginacion.pagina_actual + 1
+            );
+        }
+    );
+}
+
 
     conectarAccionCancelacion(acciones) {
         const reclamo = this.reclamos.find(item => (

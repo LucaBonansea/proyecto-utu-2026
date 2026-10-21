@@ -42,6 +42,7 @@ class ReclamoService
         $reclamo = Reclamo::create([
             'usuario_cedula' => $cedula,
             'edificio_id' => $datos['edificio_id'],
+            'area_id' => $datos['area_id'],
             'description' => Str::squish($datos['description']),
             'clasificacion_id' => $datos['clasificacion_id'],
             'estado' => 'pendiente',
@@ -58,7 +59,12 @@ class ReclamoService
             'fecha_carga' => now(),
         ]);
 
-        return $reclamo;
+        return $reclamo->load([
+            'area',
+            'edificio',
+            'clasificacion',
+            'evidencia'
+        ]);
     }
 
     public function obtenerPorUsuario(
@@ -68,8 +74,10 @@ class ReclamoService
     ): LengthAwarePaginator {
         $consulta = Reclamo::with([
             'evidencia',
+            'evidenciaOriginal',
             'clasificacion',
-            'edificio'
+            'edificio',
+            'area'
         ])
             ->where('usuario_cedula', $cedula);
 
@@ -108,7 +116,8 @@ class ReclamoService
             'edificio',
             'clasificacion',
             'evidencia',
-            'proveedor'
+            'proveedor',
+            'area'
         ])
         ->latest()
         ->get();
@@ -122,7 +131,8 @@ class ReclamoService
                 'edificio',
                 'clasificacion',
                 'evidencia',
-                'proveedor'
+                'proveedor',
+                'area'
             ])
             ->latest()
             ->get();

@@ -25,6 +25,8 @@ class UsuarioService
             'password' => Hash::make($datos['password']),
             'rol' => $datos['rol'],
             'activo' => true,
+            'politicas_aceptadas' => false,
+            'politicas_aceptadas_at' => null,
         ]);
 
         // Usuario perteneciente a edificios

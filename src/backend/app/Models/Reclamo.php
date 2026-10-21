@@ -17,6 +17,9 @@ class Reclamo extends Model
         'prioridad',
         'motivo_rechazo',
         'proveedor_id',
+        'costo_mano_obra',
+        'costo_materiales',
+        'area_id',
     ];
 
     public function usuario()
@@ -44,18 +47,24 @@ class Reclamo extends Model
     /**
      * Historial completo de evidencias, incluidas las fotos de resolución.
      */
-    public function evidencias(): HasMany
-    {
+    public function evidencias(): HasMany{
         return $this->hasMany(Evidencia::class);
     }
 
-    public function clasificacion()
-    {
+    public function clasificacion(){
         return $this->belongsTo(Clasificacion::class);
     }
 
-    public function proveedor()
-    {
+    public function proveedor(){
         return $this->belongsTo(Proveedor::class);
+    }
+
+    public function evidenciaOriginal(): HasOne{
+        return $this->hasOne(Evidencia::class)->oldestOfMany();
+    }
+
+    public function area()
+    {
+    return $this->belongsTo(Area::class);
     }
 }
