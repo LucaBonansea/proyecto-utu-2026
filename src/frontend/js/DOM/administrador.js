@@ -668,10 +668,13 @@ function renderVistaReclamos() {
             </div>
 
             <div class="controles-reclamos-admin">
-                <label class="buscador-reclamos-admin">
-                    <span class="material-symbols-outlined" aria-hidden="true">search</span>
-                    <input type="search" placeholder="Buscar por descripción, usuario, edificio o clasificación">
-                </label>
+                <div class="buscador-usuarios buscador-reclamos-admin">
+                    <input type="search" placeholder="Buscar por descripción, usuario, edificio o clasificación" aria-label="Buscar reclamos">
+                    <button class="btn-buscar-usuario" type="button">
+                        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                        Buscar
+                    </button>
+                </div>
 
                 <label class="selector-estado-reclamos">
                     <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
@@ -691,6 +694,7 @@ function renderVistaReclamos() {
     `;
 
     const inputBuscar = section.querySelector(".buscador-reclamos-admin input");
+    const botonBuscar = section.querySelector(".buscador-reclamos-admin .btn-buscar-usuario");
     const selectEstado = section.querySelector(".selector-estado-reclamos select");
 
     const aplicarFiltros = () => {
@@ -699,6 +703,7 @@ function renderVistaReclamos() {
     };
 
     inputBuscar.addEventListener("input", aplicarFiltros);
+    botonBuscar.addEventListener("click", aplicarFiltros);
     selectEstado.addEventListener("change", aplicarFiltros);
     renderListaReclamos("", "todos");
 }

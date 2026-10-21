@@ -188,6 +188,7 @@ section::-webkit-scrollbar{
     border:1px solid var(--border-subtle);
     border-radius:12px;
     background:var(--bg-surface);
+    width: 500px;
 }
 
 .form-clasificacion-admin label{
@@ -208,6 +209,7 @@ section::-webkit-scrollbar{
     border-radius:8px;
     background:var(--bg-elevated);
     color:var(--text-primary);
+    max-width: 500px;
 }
 
 .form-clasificacion-admin button{
@@ -3289,6 +3291,104 @@ main{
 
 .admin-page .input-buscar-usuario {
     min-width: 0;
+}
+
+/* Mantiene un formato común para los buscadores de usuarios y reclamos. */
+.admin-page .buscador-usuarios,
+.admin-page .buscador-reclamos-admin {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(100%, 980px);
+    max-width: 980px;
+    padding: 10px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    background: var(--bg-surface);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+    box-sizing: border-box;
+}
+
+.admin-page .buscador-usuarios input,
+.admin-page .buscador-reclamos-admin input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 46px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px 0 0 999px;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 15px;
+    outline: none;
+}
+
+.admin-page .buscador-usuarios input:focus,
+.admin-page .buscador-reclamos-admin input:focus {
+    box-shadow: inset 0 0 0 1px var(--azul-primario);
+}
+
+.admin-page .buscador-usuarios .btn-buscar-usuario,
+.admin-page .buscador-reclamos-admin .btn-buscar-usuario {
+    flex: 0 0 auto;
+    min-height: 46px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 0 999px 999px 0;
+    background: var(--azul-primario);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-page .buscador-usuarios .btn-buscar-usuario:hover,
+.admin-page .buscador-reclamos-admin .btn-buscar-usuario:hover {
+    background: var(--azul-oscuro);
+}
+
+.admin-page .buscador-reclamos-admin {
+    flex: 1 1 auto;
+}
+
+.admin-page .selector-estado-reclamos,
+.admin-page .filtro-rol-usuarios {
+    min-height: 58px;
+    padding: 0 18px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    background: var(--bg-surface);
+    box-sizing: border-box;
+}
+
+.admin-page .selector-estado-reclamos select,
+.admin-page .filtro-rol-usuarios select {
+    min-width: 150px;
+    font-size: 15px;
+}
+
+@media (max-width: 600px) {
+    .admin-page .buscador-usuarios,
+    .admin-page .buscador-reclamos-admin {
+        width: 100%;
+        max-width: none;
+    }
+
+    .admin-page .buscador-usuarios .btn-buscar-usuario,
+    .admin-page .buscador-reclamos-admin .btn-buscar-usuario {
+        padding: 0 12px;
+    }
+
+    .admin-page .selector-estado-reclamos {
+        width: 100%;
+    }
+
+    .admin-page .selector-estado-reclamos select {
+        flex: 1;
+        min-width: 0;
+    }
 }
 
 .admin-page .filtro-rol-usuarios {
