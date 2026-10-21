@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 
 // Única ruta pública: inicia la sesión (el usuario todavía no está autenticado)
 Route::post('/auth/login', [AuthController::class,'login']);
-Route::get('/edificios/{edificio}/areas', [AreaController::class, 'porEdificio']);
 // Todo lo de abajo exige sesión iniciada (Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -109,5 +108,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/reclamos/{id}/confirmar-finalizacion', [ReclamoController::class, 'confirmarFinalizacion']);
         // Rechazar la solución indicando el motivo
         Route::put('/reclamos/{id}/rechazar-finalizacion', [ReclamoController::class, 'rechazarFinalizacion']);
+    
+        // ---------- Áreas de los edificios ----------
+        // Listar las áreas de un edificio
+        // Mostrar las areas de los edificios de sus reclamos Rol: Usuario_edificio
+        Route::get('/edificios/{edificio}/areas', [AreaController::class, 'porEdificio']);
     });
 });
