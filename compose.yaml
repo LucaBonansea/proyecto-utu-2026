@@ -12,7 +12,12 @@ services:
       - backend
 
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1/"]
+      test:
+        - CMD
+        - wget
+        - --quiet
+        - --spider
+        - http://127.0.0.1/proyecto-utu-2026/src/frontend/html/index.html
       interval: 10s
       timeout: 3s
       retries: 3
@@ -22,7 +27,11 @@ services:
     build:
       context: ./src/backend
 
+    command: ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000 --no-reload"]
+
     volumes:
+      - ./src/backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
       - backend_storage:/var/www/html/storage/app/public
 
     environment:
@@ -30,14 +39,19 @@ services:
       APP_KEY: base64:yx31sN/m5zhk/IoHU1C7eh6MuKTlkuzBiAs6YKgOFtg=
       APP_DEBUG: ${APP_DEBUG}
       APP_URL: http://localhost:5501
+
       DB_CONNECTION: mysql
       DB_HOST: database
       DB_PORT: 3306
       DB_DATABASE: ${DB_DATABASE:-proyecto_utu}
       DB_USERNAME: ${DB_USERNAME:-root}
       DB_PASSWORD: ${DB_PASSWORD:-root}
+
+      CACHE_STORE: file
+
       SESSION_DRIVER: database
       SESSION_COOKIE: proyecto_utu_session
+
       SANCTUM_STATEFUL_DOMAINS: 127.0.0.1:5500,localhost:5500,127.0.0.1:5501,localhost:5501,10.244.237.220:5501,192.168.*:5501,10.*:5501,172.*:5501,10.244.237.220:5501
 
     ports:
@@ -58,7 +72,14 @@ services:
       - mysql_data:/var/lib/mysql
 
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - -h
+        - 127.0.0.1
+        - -uroot
+        - -proot
       interval: 5s
       timeout: 3s
       retries: 10
@@ -67,3 +88,4 @@ services:
 volumes:
   mysql_data:
   backend_storage:
+  backend_vendor:

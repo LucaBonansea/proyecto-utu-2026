@@ -22,4 +22,9 @@ class Edificio extends Model
             'usuario_cedula'
         );
     }
+
+    public function areas()
+    {
+        return $this->hasMany(Area::class);
+    }
 }
