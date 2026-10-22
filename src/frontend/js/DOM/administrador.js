@@ -2560,7 +2560,7 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="telefono-usuario"
                             type="text"
-                            placeholder="Ej. 098 123 456"
+                            placeholder="Ej. 098123456"
                         >
 
                     </div>
