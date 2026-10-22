@@ -535,6 +535,7 @@ textarea:focus-visible,
 :root[data-theme="dark"] .icono-subir,
 :root[data-theme="dark"] #tipo-reclamo,
 :root[data-theme="dark"] #edificio,
+:root[data-theme="dark"] #area,
 :root[data-theme="dark"] .categoria,
 :root[data-theme="dark"] .descripcion,
 :root[data-theme="dark"] .busqueda,
@@ -552,6 +553,7 @@ textarea:focus-visible,
 :root[data-theme="dark"] .icono-subir:hover,
 :root[data-theme="dark"] #tipo-reclamo:hover,
 :root[data-theme="dark"] #edificio:hover,
+:root[data-theme="dark"] #area:hover,
 :root[data-theme="dark"] .sugerencia-item:hover,
 :root[data-theme="dark"] .sugerencia-item.activa,
 :root[data-theme="dark"] .stat-item:hover,
@@ -562,6 +564,7 @@ textarea:focus-visible,
 :root[data-theme="dark"] .icono-subir,
 :root[data-theme="dark"] #tipo-reclamo,
 :root[data-theme="dark"] #edificio,
+:root[data-theme="dark"] #area,
 :root[data-theme="dark"] .descripcion,
 :root[data-theme="dark"] .perfil-card,
 :root[data-theme="dark"] .stat-item,
@@ -623,7 +626,8 @@ textarea:focus-visible,
 }
 
 :root[data-theme="dark"] #tipo-reclamo,
-:root[data-theme="dark"] #edificio {
+:root[data-theme="dark"] #edificio,
+:root[data-theme="dark"] #area {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23b4bfd0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
 }
 

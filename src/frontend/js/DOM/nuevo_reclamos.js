@@ -1,5 +1,6 @@
 ﻿import {
     crearReclamo,
+    obtenerAreasPorEdificio,
     obtenerClasificaciones,
     obtenerEdificios
 } from "../services/reclamos-service.js";
@@ -74,6 +75,14 @@ export class Nuevo_reclamos {
             </option>
         </select>
 
+        <label for="area" class="tipo-reclamo-label">Área</label>
+
+        <select id="area" required disabled>
+            <option value="" selected disabled>
+                Selecciona primero un edificio
+            </option>
+        </select>
+
         
         <section class="bottom-new-reclamo">
             <button class="enviarReclamo">Enviar Reclamo</button>
@@ -81,6 +90,7 @@ export class Nuevo_reclamos {
 
         this.cargar_clasificaciones();
         this.cargar_edificios();
+        this.preparar_selector_areas();
         this.subir_foto();
         this.enviar_reclamo();
     }
@@ -157,6 +167,81 @@ export class Nuevo_reclamos {
             select.innerHTML = `
                 <option value="" selected disabled>
                     Error al cargar los edificios
+                </option>
+            `;
+        }
+    }
+
+    preparar_selector_areas() {
+        const selectEdificio = document.getElementById("edificio");
+        const selectArea = document.getElementById("area");
+
+        selectEdificio.addEventListener("change", () => {
+            const edificioId = selectEdificio.value;
+
+            selectArea.disabled = true;
+            selectArea.innerHTML = `
+                <option value="" selected disabled>
+                    Cargando áreas...
+                </option>
+            `;
+
+            this.cargar_areas(edificioId);
+        });
+    }
+
+    async cargar_areas(edificioId) {
+        const selectEdificio = document.getElementById("edificio");
+        const selectArea = document.getElementById("area");
+
+        try {
+            const response = await obtenerAreasPorEdificio(edificioId);
+
+            if (!response.ok) {
+                throw new Error("Error al obtener las áreas");
+            }
+
+            const areas = await response.json();
+
+            if (selectEdificio.value !== String(edificioId)) {
+                return;
+            }
+
+            if (areas.length === 0) {
+                selectArea.innerHTML = `
+                    <option value="" selected disabled>
+                        Este edificio no tiene áreas registradas
+                    </option>
+                `;
+                return;
+            }
+
+            selectArea.innerHTML = `
+                <option value="" selected disabled>
+                    Selecciona el área del edificio
+                </option>
+            `;
+
+            areas.forEach(area => {
+                const option = document.createElement("option");
+
+                option.value = area.id;
+                option.textContent = area.nombre;
+
+                selectArea.appendChild(option);
+            });
+
+            selectArea.disabled = false;
+        } catch (error) {
+            console.error("Error al cargar las áreas:", error);
+
+            if (selectEdificio.value !== String(edificioId)) {
+                return;
+            }
+
+            selectArea.innerHTML = `
+                <option value="" selected disabled>
+                    Error al cargar las áreas
                 </option>
             `;
         }
@@ -284,6 +369,9 @@ enviar_reclamo() {
         const edificio_id =
             document.getElementById("edificio").value;
 
+        const area_id =
+            document.getElementById("area").value;
+
         if (!archivo) {
             this.mostrarToast(
                 "error",
@@ -332,6 +420,14 @@ enviar_reclamo() {
             return;
         }
 
+        if (!area_id) {
+            this.mostrarToast(
+                "error",
+                "Debes seleccionar un área."
+            );
+            return;
+        }
+
         try {
             boton.disabled = true;
             boton.textContent = "Enviando...";
@@ -351,6 +447,11 @@ enviar_reclamo() {
             formData.append(
                 "edificio_id",
                 edificio_id
+            );
+
+            formData.append(
+                "area_id",
+                area_id
             );
 
             formData.append(

@@ -14,6 +14,13 @@ export function obtenerEdificios() {
     });
 }
 
+export function obtenerAreasPorEdificio(edificioId) {
+    return apiFetch(`/api/edificios/${edificioId}/areas`, {
+        credentials: "include",
+        headers: { "Accept": "application/json" }
+    });
+}
+
 export function obtenerReclamos({ pagina = 1, filtro = "todos" } = {}) {
     const parametros = new URLSearchParams({
         page: pagina,
