@@ -39,4 +39,48 @@ class AreaController extends Controller
 
         return response()->json($areas);
     }
+
+     public function store(Request $request)
+    {
+        $datos = $request->validate([
+            'edificio_id' => [
+                'required',
+                'integer',
+                'exists:edificios,id',
+            ],
+
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'descripcion' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+        ]);
+
+        $existe = Area::where('edificio_id', $datos['edificio_id'])
+            ->where('nombre', $datos['nombre'])
+            ->exists();
+
+        if ($existe) {
+            return response()->json([
+                'message' => 'Ya existe un área con ese nombre en este edificio.'
+            ], 422);
+        }
+
+        $area = Area::create([
+            'edificio_id' => $datos['edificio_id'],
+            'nombre' => $datos['nombre'],
+            'descripcion' => $datos['descripcion'] ?? null,
+        ]);
+
+        return response()->json([
+            'message' => 'Área creada correctamente.',
+            'area' => $area,
+        ], 201);
+    }
 }
