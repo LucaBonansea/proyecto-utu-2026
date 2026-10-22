@@ -2273,6 +2273,15 @@ function vistaUsuarios(filtro = "") {
 
                     </div>
 
+                     <div class="campo-usuario">
+                          <label>Repetir contraseña</label>
+                        
+                          <input
+                              class="confirm-password-usuario"
+                              type="password"
+                              placeholder="Repetir contraseña"
+                          >
+                    </div>
 
                     <div class="campo-usuario">
 
@@ -2422,6 +2431,8 @@ function vistaUsuarios(filtro = "") {
     // ELEMENTOS DEL DOM
     // ==========================================
 
+
+    
     const cedulaInput =
         document.querySelector(".cedula-usuario");
 
@@ -2436,6 +2447,12 @@ function vistaUsuarios(filtro = "") {
 
     const passwordInput =
         document.querySelector(".password-usuario");
+
+     cedulaInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
+
+    const confirmPasswordInput = document.querySelector(".confirm-password-usuario");
 
     const rolSelect =
         document.querySelector(".rol-usuario");
@@ -2496,7 +2513,7 @@ function vistaUsuarios(filtro = "") {
         telefonoInput.value = "";
         emailInput.value = "";
         passwordInput.value = "";
-
+        confirmPasswordInput.value = ""; 
         rolSelect.selectedIndex = 0;
 
         document
@@ -2579,7 +2596,14 @@ function vistaUsuarios(filtro = "") {
             return;
 
         }
-
+        
+        if (
+            password !==
+             confirmPasswordInput.value.trim()
+        ) {
+            notify.warning("Las contraseñas no coinciden.");
+            return;
+        }
 
         // ======================================
         // VALIDAR EDIFICIO
