@@ -1,54 +1,63 @@
+<!--
+    VISTA: Panel de administrador departamental.
+    El HTML define la estructura visible (menú, encabezado y áreas vacías).
+    administrador.js completa esas áreas con datos y conecta las acciones.
+    Flujo: navegador carga esta página -> JavaScript consulta sesión/datos ->
+    el administrador elige una sección desde la barra lateral.
+-->
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador</title>
-    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrador.css?v=20261009-1">
-    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css?v=20261009-1">
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrador.css?v=20261022-2">
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css?v=20261016-2">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
-<body class="admin-page">
-    <aside class="sidebar">
-        <div class="first-btns">
+<body class="admin-page" data-carga-interfaz>
+    <!-- Navegación entre las secciones que administra este rol. -->
+    <div class="sidebar-box">
+        <aside class="sidebar">
+            <div class="first-btns">
 
-            <button class="sidebar-btn reclamos-btn">
-                <span class="material-symbols-outlined">campaign</span>
-                Reclamos
-            </button>
+                <button class="sidebar-btn reclamos-btn " title="Reclamos">
+                    <span class="material-symbols-outlined">campaign</span>
+                    
+                </button>
 
-            <button class="sidebar-btn proveedores-btn active">
-                <span class="material-symbols-outlined">local_shipping</span>
-                Proveedores
-            </button>
+                <button class="sidebar-btn proveedores-btn active" title="Proveedores">
+                    <span class="material-symbols-outlined">local_shipping</span>
+                    
+                </button>
 
-            <button class="sidebar-btn edificios-btn">
-                <span class="material-symbols-outlined">apartment</span>
-                Edificios
-            </button>
+                <button class="sidebar-btn edificios-btn" title="Edificios">
+                    <span class="material-symbols-outlined">apartment</span>
+                    
+                </button>
 
-            <button class="sidebar-btn clasificaciones-btn">
-                <span class="material-symbols-outlined">category</span>
-                Clasificaciones
-            </button>
+                <button class="sidebar-btn clasificaciones-btn" title="Clasificaciones">
+                    <span class="material-symbols-outlined">category</span>
+                    
+                </button>
 
-            <button class="sidebar-btn usuarios-btn">
-                <span class="material-symbols-outlined">manage_accounts</span>
-                Usuarios
-            </button>
-        </div>
-    </aside>
-
+                <button class="sidebar-btn usuarios-btn" title="Usuarios">
+                    <span class="material-symbols-outlined">manage_accounts</span>
+                    
+                </button>
+            </div>
+        </aside>
+    </div>
     <main>
         <header>
             <div class="logos">
                 <div class="logo-div">
                     <img class="logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_reclamos.png" alt="">
                 </div>
-                <a href="index.html" class="int-logo-div">
+                <div class="int-logo-div">
                     <img class="int-logo" src="/proyecto-utu-2026/src/frontend/assets/imgs/logo_intendencia.png" alt="">
-                </a>
+                </div>
             </div>
 
             <div class="header-title">
@@ -56,6 +65,15 @@
             </div>
 
             <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    id="theme-toggle"
+                    type="button"
+                    aria-label="Cambiar tema"
+                >
+                    <span class="material-symbols-outlined" aria-hidden="true">contrast</span>
+                </button>
+
                 <div class="notificaciones-wrapper">
                     <button
                         class="notificaciones-btn-top"
@@ -83,15 +101,6 @@
                     </div>
                 </div>
 
-                <button
-                    class="theme-toggle"
-                    id="theme-toggle"
-                    type="button"
-                    aria-label="Cambiar tema"
-                >
-                    <span class="material-symbols-outlined" aria-hidden="true">contrast</span>
-                </button>
-
                 <div class="account-menu-wrapper">
                     <button
                         class="account-trigger"
@@ -107,7 +116,6 @@
                     <div class="account-menu" id="account-menu" aria-hidden="true">
                         <div class="account-menu-content">
                             <div class="account-loading">
-                                <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
                                 Cargando cuenta...
                             </div>
                         </div>
@@ -126,12 +134,15 @@
             </div>
         </header>
 
+        <!-- Contenedores dinámicos: JS inserta aquí filtros y contenido. -->
         <div id="filtro-container"></div>
 
         <section></section>
     </main>
+
     <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
-    <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=4" type="module"></script>
+    <!-- Scripts del panel; administrador.js es el controlador principal. -->
+    <script src="/proyecto-utu-2026/src/frontend/js/global-loading.js?v=20261022-2"></script>
+    <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=20261022-2" type="module"></script>
 </body>
 </html>
-

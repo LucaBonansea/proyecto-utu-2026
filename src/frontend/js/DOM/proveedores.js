@@ -6,6 +6,7 @@ import {
 import {
     obtenerUrlEvidencia
 } from "../services/reclamos-service.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 
 import { inicializarTema } from '../theme.js';
 import { inicializarNotificaciones } from './notifications.js';
@@ -14,10 +15,13 @@ let reclamos = [];
 let reclamoActual = null;
 let filtroActual = "todos";
 let datosUsuario = null;
+let cambiandoFiltro = false;
 
 const listaReclamos = document.getElementById("lista-reclamos");
 const containerReclamos = document.getElementById("container-reclamos");
+const filtrosReclamos = document.querySelector(".filtros-reclamos");
 
+const resumenUrgentes = document.getElementById("resumen-urgentes");
 const containerUrgentes = document.getElementById("container-urgentes");
 const cantidadUrgentes = document.getElementById("cantidad-urgentes");
 
@@ -37,8 +41,6 @@ const cuentaEmail = document.getElementById("cuenta-email");
 const cuentaTelefono = document.getElementById("cuenta-telefono");
 const cuentaProveedor = document.getElementById("cuenta-proveedor");
 const cuentaRol = document.getElementById("cuenta-rol");
-
-const mensajePagina = document.getElementById("mensaje-pagina");
 
 const detalleImagen = document.getElementById("detalle-imagen");
 const detalleTitulo = document.getElementById("detalle-titulo");
@@ -107,22 +109,12 @@ const observaciones = document.getElementById("observaciones");
 const btnFinalizar = document.getElementById("btn-finalizar");
 
 function mostrarMensaje(texto, error = false) {
-    if (!mensajePagina) {
+    if (error) {
+        notify.error(texto);
         return;
     }
 
-    mensajePagina.textContent = texto;
-
-    mensajePagina.classList.remove("oculto");
-
-    mensajePagina.classList.toggle(
-        "error",
-        error
-    );
-
-    setTimeout(() => {
-        mensajePagina.classList.add("oculto");
-    }, 3000);
+    notify.success(texto);
 }
 
 function mostrarLista() {
@@ -345,7 +337,16 @@ function obtenerReclamosUrgentes() {
     );
 }
 
+function actualizarVisibilidadSecciones() {
+    const hayReclamos = reclamos.length > 0;
+
+    filtrosReclamos?.classList.toggle("oculto", !hayReclamos);
+    resumenUrgentes?.classList.toggle("oculto", !hayReclamos);
+}
+
 function renderizarUrgentes() {
+    actualizarVisibilidadSecciones();
+
     if (!containerUrgentes || !cantidadUrgentes) {
         return;
     }
@@ -426,6 +427,19 @@ function renderizarReclamos() {
         obtenerReclamosFiltrados();
 
     if (reclamosFiltrados.length === 0) {
+        if (reclamos.length === 0) {
+            containerReclamos.innerHTML = `
+                <div class="reclamos-vacio" role="status">
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        assignment
+                    </span>
+                    <p>No hay reclamos todavía.</p>
+                </div>
+            `;
+
+            return;
+        }
+
         containerReclamos.innerHTML = `
             <div class="reclamo-vacio">
                 <h2>No hay reclamos</h2>
@@ -522,6 +536,95 @@ function renderizarReclamos() {
 
         containerReclamos.appendChild(tarjeta);
     });
+}
+
+async function cambiarFiltro(boton) {
+    if (
+        cambiandoFiltro ||
+        boton.classList.contains("filtro-activo")
+    ) {
+        return;
+    }
+
+    document.querySelectorAll(
+        ".filtros-reclamos button"
+    ).forEach(
+        botonFiltro =>
+            botonFiltro.classList.toggle(
+                "filtro-activo",
+                botonFiltro === boton
+            )
+    );
+
+    filtroActual = boton.dataset.filtro;
+
+    if (
+        typeof containerReclamos.animate !== "function" ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+        renderizarReclamos();
+        return;
+    }
+
+    cambiandoFiltro = true;
+
+    const alturaAnterior =
+        containerReclamos.getBoundingClientRect().height;
+
+    try {
+        await containerReclamos.animate(
+            [
+                { opacity: 1 },
+                { opacity: 0 }
+            ],
+            {
+                duration: 90,
+                easing: "ease-out",
+                fill: "forwards"
+            }
+        ).finished;
+
+        containerReclamos.style.height = `${alturaAnterior}px`;
+        containerReclamos.style.overflow = "hidden";
+        containerReclamos.style.willChange = "height, opacity";
+
+        renderizarReclamos();
+
+        containerReclamos.style.height = "auto";
+
+        const alturaNueva =
+            containerReclamos.getBoundingClientRect().height;
+
+        containerReclamos.style.height = `${alturaAnterior}px`;
+
+        await containerReclamos.animate(
+            [
+                {
+                    height: `${alturaAnterior}px`,
+                    opacity: 0
+                },
+                {
+                    height: `${alturaNueva}px`,
+                    opacity: 1
+                }
+            ],
+            {
+                duration: 180,
+                easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+                fill: "forwards"
+            }
+        ).finished;
+    } catch {
+        renderizarReclamos();
+    } finally {
+        containerReclamos.style.removeProperty("height");
+        containerReclamos.style.removeProperty("overflow");
+        containerReclamos.style.removeProperty("will-change");
+        containerReclamos.getAnimations().forEach(
+            animacion => animacion.cancel()
+        );
+        cambiandoFiltro = false;
+    }
 }
 
 function abrirDetalle(reclamo) {
@@ -648,6 +751,9 @@ function limpiarFormulario() {
 }
 
 async function cargarReclamos() {
+    filtrosReclamos?.classList.add("oculto");
+    resumenUrgentes?.classList.add("oculto");
+
     containerReclamos.innerHTML = `
         <div class="cargando">
             Cargando reclamos...
@@ -858,26 +964,7 @@ document.querySelectorAll(
 
     boton.addEventListener(
         "click",
-        () => {
-
-            document.querySelectorAll(
-                ".filtros-reclamos button"
-            ).forEach(
-                botonFiltro =>
-                    botonFiltro.classList.remove(
-                        "filtro-activo"
-                    )
-            );
-
-            boton.classList.add(
-                "filtro-activo"
-            );
-
-            filtroActual =
-                boton.dataset.filtro;
-
-            renderizarReclamos();
-        }
+        () => cambiarFiltro(boton)
     );
 });
 
@@ -1169,17 +1256,18 @@ formResolver.addEventListener(
 );
 
 async function iniciar() {
-    inicializarModuloSeguro("tema", inicializarTema);
+    try {
+        inicializarModuloSeguro("tema", inicializarTema);
 
-    const sesionValida =
-        await verificarSesion();
+        const sesionValida = await verificarSesion();
 
-    if (!sesionValida) {
-        return;
+        if (!sesionValida) return;
+
+        inicializarModuloSeguro("notificaciones", inicializarNotificaciones);
+        await cargarReclamos();
+    } finally {
+        window.finalizarCargaInterfaz?.();
     }
-
-    inicializarModuloSeguro("notificaciones", inicializarNotificaciones);
-    await cargarReclamos();
 }
 
 function inicializarModuloSeguro(nombre, inicializador) {

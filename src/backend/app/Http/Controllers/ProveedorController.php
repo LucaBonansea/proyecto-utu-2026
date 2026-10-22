@@ -7,6 +7,7 @@ use App\Services\ProveedorService;
 use Illuminate\Http\Request;
 use App\Models\Reclamo;
 use App\Models\Evidencia;
+use Illuminate\Validation\Rule;
 
 
 class ProveedorController extends Controller
@@ -20,15 +21,27 @@ class ProveedorController extends Controller
 
     public function store(Request $request, ProveedorService $proveedorService)
     {
+        $camposNormalizados = [];
+
+        foreach (['rut', 'telefono', 'telefono_contacto'] as $campo) {
+            $valor = $request->input($campo);
+
+            if (is_string($valor)) {
+                $camposNormalizados[$campo] = preg_replace('/[\s().-]+/u', '', $valor);
+            }
+        }
+
+        $request->merge($camposNormalizados);
+
         $datos = $request->validate([
             'nombre' => ['required', 'string', 'max:255'],
             'razon_social' => ['required', 'string', 'max:255'],
-            'rut' => ['required', 'string', 'max:20', 'unique:proveedores,rut'],
-            'telefono' => ['required', 'string', 'max:20'],
+            'rut' => ['bail', 'required', 'string', 'regex:/^\d{12}$/', Rule::unique('proveedores', 'rut')],
+            'telefono' => ['required', 'string', 'regex:/^(?:\d{8,9}|\+598\d{8})$/'],
             'direccion' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'contacto_responsable' => ['required', 'string', 'max:255'],
-            'telefono_contacto' => ['required', 'string', 'max:20'],
+            'telefono_contacto' => ['required', 'string', 'regex:/^(?:\d{8,9}|\+598\d{8})$/'],
             'email_contacto' => ['required', 'email', 'max:255'],
         ]);
 
@@ -74,7 +87,8 @@ class ProveedorController extends Controller
             'edificio',
             'clasificacion',
             'evidencia',
-            'proveedor'
+            'proveedor',
+            'area'
         ])
         ->latest()
         ->get();
@@ -99,7 +113,7 @@ public function aceptarReclamo(Request $request, string $id, NotificacionService
         ], 422);
     }
 
-    $reclamo = Reclamo::find($id);
+    $reclamo = Reclamo::with('area')->find($id);
 
     if (!$reclamo) {
         return response()->json([
@@ -135,7 +149,8 @@ public function aceptarReclamo(Request $request, string $id, NotificacionService
         'edificio',
         'clasificacion',
         'evidencia',
-        'proveedor'
+        'proveedor',
+        'area'
     ]);
 
     return response()->json([
@@ -143,6 +158,7 @@ public function aceptarReclamo(Request $request, string $id, NotificacionService
         'reclamo' => $reclamo
     ], 200);
 }
+
 public function finalizarReclamo(Request $request, string $id, NotificacionService $notificacionService)
 {
     $usuario = $request->user();
@@ -182,6 +198,8 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
     $datos = $request->validate([
         'foto' => ['required', 'image', 'max:10240'],
         'observaciones' => ['required', 'string', 'max:500'],
+        'costo_mano_obra' => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:99999999.99'],
+        'costo_materiales' => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:99999999.99'],
     ]);
 
     $ruta = $request->file('foto')->store('evidencias', 'public');
@@ -193,6 +211,8 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
         'fecha_carga' => now(),
     ]);
 
+    $reclamo->costo_mano_obra = $datos['costo_mano_obra'];
+    $reclamo->costo_materiales = $datos['costo_materiales'];
     $reclamo->estado = 'completado';
     $reclamo->save();
 
@@ -209,7 +229,8 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
         'edificio',
         'clasificacion',
         'evidencia',
-        'proveedor'
+        'proveedor',
+        'area'
     ]);
 
     return response()->json([
@@ -217,6 +238,7 @@ public function finalizarReclamo(Request $request, string $id, NotificacionServi
         'reclamo' => $reclamo
     ], 200);
 }
+
 public function aceptarDevolucion(Request $request, string $id, NotificacionService $notificacionService)
 {
     $usuario = $request->user();
@@ -270,7 +292,8 @@ public function aceptarDevolucion(Request $request, string $id, NotificacionServ
         'edificio',
         'clasificacion',
         'evidencia',
-        'proveedor'
+        'proveedor',
+        'area'
     ]);
 
     return response()->json([

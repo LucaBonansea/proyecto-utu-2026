@@ -43,3 +43,24 @@ El proyecto, originalmente orientado a la gestión de reclamos ciudadanos, pasa 
 - La solución y las evidencias registradas por el **Usuario de proveedor** serán comunicadas al **Usuario de edificio** que realizó el reclamo.
 - El **Usuario de edificio** podrá consultar el estado y avance de sus reclamos y visualizar la información y evidencias relacionadas con la resolución del reclamo.
 - Se eliminan del alcance las funcionalidades relacionadas con la visualización pública de reclamos de otros ciudadanos, dado que los reclamos estarán vinculados a usuarios y edificios específicos.
+
+
+
+## Cambio 3
+
+### Fecha: 21/10/2026
+
+**Cambio:** Incorporación de 5 nuevos requerimientos funcionales (RF-26 a RF-30) y 3 historias de usuario (HU28, HU29 y HU31), a partir de la retroalimentación recibida durante la Sprint Review 7.
+
+**Justificación:**
+
+Durante la Sprint Review 7, el cliente propuso incorporar nuevas funcionalidades para mejorar la gestión, el control de costos y la trazabilidad de los reclamos. Se identificó la necesidad de consultar estadísticas de reclamos aprobados, rechazados y pendientes, conocer la cantidad de reclamos por edificio y área afectada, registrar los costos de materiales y mano de obra de los proveedores, y asociar cada reclamo a un área específica dentro del edificio.
+
+**Impacto:**
+
+- El **Administrador** podrá consultar estadísticas generales de los reclamos, incluyendo la cantidad de reclamos aprobados, rechazados y pendientes, así como la cantidad de reclamos registrados por edificio y área afectada, facilitando su seguimiento y la toma de decisiones.
+- El **Administrador** podrá consultar los costos de materiales y mano de obra asociados a cada reclamo y proveedor, además de conocer el costo total acumulado por edificio, permitiendo un mayor control de los gastos.
+- Los **Usuarios de proveedor** podrán registrar los costos de materiales y mano de obra al momento de finalizar una tarea, quedando asociados al proveedor y al reclamo correspondiente.
+- El **Usuario de edificio** deberá indicar el área específica afectada al registrar un reclamo, quedando asociada al edificio correspondiente.
+- Los **Usuarios de proveedor** podrán identificar directamente el sector afectado dentro del edificio, evitando demoras en la búsqueda del lugar donde deben realizar el trabajo.
+- Se incorporan **5 nuevos requerimientos funcionales (RF-26 a RF-30)** y **3 historias de usuario (HU28, HU29 y HU31)**, con un total estimado de **18 puntos de historia**, que serán considerados para su priorización en los próximos Sprints.

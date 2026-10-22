@@ -1,5 +1,38 @@
+/**
+ * ============================================================================
+ * 🚀 FLUJO GENERAL DEL PANEL ADMINISTRADOR (CÓMO FUNCIONA DE PUNTA A PUNTA)
+ * ============================================================================
+ * 
+ * 1. ARRANQUE Y SEGURIDAD (DOMContentLoaded -> iniciar):
+ *    - Se comprueba la sesión con `verificar_sesion()`. Si el rol es "administrador", 
+ *      entra al panel; si es otro rol, se le redirige a su pantalla correspondiente.
+ *    - Se inicializan el tema visual, las notificaciones y `iniciarAplicacion()`.
+ * 
+ * 2. CARGA MASIVA DE DATOS INICIALES (iniciarAplicacion):
+ *    - Se consultan en paralelo los datos maestros desde el backend: 
+ *      Edificios, Usuarios y Proveedores, guardándolos en cachés de memoria locales.
+ *    - Se configuran los eventos de la barra lateral (sidebar) para cambiar de sección.
+ * 
+ * 3. GESTIÓN DE SECCIONES (Vistas dinámicas del Administrador):
+ *    - **Reclamos (`vistaReclamos`):** Muestra todos los reclamos con buscador y filtros de estado.
+ *    - **Clasificaciones (`vistaClasificaciones`):** Permite listar y crear nuevas categorías.
+ *    - **Proveedores (`vistaProveedores`):** Listado con paginación, filtros de activos/inactivos, 
+ *      creación de nuevos proveedores y cambio de estado (activar/desactivar).
+ *    - **Edificios (`vistaEdificios`):** Permite agregar edificios y ver sus detalles y usuarios asociados.
+ *    - **Usuarios (`vistaUsuarios`):** Gestión completa de cuentas, cambio de roles, asignación 
+ *      de edificios/proveedores y actualización de contraseñas.
+ * ============================================================================
+ */
+
+/*
+ * CONTROLADOR DEL PANEL ADMINISTRADOR.
+ * Coordina la interfaz y llama a los servicios (capa que habla con el backend).
+   extrae y trae todo lo necesario de otros archivos para que el proyecto quede bien dividido, ordenado y listo para usar en el momento en que la interfaz lo necesite.   
+ * Flujo general: validar sesión -> cargar datos -> mostrar sección ->
+ * responder a búsquedas, cambios y formularios.
+ */
 import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
-import { notify } from "../utils/toast.js";
+import { notify } from "../utils/toast.js?v=20261016-1";
 import { inicializarTema } from '../theme.js';
 import { inicializarNotificaciones } from './notifications.js';
 import {
@@ -18,6 +51,7 @@ import {
 } from "../services/administrador-service.js";
 import { obtenerUrlEvidencia } from "../services/reclamos-service.js";
 
+// Referencias a elementos HTML que se actualizan desde JavaScript.
 const section = document.querySelector("main > section");
 const filtro_container = document.querySelector("#filtro-container");
 const proveedoresbtn = document.querySelector(".proveedores-btn");
@@ -32,6 +66,7 @@ const accountMenu = document.querySelector(".account-menu");
 const accountMenuContent = document.querySelector(".account-menu-content");
 const logoutbtn = document.querySelector(".account-logout");
 
+// Normaliza texto para comparar búsquedas aunque el usuario omita tildes.
 function quitarTildes(texto) {
 
     return texto
@@ -42,6 +77,8 @@ function quitarTildes(texto) {
 
 
 
+// Caché en memoria: aquí se guardan las respuestas del servidor durante la vista.
+// Se llenan al iniciar (cargarEdificios, etc.): Justo cuando la aplicación arranca (iniciarAplicacion), el sistema va a la base de datos de Laravel, trae la información y "llena" estos arreglos con los datos reales.
 let edificios = [];
 let usuarios = [];
 let proveedores = [];
@@ -65,12 +102,14 @@ const NOMBRES_ESTADO_RECLAMO = {
     rechazado: "Rechazado"
 };
 
+// Convierte texto en texto seguro antes de insertarlo en plantillas HTML.
 function escaparHtml(valor = "") {
     const elemento = document.createElement("div");
     elemento.textContent = String(valor);
     return elemento.innerHTML;
 }
-
+// Recibe la fecha cruda que viene de la base de datos (que suele verse fea o en formato ISO como 2026-10-16T...)
+//  y la transforma usando Intl.DateTimeFormat al formato uruguayo (es-UY) con fecha y hora cortas, manejando posibles errores si la fecha viene vacía o inválida.
 function formatearFechaReclamo(fecha) {
     if (!fecha) return "Fecha no disponible";
 
@@ -85,22 +124,30 @@ function formatearFechaReclamo(fecha) {
         timeStyle: "short"
     }).format(fechaReclamo);
 }
-
+//Toma el estado que venga de la base de datos, lo pasa a minúsculas y se asegura de que, si viene vacío, por defecto tome el valor "pendiente".
+//  Esto evita que el código falle por un error de mayúsculas o minúsculas al compararlo.
 function normalizarEstadoReclamo(estado) {
     return String(estado || "pendiente").toLowerCase();
 }
 
+// Divide una lista en páginas y calcula qué elementos mostrar.
 function paginarElementos(elementos, paginaSolicitada) {
     const totalPaginas = Math.max(
         1,
         Math.ceil(elementos.length / LIMITE_PAGINACION_ADMIN)
     );
+    //Valida y frena que la página solicitada nunca sea menor a 1 ni mayor al total real
+    //(evita que la app rompa si filtras datos o pones una página que no existe).
     const paginaActual = Math.min(
         Math.max(Number(paginaSolicitada) || 1, 1),
         totalPaginas
     );
+    // Calcula la posición numérica exacta en la lista donde debe empezar a recortar los elementos para la página actual
+    //(teniendo en cuenta que en programación se empieza a contar desde el 0).
     const inicio = (paginaActual - 1) * LIMITE_PAGINACION_ADMIN;
 
+    // Devuelve el "paquete" listo para la interfaz, conteniendo la sub-lista recortada con los elementos exactos de la página
+    //(elementosPagina), la página en la que estás (paginaActual), el total de páginas (totalPaginas) y el punto de partida (inicio).
     return {
         elementosPagina: elementos.slice(
             inicio,
@@ -119,6 +166,7 @@ function renderPaginacionAdministrador(
     nombreSingular,
     nombrePlural
 ) {
+//Si los elementos entran todos en una sola pantalla, oculta los botones de paginación para limpiar la interfaz.
     if (totalElementos <= LIMITE_PAGINACION_ADMIN) return "";
 
     const nombre = totalElementos === 1 ? nombreSingular : nombrePlural;
@@ -151,7 +199,8 @@ function renderPaginacionAdministrador(
         </nav>
     `;
 }
-
+//Detecta cuando el usuario hace clic en los botones de "Siguiente" o "Anterior" 
+// para cambiar de página y redibujar la tabla.
 function conectarPaginacionAdministrador(contenedor, cambiarPagina) {
     contenedor?.querySelectorAll(".btn-pagina-admin").forEach(boton => {
         boton.addEventListener("click", () => {
@@ -161,10 +210,13 @@ function conectarPaginacionAdministrador(contenedor, cambiarPagina) {
 }
 
 
-// ==========================================
-// CARGAR EDIFICIOS DESDE LA BD
-// ==========================================
-
+/**
+ * ============================================================================
+ *  CARGA INICIAL DE DATOS MAESTROS (Caché local)
+ * ============================================================================
+ Realiza peticiones al backend al iniciar la aplicación para traer y almacenar en memoria toda la información principal,
+  evitando esperas innecesarias cuando el usuario navegue por las distintas secciones.
+ */
 async function cargarEdificios() {
     try {
         const response = await obtenerEdificios();
@@ -259,8 +311,13 @@ async function cargarProveedores() {
 // INICIAR APLICACIÓN
 // ==========================================
 
-
-
+/**
+ * ============================================================================
+ *  SEGURIDAD Y CONTROL DE ACCESO (Verificación de sesión y redirección según rol)
+ * ============================================================================
+ * Valida con el backend si el usuario está autenticado. Si es válido,
+ * lo redirige a la pantalla que le corresponde según su rol (admin, proveedor, etc.); si no, lo expulsa de vuelta al inicio de sesión por seguridad
+ */
 async function verificar_sesion() {
     try {
         const request = await obtenerSesion();
@@ -291,6 +348,7 @@ async function verificar_sesion() {
     }
 }
 
+// Organiza la secuencia de inicio verificando la sesión, precargando los datos en caché y preparando todos los componentes visuales.
 async function iniciarAplicacion() {
 
     botones.forEach(boton => {
@@ -344,16 +402,25 @@ async function iniciarAplicacion() {
 
     logoutbtn.addEventListener("click", cerrar_sesion);
 
-    await cargarEdificios();
+    await Promise.all([
+        cargarEdificios(),
+        cargarUsuarios(),
+        cargarProveedores()
+    ]);
 
-    await cargarUsuarios();
-
-    await cargarProveedores();
-
-    vistaProveedores();
+    // Si el usuario cambió de sección mientras cargaban los catálogos,
+    // actualizar esa vista sin reemplazar Reclamos u otra sección abierta.
+    if (proveedoresbtn.classList.contains("active")) {
+        vistaProveedores();
+    } else if (edificiosbtn.classList.contains("active")) {
+        vistaEdificios();
+    } else if (usuariosbtn.classList.contains("active")) {
+        vistaUsuarios();
+    }
 
 }
 
+// Menú de cuenta: abrir/cerrar, cargar perfil y cerrar ante clic externo o Escape.
 function alternarMenuCuenta(event) {
     event.stopPropagation();
 
@@ -365,7 +432,8 @@ function alternarMenuCuenta(event) {
         cargarCuentaMenu();
     }
 }
-
+//Abre o cierra el menú flotante de la esquina superior derecha al hacer clic en el avatar,
+//carga los datos del usuario y detecta clics externos o la tecla Escape para cerrarlo automáticamente por prolijidad
 function cerrarMenuCuenta() {
     accountMenu.classList.remove("open");
     accountMenu.setAttribute("aria-hidden", "true");
@@ -388,7 +456,6 @@ function cerrarMenuCuentaConEscape(event) {
 async function cargarCuentaMenu() {
     accountMenuContent.innerHTML = `
         <div class="account-loading">
-            <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
             Cargando cuenta...
         </div>
     `;
@@ -477,6 +544,7 @@ function renderCuentaMenu(usuario) {
     accountMenuContent.querySelector(".account-status").textContent = usuario.activo ? "Activa" : "Inactiva";
 }
 
+// Pide al backend cerrar la sesión y luego vuelve al inicio de sesión.
 async function cerrar_sesion() {
     logoutbtn.disabled = true;
 
@@ -501,21 +569,32 @@ async function cerrar_sesion() {
 }
 
 
+// Punto de entrada: comprueba identidad, prepara componentes compartidos e inicia.
 async function iniciar() {
-    const usuario = await verificar_sesion();
+    try {
+        const usuario = await verificar_sesion();
 
-    if (!usuario) {
-        return;
+        if (!usuario) return;
+
+        inicializarTema();
+        inicializarNotificaciones();
+        await iniciarAplicacion();
+    } finally {
+        window.finalizarCargaInterfaz?.();
     }
-
-    inicializarTema();
-    inicializarNotificaciones();
-    await iniciarAplicacion();
 }
 
+// Espera a que el HTML exista antes de buscar elementos y conectar eventos.
 document.addEventListener("DOMContentLoaded", iniciar);
 
 
+/**
+ * ============================================================================
+ * CONCEPTO CLAVE: SECCIÓN RECLAMOS (Vista global del Administrador)
+ * ============================================================================
+ * Explicación: Obtiene todos los reclamos registrados en el sistema, incorporando 
+ * herramientas de filtrado en tiempo real por texto y selector de estados.
+ */
 async function vistaReclamos() {
     filtro_container.innerHTML = "";
     section.style.display = "grid";
@@ -529,7 +608,6 @@ async function vistaReclamos() {
                 </div>
             </div>
             <div class="estado-carga-reclamos">
-                <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
                 Cargando reclamos...
             </div>
         </div>
@@ -598,10 +676,13 @@ function renderVistaReclamos() {
             </div>
 
             <div class="controles-reclamos-admin">
-                <label class="buscador-reclamos-admin">
-                    <span class="material-symbols-outlined" aria-hidden="true">search</span>
-                    <input type="search" placeholder="Buscar por descripción, usuario, edificio o clasificación">
-                </label>
+                <div class="buscador-usuarios buscador-reclamos-admin">
+                    <input type="search" placeholder="Buscar por descripción, usuario, edificio o clasificación" aria-label="Buscar reclamos">
+                    <button class="btn-buscar-usuario" type="button">
+                        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                        Buscar
+                    </button>
+                </div>
 
                 <label class="selector-estado-reclamos">
                     <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
@@ -621,6 +702,7 @@ function renderVistaReclamos() {
     `;
 
     const inputBuscar = section.querySelector(".buscador-reclamos-admin input");
+    const botonBuscar = section.querySelector(".buscador-reclamos-admin .btn-buscar-usuario");
     const selectEstado = section.querySelector(".selector-estado-reclamos select");
 
     const aplicarFiltros = () => {
@@ -629,10 +711,12 @@ function renderVistaReclamos() {
     };
 
     inputBuscar.addEventListener("input", aplicarFiltros);
+    botonBuscar.addEventListener("click", aplicarFiltros);
     selectEstado.addEventListener("change", aplicarFiltros);
     renderListaReclamos("", "todos");
 }
 
+// Filtra los reclamos por texto y estado y vuelve a dibujar sus tarjetas.
 function renderListaReclamos(busqueda, estadoSeleccionado) {
     const contenedor = section.querySelector(".contenedor-reclamos-admin");
 
@@ -773,6 +857,13 @@ function renderCardReclamo(reclamo) {
     `;
 }
 
+/**
+ * ============================================================================
+ * CONCEPTO CLAVE: SECCIÓN CLASIFICACIONES (Creación de categorías)
+ * ============================================================================
+ * Explicación: Muestra el listado de categorías disponibles para los reclamos 
+ * y provee un formulario para registrar nuevas clasificaciones de forma asíncrona.
+ */
 async function vistaClasificaciones() {
     filtro_container.innerHTML = "";
     section.style.display = "grid";
@@ -874,6 +965,13 @@ async function vistaClasificaciones() {
 
 
 
+/**
+ * ============================================================================
+ * CONCEPTO CLAVE: SECCIÓN PROVEEDORES (CRUD y Gestión de Estados)
+ * ============================================================================
+ * Explicación: Administra los proveedores mediante paginación, filtros por estado (Activo/Inactivo), 
+ * un formulario de alta completa y botones para alternar su estado o ver detalles específicos.
+ */
 function vistaProveedores(){
     section.style.display = "grid";
     filtro_container.innerHTML = "";
@@ -1357,6 +1455,7 @@ function renderCardProveedor(p){
     `;
 
 }
+// Envía el cambio de estado al backend y sincroniza la vista local.
 async function cambiarEstadoProveedor(id) {
 
     try {
@@ -1555,6 +1654,13 @@ function vistaDetalleProveedor(id){
 
 }
 
+/**
+ * ============================================================================
+ * CONCEPTO CLAVE: SECCIÓN EDIFICIOS (Listado y Detalle con Usuarios)
+ * ============================================================================
+ * Explicación: Permite registrar nuevos edificios y consultar su información detallada, 
+ * filtrando qué usuarios de tipo edificio están vinculados a cada sede.
+ */
 function vistaEdificios(){
 
     section.style.display = "grid";
@@ -2174,11 +2280,37 @@ function vistaDetalleEdificio(id) {
 }
 
 
+/**
+ * ============================================================================
+ * CONCEPTO CLAVE: SECCIÓN USUARIOS (Gestión integral de cuentas y permisos)
+ * ============================================================================
+ * Explicación: Es la vista más robusta del administrador. Permite filtrar usuarios por rol y texto, 
+ * crear nuevas cuentas (vinculándolas dinámicamente a edificios o proveedores según corresponda), 
+ * cambiar roles sobre la marcha, y actualizar credenciales de acceso de forma segura.
+ */
 function vistaUsuarios(filtro = "") {
 
     section.style.display = "grid";
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
     filtro_container.innerHTML = "";
+
+    const etiquetasRoles = {
+        administrador: "Administrador",
+        administrativo: "Administrativo",
+        usuario_edificio: "Usuario de edificio",
+        usuario_proveedor: "Usuario de proveedor"
+    };
+
+    const rolesDisponibles = [...new Set([
+        ...Object.keys(etiquetasRoles),
+        ...usuarios.map(usuario => String(usuario.rol || "").trim()).filter(Boolean)
+    ])].sort();
+
+    const opcionesFiltroRoles = rolesDisponibles.map(rol => `
+        <option value="${escaparHtml(rol)}">
+            ${escaparHtml(etiquetasRoles[rol] || rol.replaceAll("_", " "))}
+        </option>
+    `).join("");
 
     section.innerHTML = `
         <div class="lista-usuarios">
@@ -2414,6 +2546,14 @@ function vistaUsuarios(filtro = "") {
 
                 </button>
 
+                <label class="filtro-rol-usuarios">
+                    <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
+                    <select class="filtro-rol-usuario" aria-label="Filtrar por tipo de usuario">
+                        <option value="todos">Todos los tipos</option>
+                        ${opcionesFiltroRoles}
+                    </select>
+                </label>
+
             </div>
 
 
@@ -2484,6 +2624,9 @@ function vistaUsuarios(filtro = "") {
 
     const btnBuscar =
         document.querySelector(".btn-buscar-usuario");
+
+    const filtroRolSelect =
+        document.querySelector(".filtro-rol-usuario");
 
     const contenedor =
         document.querySelector(".contenedor-usuarios");
@@ -2768,7 +2911,8 @@ function vistaUsuarios(filtro = "") {
             // ==================================
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
 
@@ -2798,7 +2942,7 @@ function vistaUsuarios(filtro = "") {
     // RENDERIZAR LISTA
     // ==========================================
 
-    function renderLista(valorFiltro = "") {
+    function renderLista(valorFiltro = "", filtroRol = "todos") {
 
         const filtroNormalizado =
             quitarTildes(
@@ -2806,12 +2950,12 @@ function vistaUsuarios(filtro = "") {
             );
 
 
-        const usuariosFiltrados =
-            valorFiltro
+        const usuariosFiltrados = usuarios.filter(u => {
+            const coincideRol = filtroRol === "todos" || u.rol === filtroRol;
 
-            ?
+            if (!coincideRol) return false;
 
-            usuarios.filter(u => {
+            if (!valorFiltro) return true;
 
                 const nombre =
                     quitarTildes(
@@ -2831,11 +2975,7 @@ function vistaUsuarios(filtro = "") {
                     cedula.includes(valorFiltro)
                 );
 
-            })
-
-            :
-
-            usuarios;
+        });
 
 
         // ======================================
@@ -3030,7 +3170,7 @@ function vistaUsuarios(filtro = "") {
                             </select>
 
 
-                            <button class="btn-guardar-cambio">
+                            <button class="btn-guardar-cambio oculto" type="button">
 
                                 Guardar
 
@@ -3060,11 +3200,11 @@ function vistaUsuarios(filtro = "") {
 
                                 <div class="acciones-cambiar-password">
 
-                                    <button class="cancelar-password">
+                                    <button class="cancelar-password" type="button">
                                         Cancelar
                                     </button>
 
-                                    <button class="guardar-password">
+                                    <button class="guardar-password oculto" type="button">
                                         Guardar
                                     </button>
 
@@ -3114,9 +3254,23 @@ function vistaUsuarios(filtro = "") {
                 btnCambiarPassword.addEventListener(
                     "click",
                     () => {
-                        formPassword.classList.toggle("oculto");
+                        const formularioAbierto = formPassword.classList.toggle("oculto") === false;
+                        if (!formularioAbierto) {
+                            btnGuardarPassword.classList.add("oculto");
+                        }
                     }
                 );
+
+                const actualizarVisibilidadGuardarPassword = () => {
+                    const hayCambios =
+                        nuevaPasswordInput.value.trim() !== "" ||
+                        confirmarPasswordInput.value.trim() !== "";
+
+                    btnGuardarPassword.classList.toggle("oculto", !hayCambios);
+                };
+
+                nuevaPasswordInput.addEventListener("input", actualizarVisibilidadGuardarPassword);
+                confirmarPasswordInput.addEventListener("input", actualizarVisibilidadGuardarPassword);
 
 
                 btnCancelarPassword.addEventListener(
@@ -3125,6 +3279,7 @@ function vistaUsuarios(filtro = "") {
                         formPassword.classList.add("oculto");
                         nuevaPasswordInput.value = "";
                         confirmarPasswordInput.value = "";
+                        btnGuardarPassword.classList.add("oculto");
                     }
                 );
 
@@ -3187,6 +3342,7 @@ function vistaUsuarios(filtro = "") {
                             formPassword.classList.add("oculto");
                             nuevaPasswordInput.value = "";
                             confirmarPasswordInput.value = "";
+                            btnGuardarPassword.classList.add("oculto");
 
                         } catch (error) {
 
@@ -3244,6 +3400,8 @@ function vistaUsuarios(filtro = "") {
                 selectRol.addEventListener("change", () => {
 
                     const nuevoRol = selectRol.value;
+
+                    btnGuardarCambio.classList.toggle("oculto", nuevoRol === usuario.rol);
 
                     contenedorEdificiosCambio.classList.add("oculto");
                     selectProveedor.classList.add("oculto");
@@ -3410,7 +3568,8 @@ function vistaUsuarios(filtro = "") {
                             // ==========================
 
                             renderLista(
-                                inputBuscar.value.trim()
+                                inputBuscar.value.trim(),
+                                filtroRolSelect.value
                             );
 
 
@@ -3459,7 +3618,8 @@ function vistaUsuarios(filtro = "") {
         () => {
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
         }
@@ -3475,7 +3635,8 @@ function vistaUsuarios(filtro = "") {
         () => {
 
             renderLista(
-                inputBuscar.value.trim()
+                inputBuscar.value.trim(),
+                filtroRolSelect.value
             );
 
         }
@@ -3493,12 +3654,17 @@ function vistaUsuarios(filtro = "") {
             if (e.key === "Enter") {
 
                 renderLista(
-                    inputBuscar.value.trim()
+                    inputBuscar.value.trim(),
+                    filtroRolSelect.value
                 );
 
             }
 
         }
     );
+
+    filtroRolSelect.addEventListener("change", () => {
+        renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
+    });
 
 }

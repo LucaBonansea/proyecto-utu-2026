@@ -1,7 +1,7 @@
 ﻿// import (importaciones de los objetos)
-import { Reclamos } from "./reclamos.js";
-import { Nuevo_reclamos } from "./nuevo_reclamos.js?v=20261015-5";
-import { Cuenta } from "./cuenta.js";
+import { Reclamos } from "./reclamos.js?v=20261016-3";
+import { Nuevo_reclamos } from "./nuevo_reclamos.js?v=20261022-1";
+import { Cuenta } from "./cuenta.js?v=20261016-1";
 import { inicializarNotificaciones } from "./notifications.js?v=20261007-3";
 import { inicializarTema } from "../theme.js";
 import { obtenerSesion } from "../services/auth-service.js";
@@ -168,17 +168,19 @@ function iniciarAplicacion() {
 
     // La vista de entrada de la app es "Mis Reclamos" (etiquetada "Inicio").
     $btn_inicio_top.classList.add("active");
-    reclamos.second_view();
+    return reclamos.second_view();
 }
 
 async function iniciar() {
-    const usuario = await verificar_sesion();
+    try {
+        const usuario = await verificar_sesion();
 
-    if (!usuario) {
-        return;
+        if (!usuario) return;
+
+        await iniciarAplicacion();
+    } finally {
+        window.finalizarCargaInterfaz?.();
     }
-
-    iniciarAplicacion();
 }
 
 document.addEventListener("DOMContentLoaded", iniciar);

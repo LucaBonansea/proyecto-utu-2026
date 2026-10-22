@@ -40,10 +40,12 @@ header {
 .logos{
     background: linear-gradient(to bottom, #023CA1 0%,#00286F 100%);
     display: flex;
-    display: flex;
     border-radius: 1000px;
     padding:5px;
     gap: 5px;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .int-logo{
@@ -626,6 +628,28 @@ header {
     font-size: 13px;
 }
 
+.reclamos-vacio {
+    min-height: clamp(300px, 58vh, 620px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.reclamos-vacio .material-symbols-outlined {
+    color: var(--brand);
+    font-size: 46px;
+}
+
+.reclamos-vacio p {
+    font-size: 16px;
+    font-weight: 600;
+}
+
 @media (max-width: 800px) {
 
     main {
@@ -979,6 +1003,36 @@ header {
     color: #3333a1;
 }
 
+.header-logout {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--ui-border, #dfe7f2);
+    border-radius: 50%;
+    background: var(--ui-surface, #ffffff);
+    color: #e11d48;
+    cursor: pointer;
+    transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.header-logout:hover:not(:disabled) {
+    background: var(--ui-surface-soft, #f6f8fc);
+    transform: translateY(-1px);
+}
+
+.header-logout:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.header-logout .material-symbols-outlined {
+    font-size: 22px;
+}
+
 .material-symbols-outlined {
     font-size: 20px;
     line-height: 1;
@@ -1261,25 +1315,6 @@ header {
     font-size: 11px;
 }
 
-.mensaje-pagina {
-    position: fixed;
-    left: 50%;
-    bottom: 24px;
-    transform: translateX(-50%);
-    z-index: 1000;
-    padding: 11px 16px;
-    border-radius: 12px;
-    background: #166534;
-    color: white;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
-}
-
-.mensaje-pagina.error {
-    background: #b91c1c;
-}
-
 @media (max-width: 600px) {
     .cuenta-card {
         padding: 18px;
@@ -1363,6 +1398,7 @@ header {
     .sin-foto,
     .sin-urgentes,
     .reclamo-vacio,
+    .reclamos-vacio,
     .cargando
 ) {
     color: var(--ui-muted);
@@ -1424,6 +1460,7 @@ header {
 :root[data-theme="dark"] .proveedores-page :is(
     .header-action,
     .theme-toggle,
+    .header-account-button,
     .notificaciones-btn-top
 ) {
     border: 1px solid var(--ui-border);
@@ -1434,11 +1471,16 @@ header {
 :root[data-theme="dark"] .proveedores-page :is(
     .header-action,
     .theme-toggle,
+    .header-account-button,
     .notificaciones-btn-top
 ):hover {
     border-color: var(--border-strong);
     background: var(--ui-surface-soft);
     color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .proveedores-page .header-logout {
+    color: #fda4af;
 }
 
 :root[data-theme="dark"] .proveedores-page .btn-volver {

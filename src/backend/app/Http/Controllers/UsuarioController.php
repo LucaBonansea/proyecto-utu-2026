@@ -8,6 +8,13 @@ use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
 {
+    private const ROLES = [
+        'usuario_edificio',
+        'administrador',
+        'administrativo',
+        'usuario_proveedor',
+    ];
+
     public function index(UsuarioService $usuarioService)
     {
         $usuarios = $usuarioService->obtenerTodos();
@@ -19,12 +26,15 @@ class UsuarioController extends Controller
         Request $request,
         UsuarioService $usuarioService
     ) {
+        $this->normalizarTelefono($request);
+
         $datos = $request->validate([
             'cedula' => [
+                'bail',
                 'required',
                 'string',
-                'max:20',
-                'unique:usuarios,cedula'
+                'regex:/^\d{7,8}$/',
+                Rule::unique('usuarios', 'cedula'),
             ],
 
             'nombre' => [
@@ -35,47 +45,25 @@ class UsuarioController extends Controller
 
             'telefono' => [
                 'nullable',
+                'required_if:rol,usuario_edificio,usuario_proveedor',
                 'string',
-                'max:30'
+                'regex:/^09\d{7}$/',
             ],
 
             'email' => [
                 'nullable',
                 'email',
-                'max:150'
+                'max:255'
             ],
 
             'password' => [
                 'required',
                 'string',
-                'min:6'
+                'min:8',
+                'max:255',
             ],
 
-            'rol' => [
-                'required',
-                Rule::in([
-                    'usuario_edificio',
-                    'administrador',
-                    'administrativo',
-                    'usuario_proveedor'
-                ])
-            ],
-
-            'edificios' => [
-                'nullable',
-                'required_if:rol,usuario_edificio',
-                'array',
-            ],
-
-            'edificios.*' => [
-                'exists:edificios,id',
-            ],
-
-            'proveedor' => [
-                'nullable',
-                'required_if:rol,usuario_proveedor',
-                'exists:proveedores,id'
-            ],
+            ...$this->reglasAsignacion(),
         ]);
 
         $usuario = $usuarioService->crear($datos);
@@ -95,7 +83,8 @@ class UsuarioController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:6'
+                'min:8',
+                'max:255',
             ],
         ]);
 
@@ -115,31 +104,7 @@ class UsuarioController extends Controller
         UsuarioService $usuarioService
     ) {
         $datos = $request->validate([
-            'rol' => [
-                'required',
-                Rule::in([
-                    'usuario_edificio',
-                    'administrador',
-                    'administrativo',
-                    'usuario_proveedor'
-                ])
-            ],
-
-            'edificios' => [
-                'nullable',
-                'required_if:rol,usuario_edificio',
-                'array',
-            ],
-
-            'edificios.*' => [
-                'exists:edificios,id',
-            ],
-
-            'proveedor' => [
-                'nullable',
-                'required_if:rol,usuario_proveedor',
-                'exists:proveedores,id'
-            ],
+            ...$this->reglasAsignacion(),
         ]);
 
         $usuario = $usuarioService->actualizarRol(
@@ -163,5 +128,36 @@ class UsuarioController extends Controller
             'message' => 'Usuario desactivado correctamente',
             'usuario' => $usuario,
         ]);
+    }
+
+    private function reglasAsignacion(): array
+    {
+        return [
+            'rol' => ['required', Rule::in(self::ROLES)],
+            'edificios' => [
+                'nullable',
+                'required_if:rol,usuario_edificio',
+                'prohibited_unless:rol,usuario_edificio',
+                'array',
+                'min:1',
+            ],
+            'edificios.*' => ['integer', 'distinct', Rule::exists('edificios', 'id')],
+            'proveedor' => [
+                'nullable',
+                'required_if:rol,usuario_proveedor',
+                'prohibited_unless:rol,usuario_proveedor',
+                'integer',
+                Rule::exists('proveedores', 'id')->where('estado', 'Activo'),
+            ],
+        ];
+    }
+
+    private function normalizarTelefono(Request $request): void
+    {
+        $telefono = $request->input('telefono');
+
+        if (is_string($telefono)) {
+            $request->merge(['telefono' => preg_replace('/[\s().-]+/u', '', $telefono)]);
+        }
     }
 }

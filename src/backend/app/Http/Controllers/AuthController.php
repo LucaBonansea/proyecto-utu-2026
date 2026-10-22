@@ -13,9 +13,10 @@ class AuthController extends Controller
         $datos = $request->validate(
             [
                 'cedula' => [
+                    'bail',
                     'required',
                     'string',
-                    'max:20',
+                    'regex:/^\d{7,8}$/',
                     'unique:usuarios,cedula'
                 ],
 
@@ -29,17 +30,14 @@ class AuthController extends Controller
                 'password' => [
                     'required',
                     'string',
-                    'min:6',
+                    'min:8',
+                    'max:255',
                     'confirmed'
                 ],
                 'edificio' => [
                     'required',
                     'integer',
                     'exists:edificios,id'
-                ],
-                'politicas_aceptadas' => [
-                    'required',
-                    'accepted'
                 ],
             ],
             [
@@ -50,12 +48,9 @@ class AuthController extends Controller
                 'edificio.required' => 'Debes seleccionar un edificio.',
                 'edificio.exists' => 'El edificio seleccionado no existe.',
 
-                'telefono.required' => 'Debes ingresar el teléfono.',
-
                 'password.required' => 'Debes ingresar una contraseña.',
-                'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+                'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
                 'password.confirmed' => 'Las contraseñas no coinciden.',
-                'politicas_aceptadas.accepted' => 'Debes aceptar las políticas de uso.'
             ]
         );
 
@@ -72,13 +67,16 @@ class AuthController extends Controller
         $datos = $request->validate(
             [
                 'cedula' => [
+                    'bail',
                     'required',
-                    'string'
+                    'string',
+                    'regex:/^\d{7,8}$/',
                 ],
 
                 'password' => [
                     'required',
-                    'string'
+                    'string',
+                    'max:255',
                 ],
             ],
             [

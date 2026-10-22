@@ -98,24 +98,51 @@ section{
 section::-webkit-scrollbar{
     display: none;
 }
-
-.sidebar{
+.sidebar-box{
     display: flex;
-    height: 100vh;
-    flex-direction: column;
-    width:75px;
-    background: linear-gradient(180deg, var(--sidebar-inicio) 0%, var(--sidebar-fin) 100%);
-    border-right: 1px solid var(--border-subtle);
-    box-shadow:0 8px 25px rgba(0,0,0,.5);
-    color: var(--text-primary);
-    justify-content: space-between;
     align-items: center;
-    transition:background .2s ease, color .2s ease;
+    justify-content: center;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 76px;
+    height: fit-content;
+    gap: 12px;
+    padding: 14px 0;
+    margin: 20px 0 20px 16px;
+
+    flex-shrink: 0;
+    box-sizing: border-box;
+
+    /* Apariencia */
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 100px;
+    background: linear-gradient(
+        160deg,
+        var(--sidebar-inicio) 0%,
+        var(--sidebar-fin) 100%
+    );
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+    color: var(--text-primary);
+
+    transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
 }
 
 .first-btns{
-    margin-top:30px;
-    gap:20px;
+    
+    gap:12px;
     display: flex;
     flex-direction: column;
 }
@@ -124,7 +151,7 @@ section::-webkit-scrollbar{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 10px;
+    font-size: 8px;
     gap: 5px;
     transition: all .3s ease;
     cursor:pointer;
@@ -138,7 +165,7 @@ section::-webkit-scrollbar{
 .sidebar-btn.active{
     background: var(--azul-tint);
     color: var(--text-primary);
-    border-radius:15px;
+    border-radius:100px;
     transform: translateY(-5px);
     box-shadow:
         0 10px 20px rgba(0,0,0,.45),
@@ -149,6 +176,7 @@ section::-webkit-scrollbar{
     display:flex;
     flex-direction:column;
     gap:20px;
+    padding: 30px;
 }
 
 .titulo-clasificaciones-admin p{
@@ -161,6 +189,7 @@ section::-webkit-scrollbar{
     border:1px solid var(--border-subtle);
     border-radius:12px;
     background:var(--bg-surface);
+    width: 500px;
 }
 
 .form-clasificacion-admin label{
@@ -181,6 +210,7 @@ section::-webkit-scrollbar{
     border-radius:8px;
     background:var(--bg-elevated);
     color:var(--text-primary);
+    max-width: 500px;
 }
 
 .form-clasificacion-admin button{
@@ -483,12 +513,6 @@ header{
     font-size:13px;
 }
 
-.account-loading .material-symbols-outlined{
-    color:var(--azul-primario);
-    font-size:30px;
-    animation:account-loading-spin .8s linear infinite;
-}
-
 .account-error > .material-symbols-outlined{
     color:var(--rojo);
     font-size:32px;
@@ -504,19 +528,11 @@ header{
     cursor:pointer;
 }
 
-@keyframes account-loading-spin{
-    to{ transform:rotate(360deg); }
-}
-
 @media (prefers-reduced-motion: reduce){
     .account-trigger,
     .account-menu,
     .account-logout{
         transition:none;
-    }
-
-    .account-loading .material-symbols-outlined{
-        animation:none;
     }
 
     .logout-door,
@@ -2453,8 +2469,8 @@ main{
     padding: 9px 14px;
     border: 1px solid var(--border-subtle);
     border-radius: 6px;
-    background-color: var(--bg-elevated);
-    color: var(--text-primary);
+    background-color: rgb(255, 75, 75);
+    color: white;
     font-size: 0.8rem;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -2852,12 +2868,6 @@ main{
     text-align:center;
 }
 
-.estado-carga-reclamos > .material-symbols-outlined{
-    color:var(--azul-primario);
-    font-size:34px;
-    animation:account-loading-spin .9s linear infinite;
-}
-
 .estado-error-reclamos > .material-symbols-outlined{
     color:var(--rojo);
     animation:none;
@@ -3183,4 +3193,232 @@ main{
 :root[data-theme] .admin-page .edificio-icono-div .material-symbols-outlined {
     color: #ffffff;
     text-shadow: 0 1px 2px rgba(0,29,81,.35);
+}
+
+/* Ajustes solicitados para el avatar y la posición de las notificaciones. */
+.admin-page .account-trigger,
+.admin-page .account-trigger:hover,
+.admin-page .account-trigger[aria-expanded="true"] {
+    box-shadow: none;
+}
+
+.admin-page .account-trigger {
+    transition: transform .2s ease, border-color .2s ease;
+}
+
+:is(.toast-container, .toast-stack, .notificaciones-toast, .toast-notifications, .toast) {
+    position: fixed !important;
+    inset: auto 24px 24px auto !important;
+    top: auto !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    left: auto !important;
+    z-index: 9999;
+}
+
+@media (max-width: 600px) {
+    :is(.toast-container, .toast-stack, .notificaciones-toast, .toast-notifications, .toast) {
+        right: 12px !important;
+        bottom: 12px !important;
+        left: 12px !important;
+        width: auto;
+    }
+}
+.admin-page .header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.admin-page .theme-toggle {
+    order: 1;
+}
+
+.admin-page .notificaciones-wrapper {
+    order: 2;
+}
+
+.admin-page .account-menu-wrapper {
+    order: 3;
+}
+
+.admin-page .logos,
+.admin-page .logos * {
+    cursor: default;
+}
+
+.admin-page .toast-container.bottom-right {
+    position: fixed !important;
+    inset: auto 24px 24px auto !important;
+    top: auto !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    left: auto !important;
+    z-index: 9999;
+}
+
+@media (max-width: 600px) {
+    .admin-page .toast-container.bottom-right {
+        right: 12px !important;
+        bottom: 12px !important;
+    }
+}
+
+/* Filtro por tipo de usuario junto al buscador. */
+.admin-page .buscador-usuarios {
+    width: min(100%, 980px);
+    max-width: 980px;
+    box-sizing: border-box;
+}
+
+.admin-page .input-buscar-usuario {
+    min-width: 0;
+}
+
+/* Mantiene un formato común para los buscadores de usuarios y reclamos. */
+.admin-page .buscador-usuarios,
+.admin-page .buscador-reclamos-admin {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(100%, 980px);
+    max-width: 980px;
+    padding: 10px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    background: var(--bg-surface);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+    box-sizing: border-box;
+}
+
+.admin-page .buscador-usuarios input,
+.admin-page .buscador-reclamos-admin input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 46px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px 0 0 999px;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 15px;
+    outline: none;
+}
+
+.admin-page .buscador-usuarios input:focus,
+.admin-page .buscador-reclamos-admin input:focus {
+    box-shadow: inset 0 0 0 1px var(--azul-primario);
+}
+
+.admin-page .buscador-usuarios .btn-buscar-usuario,
+.admin-page .buscador-reclamos-admin .btn-buscar-usuario {
+    flex: 0 0 auto;
+    min-height: 46px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 0 999px 999px 0;
+    background: var(--azul-primario);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-page .buscador-usuarios .btn-buscar-usuario:hover,
+.admin-page .buscador-reclamos-admin .btn-buscar-usuario:hover {
+    background: var(--azul-oscuro);
+}
+
+.admin-page .buscador-reclamos-admin {
+    flex: 1 1 auto;
+}
+
+.admin-page .selector-estado-reclamos,
+.admin-page .filtro-rol-usuarios {
+    min-height: 58px;
+    padding: 0 18px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    background: var(--bg-surface);
+    box-sizing: border-box;
+}
+
+.admin-page .selector-estado-reclamos select,
+.admin-page .filtro-rol-usuarios select {
+    min-width: 150px;
+    font-size: 15px;
+}
+
+@media (max-width: 600px) {
+    .admin-page .buscador-usuarios,
+    .admin-page .buscador-reclamos-admin {
+        width: 100%;
+        max-width: none;
+    }
+
+    .admin-page .buscador-usuarios .btn-buscar-usuario,
+    .admin-page .buscador-reclamos-admin .btn-buscar-usuario {
+        padding: 0 12px;
+    }
+
+    .admin-page .selector-estado-reclamos {
+        width: 100%;
+    }
+
+    .admin-page .selector-estado-reclamos select {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+.admin-page .filtro-rol-usuarios {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    flex: 0 0 auto;
+    padding: 0 15px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+}
+
+.admin-page .filtro-rol-usuarios > .material-symbols-outlined {
+    font-size: 24px;
+}
+
+.admin-page .filtro-rol-usuarios select {
+    min-width: 160px;
+    border: 0 !important;
+    outline: 0;
+    background: transparent !important;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: none !important;
+}
+
+.admin-page .filtro-rol-usuarios option {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+}
+
+@media (max-width: 600px) {
+    .admin-page .buscador-usuarios {
+        width: 100%;
+        max-width: none;
+    }
+
+    .admin-page .filtro-rol-usuarios {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .admin-page .filtro-rol-usuarios select {
+        flex: 1;
+        min-width: 0;
+    }
 }

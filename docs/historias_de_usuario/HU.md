@@ -379,7 +379,7 @@
 
 **Puntos:** 5 **Prioridad:** Media **Épica:** EP-06
  
----
+
 
 
 | ID | Historia de usuario | Puntos | Prioridad | Épica |
@@ -392,10 +392,10 @@
 | HU25 | Asociar usuarios a uno o más edificios. | 5 | Media | EP-02 |
 | HU4 | Crear reclamo (Usuario de edificio). | 8 | Alta | EP-03 |
 | HU7 | Consultar estado y avance de mis reclamos. | 5 | Alta | EP-03 |
+| HU12 | Visualizar evidencias antes/después de resolución. | 5 | Media | EP-03 |
 | HU5 | Moderar y clasificar reclamos. | 5 | Baja | EP-04 |
 | HU6 | Asignar prioridad a un reclamo. | 3 | Baja | EP-04 |
 | HU10 | Visualizar reclamos con filtro por categoría. | 5 | Alta | EP-04 |
-| HU12 | Visualizar evidencias antes/después de resolución. | 5 | Media | EP-03 |
 | HU21 | Moderar contenido inválido o inapropiado. | 5 | Media | EP-04 |
 | HU13 | Asignar reclamos clasificados a proveedores. | 8 | Alta | EP-05 |
 | HU14 | Mostrar proveedores correspondientes según clasificación. | 5 | Media | EP-05 |
@@ -410,6 +410,8 @@
 | HU19 | Evidencia obligatoria del trabajo realizado. | 3 | Alta | EP-08 |
 | HU20 | Aprobar o rechazar el trabajo del proveedor. | 5 | Alta | EP-08 |
 | HU23 | Gestionar clasificaciones del sistema. | 3 | Media | EP-09 |
+
+
  
 *HU11 fue cancelada (tablero Kanban) y no se incluye en este resumen.*
 
@@ -712,18 +714,37 @@ Además, durante este sprint se realizarán:
 - Validación del flujo completo.
 - Ajustes finales.
 
-### Sprint Review 6
+### Sprint Review 7: Mejoras en el sistema
+
+### Objetivo del sprint
+
+Realizar una reunión con el cliente para presentar los avances y funcionalidades desarrolladas durante el último mes, mostrar las interfaces y el funcionamiento del sistema, recopilar su opinión sobre el trabajo realizado e identificar posibles mejoras a partir de sus comentarios y sugerencias.
 
 El cliente revisa el incremento y responde:
 
-### Feedback del cliente
+> “El avance presentado es bueno, pero nos gustaría incorporar estadísticas de los reclamos, como la cantidad de aprobados y rechazados. Además, sería útil registrar los costos de materiales y mano de obra de cada proveedor. También proponemos que, al registrar un reclamo, este quede asociado al edificio y al área específica afectada, por ejemplo, Edificio Polo Tecnológico, Planta Alta. Estas mejoras permitirían aumentar la eficiencia del sistema y garantizar una mayor trazabilidad de los reclamos.”
 
+### Resultado del Sprint
 
+Se realizó una reunión con el cliente en la que se presentaron los avances desarrollados durante el último mes, mostrando las interfaces y el funcionamiento del sistema. El cliente valoró positivamente el trabajo realizado y propuso nuevas funcionalidades para mejorar la gestión de los reclamos, como la visualización de estadísticas, el registro de costos de materiales y mano de obra, y la asociación de reclamos a edificios y áreas específicas.
 
-### Resultado del sprint
+- Se incorporan **5 nuevos requerimientos funcionales (RF026 a RF030)** y **3 historias de usuario (HU28, HU29 y HU31)**, con un total estimado de **18 puntos de historia**, que serán considerados para su priorización en los próximos Sprints.
 
+### Requerimientos funcionales agregados
 
+| ID | Requerimiento |
+|---|---|
+| RF-26 | Consultar estadísticas de reclamos según su estado, edificio y área afectada. |
+| RF-27 | Registrar los costos de materiales utilizados por cada proveedor al finalizar una tarea. |
+| RF-28 | Registrar los costos de mano de obra de cada proveedor al finalizar una tarea. |
+| RF-29 | Asociar cada reclamo a un área específica dentro del edificio afectado. |
+| RF-30 | Calcular y consultar el costo total de cada reclamo y los costos acumulados por edificio. |
 
----
+### Historias de usuario agregadas
 
-
+| ID | Historia | Puntos |
+|---|---|---:|
+| HU28 | Visualizar estadísticas de reclamos por estado, edificio y área afectada. | 8 |
+| HU29 | Registrar y consultar los costos de materiales y mano de obra de cada proveedor. | 5 |
+| HU31 | Asociar reclamos a áreas específicas del edificio para facilitar la localización del problema. | 5 |
+| **Total** | | **18** |
