@@ -17,6 +17,9 @@ const enviarJsonConCsrf = (ruta, method, datos) => apiFetchConCsrf(ruta, {
 });
 
 export const obtenerEdificios = () => obtenerListado("/api/edificios");
+export const obtenerAreas = edificioId => obtenerListado(
+    edificioId ? `/api/areas?edificio_id=${encodeURIComponent(edificioId)}` : "/api/areas"
+);
 export const obtenerUsuarios = () => obtenerListado("/api/usuarios");
 export const obtenerProveedores = () => obtenerListado("/api/proveedores");
 export const obtenerClasificaciones = () =>
@@ -32,6 +35,12 @@ export const cambiarEstadoProveedor = id =>
 
 export const crearEdificio = datos =>
     enviarJsonConCsrf("/api/edificios", "POST", datos);
+
+export const crearArea = datos =>
+    enviarJsonConCsrf("/api/areas", "POST", datos);
+
+export const eliminarArea = id =>
+    apiFetchConCsrf(`/api/areas/${encodeURIComponent(id)}`, { method: "DELETE" });
 
 export const crearClasificacion = clasificacion =>
     enviarJsonConCsrf("/api/clasificaciones", "POST", { clasificacion });

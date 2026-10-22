@@ -239,6 +239,293 @@ section::-webkit-scrollbar{
     background:var(--bg-surface);
 }
 
+.form-area-admin{
+    width:100%;
+    padding:clamp(20px, 3vw, 32px);
+    border:1px solid var(--border-subtle);
+    border-radius:18px;
+    background:var(--bg-surface);
+}
+
+.encabezado-form-area-admin{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding-bottom:20px;
+    margin-bottom:22px;
+    border-bottom:1px solid var(--border-subtle);
+}
+
+.encabezado-form-area-admin > .material-symbols-outlined{
+    color:var(--azul-primario);
+    font-size:28px;
+}
+
+.encabezado-form-area-admin h3,
+.encabezado-areas-registradas h3{
+    font-size:18px;
+    color:var(--text-primary);
+}
+
+.encabezado-form-area-admin p,
+.encabezado-areas-registradas p{
+    margin-top:4px;
+    color:var(--text-secondary);
+    font-size:13px;
+}
+
+.campos-form-area-admin{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:20px 24px;
+}
+
+.campo-area-admin{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+    min-width:0;
+}
+
+.campo-area-admin label{
+    font-weight:600;
+}
+
+.campo-area-admin label span{
+    color:var(--text-secondary);
+    font-weight:400;
+}
+
+.form-area-admin :is(input, select, textarea){
+    width:100%;
+    min-height:48px;
+    padding:12px 14px;
+    border:1px solid var(--border-subtle);
+    border-radius:10px;
+    background:var(--bg-surface-alt);
+    color:var(--text-primary);
+    font:inherit;
+}
+
+.form-area-admin :is(input, select, textarea):focus-visible{
+    outline:2px solid var(--azul-primario);
+    outline-offset:2px;
+}
+
+.form-area-admin textarea{
+    height:100px;
+    min-height:100px;
+    max-height:100px;
+    resize:none;
+}
+
+.contador-descripcion-area{
+    align-self:flex-end;
+    color:var(--text-secondary);
+    font-size:12px;
+    font-variant-numeric:tabular-nums;
+}
+
+.acciones-form-area-admin{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-top:22px;
+}
+
+.form-area-admin button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    min-height:44px;
+    padding:10px 18px;
+    border:0;
+    border-radius:10px;
+    background:linear-gradient(120deg, var(--azul-oscuro), var(--azul-primario));
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.form-area-admin button:hover:not(:disabled){
+    filter:brightness(1.08);
+}
+
+.form-area-admin button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.estado-area-admin{
+    min-height:1.4em;
+    color:var(--text-secondary);
+    font-size:13px;
+}
+
+.encabezado-areas-registradas{
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:16px;
+}
+
+.contenedor-areas-admin{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:14px;
+}
+
+.tarjeta-area-admin{
+    min-width:0;
+    padding:20px;
+    border:1px solid var(--border-subtle);
+    border-radius:14px;
+    background:var(--bg-surface);
+}
+
+.tarjeta-area-encabezado{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:18px;
+}
+
+.tarjeta-area-encabezado > .material-symbols-outlined{
+    color:var(--azul-primario);
+    font-size:26px;
+}
+
+.cantidad-reclamos-area{
+    padding:5px 9px;
+    border-radius:999px;
+    background:var(--azul-tint);
+    color:var(--text-primary);
+    font-size:11px;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.tarjeta-area-admin h4{
+    color:var(--text-primary);
+    font-size:16px;
+}
+
+.edificio-tarjeta-area{
+    margin-top:5px;
+    color:var(--azul-primario);
+    font-size:12px;
+    font-weight:700;
+}
+
+.descripcion-tarjeta-area{
+    margin-top:12px;
+    color:var(--text-secondary);
+    font-size:13px;
+    line-height:1.5;
+    overflow-wrap:anywhere;
+}
+
+.acciones-tarjeta-area{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px solid var(--border-subtle);
+}
+
+.aviso-area-con-reclamos{
+    color:var(--text-secondary);
+    font-size:12px;
+}
+
+.btn-eliminar-area{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    margin-left:auto;
+    padding:7px 10px;
+    border:1px solid var(--border-subtle);
+    border-radius:8px;
+    background:var(--bg-surface);
+    color:var(--text-primary);
+    font:inherit;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.btn-eliminar-area .material-symbols-outlined{
+    font-size:18px;
+}
+
+.btn-eliminar-area:hover:not(:disabled){
+    border-color:var(--border-strong);
+    background:var(--bg-surface-alt);
+}
+
+.btn-eliminar-area:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+.sin-areas-admin,
+.mensaje-areas-admin{
+    grid-column:1 / -1;
+    padding:22px;
+    border:1px dashed var(--border-strong);
+    border-radius:12px;
+    color:var(--text-secondary);
+    background:var(--bg-surface);
+}
+
+.reintentar-areas-admin{
+    margin-left:8px;
+    border:0;
+    background:none;
+    color:var(--azul-primario);
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.edificio-areas{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    margin:28px 0;
+}
+
+.edificio-areas .encabezado-areas-registradas{
+    margin-bottom:0;
+}
+
+.form-area-edificio{
+    box-sizing:border-box;
+}
+
+.form-area-edificio *{
+    box-sizing:border-box;
+}
+
+@media (max-width: 700px){
+    .campos-form-area-admin{
+        grid-template-columns:1fr;
+    }
+
+    .encabezado-areas-registradas{
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+}
+
 .account-logout{
     width:100%;
     min-height:54px;
@@ -2993,6 +3280,8 @@ main{
 
 :root[data-theme="dark"] .admin-page :is(
     .form-clasificacion-admin,
+    .form-area-admin,
+    .tarjeta-area-admin,
     .clasificacion-admin-item,
     .primerdiv-reclamo,
     .filtro-reclamos,
@@ -3147,6 +3436,21 @@ main{
     border-color: var(--border-strong);
     outline: none;
     box-shadow: none;
+}
+
+:root[data-theme] .admin-page .form-area-admin :is(input, select, textarea):focus-visible {
+    border-color:var(--azul-primario);
+    outline:2px solid var(--azul-primario);
+    outline-offset:2px;
+}
+
+:root[data-theme="dark"] .admin-page :is(
+    .encabezado-form-area-admin > .material-symbols-outlined,
+    .tarjeta-area-encabezado > .material-symbols-outlined,
+    .edificio-tarjeta-area,
+    .reintentar-areas-admin
+) {
+    color:#8dbdff;
 }
 
 :root[data-theme] .admin-page :is(
