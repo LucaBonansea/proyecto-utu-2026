@@ -1,8 +1,3 @@
-¡Claro que sí, Ariana! Poner un diagrama de flujo esquemático arriba del todo es una idea excelente. Te va a servir muchísimo para entender la "gran foto" de cómo se mueve el código de arriba a abajo antes de leer detalle por detalle.
-
-Aquí tienes el código completo con el **flujo general esquematizado al inicio** y todas tus etiquetas conceptuales a lo largo de las funciones:
-
-```javascript
 /**
  * ============================================================================
  * 🚀 FLUJO GENERAL DE LA APLICACIÓN (CÓMO FUNCIONA DE PUNTA A PUNTA)
@@ -134,19 +129,19 @@ async function iniciarAplicacion() {
         const request = await obtenerReclamosAdministrativo();
 
         if (!request.ok) {
-            notify.error("No se pudieron obtener los reclamos.");
-            return;
+            throw new Error(`No se pudieron obtener los reclamos (HTTP ${request.status}).`);
         }
 
         const response = await request.json();
 
-        reclamosAValidar = response.reclamos;
+        reclamosAValidar = Array.isArray(response.reclamos) ? response.reclamos : [];
 
         vistaLista();
 
     } catch (error) {
         console.error("Error obteniendo reclamos:", error);
         notify.error("No se pudieron cargar los reclamos.");
+        section.innerHTML = '<p style="padding:20px;">No se pudieron cargar los reclamos. Recargá la página para intentar de nuevo.</p>';
     }
 }
 
@@ -192,15 +187,17 @@ async function cerrar_sesion() {
  * y finalmente dispara la carga de los reclamos pendientes.
  */
 async function iniciar() {
-    const usuario = await verificar_sesion();
+    try {
+        const usuario = await verificar_sesion();
 
-    if (!usuario) {
-        return;
+        if (!usuario) return;
+
+        inicializarTema();
+        inicializarNotificaciones();
+        await iniciarAplicacion();
+    } finally {
+        window.finalizarCargaInterfaz?.();
     }
-
-    inicializarTema();
-    inicializarNotificaciones();
-    iniciarAplicacion();
 }
 
 // Disparador global: espera a que el navegador termine de construir todo el HTML.
@@ -433,18 +430,22 @@ async function vistaDetalle(id) {
      * en una etiqueta HTML <option value="id">nombre</option>, permitiendo que el administrativo 
      * elija a quién derivar el reclamo.
      */
-    const requestProveedores =
-        await obtenerProveedoresAdministrativo();
-
-    if (!requestProveedores.ok) {
-        notify.error(
-            "No se pudieron obtener los proveedores."
-        );
+    let proveedores;
+    try {
+        const requestProveedores = await obtenerProveedoresAdministrativo();
+        if (!requestProveedores.ok) {
+            throw new Error(`No se pudieron obtener los proveedores (HTTP ${requestProveedores.status}).`);
+        }
+        proveedores = await requestProveedores.json();
+        if (!Array.isArray(proveedores)) {
+            throw new Error("Formato de proveedores inesperado.");
+        }
+    } catch (error) {
+        console.error("Error obteniendo proveedores:", error);
+        notify.error("No se pudieron cargar los proveedores.");
+        selectProveedor.innerHTML = '<option value="">No se pudieron cargar los proveedores</option>';
         return;
     }
-
-    const proveedores =
-        await requestProveedores.json();
 
     selectProveedor.innerHTML = `
         <option value="" selected disabled>
@@ -563,8 +564,15 @@ async function vistaDetalle(id) {
      * 3. Control de Respuesta: Evalúa `request.ok`. Si el servidor responde con éxito, remueve el reclamo 
      *    de la lista local, muestra una notificación de éxito, cierra el modal y refresca la bandeja.
      */
-    card.querySelector(".btn-enviar-area")
+    const btnEnviar = card.querySelector(".btn-enviar-area");
+    btnEnviar
         .addEventListener("click", async () => {
+
+            if (btnEnviar.disabled) return;
+
+            if (descripcion.contentEditable === "true") {
+                guardarDescripcion();
+            }
 
             const proveedor =
                 selectProveedor.value;
@@ -579,6 +587,8 @@ async function vistaDetalle(id) {
             }
 
             try {
+
+                btnEnviar.disabled = true;
 
                 const request =
                     await actualizarReclamo(
@@ -620,6 +630,8 @@ async function vistaDetalle(id) {
                 notify.error(
                     "Ocurrió un error al actualizar el reclamo."
                 );
+            } finally {
+                btnEnviar.disabled = false;
             }
         });
 }

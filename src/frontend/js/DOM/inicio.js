@@ -168,17 +168,19 @@ function iniciarAplicacion() {
 
     // La vista de entrada de la app es "Mis Reclamos" (etiquetada "Inicio").
     $btn_inicio_top.classList.add("active");
-    reclamos.second_view();
+    return reclamos.second_view();
 }
 
 async function iniciar() {
-    const usuario = await verificar_sesion();
+    try {
+        const usuario = await verificar_sesion();
 
-    if (!usuario) {
-        return;
+        if (!usuario) return;
+
+        await iniciarAplicacion();
+    } finally {
+        window.finalizarCargaInterfaz?.();
     }
-
-    iniciarAplicacion();
 }
 
 document.addEventListener("DOMContentLoaded", iniciar);

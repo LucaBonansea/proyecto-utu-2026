@@ -11,12 +11,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador</title>
-    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrador.css?v=20261009-1">
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrador.css?v=20261022-2">
     <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css?v=20261016-2">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
-<body class="admin-page">
+<body class="admin-page" data-carga-interfaz>
     <!-- Navegación entre las secciones que administra este rol. -->
     <div class="sidebar-box">
         <aside class="sidebar">
@@ -116,7 +116,6 @@
                     <div class="account-menu" id="account-menu" aria-hidden="true">
                         <div class="account-menu-content">
                             <div class="account-loading">
-                                <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
                                 Cargando cuenta...
                             </div>
                         </div>
@@ -143,8 +142,7 @@
 
     <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
     <!-- Scripts del panel; administrador.js es el controlador principal. -->
-    <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=5" type="module"></script>
-    <script src="/proyecto-utu-2026/src/frontend/js/global-loading.js?v=20261016-1"></script>
-    <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=20261016-1" type="module"></script>
+    <script src="/proyecto-utu-2026/src/frontend/js/global-loading.js?v=20261022-2"></script>
+    <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrador.js?v=20261022-2" type="module"></script>
 </body>
 </html>
