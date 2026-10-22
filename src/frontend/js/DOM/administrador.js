@@ -68,6 +68,7 @@ const accountTrigger = document.querySelector(".account-trigger");
 const accountMenu = document.querySelector(".account-menu");
 const accountMenuContent = document.querySelector(".account-menu-content");
 const logoutbtn = document.querySelector(".account-logout");
+const estadisticasbtn = document.querySelector(".estadisticas-btn");
 
 // Normaliza texto para comparar búsquedas aunque el usuario omita tildes.
 function quitarTildes(texto) {
@@ -161,6 +162,9 @@ function paginarElementos(elementos, paginaSolicitada) {
         inicio
     };
 }
+estadisticasbtn?.addEventListener("click", () => {
+    vistaEstadisticas();
+});
 
 function renderPaginacionAdministrador(
     totalElementos,
@@ -3849,4 +3853,488 @@ function vistaUsuarios(filtro = "") {
         renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
     });
 
+
+    }
+/* ==========================================================
+   ESTADÍSTICAS DEL ADMINISTRADOR
+   ========================================================== */
+
+async function vistaEstadisticas() {
+    filtro_container.innerHTML = "";
+    section.style.display = "grid";
+    section.style.gridTemplateColumns = "minmax(0, 1fr)";
+
+    section.innerHTML = `
+        <div class="estadisticas-admin">
+            <header class="estadisticas-header">
+                <div>
+                    <span class="estadisticas-etiqueta">PANEL DE CONTROL</span>
+                    <h2>Estadísticas de gestión</h2>
+                    <p>Indicadores para la gestión y el mantenimiento
+                       de los edificios.</p>
+                </div>
+
+                <button type="button" class="btn-actualizar-estadisticas">
+                    <span class="material-symbols-outlined">refresh</span>
+                    Actualizar
+                </button>
+            </header>
+
+            <div class="estadisticas-cargando">
+                <span class="material-symbols-outlined">monitoring</span>
+                <p>Cargando estadísticas...</p>
+            </div>
+        </div>
+    `;
+
+    const cargar = async () => {
+        const contenedor = section.querySelector(".estadisticas-admin");
+
+        if (!contenedor) return;
+
+        const boton = contenedor.querySelector(
+            ".btn-actualizar-estadisticas"
+        );
+
+        boton.disabled = true;
+
+        try {
+            const response = await obtenerReclamosAdministrador();
+            const data = await response.json().catch(() => ({}));
+
+            if (response.status === 401) {
+                window.location.replace("./index.html");
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "No se pudieron cargar los reclamos."
+                );
+            }
+
+            // No modificar otra sección si el usuario navegó mientras cargaban.
+            if (!estadisticasbtn?.classList.contains("active")) return;
+
+            reclamos = Array.isArray(data.reclamos) ? data.reclamos : [];
+
+            renderEstadisticasAdmin();
+        } catch (error) {
+            console.error("Error al cargar estadísticas:", error);
+
+            if (!estadisticasbtn?.classList.contains("active")) return;
+
+            contenedor.querySelector(".estadisticas-cargando").innerHTML = `
+                <span class="material-symbols-outlined">error</span>
+                <p>${escaparHtml(error.message)}</p>
+                <button type="button" class="btn-reintentar-estadisticas">
+                    Reintentar
+                </button>
+            `;
+
+            contenedor.querySelector(".btn-reintentar-estadisticas")
+                ?.addEventListener("click", cargar);
+        } finally {
+            if (boton?.isConnected) boton.disabled = false;
+        }
+    };
+
+    section.querySelector(".btn-actualizar-estadisticas")
+        ?.addEventListener("click", cargar);
+
+    await cargar();
+}
+
+// Convierte un valor a número sin considerar null como un costo real.
+function numeroEstadistica(valor) {
+    if (valor === null || valor === undefined || valor === "") {
+        return null;
+    }
+
+    const numero = Number(valor);
+    return Number.isFinite(numero) && numero >= 0 ? numero : null;
+}
+
+function monedaEstadistica(valor) {
+    return new Intl.NumberFormat("es-UY", {
+        style: "currency",
+        currency: "UYU",
+        maximumFractionDigits: 2
+    }).format(valor);
+}
+
+function porcentajeEstadistica(valor, total) {
+    return total > 0 ? Math.round((valor / total) * 100) : 0;
+}
+
+function contarPorEstadistica(lista, obtenerClave) {
+    const resultado = new Map();
+
+    lista.forEach(item => {
+        const clave = obtenerClave(item) || "Sin clasificar";
+        resultado.set(clave, (resultado.get(clave) || 0) + 1);
+    });
+
+    return [...resultado.entries()]
+        .map(([nombre, cantidad]) => ({ nombre, cantidad }))
+        .sort((a, b) => b.cantidad - a.cantidad);
+}
+
+function renderBarraEstadistica(nombre, cantidad, maximo, detalle = "") {
+    const ancho = maximo > 0 ? (cantidad / maximo) * 100 : 0;
+
+    return `
+        <div class="estadistica-barra-item">
+            <div class="estadistica-barra-info">
+                <span>${escaparHtml(nombre)}</span>
+                <strong>${cantidad}${detalle}</strong>
+            </div>
+            <div class="estadistica-barra-fondo">
+                <div class="estadistica-barra-valor"
+                     style="width:${ancho}%"></div>
+            </div>
+        </div>
+    `;
+}
+
+
+
+
+
+
+function renderEstadisticasAdmin() {
+    const contenedor = section.querySelector(".estadisticas-admin");
+    if (!contenedor) return;
+
+    const estadoNormalizado = reclamo => {
+        const estado = normalizarEstadoReclamo(reclamo.estado);
+
+        if (["enviado"].includes(estado)) return "pendiente";
+        if (["validado", "aceptado"].includes(estado)) return "validado";
+        if (["proceso"].includes(estado)) return "en_proceso";
+        if (["terminado"].includes(estado)) return "completado";
+
+        return estado;
+    };
+
+    const total = reclamos.length;
+    const pendientes = reclamos.filter(
+        r => estadoNormalizado(r) === "pendiente"
+    ).length;
+
+    const enProceso = reclamos.filter(
+        r => estadoNormalizado(r) === "en_proceso"
+    ).length;
+
+    const completados = reclamos.filter(
+        r => estadoNormalizado(r) === "completado"
+    ).length;
+
+    const rechazados = reclamos.filter(
+        r => estadoNormalizado(r) === "rechazado"
+    ).length;
+
+    const clasificaciones = contarPorEstadistica(
+        reclamos,
+        r => r.clasificacion?.clasificacion
+    );
+
+    const edificiosConReclamos = contarPorEstadistica(
+        reclamos,
+        r => r.edificio?.nombre || "Edificio no identificado"
+    );
+
+    // Calculamos por edificio qué clasificación aparece con mayor frecuencia.
+    const detalleEdificios = edificios.map(edificio => {
+        const delEdificio = reclamos.filter(
+            r => Number(r.edificio_id) === Number(edificio.id)
+        );
+
+        const tipos = contarPorEstadistica(
+            delEdificio,
+            r => r.clasificacion?.clasificacion
+        );
+
+        return {
+            edificio,
+            cantidad: delEdificio.length,
+            tipoPrincipal: delEdificio.length
+                ? tipos[0].nombre
+                : "Sin reclamos",
+            cantidadTipoPrincipal: delEdificio.length
+                ? tipos[0].cantidad
+                : 0
+        };
+    }).sort((a, b) => b.cantidad - a.cantidad);
+
+    // Sumar los costos que realmente están informados.
+    // Los null se cuentan como importes faltantes, no como costos de $0.
+    const costos = reclamos.map(r => {
+        const manoObra = numeroEstadistica(r.costo_mano_obra);
+        const materiales = numeroEstadistica(r.costo_materiales);
+
+        return {
+            reclamo: r,
+            manoObra,
+            materiales,
+            completo: manoObra !== null && materiales !== null,
+            total: (manoObra ?? 0) + (materiales ?? 0)
+        };
+    });
+
+    const costosCompletos = costos.filter(c => c.completo);
+    const costosFaltantes = costos.length - costosCompletos.length;
+
+    const gastoRegistrado = costosCompletos.reduce(
+        (suma, c) => suma + c.total, 0
+    );
+
+    const edificiosOptions = edificios.map(edificio => `
+        <option value="${Number(edificio.id)}">
+            ${escaparHtml(edificio.nombre)}
+        </option>
+    `).join("");
+
+    const maxEdificio = Math.max(
+        0, ...edificiosConReclamos.map(e => e.cantidad)
+    );
+
+    const maxClasificacion = Math.max(
+        0, ...clasificaciones.map(c => c.cantidad)
+    );
+
+    contenedor.innerHTML = `
+        <header class="estadisticas-header">
+            <div>
+                <span class="estadisticas-etiqueta">PANEL DE CONTROL</span>
+                <h2>Estadísticas de gestión</h2>
+                <p>Indicadores generales de reclamos y mantenimiento.</p>
+            </div>
+            <button type="button" class="btn-actualizar-estadisticas">
+                <span class="material-symbols-outlined">refresh</span>
+                Actualizar
+            </button>
+        </header>
+
+        <div class="estadisticas-filtros">
+            <label for="filtro-edificio-estadisticas">
+                Analizar edificio
+            </label>
+            <select id="filtro-edificio-estadisticas">
+                <option value="todos">Todos los edificios</option>
+                ${edificiosOptions}
+            </select>
+            <p>Los indicadores se calculan con los reclamos recibidos.</p>
+        </div>
+
+        <div class="estadisticas-kpis">
+            <article class="estadistica-kpi">
+                <span class="estadistica-kpi-icono azul">
+                    <span class="material-symbols-outlined">assignment</span>
+                </span>
+                <div>
+                    <p>Total de reclamos</p>
+                    <strong>${total}</strong>
+                    <small>Registrados</small>
+                </div>
+            </article>
+
+            <article class="estadistica-kpi">
+                <span class="estadistica-kpi-icono naranja">
+                    <span class="material-symbols-outlined">schedule</span>
+                </span>
+                <div>
+                    <p>Pendientes</p>
+                    <strong>${pendientes}</strong>
+                    <small>${porcentajeEstadistica(pendientes, total)}% del total</small>
+                </div>
+            </article>
+
+            <article class="estadistica-kpi">
+                <span class="estadistica-kpi-icono violeta">
+                    <span class="material-symbols-outlined">engineering</span>
+                </span>
+                <div>
+                    <p>En proceso</p>
+                    <strong>${enProceso}</strong>
+                    <small>En atención</small>
+                </div>
+            </article>
+
+            <article class="estadistica-kpi">
+                <span class="estadistica-kpi-icono verde">
+                    <span class="material-symbols-outlined">task_alt</span>
+                </span>
+                <div>
+                    <p>Completados</p>
+                    <strong>${completados}</strong>
+                    <small>${porcentajeEstadistica(completados, total)}% del total</small>
+                </div>
+            </article>
+        </div>
+
+        <div class="estadisticas-grid">
+            <article class="estadistica-panel">
+                <div class="estadistica-panel-titulo">
+                    <div>
+                        <h3>Reclamos por edificio</h3>
+                        <p>Edificios con mayor cantidad de incidencias.</p>
+                    </div>
+                    <span class="material-symbols-outlined">apartment</span>
+                </div>
+                <div class="estadistica-barras" id="grafico-edificios">
+                    ${edificiosConReclamos.length
+                        ? edificiosConReclamos.map(e =>
+                            renderBarraEstadistica(
+                                e.nombre, e.cantidad, maxEdificio
+                            )
+                        ).join("")
+                        : '<p class="estadistica-vacia">Todavía no hay reclamos.</p>'}
+                </div>
+            </article>
+
+            <article class="estadistica-panel">
+                <div class="estadistica-panel-titulo">
+                    <div>
+                        <h3>Tipos de reclamo</h3>
+                        <p>Problemas más frecuentes registrados.</p>
+                    </div>
+                    <span class="material-symbols-outlined">build</span>
+                </div>
+                <div class="estadistica-barras" id="grafico-clasificaciones">
+                    ${clasificaciones.length
+                        ? clasificaciones.map(c =>
+                            renderBarraEstadistica(
+                                c.nombre, c.cantidad, maxClasificacion
+                            )
+                        ).join("")
+                        : '<p class="estadistica-vacia">Todavía no hay datos.</p>'}
+                </div>
+            </article>
+        </div>
+
+        <article class="estadistica-panel estadistica-tabla-panel">
+            <div class="estadistica-panel-titulo">
+                <div>
+                    <h3>Problema más común por edificio</h3>
+                    <p>Clasificación predominante entre los reclamos registrados.</p>
+                </div>
+                <span class="material-symbols-outlined">domain</span>
+            </div>
+
+            <div class="estadistica-tabla-scroll">
+                <table class="tabla-estadisticas">
+                    <thead>
+                        <tr>
+                            <th>Edificio</th>
+                            <th>Total de reclamos</th>
+                            <th>Problema más común</th>
+                            <th>Casos del problema principal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-edificios-estadisticas">
+                        ${detalleEdificios.map(item => `
+                            <tr data-edificio="${Number(item.edificio.id)}">
+                                <td>${escaparHtml(item.edificio.nombre)}</td>
+                                <td>${item.cantidad}</td>
+                                <td>${escaparHtml(item.tipoPrincipal)}</td>
+                                <td>${item.cantidadTipoPrincipal}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <div class="estadisticas-grid">
+            <article class="estadistica-panel">
+                <div class="estadistica-panel-titulo">
+                    <div>
+                        <h3>Estado de los reclamos</h3>
+                        <p>Distribución actual del trabajo.</p>
+                    </div>
+                    <span class="material-symbols-outlined">fact_check</span>
+                </div>
+
+                <div class="estadistica-estados">
+                    ${[
+                        ["Pendientes", pendientes],
+                        ["En proceso", enProceso],
+                        ["Completados", completados],
+                        ["Rechazados", rechazados]
+                    ].map(([nombre, cantidad]) => `
+                        <div class="estadistica-estado-item">
+                            <span>${nombre}</span>
+                            <strong>${cantidad}</strong>
+                            <small>${porcentajeEstadistica(cantidad, total)}%</small>
+                        </div>
+                    `).join("")}
+                </div>
+            </article>
+
+            <article class="estadistica-panel">
+                <div class="estadistica-panel-titulo">
+                    <div>
+                        <h3>Gastos de mantenimiento</h3>
+                        <p>Importes registrados en los reclamos.</p>
+                    </div>
+                    <span class="material-symbols-outlined">payments</span>
+                </div>
+
+                <div class="estadistica-gasto-total">
+                    <span>Gasto registrado completo</span>
+                    <strong>${monedaEstadistica(gastoRegistrado)}</strong>
+                </div>
+
+                <div class="estadistica-gasto-desglose">
+                    <p>Reclamos con costos completos:
+                        <strong>${costosCompletos.length}</strong>
+                    </p>
+                    <p>Reclamos con algún costo faltante:
+                        <strong>${costosFaltantes}</strong>
+                    </p>
+                </div>
+
+                <p class="estadistica-nota">
+                    El total incluye solamente reclamos con ambos importes
+                    registrados. No representa necesariamente el gasto real
+                    total si hay costos sin cargar.
+                </p>
+            </article>
+        </div>
+
+        <p class="estadisticas-pie">
+            Datos calculados a partir de los reclamos devueltos por el backend.
+            Los resultados representan los registros disponibles, no una
+            proyección de gastos futuros.
+        </p>
+    `;
+
+    // Filtro por edificio: actualiza los indicadores y tablas.
+    const filtro = contenedor.querySelector("#filtro-edificio-estadisticas");
+
+    filtro.addEventListener("change", () => {
+        const id = filtro.value;
+
+        const reclamosFiltrados = id === "todos"
+            ? reclamos
+            : reclamos.filter(
+                r => Number(r.edificio_id) === Number(id)
+            );
+
+        // Recalcular el tablero con el conjunto filtrado.
+        const reclamosOriginales = reclamos;
+        reclamos = reclamosFiltrados;
+        renderEstadisticasAdmin();
+        reclamos = reclamosOriginales;
+
+        // Conservar la selección tras volver a dibujar.
+        const nuevoFiltro = section.querySelector(
+            "#filtro-edificio-estadisticas"
+        );
+        if (nuevoFiltro) nuevoFiltro.value = id;
+    });
+
+    contenedor.querySelector(".btn-actualizar-estadisticas")
+        ?.addEventListener("click", vistaEstadisticas);
 }
