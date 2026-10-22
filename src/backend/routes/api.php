@@ -50,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/proveedores/{id}/estado', [ProveedorController::class, 'cambiarEstado']);
             // Crear clasificación de reclamos
             Route::post('/clasificaciones', [ClasificacionController::class, 'store']);
+            // Crear areas de un edificio
+            Route::post('/areas', [AreaController::class, 'store']);
         });
 
         // ---------- Catálogos y datos de consulta ----------
