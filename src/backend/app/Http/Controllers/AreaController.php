@@ -7,6 +7,25 @@ use Illuminate\Http\Request;
 
 class AreaController extends Controller
 {
+    public function index(Request $request)
+    {
+        $datos = $request->validate([
+            'edificio_id' => ['sometimes', 'integer', 'exists:edificios,id'],
+        ]);
+
+        return response()->json(
+            Area::query()
+                ->with('edificio:id,nombre')
+                ->withCount('reclamos')
+                ->when(
+                    isset($datos['edificio_id']),
+                    fn ($consulta) => $consulta->where('edificio_id', $datos['edificio_id'])
+                )
+                ->orderBy('nombre')
+                ->get()
+        );
+    }
+
     public function porEdificio(Request $request, $edificioId)
     {
         $usuario = $request->user();
@@ -58,7 +77,7 @@ class AreaController extends Controller
             'descripcion' => [
                 'nullable',
                 'string',
-                'max:1000',
+                'max:200',
             ],
         ]);
 
@@ -82,5 +101,20 @@ class AreaController extends Controller
             'message' => 'Área creada correctamente.',
             'area' => $area,
         ], 201);
+    }
+
+    public function destroy(Area $area)
+    {
+        if ($area->reclamos()->exists()) {
+            return response()->json([
+                'message' => 'No se puede eliminar un área con reclamos asociados.',
+            ], 409);
+        }
+
+        $area->delete();
+
+        return response()->json([
+            'message' => 'Área eliminada correctamente.',
+        ]);
     }
 }
