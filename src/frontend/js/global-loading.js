@@ -1,105 +1,29 @@
 (() => {
-    const RETRASO_MOSTRAR = 350;
-    const TIEMPO_MINIMO_VISIBLE = 280;
-    const fetchOriginal = window.fetch.bind(window);
-    let solicitudesPendientes = 0;
-    let temporizadorMostrar = null;
-    let temporizadorOcultar = null;
-    let visibleDesde = 0;
+    // El indicador corresponde al arranque de la interfaz, no a cada petición.
+    if (!document.body.hasAttribute("data-carga-interfaz")) return;
 
-    function obtenerIndicador() {
-        let indicador = document.querySelector(".carga-global");
+    const indicador = document.createElement("div");
+    indicador.className = "carga-global";
+    indicador.hidden = true;
+    indicador.setAttribute("role", "status");
+    indicador.setAttribute("aria-live", "polite");
+    indicador.setAttribute("aria-label", "Cargando interfaz");
+    indicador.innerHTML = '<span class="carga-global-circulo" aria-hidden="true"></span>';
+    document.body.appendChild(indicador);
 
-        if (indicador) {
-            return indicador;
-        }
-
-        indicador = document.createElement("div");
-        indicador.className = "carga-global";
-        indicador.hidden = true;
-        indicador.setAttribute("role", "status");
-        indicador.setAttribute("aria-live", "polite");
-        indicador.setAttribute("aria-label", "Cargando");
-        indicador.innerHTML = `
-            <span class="carga-global-circulo" aria-hidden="true"></span>
-        `;
-        document.body.appendChild(indicador);
-
-        return indicador;
-    }
-
-    function mostrarIndicador() {
-        temporizadorMostrar = null;
-
-        if (solicitudesPendientes === 0) {
-            return;
-        }
-
-        const indicador = obtenerIndicador();
-        visibleDesde = performance.now();
+    // Evita un destello cuando la interfaz carga rápido.
+    const mostrar = window.setTimeout(() => {
         indicador.hidden = false;
+    }, 250);
+
+    // Si falla la carga de un módulo, el indicador no queda bloqueando la página.
+    const seguridad = window.setTimeout(finalizar, 15000);
+
+    function finalizar() {
+        window.clearTimeout(mostrar);
+        window.clearTimeout(seguridad);
+        indicador.hidden = true;
     }
 
-    function iniciarCarga() {
-        solicitudesPendientes += 1;
-
-        if (temporizadorOcultar) {
-            clearTimeout(temporizadorOcultar);
-            temporizadorOcultar = null;
-        }
-
-        const indicador = document.querySelector(".carga-global");
-
-        if (solicitudesPendientes > 1 || (indicador && !indicador.hidden)) {
-            return;
-        }
-
-        temporizadorMostrar = window.setTimeout(
-            mostrarIndicador,
-            RETRASO_MOSTRAR
-        );
-    }
-
-    function finalizarCarga() {
-        solicitudesPendientes = Math.max(0, solicitudesPendientes - 1);
-
-        if (solicitudesPendientes > 0) {
-            return;
-        }
-
-        if (temporizadorMostrar) {
-            clearTimeout(temporizadorMostrar);
-            temporizadorMostrar = null;
-        }
-
-        const indicador = document.querySelector(".carga-global");
-
-        if (!indicador || indicador.hidden) {
-            return;
-        }
-
-        const tiempoRestante = Math.max(
-            0,
-            TIEMPO_MINIMO_VISIBLE - (performance.now() - visibleDesde)
-        );
-
-        temporizadorOcultar = window.setTimeout(() => {
-            temporizadorOcultar = null;
-
-            if (solicitudesPendientes === 0) {
-                indicador.hidden = true;
-            }
-        }, tiempoRestante);
-    }
-
-    window.fetch = (...argumentos) => {
-        iniciarCarga();
-
-        try {
-            return fetchOriginal(...argumentos).finally(finalizarCarga);
-        } catch (error) {
-            finalizarCarga();
-            throw error;
-        }
-    };
+    window.finalizarCargaInterfaz = finalizar;
 })();

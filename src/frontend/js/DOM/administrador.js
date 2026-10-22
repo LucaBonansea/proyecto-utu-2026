@@ -402,13 +402,21 @@ async function iniciarAplicacion() {
 
     logoutbtn.addEventListener("click", cerrar_sesion);
 
-    await cargarEdificios();
+    await Promise.all([
+        cargarEdificios(),
+        cargarUsuarios(),
+        cargarProveedores()
+    ]);
 
-    await cargarUsuarios();
-
-    await cargarProveedores();
-
-    vistaProveedores();
+    // Si el usuario cambió de sección mientras cargaban los catálogos,
+    // actualizar esa vista sin reemplazar Reclamos u otra sección abierta.
+    if (proveedoresbtn.classList.contains("active")) {
+        vistaProveedores();
+    } else if (edificiosbtn.classList.contains("active")) {
+        vistaEdificios();
+    } else if (usuariosbtn.classList.contains("active")) {
+        vistaUsuarios();
+    }
 
 }
 
@@ -448,7 +456,6 @@ function cerrarMenuCuentaConEscape(event) {
 async function cargarCuentaMenu() {
     accountMenuContent.innerHTML = `
         <div class="account-loading">
-            <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
             Cargando cuenta...
         </div>
     `;
@@ -564,15 +571,17 @@ async function cerrar_sesion() {
 
 // Punto de entrada: comprueba identidad, prepara componentes compartidos e inicia.
 async function iniciar() {
-    const usuario = await verificar_sesion();
+    try {
+        const usuario = await verificar_sesion();
 
-    if (!usuario) {
-        return;
+        if (!usuario) return;
+
+        inicializarTema();
+        inicializarNotificaciones();
+        await iniciarAplicacion();
+    } finally {
+        window.finalizarCargaInterfaz?.();
     }
-
-    inicializarTema();
-    inicializarNotificaciones();
-    await iniciarAplicacion();
 }
 
 // Espera a que el HTML exista antes de buscar elementos y conectar eventos.
@@ -599,7 +608,6 @@ async function vistaReclamos() {
                 </div>
             </div>
             <div class="estado-carga-reclamos">
-                <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
                 Cargando reclamos...
             </div>
         </div>

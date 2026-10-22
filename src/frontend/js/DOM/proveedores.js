@@ -1256,17 +1256,18 @@ formResolver.addEventListener(
 );
 
 async function iniciar() {
-    inicializarModuloSeguro("tema", inicializarTema);
+    try {
+        inicializarModuloSeguro("tema", inicializarTema);
 
-    const sesionValida =
-        await verificarSesion();
+        const sesionValida = await verificarSesion();
 
-    if (!sesionValida) {
-        return;
+        if (!sesionValida) return;
+
+        inicializarModuloSeguro("notificaciones", inicializarNotificaciones);
+        await cargarReclamos();
+    } finally {
+        window.finalizarCargaInterfaz?.();
     }
-
-    inicializarModuloSeguro("notificaciones", inicializarNotificaciones);
-    await cargarReclamos();
 }
 
 function inicializarModuloSeguro(nombre, inicializador) {
