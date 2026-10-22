@@ -2576,23 +2576,35 @@ function vistaUsuarios(filtro = "") {
     const cedulaInput =
         document.querySelector(".cedula-usuario");
 
+           cedulaInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
+
     const nombreInput =
         document.querySelector(".nombre-usuario");
+       
+        nombreInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
+    });
+        
 
     const telefonoInput =
         document.querySelector(".telefono-usuario");
 
+          telefonoInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
+
     const emailInput =
         document.querySelector(".email-usuario");
+
 
     const passwordInput =
         document.querySelector(".password-usuario");
 
-     cedulaInput.addEventListener("input", (e) => {
-        e.target.value = e.target.value.replace(/[^0-9]/g, "");
-    });
 
     const confirmPasswordInput = document.querySelector(".confirm-password-usuario");
+
 
     const rolSelect =
         document.querySelector(".rol-usuario");
@@ -2740,6 +2752,11 @@ function vistaUsuarios(filtro = "") {
 
         }
         
+        if (cedula.length !== 8) {
+            notify.warning("La cédula debe tener exactamente 8 números.");
+            return;
+        }
+
         if (
             password !==
              confirmPasswordInput.value.trim()
