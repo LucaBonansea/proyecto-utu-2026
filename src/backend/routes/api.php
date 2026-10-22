@@ -51,7 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
             // Crear clasificación de reclamos
             Route::post('/clasificaciones', [ClasificacionController::class, 'store']);
             // Crear areas de un edificio
+            Route::get('/areas', [AreaController::class, 'index']);
             Route::post('/areas', [AreaController::class, 'store']);
+            Route::delete('/areas/{area}', [AreaController::class, 'destroy']);
         });
 
         // ---------- Catálogos y datos de consulta ----------

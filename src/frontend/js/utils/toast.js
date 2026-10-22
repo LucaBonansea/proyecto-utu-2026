@@ -25,6 +25,7 @@ function show(type, message, options = {}) {
 }
 
 function showConfirm(message, {
+    title = "Confirmar acción",
     confirmText = "Confirmar",
     cancelText = "Cancelar"
 } = {}) {
@@ -33,9 +34,11 @@ function showConfirm(message, {
     return new Promise(resolve => {
         const focoAnterior = document.activeElement;
         const contenedor = document.createElement("div");
-        const tarjeta = document.createElement("section");
+        const tarjeta = document.createElement("div");
         const contenido = document.createElement("div");
         const icono = document.createElement("span");
+        const cuerpo = document.createElement("div");
+        const titulo = document.createElement("h2");
         const texto = document.createElement("p");
         const acciones = document.createElement("div");
         const botonCancelar = document.createElement("button");
@@ -44,12 +47,16 @@ function showConfirm(message, {
         contenedor.className = "confirmacion-toast-container";
         tarjeta.className = "confirmacion-toast";
         tarjeta.setAttribute("role", "alertdialog");
+        tarjeta.setAttribute("aria-labelledby", "confirmacion-toast-titulo");
         tarjeta.setAttribute("aria-describedby", "confirmacion-toast-mensaje");
 
         contenido.className = "confirmacion-toast-contenido";
         icono.className = "material-symbols-outlined confirmacion-toast-icono";
         icono.setAttribute("aria-hidden", "true");
         icono.textContent = "warning";
+        cuerpo.className = "confirmacion-toast-cuerpo";
+        titulo.id = "confirmacion-toast-titulo";
+        titulo.textContent = title;
         texto.id = "confirmacion-toast-mensaje";
         texto.textContent = message;
 
@@ -61,7 +68,8 @@ function showConfirm(message, {
         botonConfirmar.className = "confirmacion-toast-confirmar";
         botonConfirmar.textContent = confirmText;
 
-        contenido.append(icono, texto);
+        cuerpo.append(titulo, texto);
+        contenido.append(icono, cuerpo);
         acciones.append(botonCancelar, botonConfirmar);
         tarjeta.append(contenido, acciones);
         contenedor.append(tarjeta);
