@@ -1,31 +1,14 @@
+
 /**
  * ============================================================================
- * 🚀 FLUJO GENERAL DE LA APLICACIÓN (CÓMO FUNCIONA DE PUNTA A PUNTA)
+ * FLUJO GENERAL DE LA APLICACIÓN
  * ============================================================================
- * 
- * 1. ARRANQUE (DOMContentLoaded):
- *    - El navegador carga el HTML y dispara la función principal `iniciar()`.
- *    - Se ejecuta `verificar_sesion()`: comprueba si el usuario está logueado y 
- *      qué rol tiene (si es administrativo entra; si es otro rol, se lo redirige).
- *    - Si pasa la seguridad, se cargan el tema, las notificaciones y se llama a `iniciarAplicacion()`.
- * 
- * 2. CARGA DE LA BANDEJA (iniciarAplicacion -> vistaLista):
- *    - Se piden los reclamos pendientes al servidor mediante una petición asíncrona.
- *    - Se dibujan las tarjetas en pantalla usando columnas (tipo Masonry) con `.map()`.
- *    - Cada tarjeta tiene un botón "Ver detalle" que escucha clics.
- * 
- * 3. INTERACCIÓN Y DETALLE (vistaDetalle):
- *    - Al hacer clic en un reclamo, se busca su ID y se inyecta su HTML en un modal (oculto).
- *    - Se abre el modal agregándole la clase CSS 'activo'.
- *    - Se piden los proveedores al servidor y se llenan las opciones del `<select>`.
- *    - El administrativo puede editar la descripción (con el botón o presionando 'Enter') 
- *      y alternar la prioridad entre "Normal" y "Urgente".
- * 
- * 4. VALIDACIÓN Y CIERRE (btn-enviar-area):
- *    - Se valida que se haya seleccionado un proveedor. Si no, frena con un aviso.
- *    - Se envían los datos actualizados al servidor mediante un método PUT.
- *    - Si el servidor responde OK: se remueve el reclamo de la lista local, se notifica 
- *      el éxito, se cierra el modal y se redibuja la bandeja actualizada.
+ *
+ * 1. Verifica la sesión y los permisos del usuario.
+ * 2. Obtiene los reclamos pendientes de validación.
+ * 3. Muestra tarjetas con edificio, área y clasificación.
+ * 4. Permite ver el detalle, editar la descripción y cambiar la prioridad.
+ * 5. Permite seleccionar un proveedor y validar el reclamo.
  * ============================================================================
  */
 
@@ -40,7 +23,7 @@ import { notify } from "../utils/toast.js?v=20261016-1";
 import { inicializarTema } from "../theme.js";
 import { inicializarNotificaciones } from "./notifications.js";
 
-// Selección de elementos globales del DOM que el controlador utilizará en toda la interfaz.
+// Elementos del DOM.
 const section = document.querySelector("main > section");
 const filtro_container = document.querySelector("#filtro-container");
 const modal = document.querySelector("#modal-reclamo");
@@ -49,37 +32,26 @@ const cerrarModal = modal.querySelector(".cerrar-modal");
 const fondoModal = modal.querySelector(".fondo-modal");
 const logoutbtn = document.querySelector(".logout");
 
-/**
- * ============================================================================
- * CONCEPTO CLAVE: CIERRE Y LIMPIEZA DE MODALES
- * ============================================================================
- * Explicación: Para cerrar el modal de detalle, quitamos la clase CSS 'activo' 
- * que lo hace visible y vaciamos el contenido HTML interno (innerHTML = ""). 
- * Esto es una buena práctica para que, si el usuario abre otro reclamo después, 
- * no queden "rastros" ni datos visuales superpuestos del reclamo anterior.
- */
+// Reclamos pendientes en memoria.
+let reclamosAValidar = [];
+
+// ============================================================================
+// CIERRE DEL MODAL
+// ============================================================================
+
 function cerrarDetalle() {
     modal.classList.remove("activo");
     contenidoModal.innerHTML = "";
 }
+
 cerrarModal.addEventListener("click", cerrarDetalle);
 fondoModal.addEventListener("click", cerrarDetalle);
 logoutbtn.addEventListener("click", cerrar_sesion);
 
-// Arreglo en memoria donde almacenamos temporalmente los reclamos pendientes traídos del servidor.
-let reclamosAValidar = [];
+// ============================================================================
+// VERIFICACIÓN DE SESIÓN
+// ============================================================================
 
-/**
- * ============================================================================
- * CONCEPTO CLAVE: SEGURIDAD Y CONTROL DE ACCESO POR ROLES (Authentication & RBAC)
- * ============================================================================
- * Explicación: Esta función actúa como un "patovica" o guardia de seguridad. 
- * Consulta al backend si la cookie o token de sesión son válidos. 
- * 1. Si no hay sesión válida (!request.ok), expulsa al usuario al login (index.html).
- * 2. Si la sesión es válida, lee el rol del usuario y lo redirige estrictamente 
- * a su pantalla correspondiente (administrativo, administrador o proveedor), 
- * evitando que entren a secciones que no les corresponden.
- */
 async function verificar_sesion() {
     try {
         const request = await obtenerSesion();
@@ -115,45 +87,44 @@ async function verificar_sesion() {
     }
 }
 
-/**
- * ============================================================================
- * CONCEPTO CLAVE: PETICIÓN ASÍNCRONA DE DATOS (Async/Await & Try/Catch)
- * ============================================================================
- * Explicación: Como la comunicación con el servidor toma tiempo (latencia de red), 
- * usamos async/await para pausar la ejecución hasta que el servidor responda. 
- * El bloque try/catch nos protege ante caídas de internet o errores del servidor, 
- * evitando que la aplicación se rompa y mostrando una notificación amigable al usuario.
- */
+// ============================================================================
+// CARGA DE RECLAMOS
+// ============================================================================
+
 async function iniciarAplicacion() {
     try {
         const request = await obtenerReclamosAdministrativo();
 
         if (!request.ok) {
-            throw new Error(`No se pudieron obtener los reclamos (HTTP ${request.status}).`);
+            throw new Error(
+                `No se pudieron obtener los reclamos (HTTP ${request.status}).`
+            );
         }
 
         const response = await request.json();
 
-        reclamosAValidar = Array.isArray(response.reclamos) ? response.reclamos : [];
+        reclamosAValidar = Array.isArray(response.reclamos)
+            ? response.reclamos
+            : [];
 
         vistaLista();
-
     } catch (error) {
         console.error("Error obteniendo reclamos:", error);
         notify.error("No se pudieron cargar los reclamos.");
-        section.innerHTML = '<p style="padding:20px;">No se pudieron cargar los reclamos. Recargá la página para intentar de nuevo.</p>';
+
+        section.innerHTML = `
+            <p style="padding:20px;">
+                No se pudieron cargar los reclamos.
+                Recargá la página para intentar de nuevo.
+            </p>
+        `;
     }
 }
 
-/**
- * ============================================================================
- * CONCEPTO CLAVE: DESTRUCCIÓN DE SESIÓN Y LIMPIEZA DE ESTADO
- * ============================================================================
- * Explicación: Desactiva temporalmente el botón de salir para prevenir clics dobles, 
- * le ordena al backend destruir la sesión actual, avisa mediante una notificación 
- * flotante de éxito y utiliza un temporizador (setTimeout) para dar tiempo a que 
- * el usuario lea el mensaje antes de redirigirlo al inicio de sesión.
- */
+// ============================================================================
+// CIERRE DE SESIÓN
+// ============================================================================
+
 async function cerrar_sesion() {
     logoutbtn.disabled = true;
 
@@ -162,10 +133,14 @@ async function cerrar_sesion() {
         const response = await request.json();
 
         if (!request.ok) {
-            throw new Error(response.mensaje || "No se pudo cerrar la sesión.");
+            throw new Error(
+                response.mensaje || "No se pudo cerrar la sesión."
+            );
         }
 
-        notify.success(response.mensaje || "Sesión cerrada correctamente.");
+        notify.success(
+            response.mensaje || "Sesión cerrada correctamente."
+        );
 
         setTimeout(() => {
             window.location.replace("./index.html");
@@ -177,15 +152,10 @@ async function cerrar_sesion() {
     }
 }
 
-/**
- * ============================================================================
- * CONCEPTO CLAVE: CICLO DE VIDA Y PUNTO DE ENTRADA (Initialization Pipeline)
- * ============================================================================
- * Explicación: Es la función principal que coordina el arranque de la vista. 
- * Primero valida la identidad y permisos del usuario. Si todo es correcto, 
- * inicializa el tema visual de la plataforma, enciende el sistema de notificaciones 
- * y finalmente dispara la carga de los reclamos pendientes.
- */
+// ============================================================================
+// INICIALIZACIÓN
+// ============================================================================
+
 async function iniciar() {
     try {
         const usuario = await verificar_sesion();
@@ -194,27 +164,22 @@ async function iniciar() {
 
         inicializarTema();
         inicializarNotificaciones();
+
         await iniciarAplicacion();
     } finally {
         window.finalizarCargaInterfaz?.();
     }
 }
 
-// Disparador global: espera a que el navegador termine de construir todo el HTML.
 document.addEventListener("DOMContentLoaded", iniciar);
 
-/**
- * ============================================================================
- * CONCEPTO CLAVE: RENDERIZADO DINÁMICO DE BANDEJA (Grid/Masonry & Templating)
- * ============================================================================
- * Explicación: Transforma los datos crudos (JSON) en elementos visuales dentro del DOM. 
- * 1. Verifica si hay elementos; si la lista está vacía, muestra un mensaje amigable.
- * 2. Distribuye los reclamos en columnas usando el operador módulo (%) para equilibrar el diseño.
- * 3. Utiliza plantillas de texto con .map().join("") para generar HTML masivo de forma eficiente.
- * 4. Asocia eventos de escucha a cada tarjeta para que el botón "Ver detalle" sepa qué ID abrir.
- */
+// ============================================================================
+// BANDEJA DE RECLAMOS
+// ============================================================================
+
 function vistaLista() {
     filtro_container.innerHTML = "";
+
     section.removeAttribute("style");
     section.style.display = "block";
     section.classList.remove("contenedor-masonry");
@@ -230,8 +195,8 @@ function vistaLista() {
 
     const columnas = [[], [], [], []];
 
-    reclamosAValidar.forEach((r, index) => {
-        columnas[index % 4].push(r);
+    reclamosAValidar.forEach((reclamo, index) => {
+        columnas[index % 4].push(reclamo);
     });
 
     section.innerHTML = `
@@ -240,35 +205,52 @@ function vistaLista() {
             ${columnas.map(columna => `
                 <div class="columna-masonry">
 
-                    ${columna.map(r => `
-                        <div class="reclamo-card-basica" data-id="${r.id}">
+                    ${columna.map(reclamo => `
+                        <div
+                            class="reclamo-card-basica"
+                            data-id="${reclamo.id}"
+                        >
 
                             <div class="foto-reclamo-basica">
                                 <img
-                                    src="${r.evidencia
-                                        ? obtenerUrlEvidencia(r.evidencia.ruta_archivo)
+                                    src="${reclamo.evidencia
+                                        ? obtenerUrlEvidencia(
+                                            reclamo.evidencia.ruta_archivo
+                                        )
                                         : ""}"
-                                alt="Evidencia del reclamo"
+                                    alt="Evidencia del reclamo"
                                 >
                             </div>
 
                             <div class="info-basica">
 
                                 <p class="reclamo-titulo-basico">
-                                    ${r.description}
+                                    ${reclamo.description ?? "Sin descripción"}
                                 </p>
 
                                 <p class="fecha">
-                                    ${new Date(r.created_at)
-                                        .toLocaleDateString("es-UY")}
+                                    ${reclamo.created_at
+                                        ? new Date(
+                                            reclamo.created_at
+                                        ).toLocaleDateString("es-UY")
+                                        : "Fecha no disponible"}
                                 </p>
 
                                 <p>
-                                    ${r.edificio?.nombre ?? "Edificio no disponible"}
+                                    Edificio:
+                                    ${reclamo.edificio?.nombre
+                                        ?? "Edificio no disponible"}
                                 </p>
 
                                 <p>
-                                    ${r.clasificacion?.clasificacion
+                                    Área:
+                                    ${reclamo.area?.nombre
+                                        ?? "Sin área asignada"}
+                                </p>
+
+                                <p>
+                                    Clasificación:
+                                    ${reclamo.clasificacion?.clasificacion
                                         ?? "Sin clasificación"}
                                 </p>
 
@@ -288,32 +270,23 @@ function vistaLista() {
     `;
 
     document.querySelectorAll(".reclamo-card-basica").forEach(card => {
-
         const id = card.dataset.id;
 
         card.querySelector(".btn-ver-detalle")
             .addEventListener("click", () => {
                 vistaDetalle(id);
             });
-
     });
 }
 
-/**
- * ============================================================================
- * CONCEPTO CLAVE: MODAL DE DETALLE Y GESTIÓN DE ESTADO LOCAL (State Management)
- * ============================================================================
- * Explicación: Busca el reclamo específico dentro del arreglo local usando su ID. 
- * Inyecta dinámicamente todo el HTML del modal en segundo plano (oculto) y, 
- * una vez que los elementos ya existen en el DOM, activa el modal agregando la clase 'activo'. 
- * A partir de ahí, inicializa los componentes interactivos del modal: proveedores, edición y prioridades.
- */
+// ============================================================================
+// MODAL DE DETALLE
+// ============================================================================
+
 async function vistaDetalle(id) {
     const reclamo = reclamosAValidar.find(r => r.id == id);
 
-    if (!reclamo) {
-        return;
-    }
+    if (!reclamo) return;
 
     contenidoModal.innerHTML = `
         <div class="primerdiv-reclamo" data-id="${reclamo.id}">
@@ -323,7 +296,7 @@ async function vistaDetalle(id) {
                 <div class="info-reclamo">
 
                     <p class="reclamo-titulo" contenteditable="false">
-                        ${reclamo.description}
+                        ${reclamo.description ?? "Sin descripción"}
                     </p>
 
                     <button class="camb-titulo">
@@ -333,9 +306,16 @@ async function vistaDetalle(id) {
                     <p class="user-p">
                         Usuario:
                         ${reclamo.usuario?.nombre ?? "No disponible"}
-                    </p><p class="user-p">
+                    </p>
+
+                    <p class="user-p">
                         Edificio:
                         ${reclamo.edificio?.nombre ?? "No disponible"}
+                    </p>
+
+                    <p class="user-p">
+                        Área:
+                        ${reclamo.area?.nombre ?? "Sin área asignada"}
                     </p>
 
                     <p class="user-p">
@@ -350,10 +330,9 @@ async function vistaDetalle(id) {
                     </p>
 
                     <div class="estado">
-
-                        Estado: ${reclamo.estado}
-                        
+                        Estado: ${reclamo.estado ?? "No disponible"}
                     </div>
+
                     <div class="acciones-reclamo">
 
                         <button class="btn-prioridad">
@@ -365,8 +344,11 @@ async function vistaDetalle(id) {
                     </div>
 
                     <p class="fecha">
-                        ${new Date(reclamo.created_at)
-                            .toLocaleDateString("es-UY")}
+                        ${reclamo.created_at
+                            ? new Date(
+                                reclamo.created_at
+                            ).toLocaleDateString("es-UY")
+                            : "Fecha no disponible"}
                     </p>
 
                     <select class="select-area">
@@ -376,6 +358,7 @@ async function vistaDetalle(id) {
                         </option>
 
                     </select>
+
                     <div class="enviar-area">
 
                         <button class="btn-enviar-area">
@@ -410,40 +393,45 @@ async function vistaDetalle(id) {
         </div>
     `;
 
-    const card = contenidoModal.querySelector(
-        ".primerdiv-reclamo"
-    );
+    const card = contenidoModal.querySelector(".primerdiv-reclamo");
 
-    const selectProveedor = card.querySelector(
-        ".select-area"
-    );
+    const selectProveedor = card.querySelector(".select-area");
 
-    // Activamos la visibilidad del modal recién cuando su estructura HTML fue completamente inyectada.
+    // Mostrar el modal cuando su contenido está listo.
     modal.classList.add("activo");
 
-    /**
-     * ============================================================================
-     * CONCEPTO CLAVE: POBLACIÓN DINÁMICA DE SELECTORES (Dropdown Data Binding)
-     * ============================================================================
-     * Explicación: Solicita al backend la lista actualizada de proveedores disponibles. 
-     * Una vez obtenidos, utiliza el método .map() para transformar cada objeto proveedor 
-     * en una etiqueta HTML <option value="id">nombre</option>, permitiendo que el administrativo 
-     * elija a quién derivar el reclamo.
-     */
+    // ========================================================================
+    // CARGA DE PROVEEDORES
+    // ========================================================================
+
     let proveedores;
+
     try {
-        const requestProveedores = await obtenerProveedoresAdministrativo();
+        const requestProveedores =
+            await obtenerProveedoresAdministrativo();
+
         if (!requestProveedores.ok) {
-            throw new Error(`No se pudieron obtener los proveedores (HTTP ${requestProveedores.status}).`);
+            throw new Error(
+                `No se pudieron obtener los proveedores (HTTP ${requestProveedores.status}).`
+            );
         }
+
         proveedores = await requestProveedores.json();
+
         if (!Array.isArray(proveedores)) {
             throw new Error("Formato de proveedores inesperado.");
         }
     } catch (error) {
         console.error("Error obteniendo proveedores:", error);
+
         notify.error("No se pudieron cargar los proveedores.");
-        selectProveedor.innerHTML = '<option value="">No se pudieron cargar los proveedores</option>';
+
+        selectProveedor.innerHTML = `
+            <option value="">
+                No se pudieron cargar los proveedores
+            </option>
+        `;
+
         return;
     }
 
@@ -459,179 +447,117 @@ async function vistaDetalle(id) {
         `).join("")}
     `;
 
-    /**
-     * ============================================================================
-     * CONCEPTO CLAVE: CONTROLADOR DE ESTADO EDITABLE (Toggle contentEditable)
-     * ============================================================================
-     * Explicación: Permite alternar la caja de texto entre modo lectura (false) y modo escritura (true). 
-     * Funciona como un interruptor: si el usuario hace clic, desbloquea el texto para que el administrativo 
-     * pueda corregir la descripción del reclamo, cambiando dinámicamente el texto del botón entre 
-     * "Editar descripción" y "Guardar descripción".
-     */
-    const btnDescripcion =
-        card.querySelector(".camb-titulo");
+    // ========================================================================
+    // EDICIÓN DE LA DESCRIPCIÓN
+    // ========================================================================
 
-    const descripcion =
-        card.querySelector(".reclamo-titulo");
+    const btnDescripcion = card.querySelector(".camb-titulo");
+    const descripcion = card.querySelector(".reclamo-titulo");
 
     btnDescripcion.addEventListener("click", () => {
-
         if (descripcion.contentEditable === "true") {
-
             guardarDescripcion();
-
         } else {
-
             descripcion.contentEditable = true;
-
             descripcion.classList.add("editando");
-
             descripcion.focus();
 
-            btnDescripcion.textContent =
-                "Guardar descripción";
+            btnDescripcion.textContent = "Guardar descripción";
         }
     });
 
-    // Accesibilidad por teclado: Permite presionar la tecla 'Enter' para confirmar y guardar la edición instantáneamente.
-    descripcion.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-
-            e.preventDefault();
-
+    descripcion.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            event.preventDefault();
             guardarDescripcion();
         }
     });
 
     function guardarDescripcion() {
-
         descripcion.contentEditable = false;
-
         descripcion.classList.remove("editando");
 
-        btnDescripcion.textContent =
-            "Editar descripción";
+        btnDescripcion.textContent = "Editar descripción";
 
-        reclamo.description =
-            descripcion.textContent.trim();
+        reclamo.description = descripcion.textContent.trim();
 
         descripcion.blur();
     }
 
-    /**
-     * ============================================================================
-     * CONCEPTO CLAVE: INTERRUPTOR DE PRIORIDAD (State Toggle Pattern)
-     * ============================================================================
-     * Explicación: Garantiza que el reclamo tenga un nivel de prioridad por defecto ("Normal") 
-     * si viene vacío. Al hacer clic en el botón de prioridad, el sistema evalúa el estado actual 
-     * e invierte el valor (de Normal a Urgente, o viceversa), actualizando también el texto 
-     * visible del botón para darle feedback inmediato al usuario.
-     */
+    // ========================================================================
+    // CAMBIO DE PRIORIDAD
+    // ========================================================================
+
     if (!reclamo.prioridad) {
         reclamo.prioridad = "Normal";
     }
 
-    const btnPrioridad =
-        card.querySelector(".btn-prioridad");
+    const btnPrioridad = card.querySelector(".btn-prioridad");
 
     btnPrioridad.addEventListener("click", () => {
-
         if (reclamo.prioridad === "Urgente") {
-
             reclamo.prioridad = "Normal";
-
-            btnPrioridad.textContent =
-                "Marcar urgencia";
-
+            btnPrioridad.textContent = "Marcar urgencia";
         } else {
-
             reclamo.prioridad = "Urgente";
-
-            btnPrioridad.textContent =
-                "Quitar urgencia";
+            btnPrioridad.textContent = "Quitar urgencia";
         }
     });
 
-    /**
-     * ============================================================================
-     * CONCEPTO CLAVE: VALIDACIÓN DE NEGOCIO Y PERSISTENCIA (Frontend Validation & PUT Request)
-     * ============================================================================
-     * Explicación: Es el proceso de cierre y guardado definitivo del reclamo. Consta de 3 fases:
-     * 1. Validación en el Frontend: Verifica que se haya seleccionado un proveedor válido. 
-     *    Si está vacío, frena la ejecución con un aviso (`return`) para evitar datos incompletos.
-     * 2. Comunicación HTTP (PUT): Empaqueta los cambios (ID, descripción editada, prioridad y proveedor) 
-     *    y se los envía al servidor mediante una petición asíncrona.
-     * 3. Control de Respuesta: Evalúa `request.ok`. Si el servidor responde con éxito, remueve el reclamo 
-     *    de la lista local, muestra una notificación de éxito, cierra el modal y refresca la bandeja.
-     */
+    // ========================================================================
+    // VALIDAR RECLAMO Y ASIGNAR PROVEEDOR
+    // ========================================================================
+
     const btnEnviar = card.querySelector(".btn-enviar-area");
-    btnEnviar
-        .addEventListener("click", async () => {
 
-            if (btnEnviar.disabled) return;
+    btnEnviar.addEventListener("click", async () => {
+        if (btnEnviar.disabled) return;
 
-            if (descripcion.contentEditable === "true") {
-                guardarDescripcion();
-            }
+        if (descripcion.contentEditable === "true") {
+            guardarDescripcion();
+        }
 
-            const proveedor =
-                selectProveedor.value;
+        const proveedor = selectProveedor.value;
 
-            if (!proveedor) {
+        if (!proveedor) {
+            notify.warning(
+                "Selecciona un proveedor antes de validar el reclamo."
+            );
+            return;
+        }
 
-                notify.warning(
-                    "Selecciona un proveedor antes de validar el reclamo."
-                );
+        try {
+            btnEnviar.disabled = true;
 
+            const request = await actualizarReclamo(
+                reclamo.id,
+                reclamo.description,
+                reclamo.prioridad,
+                proveedor
+            );
+
+            if (!request.ok) {
+                notify.error("No se pudo actualizar el reclamo.");
                 return;
             }
 
-            try {
+            reclamosAValidar = reclamosAValidar.filter(
+                r => r.id != reclamo.id
+            );
 
-                btnEnviar.disabled = true;
+            notify.success("Reclamo validado correctamente.");
 
-                const request =
-                    await actualizarReclamo(
-                        reclamo.id,
-                        reclamo.description,
-                        reclamo.prioridad,
-                        proveedor
-                    );
+            cerrarDetalle();
+            vistaLista();
 
-                if (!request.ok) {
+        } catch (error) {
+            console.error("Error actualizando reclamo:", error);
 
-                    notify.error(
-                        "No se pudo actualizar el reclamo."
-                    );
-
-                    return;
-                }
-
-                reclamosAValidar =
-                    reclamosAValidar.filter(
-                        r => r.id != reclamo.id
-                    );
-
-                notify.success(
-                    "Reclamo validado correctamente."
-                );
-
-                cerrarDetalle();
-
-                vistaLista();
-
-            } catch (error) {
-
-                console.error(
-                    "Error actualizando reclamo:",
-                    error
-                );
-
-                notify.error(
-                    "Ocurrió un error al actualizar el reclamo."
-                );
-            } finally {
-                btnEnviar.disabled = false;
-            }
-        });
+            notify.error(
+                "Ocurrió un error al actualizar el reclamo."
+            );
+        } finally {
+            btnEnviar.disabled = false;
+        }
+    });
 }
