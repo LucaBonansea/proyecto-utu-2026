@@ -1976,7 +1976,13 @@ main{
 .contenedor-usuarios {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    align-items: start;
     gap: 15px;
+}
+
+.contenedor-usuarios-gestion {
+    grid-auto-rows: var(--altura-tarjeta-usuario, auto);
+    align-items: stretch;
 }
 
 .usuario-card {
@@ -1984,10 +1990,30 @@ main{
     justify-content: center;
     gap: 10px;
     flex-direction: column;
+    position: relative;
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     border-radius: 15px;
     padding: 18px;
+}
+
+.contenedor-usuarios-gestion .usuario-info {
+    padding-right: 82px;
+}
+
+.contenedor-usuarios-gestion .usuario-card {
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.contenedor-usuarios-gestion .usuario-card-editando {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
 }
 
 .usuario-info h3 {
@@ -2002,6 +2028,34 @@ main{
     color: var(--text-secondary);
 }
 
+.usuario-dato-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.campo-edicion-inline {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 7px;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+.usuario-nombre-inline .campo-edicion-inline {
+    font-weight: 700;
+}
+
+.usuario-card-editando {
+    border-color: rgba(22, 163, 74, .38);
+}
+
 .usuario-rol-actual {
     display: inline-block;
     margin-top: 10px;
@@ -2011,6 +2065,293 @@ main{
     color: var(--azul-primario);
     font-size: 12px;
     font-weight: 600;
+}
+
+.usuario-rol-actual.rol-administrador {
+    background: #f8fafc;
+    color: #991b1b;
+    border: 1px solid #e2e8f0;
+}
+
+.usuario-rol-actual.rol-administrativo {
+    background: #f8fafc;
+    color: #854d0e;
+    border: 1px solid #e2e8f0;
+}
+
+.usuario-rol-actual.rol-usuario-proveedor {
+    background: #f8fafc;
+    color: #166534;
+    border: 1px solid #e2e8f0;
+}
+
+.usuario-rol-actual.rol-usuario-edificio {
+    background: #f8fafc;
+    color: #1e40af;
+    border: 1px solid #e2e8f0;
+}
+
+.usuario-super-admin {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 0 6px;
+    padding: 5px 10px 5px 7px;
+    border-radius: 999px;
+    border: 1px solid #93c5fd;
+    background: linear-gradient(135deg, #123a72 0%, #0b5fbd 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(11, 95, 189, .16);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.usuario-super-admin .material-symbols-outlined {
+    font-size: 17px;
+    font-variation-settings: "FILL" 1, "wght" 600;
+}
+
+.usuario-card-protegida {
+    border-color: rgba(185, 28, 28, .35);
+}
+
+.usuario-protegido-mensaje {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(185, 28, 28, .1);
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.acciones-usuario-superiores {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    gap: 7px;
+}
+
+.btn-editar-usuario,
+.btn-password-usuario,
+.btn-eliminar-usuario,
+.btn-confirmar-edicion-usuario,
+.btn-cancelar-edicion-usuario {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    place-items: center;
+    border: 1px solid var(--border-subtle);
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    color: var(--azul-primario);
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.btn-editar-usuario .material-symbols-outlined,
+.btn-password-usuario .material-symbols-outlined,
+.btn-eliminar-usuario .material-symbols-outlined,
+.btn-confirmar-edicion-usuario .material-symbols-outlined,
+.btn-cancelar-edicion-usuario .material-symbols-outlined {
+    font-size: 19px;
+}
+
+.btn-eliminar-usuario {
+    border: 1px solid #fecaca;
+    background: #fff1f2;
+    color: #be123c;
+}
+
+.btn-password-usuario {
+    color: #7c3aed;
+}
+
+.btn-confirmar-edicion-usuario {
+    border-color: #86efac;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.btn-cancelar-edicion-usuario {
+    border-color: #fecaca;
+    background: #fff1f2;
+    color: #dc2626;
+}
+
+.btn-editar-usuario:hover,
+.btn-password-usuario:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-elevated-hover);
+    transform: translateY(-1px);
+}
+
+.btn-editar-usuario[aria-expanded="true"] {
+    border-color: #86efac;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.btn-eliminar-usuario:hover {
+    background: #ffe4e6;
+    transform: translateY(-1px);
+}
+
+.btn-cancelar-edicion-usuario:hover {
+    background: #ffe4e6;
+    transform: translateY(-1px);
+}
+
+.btn-eliminar-usuario.modo-cancelar-edicion {
+    border-color: #fecaca;
+    background: #fff1f2;
+    color: #dc2626;
+}
+
+.btn-eliminar-usuario.modo-cancelar-edicion:hover {
+    background: #ffe4e6;
+}
+
+.btn-editar-usuario:disabled,
+.btn-password-usuario:disabled,
+.btn-eliminar-usuario:disabled,
+.btn-confirmar-edicion-usuario:disabled,
+.btn-cancelar-edicion-usuario:disabled,
+.select-rol:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.panel-editor-usuario {
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    background: var(--bg-surface-alt);
+}
+
+.selector-editor-usuario {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.opcion-editor-usuario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+    padding: 7px 8px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.opcion-editor-usuario .material-symbols-outlined {
+    font-size: 17px;
+}
+
+.opcion-editor-usuario.activa {
+    border-color: var(--azul-primario);
+    color: var(--azul-primario);
+}
+
+.panel-datos-editor,
+.panel-password-editor {
+    display: grid;
+    gap: 8px;
+}
+
+.campo-autorizacion-usuario {
+    display: grid;
+    gap: 5px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.campo-autorizacion-usuario input,
+.panel-password-editor input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 7px;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 13px;
+}
+
+.form-transferir-super-admin {
+    display: grid;
+    gap: 10px;
+    margin-top: 9px;
+    padding: 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 9px;
+    background: var(--bg-surface-alt);
+}
+
+.form-transferir-super-admin label {
+    display: grid;
+    gap: 5px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.form-transferir-super-admin select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 10px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 7px;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 13px;
+}
+
+.acciones-transferir-super-admin {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.acciones-transferir-super-admin button {
+    padding: 8px 11px;
+    border: 0;
+    border-radius: 7px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.cancelar-transferencia {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+}
+
+.confirmar-transferencia {
+    background: #be123c;
+    color: #fff;
+}
+
+.confirmar-transferencia:disabled {
+    opacity: .55;
+    cursor: not-allowed;
 }
 
 
@@ -3297,6 +3638,7 @@ main{
     .edificio-detalle-info,
     .contenedor-usuarios-edificio .usuario-card,
     .form-cambiar-password,
+    .form-transferir-super-admin,
     .buscador-reclamos-admin,
     .selector-estado-reclamos,
     .reclamo-admin-card,
@@ -3359,6 +3701,8 @@ main{
     .cancelar-edificio,
     .cancelar-usuario,
     .cancelar-password,
+    .cancelar-transferencia,
+    .btn-editar-usuario,
     .btn-cambiar-password,
     .btn-toggle-estado-proveedor,
     .btn-pagina-admin,
@@ -3374,6 +3718,8 @@ main{
     .cancelar-edificio,
     .cancelar-usuario,
     .cancelar-password,
+    .cancelar-transferencia,
+    .btn-editar-usuario,
     .btn-cambiar-password,
     .btn-toggle-estado-proveedor,
     .btn-pagina-admin,
@@ -3381,6 +3727,99 @@ main{
 ):hover:not(:disabled) {
     border-color: var(--border-strong);
     background: var(--bg-elevated-hover);
+}
+
+:root[data-theme="dark"] .admin-page .btn-eliminar-usuario {
+    border-color: rgba(251, 113, 133, .38);
+    background: rgba(190, 18, 60, .15);
+    color: #fda4af;
+}
+
+:root[data-theme="dark"] .admin-page .btn-eliminar-usuario:hover:not(:disabled) {
+    background: rgba(190, 18, 60, .24);
+}
+
+:root[data-theme="dark"] .admin-page .btn-eliminar-usuario.modo-cancelar-edicion {
+    border-color: rgba(251, 113, 133, .48);
+    background: rgba(190, 18, 60, .18);
+    color: #fda4af;
+}
+
+:root[data-theme="dark"] .admin-page .btn-eliminar-usuario.modo-cancelar-edicion:hover:not(:disabled) {
+    background: rgba(190, 18, 60, .28);
+}
+
+@media (min-width: 1050px) {
+    .contenedor-usuarios-gestion .usuario-card-editando {
+        grid-column: span 2;
+        overflow: hidden;
+    }
+
+    .contenedor-usuarios-gestion .usuario-card-editando .usuario-info {
+        position: relative;
+        height: 100%;
+        box-sizing: border-box;
+        padding-right: calc(50% + 12px);
+    }
+
+    .contenedor-usuarios-gestion .usuario-card-editando .usuario-nombre-inline {
+        padding-right: 82px;
+    }
+
+    .contenedor-usuarios-gestion .usuario-card-editando .acciones-usuario-superiores {
+        right: calc(50% + 12px);
+    }
+
+    .contenedor-usuarios-gestion .usuario-card-editando .panel-editor-usuario {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: calc(50% - 12px);
+        box-sizing: border-box;
+    }
+}
+
+:root[data-theme="dark"] .admin-page .usuario-card-editando {
+    border-color: rgba(74, 222, 128, .45);
+}
+
+:root[data-theme="dark"] .admin-page .usuario-card-editando .btn-editar-usuario {
+    border-color: rgba(74, 222, 128, .55);
+    background: rgba(22, 163, 74, .2);
+    color: #86efac;
+}
+
+:root[data-theme="dark"] .admin-page .usuario-super-admin {
+    border-color: rgba(147, 197, 253, .6);
+    background: linear-gradient(135deg, #123a72 0%, #0b5fbd 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .24);
+}
+
+:root[data-theme="dark"] .admin-page .usuario-rol-actual {
+    background: rgba(255, 255, 255, .045);
+    border-color: rgba(148, 163, 184, .22);
+}
+
+:root[data-theme="dark"] .admin-page .usuario-rol-actual.rol-administrador {
+    color: #fca5a5;
+}
+
+:root[data-theme="dark"] .admin-page .usuario-rol-actual.rol-administrativo {
+    color: #fde68a;
+}
+
+:root[data-theme="dark"] .admin-page .usuario-rol-actual.rol-usuario-proveedor {
+    color: #86efac;
+}
+
+:root[data-theme="dark"] .admin-page .usuario-rol-actual.rol-usuario-edificio {
+    color: #93c5fd;
+}
+
+:root[data-theme="dark"] .admin-page .usuario-protegido-mensaje {
+    background: rgba(190, 18, 60, .15);
+    color: #fda4af;
 }
 
 :root[data-theme="dark"] .admin-page :is(
@@ -4259,5 +4698,1106 @@ main{
     .tabla-estadisticas th,
     .tabla-estadisticas td {
         padding: 12px 10px;
+    }
+}
+
+body.editor-usuario-modal-abierto {
+    overflow: hidden;
+}
+
+.modal-editor-usuario {
+    position: fixed;
+    inset: 0;
+    z-index: 50000;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    padding: 24px;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, .48);
+    -webkit-backdrop-filter: blur(9px);
+    backdrop-filter: blur(9px);
+}
+
+.modal-editor-usuario .usuario-card-editando {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(310px, .95fr);
+    grid-template-areas:
+        "titulo titulo"
+        "mensaje mensaje"
+        "confirmacion confirmacion"
+        "datos editor";
+    align-items: start;
+    gap: 22px;
+    width: min(820px, calc(100vw - 48px));
+    height: auto;
+    min-height: 0;
+    max-height: calc(100vh - 48px);
+    box-sizing: border-box;
+    padding: 28px;
+    overflow-y: auto;
+    border: 1px solid rgba(37, 99, 235, .24);
+    border-radius: 22px;
+    background: var(--bg-surface);
+    box-shadow: 0 28px 80px rgba(15, 23, 42, .32), 0 8px 24px rgba(15, 23, 42, .18);
+    animation: modal-editor-usuario-entrada .2s ease-out;
+}
+
+.modal-editor-usuario .usuario-card-editando::before {
+    content: "Editar usuario";
+    grid-area: titulo;
+    grid-column: 1 / -1;
+    padding-right: 96px;
+    color: var(--text-primary);
+    font-size: 21px;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.modal-editor-usuario .usuario-info {
+    grid-area: datos;
+    min-width: 0;
+    padding-right: 0;
+}
+
+.modal-editor-usuario .usuario-nombre-inline {
+    display: block;
+    margin-right: 92px;
+}
+
+.modal-editor-usuario .usuario-dato-inline:not(.usuario-nombre-inline) {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-editor-usuario .campo-edicion-inline {
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 11px;
+    border-radius: 10px;
+}
+
+.modal-editor-usuario .usuario-nombre-inline .campo-edicion-inline {
+    font-size: 18px;
+}
+
+.modal-editor-usuario .acciones-usuario-superiores {
+    top: 22px;
+    right: 22px;
+    z-index: 2;
+}
+
+.modal-editor-usuario .btn-editar-usuario,
+.modal-editor-usuario .btn-password-usuario,
+.modal-editor-usuario .btn-eliminar-usuario,
+.modal-editor-usuario .btn-confirmar-edicion-usuario,
+.modal-editor-usuario .btn-cancelar-edicion-usuario {
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 5px 14px rgba(15, 23, 42, .1);
+}
+
+.modal-editor-usuario .btn-editar-usuario[aria-expanded="true"] {
+    border-color: #86efac;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.modal-editor-usuario .btn-cancelar-edicion-usuario {
+    border-color: #fecaca;
+    background: #fff1f2;
+    color: #dc2626;
+}
+
+.modal-editor-usuario .btn-confirmar-edicion-usuario {
+    border-color: #86efac;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.modal-editor-usuario .panel-editor-usuario {
+    grid-area: editor;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 14px;
+}
+
+.modal-editor-usuario .selector-editor-usuario {
+    gap: 8px;
+}
+
+.modal-editor-usuario .opcion-editor-usuario {
+    min-height: 42px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.modal-editor-usuario .campo-autorizacion-usuario input,
+.modal-editor-usuario .panel-password-editor input,
+.modal-editor-usuario .usuario-acciones select {
+    min-height: 42px;
+    border-radius: 10px;
+}
+
+.control-password-editor {
+    position: relative;
+    display: block;
+}
+
+.control-password-editor input {
+    padding-right: 44px !important;
+}
+
+.alternar-password-editor {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    place-items: center;
+    transform: translateY(-50%);
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.alternar-password-editor:hover {
+    background: var(--bg-elevated-hover);
+    color: var(--azul-primario);
+}
+
+.alternar-password-editor:focus-visible {
+    outline: 2px solid var(--azul-primario);
+    outline-offset: 1px;
+}
+
+.alternar-password-editor .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.mensaje-editor-usuario {
+    grid-area: mensaje;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 10px 13px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.mensaje-editor-usuario .material-symbols-outlined {
+    flex: 0 0 auto;
+    font-size: 20px;
+}
+
+.mensaje-editor-advertencia {
+    border-color: #fde68a;
+    background: #fffbeb;
+    color: #92400e;
+}
+
+.mensaje-editor-error {
+    border-color: #fecaca;
+    background: #fff1f2;
+    color: #b91c1c;
+}
+
+.mensaje-editor-exito {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.mensaje-editor-info {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.confirmacion-editor-usuario {
+    grid-area: confirmacion;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #1e3a8a;
+}
+
+.confirmacion-editor-usuario > .material-symbols-outlined {
+    grid-column: 1;
+    grid-row: 1;
+    color: #2563eb;
+    font-size: 22px;
+}
+
+.confirmacion-editor-texto {
+    grid-column: 2 / -1;
+    grid-row: 1;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.4;
+}
+
+.confirmacion-editor-password {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 6px;
+    color: inherit;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.confirmacion-editor-password input {
+    width: 100%;
+    min-height: 42px;
+    box-sizing: border-box;
+    padding: 9px 44px 9px 11px;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 13px;
+    outline: none;
+}
+
+.confirmacion-editor-password input:focus {
+    border-color: var(--azul-primario);
+}
+
+.confirmacion-editor-password input[aria-invalid="true"] {
+    border-color: #dc2626;
+}
+
+.confirmacion-editor-password-error {
+    color: #b91c1c;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.confirmacion-editor-acciones {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+}
+
+.confirmacion-editor-acciones button {
+    min-height: 36px;
+    padding: 7px 11px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cancelar-confirmacion-editor {
+    border-color: #cbd5e1 !important;
+    background: #ffffff;
+    color: #334155;
+}
+
+.aceptar-confirmacion-editor {
+    background: var(--azul-primario);
+    color: #ffffff;
+}
+
+.modal-editor-usuario .usuario-acciones {
+    align-items: stretch;
+}
+
+.modal-editor-usuario .btn-guardar-cambio {
+    min-height: 40px;
+    border-radius: 10px;
+}
+
+:root[data-theme="dark"] .modal-editor-usuario {
+    background: rgba(2, 6, 23, .66);
+}
+
+:root[data-theme="dark"] .modal-editor-usuario .usuario-card-editando {
+    border-color: rgba(96, 165, 250, .38);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .58), 0 0 0 1px rgba(148, 184, 255, .06);
+}
+
+:root[data-theme="dark"] .modal-editor-usuario .btn-editar-usuario[aria-expanded="true"] {
+    border-color: rgba(74, 222, 128, .55);
+    background: rgba(22, 163, 74, .2);
+    color: #86efac;
+}
+
+:root[data-theme="dark"] .modal-editor-usuario .btn-cancelar-edicion-usuario {
+    border-color: rgba(251, 113, 133, .48);
+    background: rgba(190, 18, 60, .2);
+    color: #fda4af;
+}
+
+:root[data-theme="dark"] .mensaje-editor-advertencia {
+    border-color: rgba(251, 191, 36, .42);
+    background: rgba(146, 64, 14, .2);
+    color: #fde68a;
+}
+
+:root[data-theme="dark"] .mensaje-editor-error {
+    border-color: rgba(251, 113, 133, .42);
+    background: rgba(159, 18, 57, .2);
+    color: #fecdd3;
+}
+
+:root[data-theme="dark"] .mensaje-editor-exito {
+    border-color: rgba(74, 222, 128, .4);
+    background: rgba(22, 101, 52, .2);
+    color: #bbf7d0;
+}
+
+:root[data-theme="dark"] .mensaje-editor-info,
+:root[data-theme="dark"] .confirmacion-editor-usuario {
+    border-color: rgba(96, 165, 250, .42);
+    background: rgba(30, 64, 175, .2);
+    color: #bfdbfe;
+}
+
+:root[data-theme="dark"] .confirmacion-editor-usuario > .material-symbols-outlined {
+    color: #93c5fd;
+}
+
+:root[data-theme="dark"] .confirmacion-editor-password input {
+    border-color: var(--ui-border);
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+:root[data-theme="dark"] .confirmacion-editor-password-error {
+    color: #fecdd3;
+}
+
+:root[data-theme="dark"] .cancelar-confirmacion-editor {
+    border-color: var(--ui-border) !important;
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+}
+
+@keyframes modal-editor-usuario-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 760px) {
+    .modal-editor-usuario {
+        place-items: start center;
+        padding: 14px;
+    }
+
+    .modal-editor-usuario .usuario-card-editando {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "titulo"
+            "mensaje"
+            "confirmacion"
+            "datos"
+            "editor";
+        width: min(560px, calc(100vw - 28px));
+        max-height: calc(100vh - 28px);
+        padding: 22px;
+        border-radius: 18px;
+    }
+
+    .modal-editor-usuario .usuario-nombre-inline {
+        margin-right: 88px;
+    }
+
+    .confirmacion-editor-usuario {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .confirmacion-editor-acciones {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-editor-usuario .usuario-card-editando {
+        animation: none;
+    }
+}
+
+.usuario-etiqueta-nombre {
+    display: none;
+}
+
+.modal-editor-usuario .usuario-card-editando:not(.usuario-card-confirmando) {
+    grid-template-columns: minmax(0, 1.18fr) minmax(300px, .82fr);
+    grid-template-areas:
+        "titulo titulo"
+        "mensaje mensaje"
+        "confirmacion confirmacion"
+        "datos editor";
+    width: min(980px, calc(100vw - 48px));
+}
+
+.modal-editor-usuario .panel-editor-usuario {
+    display: contents;
+}
+
+.modal-editor-usuario .panel-password-editor {
+    grid-area: editor;
+    align-self: stretch;
+    box-sizing: border-box;
+    padding: 17px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    background: var(--bg-surface-alt);
+}
+
+.modal-editor-usuario .encabezado-password-editor {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding-bottom: 13px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-editor-usuario .encabezado-password-editor > .material-symbols-outlined {
+    display: grid;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border-radius: 11px;
+    background: var(--azul-tint);
+    color: var(--azul-primario);
+}
+
+.modal-editor-usuario .encabezado-password-editor h4,
+.modal-editor-usuario .encabezado-password-editor p {
+    margin: 0;
+}
+
+.modal-editor-usuario .encabezado-password-editor h4 {
+    color: var(--text-primary);
+    font-size: 15px;
+}
+
+.modal-editor-usuario .encabezado-password-editor p {
+    margin-top: 3px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.modal-editor-usuario .usuario-info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 14px;
+    padding: 17px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    background: var(--bg-surface-alt);
+}
+
+.modal-editor-usuario .usuario-nombre-inline {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 6px;
+    margin: 0;
+}
+
+.modal-editor-usuario .usuario-etiqueta-nombre {
+    display: block;
+}
+
+.modal-editor-usuario .usuario-dato-inline:not(.usuario-nombre-inline) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 6px;
+    margin: 0;
+}
+
+.modal-editor-usuario .usuario-dato-etiqueta,
+.modal-editor-usuario .titulo-selector-rol {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.modal-editor-usuario .usuario-info .campo-edicion-inline {
+    min-height: 43px;
+    box-sizing: border-box;
+    padding: 10px 11px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.modal-editor-usuario .usuario-info .usuario-tipo-editor {
+    display: grid;
+    grid-column: 1 / -1;
+    gap: 7px;
+    width: auto;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.modal-editor-usuario .usuario-info .usuario-tipo-editor.oculto {
+    display: none;
+}
+
+.modal-editor-usuario .usuario-tipo-editor .select-rol,
+.modal-editor-usuario .usuario-tipo-editor .select-proveedor-cambio {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-editor-usuario .usuario-nombre-inline .campo-edicion-inline {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.modal-editor-usuario .campo-cedula-bloqueada:disabled {
+    border-color: #cbd5e1;
+    background: #e5e7eb;
+    color: #64748b;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.modal-editor-usuario .usuario-rol-actual,
+.modal-editor-usuario .usuario-super-admin,
+.modal-editor-usuario .usuario-asociacion {
+    display: none;
+}
+
+.modal-editor-usuario .usuario-acciones {
+    gap: 11px;
+}
+
+.modal-editor-usuario .select-rol {
+    min-height: 44px;
+    border-width: 1px;
+    border-style: solid;
+    font-weight: 700;
+}
+
+.modal-editor-usuario .rol-select-neutral {
+    border-color: var(--border-subtle);
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+}
+
+.modal-editor-usuario .rol-select-edificio,
+.modal-editor-usuario .opcion-rol-edificio {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+.modal-editor-usuario .rol-select-proveedor,
+.modal-editor-usuario .opcion-rol-proveedor {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.modal-editor-usuario .rol-select-administrativo,
+.modal-editor-usuario .opcion-rol-administrativo {
+    border-color: #fde68a;
+    background: #fffbeb;
+    color: #854d0e;
+}
+
+.modal-editor-usuario .rol-select-administrador,
+.modal-editor-usuario .opcion-rol-administrador {
+    border-color: #fecaca;
+    background: #fff1f2;
+    color: #991b1b;
+}
+
+.modal-editor-usuario .usuario-card-password:not(.usuario-card-confirmando) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "titulo"
+        "mensaje"
+        "confirmacion"
+        "pestanas"
+        "password";
+    width: min(620px, calc(100vw - 48px));
+}
+
+.modal-editor-usuario .usuario-card-password .usuario-info,
+.modal-editor-usuario .usuario-card-password .panel-datos-editor {
+    display: none;
+}
+
+.modal-editor-usuario .usuario-card-password .panel-password-editor {
+    grid-area: password;
+}
+
+.modal-editor-usuario .usuario-card-confirmando {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "titulo"
+        "confirmacion";
+    width: min(500px, calc(100vw - 48px));
+    gap: 18px;
+}
+
+.modal-editor-usuario .usuario-card-confirmando::before {
+    content: "Autorizar cambios";
+    padding-right: 0;
+    text-align: center;
+}
+
+.modal-editor-usuario .usuario-card-confirmando > .usuario-info,
+.modal-editor-usuario .usuario-card-confirmando > .panel-editor-usuario,
+.modal-editor-usuario .usuario-card-confirmando > .mensaje-editor-usuario,
+.modal-editor-usuario .usuario-card-confirmando > .acciones-usuario-superiores,
+.modal-editor-usuario .usuario-card-confirmando > .form-transferir-super-admin {
+    display: none !important;
+}
+
+.modal-editor-usuario .usuario-card-confirmando .confirmacion-editor-usuario {
+    grid-area: confirmacion;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-primary);
+}
+
+.modal-editor-usuario .usuario-card-confirmando .confirmacion-editor-texto {
+    font-size: 14px;
+}
+
+.modal-editor-usuario .usuario-card-confirmando .confirmacion-editor-password {
+    color: var(--text-secondary);
+}
+
+.modal-editor-usuario .confirmacion-editor-exito {
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+.modal-editor-usuario .confirmacion-editor-exito > .material-symbols-outlined {
+    color: #16a34a;
+}
+
+:root[data-theme="dark"] .modal-editor-usuario .campo-cedula-bloqueada:disabled {
+    border-color: rgba(148, 163, 184, .28);
+    background: rgba(148, 163, 184, .12);
+    color: #94a3b8;
+}
+
+:root[data-theme="dark"] .modal-editor-usuario :is(
+    .rol-select-edificio,
+    .opcion-rol-edificio
+) {
+    border-color: rgba(96, 165, 250, .4);
+    background: rgba(30, 64, 175, .2);
+    color: #bfdbfe;
+}
+
+:root[data-theme="dark"] .modal-editor-usuario :is(
+    .rol-select-proveedor,
+    .opcion-rol-proveedor
+) {
+    border-color: rgba(74, 222, 128, .38);
+    background: rgba(22, 101, 52, .2);
+    color: #bbf7d0;
+}
+
+:root[data-theme="dark"] .modal-editor-usuario :is(
+    .rol-select-administrativo,
+    .opcion-rol-administrativo
+) {
+    border-color: rgba(251, 191, 36, .4);
+    background: rgba(146, 64, 14, .2);
+    color: #fde68a;
+}
+
+:root[data-theme="dark"] .modal-editor-usuario :is(
+    .rol-select-administrador,
+    .opcion-rol-administrador
+) {
+    border-color: rgba(251, 113, 133, .4);
+    background: rgba(159, 18, 57, .2);
+    color: #fecdd3;
+}
+
+@media (max-width: 760px) {
+    .modal-editor-usuario .usuario-card-editando:not(.usuario-card-confirmando) {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "titulo"
+            "mensaje"
+            "confirmacion"
+            "datos"
+            "editor";
+    }
+
+    .modal-editor-usuario .usuario-info {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .modal-editor-usuario .usuario-nombre-inline {
+        grid-column: auto;
+        margin-right: 0;
+    }
+}
+
+.contenedor-usuarios-gestion .usuario-card:not(.usuario-card-editando) .usuario-nombre-inline {
+    margin-right: 122px;
+}
+
+.contenedor-usuarios-gestion .usuario-card:not(.usuario-card-editando) .usuario-nombre-inline .dato-visual {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.modal-editor-usuario .usuario-card-datos:not(.usuario-card-confirmando) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "titulo"
+        "mensaje"
+        "confirmacion"
+        "datos";
+    width: min(680px, calc(100vw - 48px));
+}
+
+.modal-editor-usuario .usuario-card-datos:not(.usuario-card-confirmando)::before {
+    content: "Editar datos del usuario";
+}
+
+.modal-editor-usuario .usuario-card-datos .panel-password-editor {
+    display: none !important;
+}
+
+.modal-editor-usuario .usuario-card-datos .usuario-info {
+    grid-area: datos;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-editor-usuario .usuario-card-datos .usuario-nombre-inline,
+.modal-editor-usuario .usuario-card-datos .editar-nombre {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.modal-editor-usuario .usuario-tipo-editor .asociacion-rol-editor {
+    display: grid;
+    align-content: start;
+    gap: 7px;
+    min-height: 112px;
+    box-sizing: border-box;
+    padding: 11px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    background: var(--bg-surface);
+}
+
+.modal-editor-usuario .sin-asociacion-rol {
+    margin: 0;
+    padding: 10px 11px;
+    border-radius: 8px;
+    background: var(--bg-surface-alt);
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.modal-editor-usuario .checkboxes-edificios-cambio {
+    max-height: 82px;
+    overflow-y: auto;
+}
+
+.modal-editor-usuario .usuario-card-password:not(.usuario-card-confirmando) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "titulo"
+        "mensaje"
+        "confirmacion"
+        "password";
+    width: min(520px, calc(100vw - 48px));
+}
+
+.modal-editor-usuario .usuario-card-password:not(.usuario-card-confirmando)::before {
+    content: "Cambiar contraseña";
+}
+
+.modal-editor-usuario .usuario-card-password .usuario-info {
+    display: none !important;
+}
+
+.modal-editor-usuario .usuario-card-password .panel-password-editor {
+    grid-area: password;
+    display: grid;
+    gap: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-editor-usuario .usuario-card-password .encabezado-password-editor {
+    display: none;
+}
+
+.modal-editor-usuario .btn-confirmar-edicion-usuario:hover:not(:disabled) {
+    background: #bbf7d0;
+    transform: translateY(-1px);
+}
+
+:root[data-theme="dark"] .modal-editor-usuario .btn-confirmar-edicion-usuario {
+    border-color: rgba(74, 222, 128, .55);
+    background: rgba(22, 163, 74, .2);
+    color: #86efac;
+}
+
+:root[data-theme="dark"] .modal-editor-usuario .usuario-tipo-editor .asociacion-rol-editor {
+    background: var(--bg-surface-alt);
+}
+
+@media (max-width: 620px) {
+    .modal-editor-usuario {
+        padding: 12px;
+    }
+
+    .modal-editor-usuario .usuario-card-editando:not(.usuario-card-confirmando) {
+        width: min(100%, calc(100vw - 24px));
+        max-height: calc(100vh - 24px);
+        padding: 20px;
+    }
+
+    .modal-editor-usuario .usuario-info {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .modal-editor-usuario .usuario-nombre-inline,
+    .modal-editor-usuario .usuario-info .usuario-tipo-editor {
+        grid-column: auto;
+    }
+}
+
+body.modal-eliminar-usuario-abierto {
+    overflow: hidden;
+}
+
+.modal-eliminar-usuario {
+    position: fixed;
+    inset: 0;
+    z-index: 70000;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    padding: 20px;
+    background: rgba(15, 23, 42, .56);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.dialogo-eliminar-usuario {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 16px;
+    width: min(500px, calc(100vw - 40px));
+    box-sizing: border-box;
+    padding: 25px;
+    border: 1px solid #fecaca;
+    border-radius: 20px;
+    background: var(--bg-surface);
+    box-shadow: 0 28px 80px rgba(15, 23, 42, .36);
+    animation: modal-editor-usuario-entrada .2s ease-out;
+}
+
+.icono-eliminar-usuario {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 14px;
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.icono-eliminar-usuario .material-symbols-outlined {
+    font-size: 29px;
+    font-variation-settings: "FILL" 1, "wght" 600;
+}
+
+.contenido-eliminar-usuario h3,
+.contenido-eliminar-usuario p {
+    margin: 0;
+}
+
+.contenido-eliminar-usuario h3 {
+    color: var(--text-primary);
+    font-size: 19px;
+    line-height: 1.3;
+}
+
+.contenido-eliminar-usuario p {
+    margin-top: 7px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.password-eliminar-usuario {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 7px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.control-password-eliminar {
+    position: relative;
+    display: block;
+}
+
+.control-password-eliminar input {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 10px 46px 10px 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    outline: none;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.control-password-eliminar input:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, .12);
+}
+
+.control-password-eliminar input[aria-invalid="true"] {
+    border-color: #dc2626;
+}
+
+.control-password-eliminar button {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    place-items: center;
+    transform: translateY(-50%);
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.control-password-eliminar button:hover {
+    background: var(--bg-elevated-hover);
+}
+
+.error-password-eliminar {
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.acciones-eliminar-usuario {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.acciones-eliminar-usuario button {
+    min-height: 42px;
+    padding: 9px 16px;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.cancelar-eliminacion-usuario {
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+}
+
+.confirmar-eliminacion-usuario {
+    border: 1px solid #dc2626;
+    background: #dc2626;
+    color: #fff;
+}
+
+.confirmar-eliminacion-usuario:hover {
+    background: #b91c1c;
+}
+
+:root[data-theme="dark"] .dialogo-eliminar-usuario {
+    border-color: rgba(251, 113, 133, .42);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .62);
+}
+
+:root[data-theme="dark"] .icono-eliminar-usuario {
+    background: rgba(190, 18, 60, .2);
+    color: #fda4af;
+}
+
+@media (max-width: 520px) {
+    .dialogo-eliminar-usuario {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 21px;
+    }
+
+    .icono-eliminar-usuario {
+        width: 44px;
+        height: 44px;
+    }
+
+    .acciones-eliminar-usuario {
+        flex-direction: column-reverse;
+    }
+
+    .acciones-eliminar-usuario button {
+        width: 100%;
     }
 }

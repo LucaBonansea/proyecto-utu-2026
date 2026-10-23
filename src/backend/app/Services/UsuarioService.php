@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UsuarioService
@@ -24,6 +25,7 @@ class UsuarioService
             'email' => $datos['email'] ?? null,
             'password' => Hash::make($datos['password']),
             'rol' => $datos['rol'],
+            'es_super_admin' => false,
             'activo' => true,
             'politicas_aceptadas' => false,
             'politicas_aceptadas_at' => null,
@@ -54,6 +56,27 @@ class UsuarioService
         ]);
     }
 
+    public function actualizarDatos(
+        Usuario $usuario,
+        array $datos
+    ): Usuario {
+        return DB::transaction(function () use ($usuario, $datos) {
+            $usuario->fill([
+                'nombre' => $datos['nombre'],
+                'telefono' => $datos['telefono'] ?? null,
+                'email' => $datos['email'] ?? null,
+                'activo' => $datos['activo'] ?? $usuario->activo,
+            ]);
+
+            $usuario->save();
+
+            return $usuario->fresh()->load([
+                'edificios',
+                'proveedor'
+            ]);
+        });
+    }
+
     public function actualizarPassword(
         string $cedula,
         string $password
@@ -77,20 +100,7 @@ class UsuarioService
             'rol' => $datos['rol'],
         ]);
 
-        // Edificios
-        $usuario->edificios()->sync(
-            $datos['rol'] === 'usuario_edificio'
-                ? $datos['edificios']
-                : []
-        );
-
-        // Proveedor
-        $usuario->proveedor_id =
-            $datos['rol'] === 'usuario_proveedor'
-                ? $datos['proveedor']
-                : null;
-
-        $usuario->save();
+        $this->sincronizarAsignaciones($usuario, $datos);
 
         return $usuario->load([
             'edificios',
@@ -105,5 +115,40 @@ class UsuarioService
         $usuario->update(['activo' => false]);
 
         return $usuario;
+    }
+
+    public function eliminar(
+        Usuario $usuario,
+        ?Usuario $nuevoSuperAdmin = null
+    ): ?Usuario {
+        return DB::transaction(function () use ($usuario, $nuevoSuperAdmin) {
+            if ($usuario->es_super_admin && $nuevoSuperAdmin) {
+                $nuevoSuperAdmin->update(['es_super_admin' => true]);
+                $usuario->update(['es_super_admin' => false]);
+            }
+
+            $usuario->edificios()->detach();
+            $usuario->delete();
+
+            return $nuevoSuperAdmin?->fresh();
+        });
+    }
+
+    private function sincronizarAsignaciones(
+        Usuario $usuario,
+        array $datos
+    ): void {
+        $usuario->edificios()->sync(
+            $datos['rol'] === 'usuario_edificio'
+                ? ($datos['edificios'] ?? [])
+                : []
+        );
+
+        $usuario->proveedor_id =
+            $datos['rol'] === 'usuario_proveedor'
+                ? ($datos['proveedor'] ?? null)
+                : null;
+
+        $usuario->save();
     }
 }
