@@ -48,8 +48,26 @@ export const crearClasificacion = clasificacion =>
 export const crearUsuario = datos =>
     enviarJsonConCsrf("/api/usuarios", "POST", datos);
 
-export const cambiarPasswordUsuario = (cedula, password) =>
-    enviarJsonConCsrf(`/api/usuarios/${cedula}/password`, "PUT", { password });
+export const actualizarUsuario = (cedula, datos) =>
+    enviarJsonConCsrf(`/api/usuarios/${encodeURIComponent(cedula)}`, "PUT", datos);
+
+export const eliminarUsuario = (cedula, passwordActual, nuevoSuperAdminCedula = null) =>
+    enviarJsonConCsrf(
+        `/api/usuarios/${encodeURIComponent(cedula)}`,
+        "DELETE",
+        {
+            password_actual: passwordActual,
+            ...(nuevoSuperAdminCedula
+                ? { nuevo_super_admin_cedula: nuevoSuperAdminCedula }
+                : {})
+        }
+    );
+
+export const cambiarPasswordUsuario = (cedula, password, passwordActual) =>
+    enviarJsonConCsrf(`/api/usuarios/${cedula}/password`, "PUT", {
+        password,
+        password_actual: passwordActual
+    });
 
 export const cambiarRolUsuario = (cedula, datos) =>
     enviarJsonConCsrf(`/api/usuarios/${cedula}/rol`, "PUT", datos);

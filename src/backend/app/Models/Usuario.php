@@ -6,11 +6,12 @@ use App\Models\Edificio;
 use App\Models\Proveedor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
 {
-    use HasApiTokens;
+    use HasApiTokens, SoftDeletes;
     protected $table = 'usuarios';
 
     protected $primaryKey = 'cedula';
@@ -26,6 +27,7 @@ class Usuario extends Authenticatable
         'email',
         'password',
         'rol',
+        'es_super_admin',
         'activo',
         'politicas_aceptadas',
         'politicas_aceptadas_at',
@@ -38,6 +40,7 @@ class Usuario extends Authenticatable
 
     protected $casts = [
         'activo' => 'boolean',
+        'es_super_admin' => 'boolean',
         'politicas_aceptadas' => 'boolean',
         'politicas_aceptadas_at' => 'datetime',
     ];

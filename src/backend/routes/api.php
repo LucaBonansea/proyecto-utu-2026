@@ -36,12 +36,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/usuarios', [UsuarioController::class, 'index']);
             // Crear usuario (alta hecha por el administrador)
             Route::post('/usuarios', [UsuarioController::class, 'store']);
+            Route::put('/usuarios/{cedula}', [UsuarioController::class, 'update']);
             // Cambiar la contraseña de un usuario
             Route::put('/usuarios/{cedula}/password', [UsuarioController::class, 'updatePassword']);
             // Cambiar el rol de un usuario
             Route::put('/usuarios/{cedula}/rol', [UsuarioController::class, 'updateRol']);
             // Desactivar un usuario (no podrá volver a iniciar sesión)
             Route::put('/usuarios/{cedula}/desactivar', [UsuarioController::class, 'desactivar']);
+            Route::delete('/usuarios/{cedula}', [UsuarioController::class, 'destroy']);
             // Crear edificio
             Route::post('/edificios', [EdificioController::class, 'store']);
             // Crear proveedor
