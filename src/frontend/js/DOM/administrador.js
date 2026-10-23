@@ -2731,8 +2731,9 @@ function vistaUsuarios(filtro = "") {
                 <input
                     class="input-buscar-usuario"
                     type="search"
-                    name="filtro-listado-usuarios"
-                    autocomplete="off"
+                    name="admin-search-query"
+                    autocomplete="one-time-code"
+                    readonly
                     role="searchbox"
                     aria-label="Buscar usuarios"
                     autocapitalize="none"
@@ -2840,6 +2841,13 @@ function vistaUsuarios(filtro = "") {
 
     const inputBuscar =
         document.querySelector(".input-buscar-usuario");
+
+    const habilitarBuscador = () => {
+        inputBuscar.removeAttribute("readonly");
+    };
+
+    inputBuscar.addEventListener("pointerdown", habilitarBuscador, { once: true });
+    inputBuscar.addEventListener("focus", habilitarBuscador, { once: true });
 
     const btnBuscar =
         document.querySelector(".btn-buscar-usuario");
