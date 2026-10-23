@@ -2548,6 +2548,7 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="nombre-usuario"
                             type="text"
+                             maxlength="60"
                             placeholder="Ej. Juan Pérez"
                         >
 
@@ -2562,7 +2563,7 @@ function vistaUsuarios(filtro = "") {
                             class="telefono-usuario"
                             type="text"
                             maxlength="9"
-                            placeholder="Ej. 098 123 456"
+                            placeholder="Ej. 098123456"
                         >
 
                     </div>
