@@ -2534,6 +2534,7 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="cedula-usuario"
                             type="text"
+                            maxlength="8"
                             placeholder="Ej. 12345678"
                         >
 
@@ -2560,6 +2561,7 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="telefono-usuario"
                             type="text"
+                            maxlength="9"
                             placeholder="Ej. 098 123 456"
                         >
 
@@ -2938,11 +2940,6 @@ function vistaUsuarios(filtro = "") {
 
         }
         
-        if (cedula.length !== 8) {
-            notify.warning("La cédula debe tener exactamente 8 números.");
-            return;
-        }
-
         if (
             password !==
              confirmPasswordInput.value.trim()
