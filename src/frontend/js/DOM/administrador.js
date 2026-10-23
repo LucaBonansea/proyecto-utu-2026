@@ -1069,6 +1069,7 @@ function vistaProveedores(){
     section.style.display = "grid";
     filtro_container.innerHTML = "";
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
+    const hayProveedores = proveedores.length > 0;
 
     const proveedoresFiltrados = proveedores.filter(p =>
         filtroEstadoProveedor === "todos" ||
@@ -1091,7 +1092,7 @@ function vistaProveedores(){
                     Agregar proveedor
                 </button>
             </div>
-            <div class="filtro-estado-proveedores">
+            ${hayProveedores ? `<div class="filtro-estado-proveedores">
 
                 <button class="filtro-estado-btn" data-estado="todos">
                     Todos
@@ -1105,7 +1106,7 @@ function vistaProveedores(){
                     Desactivados
                 </button>
 
-            </div>
+            </div>` : ""}
 
 
           
@@ -1218,14 +1219,28 @@ function vistaProveedores(){
             <div class="contenedor-proveedores">
 
                 ${
-                    paginacion.elementosPagina
-                        .map(renderCardProveedor)
-                        .join("")
+                    !hayProveedores
+                        ? `
+                            <div class="estado-vacio-proveedores">
+                                <span class="material-symbols-outlined" aria-hidden="true">local_shipping</span>
+                                <h3>Todavía no hay proveedores</h3>
+                                <p>Agregá el primer proveedor para comenzar a asignar y gestionar reclamos.</p>
+                            </div>
+                        `
+                        : paginacion.elementosPagina.length
+                            ? paginacion.elementosPagina.map(renderCardProveedor).join("")
+                            : `
+                                <div class="estado-vacio-proveedores estado-vacio-proveedores-filtrado">
+                                    <span class="material-symbols-outlined" aria-hidden="true">filter_alt_off</span>
+                                    <h3>No hay proveedores en este estado</h3>
+                                    <p>Probá seleccionando otro filtro.</p>
+                                </div>
+                            `
                 }
 
             </div>
 
-            <div class="paginacion-proveedores-admin">
+            ${hayProveedores ? `<div class="paginacion-proveedores-admin">
                 ${renderPaginacionAdministrador(
                     proveedoresFiltrados.length,
                     paginacion.paginaActual,
@@ -1233,7 +1248,7 @@ function vistaProveedores(){
                     "proveedor",
                     "proveedores"
                 )}
-            </div>
+            </div>` : ""}
 
         </div>
     `;
@@ -3480,16 +3495,18 @@ function vistaUsuarios(filtro = "") {
                                 </select>
                             </p>
 
-                            <span class="usuario-rol-actual ${claseRol}">
-                                ${escaparHtml(etiquetaRol)}
-                            </span>
-
-                            ${usuario.es_super_admin ? `
-                                <span class="usuario-super-admin">
-                                    <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
-                                    <span>Administrador superior</span>
+                            <div class="usuario-insignias">
+                                <span class="usuario-rol-actual ${claseRol}">
+                                    ${escaparHtml(etiquetaRol)}
                                 </span>
-                            ` : ""}
+
+                                ${usuario.es_super_admin ? `
+                                    <span class="usuario-super-admin">
+                                        <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
+                                        <span>Administrador superior</span>
+                                    </span>
+                                ` : ""}
+                            </div>
 
 
                             ${resumenEdificios}
@@ -4096,6 +4113,9 @@ function vistaUsuarios(filtro = "") {
 
                 const solicitarPasswordEliminacion = (mensaje, opciones = {}) =>
                     new Promise(resolve => {
+                        const administradoresSucesores = Array.isArray(opciones.administradores)
+                            ? opciones.administradores
+                            : [];
                         const fondo = document.createElement("div");
                         fondo.className = "modal-eliminar-usuario";
                         fondo.innerHTML = `
@@ -4107,6 +4127,20 @@ function vistaUsuarios(filtro = "") {
                                     <h3 id="titulo-eliminar-usuario">${escaparHtml(opciones.titulo || "Eliminar usuario")}</h3>
                                     <p>${escaparHtml(mensaje)}</p>
                                 </div>
+                                ${administradoresSucesores.length ? `
+                                    <label class="sucesor-eliminar-usuario">
+                                        Delegar administrador superior a
+                                        <select>
+                                            <option value="">Selecciona un administrador</option>
+                                            ${administradoresSucesores.map(administrador => `
+                                                <option value="${escaparHtml(administrador.cedula)}">
+                                                    ${escaparHtml(administrador.nombre)} (${escaparHtml(administrador.cedula)})
+                                                </option>
+                                            `).join("")}
+                                        </select>
+                                        <span class="error-sucesor-eliminar oculto">Selecciona el nuevo administrador superior.</span>
+                                    </label>
+                                ` : ""}
                                 <label class="password-eliminar-usuario">
                                     Contraseña del administrador
                                     <span class="control-password-eliminar">
@@ -4126,6 +4160,8 @@ function vistaUsuarios(filtro = "") {
 
                         const input = fondo.querySelector(".password-eliminar-usuario input");
                         const error = fondo.querySelector(".error-password-eliminar");
+                        const selectorSucesor = fondo.querySelector(".sucesor-eliminar-usuario select");
+                        const errorSucesor = fondo.querySelector(".error-sucesor-eliminar");
                         const alternar = fondo.querySelector(".control-password-eliminar button");
                         const cancelar = fondo.querySelector(".cancelar-eliminacion-usuario");
                         const confirmar = fondo.querySelector(".confirmar-eliminacion-usuario");
@@ -4138,6 +4174,13 @@ function vistaUsuarios(filtro = "") {
                         };
 
                         const aceptar = () => {
+                            if (selectorSucesor && !selectorSucesor.value) {
+                                selectorSucesor.setAttribute("aria-invalid", "true");
+                                errorSucesor.classList.remove("oculto");
+                                selectorSucesor.focus();
+                                return;
+                            }
+
                             if (!input.value) {
                                 input.setAttribute("aria-invalid", "true");
                                 error.classList.remove("oculto");
@@ -4145,7 +4188,13 @@ function vistaUsuarios(filtro = "") {
                                 return;
                             }
 
-                            cerrar(input.value);
+                            cerrar(selectorSucesor
+                                ? {
+                                    passwordActual: input.value,
+                                    nuevoSuperAdminCedula: selectorSucesor.value
+                                }
+                                : input.value
+                            );
                         };
 
                         const manejarEscape = event => {
@@ -4165,6 +4214,10 @@ function vistaUsuarios(filtro = "") {
                         input.addEventListener("input", () => {
                             input.removeAttribute("aria-invalid");
                             error.classList.add("oculto");
+                        });
+                        selectorSucesor?.addEventListener("change", () => {
+                            selectorSucesor.removeAttribute("aria-invalid");
+                            errorSucesor.classList.add("oculto");
                         });
                         input.addEventListener("keydown", event => {
                             if (event.key === "Enter") aceptar();
@@ -4222,7 +4275,27 @@ function vistaUsuarios(filtro = "") {
 
                 btnEliminarUsuario?.addEventListener("click", async () => {
                     if (usuario.es_super_admin) {
-                        formTransferencia?.classList.toggle("oculto");
+                        if (!administradoresDisponibles.length) {
+                            notify.warning("Primero crea otro administrador para poder delegarle el permiso superior.");
+                            return;
+                        }
+
+                        const autorizacion = await solicitarPasswordEliminacion(
+                            "Para eliminar tu cuenta debes delegar el permiso superior. Esta acción no se puede revertir.",
+                            {
+                                titulo: "Delegar y eliminar administrador",
+                                confirmar: "Sí, delegar y eliminar",
+                                cancelar: "No, volver",
+                                administradores: administradoresDisponibles
+                            }
+                        );
+
+                        if (autorizacion !== null) {
+                            await ejecutarEliminacion(
+                                autorizacion.nuevoSuperAdminCedula,
+                                autorizacion.passwordActual
+                            );
+                        }
                         return;
                     }
 
