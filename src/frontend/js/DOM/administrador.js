@@ -2554,6 +2554,7 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="nombre-usuario"
                             type="text"
+                            maxlength="60"
                             placeholder="Ej. Juan Pérez"
                         >
 
