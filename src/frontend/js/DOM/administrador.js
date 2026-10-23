@@ -3649,6 +3649,12 @@ function vistaUsuarios(filtro = "") {
 
                 if (!usuario) return;
 
+                const administradoresDisponibles = usuarios.filter(candidato =>
+                    candidato.rol === "administrador" &&
+                    candidato.activo &&
+                    String(candidato.cedula) !== String(usuario.cedula)
+                );
+
                 const btnVerEdificios = card.querySelector(".btn-ver-edificios-usuario");
                 const panelEdificios = card.querySelector(".usuario-edificios-popover");
 
@@ -3709,6 +3715,8 @@ function vistaUsuarios(filtro = "") {
                 let marcadorCard = null;
                 let resolverConfirmacionEditor = null;
                 let modoEditorActivo = null;
+
+                btnEliminarUsuario?.addEventListener("click", manejarEliminacionUsuario);
 
                 const limpiarMensajeEditor = () => {
                     mensajeEditor.className = "mensaje-editor-usuario oculto";
@@ -4126,8 +4134,8 @@ function vistaUsuarios(filtro = "") {
                 const btnConfirmarTransferencia = card.querySelector(".confirmar-transferencia");
                 const selectNuevoSuperAdmin = card.querySelector(".nuevo-super-admin");
 
-                const solicitarPasswordEliminacion = (mensaje, opciones = {}) =>
-                    new Promise(resolve => {
+                function solicitarPasswordEliminacion(mensaje, opciones = {}) {
+                    return new Promise(resolve => {
                         const administradoresSucesores = Array.isArray(opciones.administradores)
                             ? opciones.administradores
                             : [];
@@ -4146,9 +4154,9 @@ function vistaUsuarios(filtro = "") {
                                     <label class="sucesor-eliminar-usuario">
                                         Delegar administrador superior a
                                         <select>
-                                            <option value="">Selecciona un administrador</option>
-                                            ${administradoresSucesores.map(administrador => `
-                                                <option value="${escaparHtml(administrador.cedula)}">
+                                            <option value="" ${administradoresSucesores.length === 1 ? "" : "selected"} disabled>Selecciona un administrador</option>
+                                            ${administradoresSucesores.map((administrador, indice) => `
+                                                <option value="${escaparHtml(administrador.cedula)}" ${administradoresSucesores.length === 1 && indice === 0 ? "selected" : ""}>
                                                     ${escaparHtml(administrador.nombre)} (${escaparHtml(administrador.cedula)})
                                                 </option>
                                             `).join("")}
@@ -4157,7 +4165,7 @@ function vistaUsuarios(filtro = "") {
                                     </label>
                                 ` : ""}
                                 <label class="password-eliminar-usuario">
-                                    Contraseña del administrador
+                                    Contraseña del administrador actual
                                     <span class="control-password-eliminar">
                                         <input type="password" autocomplete="current-password">
                                         <button type="button" aria-label="Mostrar contraseña" aria-pressed="false">
@@ -4247,8 +4255,9 @@ function vistaUsuarios(filtro = "") {
                         document.body.classList.add("modal-eliminar-usuario-abierto");
                         input.focus();
                     });
+                }
 
-                const ejecutarEliminacion = async (nuevoSuperAdminCedula, passwordActual) => {
+                async function ejecutarEliminacion(nuevoSuperAdminCedula, passwordActual) {
                     try {
                         if (btnEliminarUsuario) btnEliminarUsuario.disabled = true;
                         if (btnConfirmarTransferencia) btnConfirmarTransferencia.disabled = true;
@@ -4286,9 +4295,12 @@ function vistaUsuarios(filtro = "") {
                         if (btnEliminarUsuario) btnEliminarUsuario.disabled = false;
                         if (btnConfirmarTransferencia) btnConfirmarTransferencia.disabled = false;
                     }
-                };
+                }
 
-                btnEliminarUsuario?.addEventListener("click", async () => {
+                async function manejarEliminacionUsuario(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
                     if (usuario.es_super_admin) {
                         if (!administradoresDisponibles.length) {
                             notify.warning("Primero crea otro administrador para poder delegarle el permiso superior.");
@@ -4326,7 +4338,7 @@ function vistaUsuarios(filtro = "") {
                     if (passwordActual !== null) {
                         await ejecutarEliminacion(null, passwordActual);
                     }
-                });
+                }
 
                 btnCancelarTransferencia?.addEventListener("click", () => {
                     formTransferencia.classList.add("oculto");
