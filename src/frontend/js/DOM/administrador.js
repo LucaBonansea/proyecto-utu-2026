@@ -3302,6 +3302,44 @@ function vistaUsuarios(filtro = "") {
                         ? (usuario.edificios || [])
                         : [];
 
+                const edificioPrincipal = edificiosDelUsuario[0] || null;
+                const edificiosAdicionales = edificiosDelUsuario.slice(1);
+                const idEdificiosUsuario = `edificios-usuario-${String(usuario.cedula).replace(/[^a-zA-Z0-9_-]/g, "")}`;
+                const resumenEdificios = edificioPrincipal
+                    ? `
+                        <div class="usuario-edificios-resumen">
+                            <span class="usuario-asociacion">
+                                <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+                                <span>Edificio: ${escaparHtml(edificioPrincipal.nombre)}</span>
+                            </span>
+                            ${edificiosAdicionales.length ? `
+                                <button
+                                    class="btn-ver-edificios-usuario"
+                                    type="button"
+                                    aria-label="Ver ${edificiosAdicionales.length} edificio${edificiosAdicionales.length === 1 ? "" : "s"} adicional${edificiosAdicionales.length === 1 ? "" : "es"}"
+                                    aria-expanded="false"
+                                    aria-controls="${idEdificiosUsuario}"
+                                    title="Ver otros edificios asociados"
+                                >
+                                    <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+                                    <span>+${edificiosAdicionales.length}</span>
+                                </button>
+                                <div class="usuario-edificios-popover oculto" id="${idEdificiosUsuario}">
+                                    <strong>Otros edificios asociados</strong>
+                                    <ul>
+                                        ${edificiosAdicionales.map(edificio => `
+                                            <li>
+                                                <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+                                                <span>${escaparHtml(edificio.nombre)}</span>
+                                            </li>
+                                        `).join("")}
+                                    </ul>
+                                </div>
+                            ` : ""}
+                        </div>
+                    `
+                    : "";
+
                 const esUsuarioActual =
                     String(usuario.cedula) === String(usuarioActual?.cedula);
                 const esAdministrador = usuario.rol === "administrador";
@@ -3454,25 +3492,7 @@ function vistaUsuarios(filtro = "") {
                             ` : ""}
 
 
-                            ${
-                                edificiosDelUsuario.length > 0
-                                ?
-
-                                edificiosDelUsuario.map(edificio => `
-
-                                    <span class="usuario-asociacion">
-
-                                        Edificio:
-                                        ${escaparHtml(edificio.nombre)}
-
-                                    </span>
-
-                                `).join("")
-
-                                :
-
-                                ""
-                            }
+                            ${resumenEdificios}
 
                         </div>
 
@@ -3596,6 +3616,27 @@ function vistaUsuarios(filtro = "") {
 
 
                 if (!usuario) return;
+
+                const btnVerEdificios = card.querySelector(".btn-ver-edificios-usuario");
+                const panelEdificios = card.querySelector(".usuario-edificios-popover");
+
+                btnVerEdificios?.addEventListener("click", () => {
+                    const debeAbrir = panelEdificios.classList.contains("oculto");
+
+                    contenedor.querySelectorAll(".usuario-edificios-popover").forEach(panel => {
+                        panel.classList.add("oculto");
+                        panel.closest(".usuario-card")?.classList.remove("usuario-edificios-abiertos");
+                    });
+                    contenedor.querySelectorAll(".btn-ver-edificios-usuario").forEach(boton => {
+                        boton.setAttribute("aria-expanded", "false");
+                    });
+
+                    if (debeAbrir) {
+                        panelEdificios.classList.remove("oculto");
+                        card.classList.add("usuario-edificios-abiertos");
+                        btnVerEdificios.setAttribute("aria-expanded", "true");
+                    }
+                });
 
                 const btnEditarUsuario = card.querySelector(".btn-editar-usuario");
                 const btnPasswordUsuario = card.querySelector(".btn-password-usuario");
