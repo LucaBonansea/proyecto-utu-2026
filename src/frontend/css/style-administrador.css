@@ -1332,6 +1332,46 @@ main{
     gap:20px;
 }
 
+.estado-vacio-proveedores {
+    grid-column: 1 / -1;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 42px 24px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 18px;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.estado-vacio-proveedores > .material-symbols-outlined {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--azul-tint);
+    color: var(--azul-primario);
+    font-size: 28px;
+}
+
+.estado-vacio-proveedores h3,
+.estado-vacio-proveedores p {
+    margin: 0;
+}
+
+.estado-vacio-proveedores h3 {
+    color: var(--text-primary);
+    font-size: 17px;
+}
+
+.estado-vacio-proveedores p {
+    max-width: 460px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
 .proveedor-card{
     background: var(--bg-surface);
     padding:20px;
@@ -2058,13 +2098,28 @@ main{
 
 .usuario-rol-actual {
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 0;
     padding: 5px 9px;
     border-radius: 15px;
     background: var(--azul-tint);
     color: var(--azul-primario);
     font-size: 12px;
     font-weight: 600;
+}
+
+.usuario-insignias {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.usuario-insignias .usuario-rol-actual,
+.usuario-insignias .usuario-super-admin {
+    min-height: 29px;
+    box-sizing: border-box;
+    margin: 0;
 }
 
 .usuario-rol-actual.rol-administrador {
@@ -5396,6 +5451,7 @@ body.editor-usuario-modal-abierto {
 
 .modal-editor-usuario .usuario-rol-actual,
 .modal-editor-usuario .usuario-super-admin,
+.modal-editor-usuario .usuario-insignias,
 .modal-editor-usuario .usuario-asociacion,
 .modal-editor-usuario .usuario-edificios-resumen {
     display: none;
@@ -5799,6 +5855,43 @@ body.modal-eliminar-usuario-abierto {
     color: var(--text-primary);
     font-size: 13px;
     font-weight: 700;
+}
+
+.sucesor-eliminar-usuario {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 7px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.sucesor-eliminar-usuario select {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    outline: none;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.sucesor-eliminar-usuario select:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, .12);
+}
+
+.sucesor-eliminar-usuario select[aria-invalid="true"],
+.error-sucesor-eliminar {
+    color: #dc2626;
+}
+
+.error-sucesor-eliminar {
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .control-password-eliminar {
