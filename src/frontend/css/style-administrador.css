@@ -2075,6 +2075,19 @@ main{
     min-width: 0;
 }
 
+.usuario-dato-etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+}
+
+.usuario-dato-icono {
+    color: var(--text-secondary);
+    font-size: 17px;
+    font-variation-settings: "FILL" 0, "wght" 500;
+}
+
 .campo-edicion-inline {
     flex: 1;
     min-width: 0;

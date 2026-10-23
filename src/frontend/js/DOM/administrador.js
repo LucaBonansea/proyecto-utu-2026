@@ -3433,7 +3433,10 @@ function vistaUsuarios(filtro = "") {
                         <div class="usuario-info">
 
                             <h3 class="usuario-dato-inline usuario-nombre-inline">
-                                <span class="usuario-dato-etiqueta usuario-etiqueta-nombre">Nombre</span>
+                                <span class="usuario-dato-etiqueta usuario-etiqueta-nombre">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">person</span>
+                                    Nombre
+                                </span>
                                 <span class="dato-visual">${escaparHtml(usuario.nombre)}</span>
                                 <input
                                     class="editar-nombre campo-edicion-inline oculto"
@@ -3445,7 +3448,10 @@ function vistaUsuarios(filtro = "") {
                             </h3>
 
                             <p class="usuario-dato-inline usuario-cedula-inline">
-                                <span class="usuario-dato-etiqueta">Cédula</span>
+                                <span class="usuario-dato-etiqueta">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">badge</span>
+                                    Cédula
+                                </span>
                                 <span class="dato-visual">${escaparHtml(usuario.cedula)}</span>
                                 <input
                                     class="campo-edicion-inline campo-cedula-bloqueada oculto"
@@ -3458,7 +3464,10 @@ function vistaUsuarios(filtro = "") {
 
 
                             <p class="usuario-dato-inline">
-                                <span class="usuario-dato-etiqueta">Teléfono</span>
+                                <span class="usuario-dato-etiqueta">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">phone</span>
+                                    Teléfono
+                                </span>
                                 <span class="dato-visual">${escaparHtml(usuario.telefono || "Sin teléfono")}</span>
                                 <input
                                     class="editar-telefono campo-edicion-inline oculto"
@@ -3471,7 +3480,10 @@ function vistaUsuarios(filtro = "") {
                             </p>
 
                             <p class="usuario-dato-inline">
-                                <span class="usuario-dato-etiqueta">Correo</span>
+                                <span class="usuario-dato-etiqueta">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">mail</span>
+                                    Correo
+                                </span>
                                 <span class="dato-visual">${escaparHtml(usuario.email || "Sin correo")}</span>
                                 <input
                                     class="editar-email campo-edicion-inline oculto"
@@ -3483,7 +3495,10 @@ function vistaUsuarios(filtro = "") {
                             </p>
 
                             <p class="usuario-dato-inline">
-                                <span class="usuario-dato-etiqueta">Estado</span>
+                                <span class="usuario-dato-etiqueta">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">${usuario.activo ? "check_circle" : "cancel"}</span>
+                                    Estado
+                                </span>
                                 <span class="dato-visual">${usuario.activo ? "Activo" : "Inactivo"}</span>
                                 <select
                                     class="editar-activo campo-edicion-inline oculto"
