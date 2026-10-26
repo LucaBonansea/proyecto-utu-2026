@@ -3695,6 +3695,24 @@ main{
     font-size:13px;
     overflow-wrap:anywhere;
 }
+.reclamo-admin-datos .reclamo-admin-gasto-total {
+    grid-column: 1 / -1;
+    background: var(--bg-surface-alt);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    margin-top: 4px;
+}
+
+.reclamo-admin-datos .reclamo-admin-gasto-total dt {
+    color: var(--azul-primario);
+    font-weight: 700;
+}
+
+.reclamo-admin-datos .reclamo-admin-gasto-total dd strong {
+    color: var(--text-primary);
+    font-size: 14px;
+}
 
 .estado-carga-reclamos,
 .sin-reclamos-admin{

@@ -828,6 +828,21 @@ function renderCardReclamo(reclamo) {
         ? `<img src="${escaparHtml(urlEvidencia)}" alt="Evidencia del reclamo ${escaparHtml(reclamo.id)}" loading="lazy">`
         : `<span class="material-symbols-outlined" aria-hidden="true">image_not_supported</span>`;
 
+    // Costos de mano de obra y materiales
+    const manoObra = reclamo.costo_mano_obra !== null && reclamo.costo_mano_obra !== undefined ? Number(reclamo.costo_mano_obra) : null;
+    const materiales = reclamo.costo_materiales !== null && reclamo.costo_materiales !== undefined ? Number(reclamo.costo_materiales) : null;
+    
+    const formatoMoneda = (valor) => {
+        if (valor === null || Number.isNaN(valor)) return "No registrado";
+        return new Intl.NumberFormat("es-UY", {
+            style: "currency",
+            currency: "UYU",
+            maximumFractionDigits: 2
+        }).format(valor);
+    };
+
+    const totalCalculado = (manoObra !== null && materiales !== null) ? (manoObra + materiales) : null;
+
     return `
         <article class="reclamo-admin-card">
             <div class="reclamo-admin-imagen ${urlEvidencia ? "" : "sin-imagen"}">
@@ -862,6 +877,18 @@ function renderCardReclamo(reclamo) {
                     <div>
                         <dt><span class="material-symbols-outlined" aria-hidden="true">calendar_today</span> Fecha</dt>
                         <dd>${escaparHtml(formatearFechaReclamo(reclamo.created_at))}</dd>
+                    </div>
+                    <div>
+                        <dt><span class="material-symbols-outlined" aria-hidden="true">engineering</span> Mano de obra</dt>
+                        <dd>${escaparHtml(formatoMoneda(manoObra))}</dd>
+                    </div>
+                    <div>
+                        <dt><span class="material-symbols-outlined" aria-hidden="true">inventory_2</span> Materiales</dt>
+                        <dd>${escaparHtml(formatoMoneda(materiales))}</dd>
+                    </div>
+                    <div class="reclamo-admin-gasto-total">
+                        <dt><span class="material-symbols-outlined" aria-hidden="true">payments</span> Costo Total</dt>
+                        <dd><strong>${escaparHtml(formatoMoneda(totalCalculado))}</strong></dd>
                     </div>
                 </dl>
             </div>
