@@ -27,7 +27,11 @@ function show(type, message, options = {}) {
 function showConfirm(message, {
     title = "Confirmar acción",
     confirmText = "Confirmar",
-    cancelText = "Cancelar"
+    cancelText = "Cancelar",
+    inputType = null,
+    inputLabel = "",
+    inputPlaceholder = "",
+    inputAutocomplete = "off"
 } = {}) {
     cerrarConfirmacionActiva?.(false);
 
@@ -40,6 +44,9 @@ function showConfirm(message, {
         const cuerpo = document.createElement("div");
         const titulo = document.createElement("h2");
         const texto = document.createElement("p");
+        const campo = inputType ? document.createElement("label") : null;
+        const etiquetaCampo = inputType ? document.createElement("span") : null;
+        const entrada = inputType ? document.createElement("input") : null;
         const acciones = document.createElement("div");
         const botonCancelar = document.createElement("button");
         const botonConfirmar = document.createElement("button");
@@ -60,6 +67,16 @@ function showConfirm(message, {
         texto.id = "confirmacion-toast-mensaje";
         texto.textContent = message;
 
+        if (campo && etiquetaCampo && entrada) {
+            campo.className = "confirmacion-toast-campo";
+            etiquetaCampo.textContent = inputLabel;
+            entrada.type = inputType;
+            entrada.placeholder = inputPlaceholder;
+            entrada.autocomplete = inputAutocomplete;
+            entrada.required = true;
+            campo.append(etiquetaCampo, entrada);
+        }
+
         acciones.className = "confirmacion-toast-acciones";
         botonCancelar.type = "button";
         botonCancelar.className = "confirmacion-toast-cancelar";
@@ -69,6 +86,7 @@ function showConfirm(message, {
         botonConfirmar.textContent = confirmText;
 
         cuerpo.append(titulo, texto);
+        if (campo) cuerpo.append(campo);
         contenido.append(icono, cuerpo);
         acciones.append(botonCancelar, botonConfirmar);
         tarjeta.append(contenido, acciones);
@@ -79,7 +97,7 @@ function showConfirm(message, {
             document.removeEventListener("keydown", manejarTeclado);
             contenedor.remove();
             cerrarConfirmacionActiva = null;
-            resolve(confirmado);
+            resolve(entrada ? (confirmado ? entrada.value : null) : confirmado);
 
             if (focoAnterior instanceof HTMLElement && focoAnterior.isConnected) {
                 focoAnterior.focus();
@@ -92,11 +110,28 @@ function showConfirm(message, {
             }
         };
 
+        const confirmar = () => {
+            if (entrada && !entrada.value) {
+                entrada.setAttribute("aria-invalid", "true");
+                entrada.focus();
+                return;
+            }
+
+            cerrar(true);
+        };
+
         botonCancelar.addEventListener("click", () => cerrar(false));
-        botonConfirmar.addEventListener("click", () => cerrar(true));
+        botonConfirmar.addEventListener("click", confirmar);
+        entrada?.addEventListener("input", () => entrada.removeAttribute("aria-invalid"));
+        entrada?.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                confirmar();
+            }
+        });
         document.addEventListener("keydown", manejarTeclado);
         cerrarConfirmacionActiva = cerrar;
-        botonCancelar.focus();
+        (entrada || botonCancelar).focus();
     });
 }
 
@@ -115,5 +150,14 @@ export const notify = {
     },
     confirm(message, options) {
         return showConfirm(message, options);
+    },
+    confirmPassword(message, options = {}) {
+        return showConfirm(message, {
+            ...options,
+            inputType: "password",
+            inputLabel: options.inputLabel || "Tu contraseña actual",
+            inputPlaceholder: options.inputPlaceholder || "Ingresá tu contraseña",
+            inputAutocomplete: "current-password"
+        });
     }
 };

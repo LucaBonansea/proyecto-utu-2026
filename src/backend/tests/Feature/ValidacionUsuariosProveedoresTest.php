@@ -27,12 +27,13 @@ class ValidacionUsuariosProveedoresTest extends TestCase
             'cedula' => 'cedula-invalida',
             'nombre' => 'Usuario de prueba',
             'telefono' => '123',
+            'email' => 'correo-invalido',
             'password' => 'clave-segura',
             'rol' => 'usuario_edificio',
             'edificios' => [$edificio->id, $edificio->id],
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['cedula', 'telefono', 'edificios.0', 'edificios.1']);
+            ->assertJsonValidationErrors(['cedula', 'telefono', 'email', 'edificios.0', 'edificios.1']);
 
         $this->postJson('/api/usuarios', [
             'cedula' => '22222222',

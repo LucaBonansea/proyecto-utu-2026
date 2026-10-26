@@ -32,26 +32,27 @@
  * responder a búsquedas, cambios y formularios.
  */
 import { cerrarSesion, obtenerSesion } from "../services/auth-service.js";
-import { notify } from "../utils/toast.js?v=20261022-8";
+import { notify } from "../utils/toast.js?v=20261023-9";
 import { inicializarTema } from '../theme.js';
 import { inicializarNotificaciones } from './notifications.js';
 import {
+    actualizarUsuario,
     cambiarEstadoProveedor as actualizarEstadoProveedor,
     cambiarPasswordUsuario,
-    cambiarRolUsuario,
     crearArea,
     crearClasificacion,
     crearEdificio,
     crearProveedor,
     crearUsuario,
     eliminarArea,
+    eliminarUsuario,
     obtenerEdificios,
     obtenerAreas,
     obtenerClasificaciones,
     obtenerProveedores,
     obtenerReclamosAdministrador,
     obtenerUsuarios
-} from "../services/administrador-service.js?v=20261022-7";
+} from "../services/administrador-service.js?v=20261023-11";
 import { obtenerUrlEvidencia } from "../services/reclamos-service.js";
 
 // Referencias a elementos HTML que se actualizan desde JavaScript.
@@ -88,11 +89,13 @@ let usuarios = [];
 let proveedores = [];
 let reclamos = [];
 let clasificaciones = [];
+let usuarioActual = null;
 let filtroEstadoProveedor = "todos";
 const LIMITE_PAGINACION_ADMIN = 6;
 let paginaReclamos = 1;
 let paginaProveedores = 1;
 let paginaEdificios = 1;
+let observadorAlturaUsuarios = null;
 
 const NOMBRES_ESTADO_RECLAMO = {
     pendiente: "Pendiente",
@@ -583,6 +586,8 @@ async function iniciar() {
 
         if (!usuario) return;
 
+        usuarioActual = usuario;
+
         inicializarTema();
         inicializarNotificaciones();
         await iniciarAplicacion();
@@ -1064,6 +1069,7 @@ function vistaProveedores(){
     section.style.display = "grid";
     filtro_container.innerHTML = "";
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
+    const hayProveedores = proveedores.length > 0;
 
     const proveedoresFiltrados = proveedores.filter(p =>
         filtroEstadoProveedor === "todos" ||
@@ -1086,7 +1092,7 @@ function vistaProveedores(){
                     Agregar proveedor
                 </button>
             </div>
-            <div class="filtro-estado-proveedores">
+            ${hayProveedores ? `<div class="filtro-estado-proveedores">
 
                 <button class="filtro-estado-btn" data-estado="todos">
                     Todos
@@ -1100,7 +1106,7 @@ function vistaProveedores(){
                     Desactivados
                 </button>
 
-            </div>
+            </div>` : ""}
 
 
           
@@ -1213,14 +1219,28 @@ function vistaProveedores(){
             <div class="contenedor-proveedores">
 
                 ${
-                    paginacion.elementosPagina
-                        .map(renderCardProveedor)
-                        .join("")
+                    !hayProveedores
+                        ? `
+                            <div class="estado-vacio-proveedores">
+                                <span class="material-symbols-outlined" aria-hidden="true">local_shipping</span>
+                                <h3>Todavía no hay proveedores</h3>
+                                <p>Agregá el primer proveedor para comenzar a asignar y gestionar reclamos.</p>
+                            </div>
+                        `
+                        : paginacion.elementosPagina.length
+                            ? paginacion.elementosPagina.map(renderCardProveedor).join("")
+                            : `
+                                <div class="estado-vacio-proveedores estado-vacio-proveedores-filtrado">
+                                    <span class="material-symbols-outlined" aria-hidden="true">filter_alt_off</span>
+                                    <h3>No hay proveedores en este estado</h3>
+                                    <p>Probá seleccionando otro filtro.</p>
+                                </div>
+                            `
                 }
 
             </div>
 
-            <div class="paginacion-proveedores-admin">
+            ${hayProveedores ? `<div class="paginacion-proveedores-admin">
                 ${renderPaginacionAdministrador(
                     proveedoresFiltrados.length,
                     paginacion.paginaActual,
@@ -1228,7 +1248,7 @@ function vistaProveedores(){
                     "proveedor",
                     "proveedores"
                 )}
-            </div>
+            </div>` : ""}
 
         </div>
     `;
@@ -1706,7 +1726,7 @@ function vistaDetalleProveedor(id){
                                     ""
                                 }
 
-                                <span class="usuario-rol-actual">
+                                <span class="usuario-rol-actual rol-usuario-proveedor">
                                     Usuario de proveedor
                                 </span>
 
@@ -2343,7 +2363,7 @@ function vistaDetalleEdificio(id) {
 
 
                                 <span
-                                    class="usuario-rol-actual"
+                                    class="usuario-rol-actual rol-usuario-edificio"
                                 >
 
                                     Usuario de edificio
@@ -2534,6 +2554,8 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="cedula-usuario"
                             type="text"
+                            inputmode="numeric"
+                            maxlength="8"
                             placeholder="Ej. 12345678"
                         >
 
@@ -2547,6 +2569,7 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="nombre-usuario"
                             type="text"
+                            maxlength="60"
                             placeholder="Ej. Juan Pérez"
                         >
 
@@ -2560,6 +2583,8 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="telefono-usuario"
                             type="text"
+                            inputmode="numeric"
+                            maxlength="9"
                             placeholder="Ej. 098123456"
                         >
 
@@ -2573,6 +2598,7 @@ function vistaUsuarios(filtro = "") {
                         <input
                             class="email-usuario"
                             type="email"
+                            maxlength="255"
                             placeholder="Ej. usuario@gmail.com"
                         >
 
@@ -2623,9 +2649,11 @@ function vistaUsuarios(filtro = "") {
                                 Administrativo
                             </option>
 
-                            <option value="administrador">
-                                Administrador
-                            </option>
+                            ${usuarioActual?.es_super_admin ? `
+                                <option value="administrador">
+                                    Administrador
+                                </option>
+                            ` : ""}
 
 
                         </select>
@@ -2717,7 +2745,16 @@ function vistaUsuarios(filtro = "") {
 
                 <input
                     class="input-buscar-usuario"
-                    type="text"
+                    type="search"
+                    name="admin-search-query"
+                    autocomplete="one-time-code"
+                    readonly
+                    role="searchbox"
+                    aria-label="Buscar usuarios"
+                    autocapitalize="none"
+                    spellcheck="false"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
                     placeholder="Buscar por nombre, teléfono o cédula"
                     value="${filtro}"
                 >
@@ -2747,7 +2784,7 @@ function vistaUsuarios(filtro = "") {
                  LISTADO
             =============================== -->
 
-            <div class="contenedor-usuarios"></div>
+            <div class="contenedor-usuarios contenedor-usuarios-gestion"></div>
 
         </div>
     `;
@@ -2762,8 +2799,8 @@ function vistaUsuarios(filtro = "") {
     const cedulaInput =
         document.querySelector(".cedula-usuario");
 
-           cedulaInput.addEventListener("input", (e) => {
-        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    cedulaInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 8);
     });
 
     const nombreInput =
@@ -2777,8 +2814,8 @@ function vistaUsuarios(filtro = "") {
     const telefonoInput =
         document.querySelector(".telefono-usuario");
 
-          telefonoInput.addEventListener("input", (e) => {
-        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    telefonoInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 9);
     });
 
     const emailInput =
@@ -2820,6 +2857,13 @@ function vistaUsuarios(filtro = "") {
     const inputBuscar =
         document.querySelector(".input-buscar-usuario");
 
+    const habilitarBuscador = () => {
+        inputBuscar.removeAttribute("readonly");
+    };
+
+    inputBuscar.addEventListener("pointerdown", habilitarBuscador, { once: true });
+    inputBuscar.addEventListener("focus", habilitarBuscador, { once: true });
+
     const btnBuscar =
         document.querySelector(".btn-buscar-usuario");
 
@@ -2828,6 +2872,47 @@ function vistaUsuarios(filtro = "") {
 
     const contenedor =
         document.querySelector(".contenedor-usuarios");
+
+    const igualarAlturaTarjetas = () => {
+        const tarjetas = Array.from(
+            contenedor.querySelectorAll(".usuario-card")
+        );
+
+        if (!tarjetas.length || contenedor.querySelector(".usuario-card-editando")) {
+            return;
+        }
+
+        contenedor.style.removeProperty("--altura-tarjeta-usuario");
+        tarjetas.forEach(tarjeta => {
+            tarjeta.style.height = "auto";
+        });
+
+        const alturaMaxima = Math.max(
+            ...tarjetas.map(tarjeta => Math.ceil(tarjeta.getBoundingClientRect().height))
+        );
+
+        tarjetas.forEach(tarjeta => {
+            tarjeta.style.removeProperty("height");
+        });
+        contenedor.style.setProperty(
+            "--altura-tarjeta-usuario",
+            `${alturaMaxima}px`
+        );
+    };
+
+    observadorAlturaUsuarios?.disconnect();
+    let anchoContenedorUsuarios = Math.round(contenedor.getBoundingClientRect().width);
+    observadorAlturaUsuarios = new ResizeObserver(() => {
+        const nuevoAncho = Math.round(contenedor.getBoundingClientRect().width);
+
+        if (nuevoAncho === anchoContenedorUsuarios) {
+            return;
+        }
+
+        anchoContenedorUsuarios = nuevoAncho;
+        requestAnimationFrame(igualarAlturaTarjetas);
+    });
+    observadorAlturaUsuarios.observe(contenedor);
 
 
     // ==========================================
@@ -2938,8 +3023,18 @@ function vistaUsuarios(filtro = "") {
 
         }
         
-        if (cedula.length !== 8) {
-            notify.warning("La cédula debe tener exactamente 8 números.");
+        if (!/^\d{7,8}$/.test(cedula)) {
+            notify.warning("La cédula debe tener entre 7 y 8 números.");
+            return;
+        }
+
+        if (telefono !== "" && !/^09\d{7}$/.test(telefono)) {
+            notify.warning("El teléfono debe tener 9 números y comenzar con 09.");
+            return;
+        }
+
+        if (email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            notify.warning("Ingresa un correo electrónico válido, por ejemplo usuario@gmail.com.");
             return;
         }
 
@@ -3222,200 +3317,311 @@ function vistaUsuarios(filtro = "") {
                         ? (usuario.edificios || [])
                         : [];
 
+                const edificioPrincipal = edificiosDelUsuario[0] || null;
+                const edificiosAdicionales = edificiosDelUsuario.slice(1);
+                const idEdificiosUsuario = `edificios-usuario-${String(usuario.cedula).replace(/[^a-zA-Z0-9_-]/g, "")}`;
+                const resumenEdificios = edificioPrincipal
+                    ? `
+                        <div class="usuario-edificios-resumen">
+                            <span class="usuario-asociacion">
+                                <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+                                <span>Edificio: ${escaparHtml(edificioPrincipal.nombre)}</span>
+                            </span>
+                            ${edificiosAdicionales.length ? `
+                                <button
+                                    class="btn-ver-edificios-usuario"
+                                    type="button"
+                                    aria-label="Ver ${edificiosAdicionales.length} edificio${edificiosAdicionales.length === 1 ? "" : "s"} adicional${edificiosAdicionales.length === 1 ? "" : "es"}"
+                                    aria-expanded="false"
+                                    aria-controls="${idEdificiosUsuario}"
+                                    title="Ver otros edificios asociados"
+                                >
+                                    <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+                                    <span>+${edificiosAdicionales.length}</span>
+                                </button>
+                                <div class="usuario-edificios-popover oculto" id="${idEdificiosUsuario}">
+                                    <strong>Otros edificios asociados</strong>
+                                    <ul>
+                                        ${edificiosAdicionales.map(edificio => `
+                                            <li>
+                                                <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+                                                <span>${escaparHtml(edificio.nombre)}</span>
+                                            </li>
+                                        `).join("")}
+                                    </ul>
+                                </div>
+                            ` : ""}
+                        </div>
+                    `
+                    : "";
+
+                const esUsuarioActual =
+                    String(usuario.cedula) === String(usuarioActual?.cedula);
+                const esAdministrador = usuario.rol === "administrador";
+                const estaProtegido =
+                    esAdministrador &&
+                    !usuarioActual?.es_super_admin &&
+                    !esUsuarioActual;
+                const puedeEditarDatos = !estaProtegido;
+                const puedeEliminar =
+                    !esAdministrador || Boolean(usuarioActual?.es_super_admin);
+                const administradoresDisponibles = usuarios.filter(candidato =>
+                    candidato.rol === "administrador" &&
+                    candidato.activo &&
+                    String(candidato.cedula) !== String(usuario.cedula)
+                );
+                const claseRol = `rol-${String(usuario.rol || "").replaceAll("_", "-")}`;
+                const etiquetaRol = etiquetasRoles[usuario.rol] || usuario.rol;
+
 
                 return `
 
                     <div
-                        class="usuario-card"
+                        class="usuario-card ${estaProtegido ? "usuario-card-protegida" : ""}"
                         data-cedula="${usuario.cedula}"
                     >
 
+                        <div class="acciones-usuario-superiores">
+                                <button
+                                    class="btn-editar-usuario"
+                                    type="button"
+                                    aria-label="Editar datos de ${escaparHtml(usuario.nombre)}"
+                                    aria-expanded="false"
+                                    title="Editar datos"
+                                    ${puedeEditarDatos ? "" : "disabled"}
+                                >
+                                    <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                                </button>
+                                <button
+                                    class="btn-password-usuario"
+                                    type="button"
+                                    aria-label="Cambiar contraseña de ${escaparHtml(usuario.nombre)}"
+                                    aria-expanded="false"
+                                    title="Cambiar contraseña"
+                                    ${puedeEditarDatos ? "" : "disabled"}
+                                >
+                                    <span class="material-symbols-outlined" aria-hidden="true">key</span>
+                                </button>
+                                ${puedeEliminar ? `
+                                    <button
+                                        class="btn-eliminar-usuario"
+                                        type="button"
+                                        aria-label="Borrar usuario ${escaparHtml(usuario.nombre)}"
+                                        title="Borrar usuario"
+                                    >
+                                        <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                                    </button>
+                                ` : ""}
+                                <button
+                                    class="btn-confirmar-edicion-usuario oculto"
+                                    type="button"
+                                    aria-label="Guardar cambios"
+                                    title="Guardar cambios"
+                                >
+                                    <span class="material-symbols-outlined" aria-hidden="true">check</span>
+                                </button>
+                                <button
+                                    class="btn-cancelar-edicion-usuario oculto"
+                                    type="button"
+                                    aria-label="Cancelar edición"
+                                    title="Cancelar edición"
+                                >
+                                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                                </button>
+                        </div>
+
                         <div class="usuario-info">
 
-                            <h3>
-                                ${usuario.nombre}
+                            <h3 class="usuario-dato-inline usuario-nombre-inline">
+                                <span class="usuario-dato-etiqueta usuario-etiqueta-nombre">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">person</span>
+                                    Nombre
+                                </span>
+                                <span class="dato-visual">${escaparHtml(usuario.nombre)}</span>
+                                <input
+                                    class="editar-nombre campo-edicion-inline oculto"
+                                    type="text"
+                                    maxlength="100"
+                                    aria-label="Nombre completo"
+                                    value="${escaparHtml(usuario.nombre || "")}"
+                                >
                             </h3>
 
-
-                            <p>
-                                Cédula:
-                                ${usuario.cedula}
+                            <p class="usuario-dato-inline usuario-cedula-inline">
+                                <span class="usuario-dato-etiqueta">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">badge</span>
+                                    Cédula
+                                </span>
+                                <span class="dato-visual">${escaparHtml(usuario.cedula)}</span>
+                                <input
+                                    class="campo-edicion-inline campo-cedula-bloqueada oculto"
+                                    type="text"
+                                    value="${escaparHtml(usuario.cedula)}"
+                                    aria-label="Cédula, no editable"
+                                    disabled
+                                >
                             </p>
 
 
-                            <p>
-                                Tel:
-                                ${usuario.telefono || "Sin teléfono"}
+                            <p class="usuario-dato-inline">
+                                <span class="usuario-dato-etiqueta">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">phone</span>
+                                    Teléfono
+                                </span>
+                                <span class="dato-visual">${escaparHtml(usuario.telefono || "Sin teléfono")}</span>
+                                <input
+                                    class="editar-telefono campo-edicion-inline oculto"
+                                    type="text"
+                                    inputmode="numeric"
+                                    maxlength="9"
+                                    aria-label="Teléfono"
+                                    value="${escaparHtml(usuario.telefono || "")}"
+                                >
                             </p>
 
+                            <p class="usuario-dato-inline">
+                                <span class="usuario-dato-etiqueta">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">mail</span>
+                                    Correo
+                                </span>
+                                <span class="dato-visual">${escaparHtml(usuario.email || "Sin correo")}</span>
+                                <input
+                                    class="editar-email campo-edicion-inline oculto"
+                                    type="email"
+                                    maxlength="255"
+                                    aria-label="Correo electrónico"
+                                    value="${escaparHtml(usuario.email || "")}"
+                                >
+                            </p>
 
-                            ${
-                                usuario.email
-                                ?
-                                `
-                                <p>
-                                    Email:
-                                    ${usuario.email}
-                                </p>
-                                `
-                                :
-                                ""
-                            }
+                            <p class="usuario-dato-inline">
+                                <span class="usuario-dato-etiqueta">
+                                    <span class="material-symbols-outlined usuario-dato-icono" aria-hidden="true">${usuario.activo ? "check_circle" : "cancel"}</span>
+                                    Estado
+                                </span>
+                                <span class="dato-visual">${usuario.activo ? "Activo" : "Inactivo"}</span>
+                                <select
+                                    class="editar-activo campo-edicion-inline oculto"
+                                    aria-label="Estado del usuario"
+                                    ${usuario.es_super_admin || esUsuarioActual ? "disabled" : ""}
+                                >
+                                    <option value="1" ${usuario.activo ? "selected" : ""}>Activo</option>
+                                    <option value="0" ${usuario.activo ? "" : "selected"}>Inactivo</option>
+                                </select>
+                            </p>
 
+                            <div class="usuario-insignias">
+                                <span class="usuario-rol-actual ${claseRol}">
+                                    ${escaparHtml(etiquetaRol)}
+                                </span>
 
-                            <span class="usuario-rol-actual">
-                                ${usuario.rol}
-                            </span>
-
-
-                            ${
-                                edificiosDelUsuario.length > 0
-                                ?
-
-                                edificiosDelUsuario.map(edificio => `
-
-                                    <span class="usuario-asociacion">
-
-                                        Edificio:
-                                        ${edificio.nombre}
-
+                                ${usuario.es_super_admin ? `
+                                    <span class="usuario-super-admin">
+                                        <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
+                                        <span>Administrador superior</span>
                                     </span>
-
-                                `).join("")
-
-                                :
-
-                                ""
-                            }
-
-                        </div>
-
-
-                        <!-- ==========================
-                             ACCIONES
-                        =========================== -->
-
-                        <div class="usuario-acciones">
-
-
-                            <select class="select-rol slct-usr">
-
-                                <option value="" selected disabled>
-                                    Cambiar tipo...
-                                </option>
-
-                                <option value="usuario_edificio">
-                                    Usuario de edificio
-                                </option>
-
-                                <option value="usuario_proveedor">
-                                    Usuario de proveedor
-                                </option>
-
-                                <option value="administrativo">
-                                    Administrativo
-                                </option>
-
-                            </select>
-
-
-                            <!-- EDIFICIO -->
-
-                            <div class="checkboxes-edificios-cambio oculto">
-
-                                ${
-                                    edificios.map(e => {
-
-                                        const yaAsignado =
-                                            Array.isArray(usuario.edificios) &&
-                                            usuario.edificios.some(
-                                                ed => Number(ed.id) === Number(e.id)
-                                            );
-
-                                        return `
-                                            <label class="checkbox-edificio">
-                                                <input
-                                                    type="checkbox"
-                                                    class="chk-edificio-cambio"
-                                                    value="${e.id}"
-                                                    ${yaAsignado ? "checked" : ""}
-                                                >
-                                                ${e.nombre}
-                                            </label>
-                                        `;
-
-                                    }).join("")
-                                }
-
+                                ` : ""}
                             </div>
 
 
-                            <!-- PROVEEDOR -->
+                            ${resumenEdificios}
 
-                            <select
-                                class="select-proveedor-cambio oculto slct-usr"
+                        </div>
+
+                        ${estaProtegido ? `
+                            <p class="usuario-protegido-mensaje">
+                                Solo el administrador superior puede modificar esta cuenta.
+                            </p>
+                        ` : ""}
+
+                        <div class="mensaje-editor-usuario oculto" role="status" aria-live="polite">
+                            <span class="material-symbols-outlined mensaje-editor-icono" aria-hidden="true">info</span>
+                            <span class="mensaje-editor-texto"></span>
+                        </div>
+
+                        <div class="confirmacion-editor-usuario oculto" role="alertdialog" aria-modal="false">
+                            <span class="material-symbols-outlined" aria-hidden="true">help</span>
+                            <p class="confirmacion-editor-texto"></p>
+                            <label class="confirmacion-editor-password">
+                                Contraseña del administrador
+                                <span class="control-password-editor">
+                                    <input class="password-confirmacion-editor" type="password" autocomplete="current-password">
+                                    <button class="alternar-password-editor" type="button" data-password-nombre="contraseña del administrador" aria-label="Mostrar contraseña del administrador" aria-pressed="false">
+                                        <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+                                    </button>
+                                </span>
+                                <span class="confirmacion-editor-password-error oculto">Ingresa la contraseña del administrador.</span>
+                            </label>
+                            <div class="confirmacion-editor-acciones">
+                                <button class="cancelar-confirmacion-editor" type="button">No, volver</button>
+                                <button class="aceptar-confirmacion-editor" type="button">Sí, confirmar</button>
+                            </div>
+                        </div>
+
+
+                        <div class="panel-editor-usuario oculto">
+                            <input
+                                type="hidden"
+                                autocomplete="username"
+                                value="${escaparHtml(usuarioActual?.cedula || "")}"
                             >
-
-                                <option value="" selected disabled>
-                                    Seleccionar proveedor
-                                </option>
-
-                                ${
-                                    proveedores.map(p => `
-
-                                        <option value="${p.id}">
-                                            ${p.nombre}
-                                        </option>
-
-                                    `).join("")
-                                }
-
-                            </select>
-
-
-                            <button class="btn-guardar-cambio oculto" type="button">
-
-                                Guardar
-
-                            </button>
-
-
-                        </div>
-                        <div class="cambiar-password-container">
-
-                            <button class="btn-cambiar-password">
-                                Cambiar contraseña
-                            </button>
-
-                            <div class="form-cambiar-password oculto">
-
-                                <input
-                                    class="nueva-password"
-                                    type="password"
-                                    placeholder="Nueva contraseña"
-                                >
-
-                                <input
-                                    class="confirmar-password"
-                                    type="password"
-                                    placeholder="Repetir contraseña"
-                                >
-
-                                <div class="acciones-cambiar-password">
-
-                                    <button class="cancelar-password" type="button">
-                                        Cancelar
-                                    </button>
-
-                                    <button class="guardar-password oculto" type="button">
-                                        Guardar
-                                    </button>
-
+                            <div class="panel-password-editor">
+                                <div class="encabezado-password-editor">
+                                    <span class="material-symbols-outlined" aria-hidden="true">key</span>
+                                    <div>
+                                        <h4>Cambiar contraseña</h4>
+                                        <p>Ingresa la nueva contraseña para este usuario.</p>
+                                    </div>
                                 </div>
-
+                                <label class="campo-autorizacion-usuario">
+                                    Nueva contraseña
+                                    <span class="control-password-editor">
+                                        <input
+                                            class="nueva-password"
+                                            type="password"
+                                            autocomplete="new-password"
+                                        >
+                                        <button class="alternar-password-editor" type="button" data-password-nombre="contraseña nueva" data-controla-confirmacion="true" aria-label="Mostrar contraseña nueva" aria-pressed="false">
+                                            <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+                                        </button>
+                                    </span>
+                                </label>
+                                <label class="campo-autorizacion-usuario campo-confirmar-password">
+                                    Confirmar nueva contraseña
+                                    <input
+                                        class="confirmar-password"
+                                        type="password"
+                                        autocomplete="new-password"
+                                    >
+                                </label>
                             </div>
-
                         </div>
+
+                        ${usuario.es_super_admin && esUsuarioActual ? `
+                            <div class="form-transferir-super-admin oculto">
+                                <label>
+                                    Delegar administrador superior a
+                                    <select class="nuevo-super-admin" ${administradoresDisponibles.length ? "" : "disabled"}>
+                                        <option value="" selected disabled>
+                                            ${administradoresDisponibles.length
+                                                ? "Seleccionar administrador"
+                                                : "No hay otros administradores disponibles"}
+                                        </option>
+                                        ${administradoresDisponibles.map(administrador => `
+                                            <option value="${escaparHtml(administrador.cedula)}">
+                                                ${escaparHtml(administrador.nombre)} (${escaparHtml(administrador.cedula)})
+                                            </option>
+                                        `).join("")}
+                                    </select>
+                                </label>
+                                <div class="acciones-transferir-super-admin">
+                                    <button class="cancelar-transferencia" type="button">Cancelar</button>
+                                    <button class="confirmar-transferencia" type="button" ${administradoresDisponibles.length ? "" : "disabled"}>
+                                        Delegar y borrar mi cuenta
+                                    </button>
+                                </div>
+                            </div>
+                        ` : ""}
 
                     </div>
 
@@ -3431,140 +3637,6 @@ function vistaUsuarios(filtro = "") {
         contenedor
             .querySelectorAll(".usuario-card")
             .forEach(card => {
-                                // ==================================
-                // CAMBIAR CONTRASEÑA
-                // ==================================
-
-                const btnCambiarPassword =
-                    card.querySelector(".btn-cambiar-password");
-
-                const formPassword =
-                    card.querySelector(".form-cambiar-password");
-
-                const nuevaPasswordInput =
-                    card.querySelector(".nueva-password");
-
-                const confirmarPasswordInput =
-                    card.querySelector(".confirmar-password");
-
-                const btnCancelarPassword =
-                    card.querySelector(".cancelar-password");
-
-                const btnGuardarPassword =
-                    card.querySelector(".guardar-password");
-
-
-                btnCambiarPassword.addEventListener(
-                    "click",
-                    () => {
-                        const formularioAbierto = formPassword.classList.toggle("oculto") === false;
-                        if (!formularioAbierto) {
-                            btnGuardarPassword.classList.add("oculto");
-                        }
-                    }
-                );
-
-                const actualizarVisibilidadGuardarPassword = () => {
-                    const hayCambios =
-                        nuevaPasswordInput.value.trim() !== "" ||
-                        confirmarPasswordInput.value.trim() !== "";
-
-                    btnGuardarPassword.classList.toggle("oculto", !hayCambios);
-                };
-
-                nuevaPasswordInput.addEventListener("input", actualizarVisibilidadGuardarPassword);
-                confirmarPasswordInput.addEventListener("input", actualizarVisibilidadGuardarPassword);
-
-
-                btnCancelarPassword.addEventListener(
-                    "click",
-                    () => {
-                        formPassword.classList.add("oculto");
-                        nuevaPasswordInput.value = "";
-                        confirmarPasswordInput.value = "";
-                        btnGuardarPassword.classList.add("oculto");
-                    }
-                );
-
-
-                btnGuardarPassword.addEventListener(
-                    "click",
-                    async () => {
-
-                        const nuevaPassword =
-                            nuevaPasswordInput.value.trim();
-
-                        const confirmarPassword =
-                            confirmarPasswordInput.value.trim();
-
-
-                        if (
-                            nuevaPassword === "" ||
-                            confirmarPassword === ""
-                        ) {
-                            notify.warning("Completa ambos campos.");
-                            return;
-                        }
-
-                        if (nuevaPassword.length < 6) {
-                            notify.warning("La contraseña debe tener al menos 6 caracteres.");
-                            return;
-                        }
-
-                        if (nuevaPassword !== confirmarPassword) {
-                            notify.warning("Las contraseñas no coinciden.");
-                            return;
-                        }
-
-
-                        try {
-
-                            btnGuardarPassword.disabled = true;
-                            btnGuardarPassword.textContent = "Guardando...";
-
-                            const response = await cambiarPasswordUsuario(
-                                usuario.cedula,
-                                nuevaPassword
-                            );
-
-                            const data = await response.json();
-
-                            console.log("STATUS:", response.status);
-                            console.log("RESPUESTA:", data);
-
-                            if (!response.ok) {
-                                notify.error(
-                                    data.message ||
-                                    "No se pudo actualizar la contraseña."
-                                );
-                                return;
-                            }
-
-                            notify.success("Contraseña actualizada correctamente.");
-
-                            formPassword.classList.add("oculto");
-                            nuevaPasswordInput.value = "";
-                            confirmarPasswordInput.value = "";
-                            btnGuardarPassword.classList.add("oculto");
-
-                        } catch (error) {
-
-                            console.error(
-                                "Error al actualizar contraseña:",
-                                error
-                            );
-
-                            notify.error("No se pudo conectar con el servidor.");
-
-                        } finally {
-
-                            btnGuardarPassword.disabled = false;
-                            btnGuardarPassword.textContent = "Guardar";
-
-                        }
-
-                    }
-                );
                 const cedula =
                     card.dataset.cedula;
 
@@ -3577,230 +3649,732 @@ function vistaUsuarios(filtro = "") {
 
                 if (!usuario) return;
 
-
-                const selectRol =
-                    card.querySelector(".select-rol");
-
-                const contenedorEdificiosCambio =
-                    card.querySelector(
-                        ".checkboxes-edificios-cambio"
-                    );
-
-                const selectProveedor =
-                    card.querySelector(
-                        ".select-proveedor-cambio"
-                    );
-
-                const btnGuardarCambio =
-                    card.querySelector(
-                        ".btn-guardar-cambio"
-                    );
-
-                // ==================================
-                // CAMBIAR ROL
-                // ==================================
-
-                selectRol.addEventListener("change", () => {
-
-                    const nuevoRol = selectRol.value;
-
-                    btnGuardarCambio.classList.toggle("oculto", nuevoRol === usuario.rol);
-
-                    contenedorEdificiosCambio.classList.add("oculto");
-                    selectProveedor.classList.add("oculto");
-
-                    if (nuevoRol === "usuario_edificio") {
-                        contenedorEdificiosCambio.classList.remove("oculto");
-                    }
-
-                    if (nuevoRol === "usuario_proveedor") {
-                        selectProveedor.classList.remove("oculto");
-                    }
-
-                });
-
-
-                // ==================================
-                // GUARDAR CAMBIO DE ROL
-                // ==================================
-
-                btnGuardarCambio.addEventListener(
-                    "click",
-                    async () => {
-
-                        const nuevoRol =
-                            selectRol.value;
-
-
-                        if (!nuevoRol) {
-
-                            notify.warning(
-                                "Selecciona el nuevo tipo de usuario."
-                            );
-
-                            return;
-
-                        }
-
-
-                        // ==============================
-                        // EDIFICIO
-                        // ==============================
-
-                        let edificios_ids = [];
-
-                        if (nuevoRol === "usuario_edificio") {
-
-                            edificios_ids = Array.from(
-                                contenedorEdificiosCambio.querySelectorAll(
-                                    ".chk-edificio-cambio:checked"
-                                )
-                            ).map(chk => Number(chk.value));
-
-                            if (edificios_ids.length === 0) {
-                                notify.warning("Selecciona al menos un edificio.");
-                                return;
-                            }
-                        }
-
-
-                        // ==============================
-                        // PROVEEDOR
-                        // ==============================
-
-                        let proveedor = null;
-
-                        if (
-                            nuevoRol === "usuario_proveedor"
-                        ) {
-
-                            if (!selectProveedor.value) {
-
-                                notify.warning(
-                                    "Selecciona el proveedor."
-                                );
-
-                                return;
-
-                            }
-
-                            proveedor = Number(
-                                selectProveedor.value
-                            );
-
-                        }
-
-
-
-                        // ==============================
-                        // ENVIAR A LARAVEL
-                        // ==============================
-
-                        try {
-
-                            btnGuardarCambio.disabled =
-                                true;
-
-                            btnGuardarCambio.textContent =
-                                "Guardando...";
-
-                            const response = await cambiarRolUsuario(
-                                usuario.cedula,
-                                {
-                                    rol: nuevoRol,
-                                    edificios: edificios_ids,
-                                    proveedor: proveedor
-                                }
-                            );
-
-
-                            const data =
-                                await response.json();
-
-
-                            console.log(
-                                "STATUS:",
-                                response.status
-                            );
-
-                            console.log(
-                                "RESPUESTA:",
-                                data
-                            );
-
-
-                            if (!response.ok) {
-
-                                notify.error(
-                                    data.message ||
-                                    "No se pudo actualizar el usuario."
-                                );
-
-                                return;
-
-                            }
-
-
-                            // ==========================
-                            // ACTUALIZAR USUARIO LOCAL
-                            // ==========================
-
-                            const indice =
-                                usuarios.findIndex(
-                                    u =>
-                                        String(u.cedula) ===
-                                        String(usuario.cedula)
-                                );
-
-
-                            if (indice !== -1) {
-
-                                usuarios[indice] =
-                                    data.usuario;
-
-                            }
-
-
-                            notify.success(
-                                "Usuario actualizado correctamente."
-                            );
-
-
-                            // ==========================
-                            // RENDERIZAR NUEVAMENTE
-                            // ==========================
-
-                            renderLista(
-                                inputBuscar.value.trim(),
-                                filtroRolSelect.value
-                            );
-
-
-                        } catch (error) {
-
-                            console.error(
-                                "Error al actualizar usuario:",
-                                error
-                            );
-
-                            notify.error(
-                                "No se pudo conectar con el servidor."
-                            );
-
-                        } finally {
-
-                            btnGuardarCambio.disabled =
-                                false;
-
-                            btnGuardarCambio.textContent =
-                                "Guardar";
-
-                        }
-
-                    }
+                const administradoresDisponibles = usuarios.filter(candidato =>
+                    candidato.rol === "administrador" &&
+                    candidato.activo &&
+                    String(candidato.cedula) !== String(usuario.cedula)
                 );
 
+                const btnVerEdificios = card.querySelector(".btn-ver-edificios-usuario");
+                const panelEdificios = card.querySelector(".usuario-edificios-popover");
+
+                btnVerEdificios?.addEventListener("click", () => {
+                    const debeAbrir = panelEdificios.classList.contains("oculto");
+
+                    contenedor.querySelectorAll(".usuario-edificios-popover").forEach(panel => {
+                        panel.classList.add("oculto");
+                        panel.closest(".usuario-card")?.classList.remove("usuario-edificios-abiertos");
+                    });
+                    contenedor.querySelectorAll(".btn-ver-edificios-usuario").forEach(boton => {
+                        boton.setAttribute("aria-expanded", "false");
+                    });
+
+                    if (debeAbrir) {
+                        panelEdificios.classList.remove("oculto");
+                        card.classList.add("usuario-edificios-abiertos");
+                        btnVerEdificios.setAttribute("aria-expanded", "true");
+                    }
+                });
+
+                const btnEditarUsuario = card.querySelector(".btn-editar-usuario");
+                const btnPasswordUsuario = card.querySelector(".btn-password-usuario");
+                const btnEliminarUsuario = card.querySelector(".btn-eliminar-usuario");
+                const btnConfirmarEdicionUsuario = card.querySelector(".btn-confirmar-edicion-usuario");
+                const iconoConfirmarEdicion = btnConfirmarEdicionUsuario.querySelector(".material-symbols-outlined");
+                const btnCancelarEdicionUsuario = card.querySelector(".btn-cancelar-edicion-usuario");
+                const panelEditorUsuario = card.querySelector(".panel-editor-usuario");
+                const panelPasswordEditor = card.querySelector(".panel-password-editor");
+                const inputEditarNombre = card.querySelector(".editar-nombre");
+                const inputEditarTelefono = card.querySelector(".editar-telefono");
+                const inputEditarEmail = card.querySelector(".editar-email");
+                const selectEditarActivo = card.querySelector(".editar-activo");
+                const nuevaPasswordInput = card.querySelector(".nueva-password");
+                const confirmarPasswordInput = card.querySelector(".confirmar-password");
+                const campoConfirmarPassword = card.querySelector(".campo-confirmar-password");
+                const datosVisuales = card.querySelectorAll(".dato-visual");
+                const camposEdicion = card.querySelectorAll(".campo-edicion-inline");
+                const botonesAlternarPassword = card.querySelectorAll(".alternar-password-editor");
+                const mensajeEditor = card.querySelector(".mensaje-editor-usuario");
+                const iconoMensajeEditor = card.querySelector(".mensaje-editor-icono");
+                const textoMensajeEditor = card.querySelector(".mensaje-editor-texto");
+                const confirmacionEditor = card.querySelector(".confirmacion-editor-usuario");
+                const iconoConfirmacionEditor = confirmacionEditor.querySelector(
+                    ":scope > .material-symbols-outlined"
+                );
+                const textoConfirmacionEditor = card.querySelector(".confirmacion-editor-texto");
+                const btnAceptarConfirmacionEditor = card.querySelector(".aceptar-confirmacion-editor");
+                const btnCancelarConfirmacionEditor = card.querySelector(".cancelar-confirmacion-editor");
+                const passwordConfirmacionEditor = card.querySelector(".password-confirmacion-editor");
+                const errorPasswordConfirmacion = card.querySelector(".confirmacion-editor-password-error");
+                const campoPasswordConfirmacion = card.querySelector(".confirmacion-editor-password");
+                const accionesConfirmacionEditor = card.querySelector(".confirmacion-editor-acciones");
+                const btnAlternarPasswordConfirmacion = card.querySelector(
+                    ".confirmacion-editor-password .alternar-password-editor"
+                );
+                let fondoModalEditor = null;
+                let marcadorCard = null;
+                let resolverConfirmacionEditor = null;
+                let modoEditorActivo = null;
+
+                btnEliminarUsuario?.addEventListener("click", manejarEliminacionUsuario);
+
+                const limpiarMensajeEditor = () => {
+                    mensajeEditor.className = "mensaje-editor-usuario oculto";
+                    textoMensajeEditor.textContent = "";
+                };
+
+                const mostrarMensajeEditor = (tipo, mensaje) => {
+                    const iconos = {
+                        error: "error",
+                        advertencia: "warning",
+                        exito: "check_circle",
+                        info: "info"
+                    };
+
+                    mensajeEditor.className = `mensaje-editor-usuario mensaje-editor-${tipo}`;
+                    iconoMensajeEditor.textContent = iconos[tipo] || iconos.info;
+                    textoMensajeEditor.textContent = mensaje;
+                    mensajeEditor.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                };
+
+                const resolverConfirmacion = resultado => {
+                    if (!resolverConfirmacionEditor) return;
+
+                    if (resultado && !passwordConfirmacionEditor.value) {
+                        passwordConfirmacionEditor.setAttribute("aria-invalid", "true");
+                        errorPasswordConfirmacion.classList.remove("oculto");
+                        passwordConfirmacionEditor.focus();
+                        return;
+                    }
+
+                    const resolver = resolverConfirmacionEditor;
+                    const passwordAdministrador = resultado
+                        ? passwordConfirmacionEditor.value
+                        : null;
+                    resolverConfirmacionEditor = null;
+
+                    if (resultado) {
+                        passwordConfirmacionEditor.disabled = true;
+                        btnAlternarPasswordConfirmacion.disabled = true;
+                        btnAceptarConfirmacionEditor.disabled = true;
+                        btnCancelarConfirmacionEditor.disabled = true;
+                        btnAceptarConfirmacionEditor.textContent = "Guardando...";
+                    } else {
+                        confirmacionEditor.classList.add("oculto");
+                        card.classList.remove("usuario-card-confirmando");
+                        btnConfirmarEdicionUsuario.disabled = false;
+                    }
+
+                    resolver(passwordAdministrador);
+                };
+
+                const restaurarFormularioEditor = mensaje => {
+                    confirmacionEditor.classList.add("oculto");
+                    card.classList.remove("usuario-card-confirmando");
+                    passwordConfirmacionEditor.disabled = false;
+                    btnAlternarPasswordConfirmacion.disabled = false;
+                    btnAceptarConfirmacionEditor.disabled = false;
+                    btnCancelarConfirmacionEditor.disabled = false;
+                    btnConfirmarEdicionUsuario.disabled = false;
+                    iconoConfirmarEdicion.textContent = "check";
+                    mostrarMensajeEditor("error", mensaje);
+                };
+
+                const mostrarExitoConfirmacion = mensaje => {
+                    textoConfirmacionEditor.textContent = mensaje;
+                    iconoConfirmacionEditor.textContent = "check_circle";
+                    campoPasswordConfirmacion.classList.add("oculto");
+                    accionesConfirmacionEditor.classList.add("oculto");
+                    confirmacionEditor.classList.add("confirmacion-editor-exito");
+                };
+
+                const confirmarEnEditor = (mensaje, textoConfirmar) => {
+                    resolverConfirmacion(false);
+                    limpiarMensajeEditor();
+                    textoConfirmacionEditor.textContent = mensaje;
+                    btnAceptarConfirmacionEditor.textContent = textoConfirmar;
+                    iconoConfirmacionEditor.textContent = "lock";
+                    passwordConfirmacionEditor.value = "";
+                    passwordConfirmacionEditor.type = "password";
+                    passwordConfirmacionEditor.disabled = false;
+                    passwordConfirmacionEditor.removeAttribute("aria-invalid");
+                    errorPasswordConfirmacion.classList.add("oculto");
+                    campoPasswordConfirmacion.classList.remove("oculto");
+                    accionesConfirmacionEditor.classList.remove("oculto");
+                    confirmacionEditor.classList.remove("confirmacion-editor-exito");
+                    btnAlternarPasswordConfirmacion.disabled = false;
+                    btnAceptarConfirmacionEditor.disabled = false;
+                    btnCancelarConfirmacionEditor.disabled = false;
+                    btnAlternarPasswordConfirmacion.setAttribute("aria-pressed", "false");
+                    btnAlternarPasswordConfirmacion.setAttribute(
+                        "aria-label",
+                        "Mostrar contraseña del administrador"
+                    );
+                    btnAlternarPasswordConfirmacion.querySelector(
+                        ".material-symbols-outlined"
+                    ).textContent = "visibility";
+                    confirmacionEditor.classList.remove("oculto");
+                    card.classList.add("usuario-card-confirmando");
+                    btnConfirmarEdicionUsuario.disabled = true;
+                    passwordConfirmacionEditor.focus();
+
+                    return new Promise(resolve => {
+                        resolverConfirmacionEditor = resolve;
+                    });
+                };
+
+                btnAceptarConfirmacionEditor.addEventListener("click", () => {
+                    resolverConfirmacion(true);
+                });
+
+                btnCancelarConfirmacionEditor.addEventListener("click", () => {
+                    resolverConfirmacion(false);
+                });
+
+                passwordConfirmacionEditor.addEventListener("input", () => {
+                    passwordConfirmacionEditor.removeAttribute("aria-invalid");
+                    errorPasswordConfirmacion.classList.add("oculto");
+                });
+
+                botonesAlternarPassword.forEach(boton => {
+                    boton.addEventListener("click", () => {
+                        const input = boton.previousElementSibling;
+                        const mostrar = input.type === "password";
+                        input.type = mostrar ? "text" : "password";
+                        boton.setAttribute("aria-pressed", String(mostrar));
+                        boton.setAttribute(
+                            "aria-label",
+                            `${mostrar ? "Ocultar" : "Mostrar"} ${boton.dataset.passwordNombre}`
+                        );
+                        boton.querySelector(".material-symbols-outlined").textContent =
+                            mostrar ? "visibility_off" : "visibility";
+
+                        if (boton.dataset.controlaConfirmacion === "true") {
+                            campoConfirmarPassword.classList.toggle("oculto", mostrar);
+                            if (mostrar) confirmarPasswordInput.value = "";
+                        }
+
+                        input.focus();
+                    });
+                });
+
+                const manejarTeclaEditor = event => {
+                    if (
+                        event.key === "Escape" &&
+                        !document.querySelector(".confirmacion-toast-container")
+                    ) {
+                        cambiarModoEdicion(false, true);
+                    }
+                };
+
+                const abrirModalEditor = () => {
+                    if (fondoModalEditor) return;
+
+                    marcadorCard = document.createElement("span");
+                    marcadorCard.hidden = true;
+                    card.before(marcadorCard);
+
+                    fondoModalEditor = document.createElement("div");
+                    fondoModalEditor.className = "modal-editor-usuario";
+                    fondoModalEditor.addEventListener("mousedown", event => {
+                        if (event.target === fondoModalEditor) {
+                            cambiarModoEdicion(false, true);
+                        }
+                    });
+
+                    document.body.appendChild(fondoModalEditor);
+                    fondoModalEditor.appendChild(card);
+                    document.body.classList.add("editor-usuario-modal-abierto");
+                    card.setAttribute("role", "dialog");
+                    card.setAttribute("aria-modal", "true");
+                    card.setAttribute("aria-label", `Editar usuario ${usuario.nombre}`);
+                    document.addEventListener("keydown", manejarTeclaEditor);
+                };
+
+                const cerrarModalEditor = () => {
+                    document.removeEventListener("keydown", manejarTeclaEditor);
+
+                    if (marcadorCard?.parentNode) {
+                        marcadorCard.replaceWith(card);
+                    } else if (!contenedor.contains(card)) {
+                        contenedor.appendChild(card);
+                    }
+
+                    fondoModalEditor?.remove();
+                    fondoModalEditor = null;
+                    marcadorCard = null;
+                    document.body.classList.remove("editor-usuario-modal-abierto");
+                    card.removeAttribute("role");
+                    card.removeAttribute("aria-modal");
+                    card.removeAttribute("aria-label");
+                };
+
+                const cambiarModoEdicion = (modo, restaurar = false) => {
+                    const activo = modo === "datos" || modo === "password";
+                    card.scrollTop = 0;
+
+                    if (restaurar) {
+                        inputEditarNombre.value = usuario.nombre || "";
+                        inputEditarTelefono.value = usuario.telefono || "";
+                        inputEditarEmail.value = usuario.email || "";
+                        selectEditarActivo.value = usuario.activo ? "1" : "0";
+                    }
+
+                    modoEditorActivo = activo ? modo : null;
+                    card.classList.toggle("usuario-card-editando", activo);
+                    panelEditorUsuario.classList.toggle("oculto", !activo);
+                    btnEditarUsuario.setAttribute("aria-expanded", String(modo === "datos"));
+                    btnPasswordUsuario.setAttribute("aria-expanded", String(modo === "password"));
+                    btnEditarUsuario.classList.toggle("oculto", activo);
+                    btnPasswordUsuario.classList.toggle("oculto", activo);
+                    btnConfirmarEdicionUsuario.classList.toggle("oculto", !activo);
+                    btnCancelarEdicionUsuario.classList.toggle("oculto", !activo);
+                    btnConfirmarEdicionUsuario.disabled = false;
+                    iconoConfirmarEdicion.textContent = "check";
+
+                    if (btnEliminarUsuario) {
+                        btnEliminarUsuario.classList.toggle("oculto", activo);
+                    }
+
+                    if (activo) {
+                        abrirModalEditor();
+                        limpiarMensajeEditor();
+                        confirmacionEditor.classList.add("oculto");
+                        card.classList.toggle("usuario-card-datos", modo === "datos");
+                        card.classList.toggle("usuario-card-password", modo === "password");
+                        card.classList.remove("usuario-card-confirmando");
+                        panelPasswordEditor.classList.toggle("oculto", modo !== "password");
+                        datosVisuales.forEach(dato => dato.classList.toggle("oculto", modo === "datos"));
+                        camposEdicion.forEach(campo => campo.classList.toggle("oculto", modo !== "datos"));
+
+                        if (modo === "datos") {
+                            inputEditarNombre.focus();
+                        } else {
+                            nuevaPasswordInput.focus();
+                        }
+                    } else {
+                        card.classList.remove(
+                            "usuario-card-datos",
+                            "usuario-card-password",
+                            "usuario-card-confirmando"
+                        );
+                        datosVisuales.forEach(dato => dato.classList.remove("oculto"));
+                        camposEdicion.forEach(campo => campo.classList.add("oculto"));
+                        nuevaPasswordInput.value = "";
+                        confirmarPasswordInput.value = "";
+                        campoConfirmarPassword.classList.remove("oculto");
+                        resolverConfirmacion(false);
+                        botonesAlternarPassword.forEach(boton => {
+                            const input = boton.previousElementSibling;
+                            input.type = "password";
+                            boton.setAttribute("aria-pressed", "false");
+                            boton.setAttribute("aria-label", `Mostrar ${boton.dataset.passwordNombre}`);
+                            boton.querySelector(".material-symbols-outlined").textContent = "visibility";
+                        });
+                        limpiarMensajeEditor();
+                        cerrarModalEditor();
+                        requestAnimationFrame(igualarAlturaTarjetas);
+                    }
+                };
+
+                inputEditarTelefono?.addEventListener("input", event => {
+                    event.target.value = event.target.value.replace(/[^0-9]/g, "").slice(0, 9);
+                });
+
+                btnCancelarEdicionUsuario.addEventListener("click", () => {
+                    cambiarModoEdicion(null, true);
+                });
+
+                btnEditarUsuario?.addEventListener("click", () => {
+                    cambiarModoEdicion("datos", true);
+                });
+
+                btnPasswordUsuario?.addEventListener("click", () => {
+                    cambiarModoEdicion("password", true);
+                });
+
+                btnConfirmarEdicionUsuario.addEventListener("click", async () => {
+                    if (!modoEditorActivo) return;
+
+                    limpiarMensajeEditor();
+
+                    if (modoEditorActivo === "password") {
+                        const nuevaPassword = nuevaPasswordInput.value;
+                        const confirmarPassword = confirmarPasswordInput.value;
+                        const requiereConfirmacion = nuevaPasswordInput.type === "password";
+
+                        if (!nuevaPassword) {
+                            mostrarMensajeEditor("advertencia", "Ingresa la nueva contraseña.");
+                            return;
+                        }
+
+                        if (nuevaPassword.length < 8) {
+                            mostrarMensajeEditor("advertencia", "La nueva contraseña debe tener al menos 8 caracteres.");
+                            return;
+                        }
+
+                        if (requiereConfirmacion && !confirmarPassword) {
+                            mostrarMensajeEditor("advertencia", "Confirma la nueva contraseña o presiona el ojo para verificarla visualmente.");
+                            return;
+                        }
+
+                        if (requiereConfirmacion && nuevaPassword !== confirmarPassword) {
+                            mostrarMensajeEditor("advertencia", "La nueva contraseña y su confirmación no coinciden.");
+                            return;
+                        }
+
+                        const passwordActual = await confirmarEnEditor(
+                            `¿Querés cambiar la contraseña de ${usuario.nombre}?`,
+                            "Sí, cambiar"
+                        );
+
+                        if (passwordActual === null) return;
+
+                        try {
+                            btnConfirmarEdicionUsuario.disabled = true;
+                            iconoConfirmarEdicion.textContent = "hourglass_top";
+                            const response = await cambiarPasswordUsuario(
+                                usuario.cedula,
+                                nuevaPassword,
+                                passwordActual
+                            );
+                            const data = await response.json().catch(() => ({}));
+
+                            if (!response.ok) {
+                                throw new Error(data.errors?.password_actual?.[0] || data.message || "No se pudo cambiar la contraseña.");
+                            }
+
+                            mostrarExitoConfirmacion(data.message || "Contraseña actualizada correctamente.");
+                            await new Promise(resolve => setTimeout(resolve, 650));
+                            cambiarModoEdicion(null, true);
+                        } catch (error) {
+                            restaurarFormularioEditor(error.message || "No se pudo cambiar la contraseña.");
+                        } finally {
+                            btnConfirmarEdicionUsuario.disabled = false;
+                            iconoConfirmarEdicion.textContent = "check";
+                        }
+                        return;
+                    }
+
+                    const nombre = inputEditarNombre.value.trim();
+                    const telefono = inputEditarTelefono.value.trim();
+                    const email = inputEditarEmail.value.trim();
+                    const activo = selectEditarActivo.value === "1";
+
+                    if (!nombre) {
+                        mostrarMensajeEditor("advertencia", "El nombre es obligatorio.");
+                        return;
+                    }
+
+                    if (telefono !== "" && !/^09\d{7}$/.test(telefono)) {
+                        mostrarMensajeEditor("advertencia", "El teléfono debe tener 9 números y comenzar con 09.");
+                        return;
+                    }
+
+                    if (email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        mostrarMensajeEditor("advertencia", "Ingresa un correo electrónico válido.");
+                        return;
+                    }
+
+                    const passwordActual = await confirmarEnEditor(
+                        `¿Querés guardar los cambios de ${usuario.nombre}?`,
+                        "Sí, guardar"
+                    );
+
+                    if (passwordActual === null) return;
+
+                    const datos = {
+                        nombre,
+                        telefono,
+                        email,
+                        activo,
+                        password_actual: passwordActual
+                    };
+
+                    try {
+                        btnConfirmarEdicionUsuario.disabled = true;
+                        iconoConfirmarEdicion.textContent = "hourglass_top";
+
+                        const responseDatos = await actualizarUsuario(usuario.cedula, datos);
+                        const dataDatos = await responseDatos.json().catch(() => ({}));
+
+                        if (!responseDatos.ok) {
+                            throw new Error(dataDatos.errors?.password_actual?.[0] || dataDatos.message || "No se pudo actualizar el usuario.");
+                        }
+
+                        const usuarioActualizado = dataDatos.usuario;
+
+                        const indice = usuarios.findIndex(item =>
+                            String(item.cedula) === String(usuario.cedula)
+                        );
+
+                        if (indice !== -1) {
+                            usuarios[indice] = usuarioActualizado;
+                        }
+
+                        if (String(usuarioActual?.cedula) === String(usuario.cedula)) {
+                            usuarioActual = usuarioActualizado;
+                        }
+
+                        mostrarExitoConfirmacion("Usuario actualizado correctamente.");
+                        await new Promise(resolve => setTimeout(resolve, 650));
+                        cambiarModoEdicion(false);
+                        renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
+                    } catch (error) {
+                        console.error("Error al actualizar usuario:", error);
+                        restaurarFormularioEditor(error.message || "No se pudo actualizar el usuario.");
+                    } finally {
+                        btnConfirmarEdicionUsuario.disabled = false;
+                        iconoConfirmarEdicion.textContent = "check";
+                    }
+                });
+
+                const formTransferencia = card.querySelector(".form-transferir-super-admin");
+                const btnCancelarTransferencia = card.querySelector(".cancelar-transferencia");
+                const btnConfirmarTransferencia = card.querySelector(".confirmar-transferencia");
+                const selectNuevoSuperAdmin = card.querySelector(".nuevo-super-admin");
+
+                function solicitarPasswordEliminacion(mensaje, opciones = {}) {
+                    return new Promise(resolve => {
+                        const administradoresSucesores = Array.isArray(opciones.administradores)
+                            ? opciones.administradores
+                            : [];
+                        const fondo = document.createElement("div");
+                        fondo.className = "modal-eliminar-usuario";
+                        fondo.innerHTML = `
+                            <section class="dialogo-eliminar-usuario" role="alertdialog" aria-modal="true" aria-labelledby="titulo-eliminar-usuario">
+                                <div class="icono-eliminar-usuario" aria-hidden="true">
+                                    <span class="material-symbols-outlined">warning</span>
+                                </div>
+                                <div class="contenido-eliminar-usuario">
+                                    <h3 id="titulo-eliminar-usuario">${escaparHtml(opciones.titulo || "Eliminar usuario")}</h3>
+                                    <p>${escaparHtml(mensaje)}</p>
+                                </div>
+                                ${administradoresSucesores.length ? `
+                                    <label class="sucesor-eliminar-usuario">
+                                        Delegar administrador superior a
+                                        <select>
+                                            <option value="" ${administradoresSucesores.length === 1 ? "" : "selected"} disabled>Selecciona un administrador</option>
+                                            ${administradoresSucesores.map((administrador, indice) => `
+                                                <option value="${escaparHtml(administrador.cedula)}" ${administradoresSucesores.length === 1 && indice === 0 ? "selected" : ""}>
+                                                    ${escaparHtml(administrador.nombre)} (${escaparHtml(administrador.cedula)})
+                                                </option>
+                                            `).join("")}
+                                        </select>
+                                        <span class="error-sucesor-eliminar oculto">Selecciona el nuevo administrador superior.</span>
+                                    </label>
+                                ` : ""}
+                                <label class="password-eliminar-usuario">
+                                    Contraseña del administrador actual
+                                    <span class="control-password-eliminar">
+                                        <input type="password" autocomplete="current-password">
+                                        <button type="button" aria-label="Mostrar contraseña" aria-pressed="false">
+                                            <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+                                        </button>
+                                    </span>
+                                    <span class="error-password-eliminar oculto">Ingresa la contraseña del administrador.</span>
+                                </label>
+                                <div class="acciones-eliminar-usuario">
+                                    <button class="cancelar-eliminacion-usuario" type="button">${escaparHtml(opciones.cancelar || "No, volver")}</button>
+                                    <button class="confirmar-eliminacion-usuario" type="button">${escaparHtml(opciones.confirmar || "Sí, eliminar")}</button>
+                                </div>
+                            </section>
+                        `;
+
+                        const input = fondo.querySelector(".password-eliminar-usuario input");
+                        const error = fondo.querySelector(".error-password-eliminar");
+                        const selectorSucesor = fondo.querySelector(".sucesor-eliminar-usuario select");
+                        const errorSucesor = fondo.querySelector(".error-sucesor-eliminar");
+                        const alternar = fondo.querySelector(".control-password-eliminar button");
+                        const cancelar = fondo.querySelector(".cancelar-eliminacion-usuario");
+                        const confirmar = fondo.querySelector(".confirmar-eliminacion-usuario");
+
+                        const cerrar = resultado => {
+                            document.removeEventListener("keydown", manejarEscape);
+                            fondo.remove();
+                            document.body.classList.remove("modal-eliminar-usuario-abierto");
+                            resolve(resultado);
+                        };
+
+                        const aceptar = () => {
+                            if (selectorSucesor && !selectorSucesor.value) {
+                                selectorSucesor.setAttribute("aria-invalid", "true");
+                                errorSucesor.classList.remove("oculto");
+                                selectorSucesor.focus();
+                                return;
+                            }
+
+                            if (!input.value) {
+                                input.setAttribute("aria-invalid", "true");
+                                error.classList.remove("oculto");
+                                input.focus();
+                                return;
+                            }
+
+                            cerrar(selectorSucesor
+                                ? {
+                                    passwordActual: input.value,
+                                    nuevoSuperAdminCedula: selectorSucesor.value
+                                }
+                                : input.value
+                            );
+                        };
+
+                        const manejarEscape = event => {
+                            if (event.key === "Escape") cerrar(null);
+                        };
+
+                        alternar.addEventListener("click", () => {
+                            const mostrar = input.type === "password";
+                            input.type = mostrar ? "text" : "password";
+                            alternar.setAttribute("aria-pressed", String(mostrar));
+                            alternar.setAttribute("aria-label", mostrar ? "Ocultar contraseña" : "Mostrar contraseña");
+                            alternar.querySelector(".material-symbols-outlined").textContent =
+                                mostrar ? "visibility_off" : "visibility";
+                            input.focus();
+                        });
+
+                        input.addEventListener("input", () => {
+                            input.removeAttribute("aria-invalid");
+                            error.classList.add("oculto");
+                        });
+                        selectorSucesor?.addEventListener("change", () => {
+                            selectorSucesor.removeAttribute("aria-invalid");
+                            errorSucesor.classList.add("oculto");
+                        });
+                        input.addEventListener("keydown", event => {
+                            if (event.key === "Enter") aceptar();
+                        });
+                        cancelar.addEventListener("click", () => cerrar(null));
+                        confirmar.addEventListener("click", aceptar);
+                        fondo.addEventListener("mousedown", event => {
+                            if (event.target === fondo) cerrar(null);
+                        });
+                        document.addEventListener("keydown", manejarEscape);
+                        document.body.appendChild(fondo);
+                        document.body.classList.add("modal-eliminar-usuario-abierto");
+                        input.focus();
+                    });
+                }
+
+                async function ejecutarEliminacion(nuevoSuperAdminCedula, passwordActual) {
+                    try {
+                        if (btnEliminarUsuario) btnEliminarUsuario.disabled = true;
+                        if (btnConfirmarTransferencia) btnConfirmarTransferencia.disabled = true;
+
+                        const response = await eliminarUsuario(
+                            usuario.cedula,
+                            passwordActual,
+                            nuevoSuperAdminCedula
+                        );
+                        const data = await response.json().catch(() => ({}));
+
+                        if (!response.ok) {
+                            throw new Error(
+                                data.errors?.password_actual?.[0] ||
+                                data.message ||
+                                "No se pudo eliminar el usuario."
+                            );
+                        }
+
+                        notify.success(data.message || "Usuario eliminado correctamente.");
+
+                        if (data.sesion_cerrada) {
+                            setTimeout(() => window.location.replace("./index.html"), 900);
+                            return;
+                        }
+
+                        usuarios = usuarios.filter(item =>
+                            String(item.cedula) !== String(usuario.cedula)
+                        );
+                        renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
+                    } catch (error) {
+                        console.error("Error al eliminar usuario:", error);
+                        notify.error(error.message || "No se pudo eliminar el usuario.");
+                    } finally {
+                        if (btnEliminarUsuario) btnEliminarUsuario.disabled = false;
+                        if (btnConfirmarTransferencia) btnConfirmarTransferencia.disabled = false;
+                    }
+                }
+
+                async function manejarEliminacionUsuario(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    if (usuario.es_super_admin) {
+                        if (!administradoresDisponibles.length) {
+                            notify.warning("Primero crea otro administrador para poder delegarle el permiso superior.");
+                            return;
+                        }
+
+                        const autorizacion = await solicitarPasswordEliminacion(
+                            "Para eliminar tu cuenta debes delegar el permiso superior. Esta acción no se puede revertir.",
+                            {
+                                titulo: "Delegar y eliminar administrador",
+                                confirmar: "Sí, delegar y eliminar",
+                                cancelar: "No, volver",
+                                administradores: administradoresDisponibles
+                            }
+                        );
+
+                        if (autorizacion !== null) {
+                            await ejecutarEliminacion(
+                                autorizacion.nuevoSuperAdminCedula,
+                                autorizacion.passwordActual
+                            );
+                        }
+                        return;
+                    }
+
+                    const passwordActual = await solicitarPasswordEliminacion(
+                        `¿Querés eliminar al usuario ${usuario.nombre}? Esta acción no se puede revertir.`,
+                        {
+                            titulo: "Eliminar usuario definitivamente",
+                            confirmar: "Sí, eliminar",
+                            cancelar: "No, volver"
+                        }
+                    );
+
+                    if (passwordActual !== null) {
+                        await ejecutarEliminacion(null, passwordActual);
+                    }
+                }
+
+                btnCancelarTransferencia?.addEventListener("click", () => {
+                    formTransferencia.classList.add("oculto");
+                    selectNuevoSuperAdmin.value = "";
+                });
+
+                btnConfirmarTransferencia?.addEventListener("click", async () => {
+                    const nuevoSuperAdminCedula = selectNuevoSuperAdmin.value;
+
+                    if (!nuevoSuperAdminCedula) {
+                        notify.warning("Selecciona el nuevo administrador superior.");
+                        return;
+                    }
+
+                    const passwordActual = await solicitarPasswordEliminacion(
+                        "¿Querés delegar el permiso superior y eliminar tu cuenta? Esta acción no se puede revertir.",
+                        {
+                            titulo: "Delegar administración superior",
+                            confirmar: "Sí, delegar y eliminar",
+                            cancelar: "No, volver"
+                        }
+                    );
+
+                    if (passwordActual !== null) {
+                        await ejecutarEliminacion(nuevoSuperAdminCedula, passwordActual);
+                    }
+                });
+
             });
+
+        requestAnimationFrame(igualarAlturaTarjetas);
+        document.fonts?.ready.then(() => {
+            if (contenedor.isConnected) {
+                igualarAlturaTarjetas();
+            }
+        });
 
     }
 

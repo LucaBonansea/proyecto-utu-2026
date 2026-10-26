@@ -24,6 +24,7 @@ class UsuarioSeeder extends Seeder
                 'email' => 'edificio@test.com',
                 'password' => Hash::make('luca12345'),
                 'rol' => 'usuario_edificio',
+                'es_super_admin' => false,
                 'activo' => true,
                 'proveedor_id' => null,
             ]
@@ -46,6 +47,7 @@ class UsuarioSeeder extends Seeder
                 'email' => 'admin@test.com',
                 'password' => Hash::make('admin12345'),
                 'rol' => 'administrador',
+                'es_super_admin' => true,
                 'activo' => true,
                 'proveedor_id' => null,
             ]
@@ -66,6 +68,7 @@ class UsuarioSeeder extends Seeder
                 'email' => 'administrativo@test.com',
                 'password' => Hash::make('administrativo123'),
                 'rol' => 'administrativo',
+                'es_super_admin' => false,
                 'activo' => true,
                 'proveedor_id' => null,
             ]
@@ -86,6 +89,7 @@ class UsuarioSeeder extends Seeder
                 'email' => 'proveedor@test.com',
                 'password' => Hash::make('proveedor123'),
                 'rol' => 'usuario_proveedor',
+                'es_super_admin' => false,
                 'activo' => true,
 
                 // Tiene que existir un proveedor con id 1

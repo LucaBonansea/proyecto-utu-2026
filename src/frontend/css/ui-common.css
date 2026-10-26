@@ -807,6 +807,38 @@ textarea:focus-visible,
     overflow-wrap: anywhere;
 }
 
+.confirmacion-toast-campo {
+    display: grid;
+    gap: 6px;
+    margin-top: 14px;
+    color: var(--ui-text);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.confirmacion-toast-campo input {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 42px;
+    border: 1px solid var(--ui-border);
+    border-radius: 10px;
+    padding: 9px 11px;
+    background: var(--ui-surface-soft);
+    color: var(--ui-text);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.confirmacion-toast-campo input:focus {
+    border-color: var(--ui-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ui-focus) 18%, transparent);
+}
+
+.confirmacion-toast-campo input[aria-invalid="true"] {
+    border-color: #dc2626;
+}
+
 .confirmacion-toast-acciones {
     display: flex;
     justify-content: flex-end;
