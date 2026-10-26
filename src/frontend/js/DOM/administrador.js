@@ -2615,6 +2615,7 @@ function vistaUsuarios(filtro = "") {
                             placeholder="Contraseña"
                         >
 
+
                     </div>
 
                      <div class="campo-usuario">
@@ -2626,7 +2627,33 @@ function vistaUsuarios(filtro = "") {
                               placeholder="Repetir contraseña"
                           >
                     </div>
+                    <div class="campo-usuario">
+                   <label>Contraseña</label>
+                     <div class="campo-password-wrapper">
+                         <input
+                            class="password-usuario"
+                            type="password"
+                            placeholder="Contraseña"
+                          >
+                         <button type="button" class="btn-toggle-password-input" aria-label="Mostrar contraseña">
+                       <span class="material-symbols-outlined">visibility</span>
+                     </button>
+                   </div>
+                  </div>
 
+                    <div class="campo-usuario">
+                        <label>Repetir contraseña</label>
+                            <div class="campo-password-wrapper">
+                               <input
+                              class="confirm-password-usuario"
+                                 type="password"
+                               placeholder="Repetir contraseña"
+                                >
+                         <button type="button" class="btn-toggle-password-input" aria-label="Mostrar contraseña">
+                              <span class="material-symbols-outlined">visibility</span>
+                          </button>
+                      </div>
+                    </div>
                     <div class="campo-usuario">
 
                         <label>Tipo de usuario</label>
@@ -4929,3 +4956,22 @@ function renderEstadisticasAdmin() {
     contenedor.querySelector(".btn-actualizar-estadisticas")
         ?.addEventListener("click", vistaEstadisticas);
 }
+
+// ==========================================
+// MOSTRAR / OCULTAR CONTRASEÑA (GLOBAL)
+// ==========================================
+document.addEventListener("click", (event) => {
+    const btnToggle = event.target.closest(".btn-toggle-password-input");
+    if (!btnToggle) return;
+
+    const wrapper = btnToggle.closest(".campo-password-wrapper");
+    const input = wrapper?.querySelector("input");
+    const icono = btnToggle.querySelector(".material-symbols-outlined");
+
+    if (!input || !icono) return;
+
+    const esPassword = input.type === "password";
+    input.type = esPassword ? "text" : "password";
+    icono.textContent = esPassword ? "visibility_off" : "visibility";
+    btnToggle.setAttribute("aria-label", esPassword ? "Ocultar contraseña" : "Mostrar contraseña");
+});

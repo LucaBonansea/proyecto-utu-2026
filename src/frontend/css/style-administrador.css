@@ -2238,6 +2238,54 @@ main{
     color: #7c3aed;
 }
 
+.campo-password-wrapper{
+     position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+.campo-password-wrapper:focus-within {
+    border-color: var(--azul-primario);
+    box-shadow: 0 0 0 3px var(--azul-tint);
+}
+.campo-password-wrapper input {
+    flex: 1;
+    border: none !important;
+    background: transparent !important;
+    padding: 11px 13px !important;
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none !important;
+    box-shadow: none !important;
+}
+.btn-toggle-password-input {
+    position: absolute;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.btn-toggle-password-input:hover {
+    color: var(--text-primary);
+}
+
+.btn-toggle-password-input .material-symbols-outlined {
+    font-size: 20px;
+}
+
+
 .btn-confirmar-edicion-usuario {
     border-color: #86efac;
     background: #dcfce7;
