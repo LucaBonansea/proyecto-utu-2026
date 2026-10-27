@@ -31,9 +31,54 @@ const contenidoModal = document.querySelector("#contenido-modal");
 const cerrarModal = modal.querySelector(".cerrar-modal");
 const fondoModal = modal.querySelector(".fondo-modal");
 const logoutbtn = document.querySelector(".logout");
+const cuentaButton = document.getElementById("btn-cuenta-administrativo");
+const cuentaModal = document.getElementById("cuenta-administrativo");
+const cuentaFondo = cuentaModal.querySelector(".cuenta-administrativo-fondo");
+const cuentaCerrar = cuentaModal.querySelector(".cuenta-administrativo-cerrar");
+const cuentaNombre = document.getElementById("cuenta-administrativo-nombre");
+const cuentaCedula = document.getElementById("cuenta-administrativo-cedula");
+const cuentaTelefono = document.getElementById("cuenta-administrativo-telefono");
+const cuentaEmail = document.getElementById("cuenta-administrativo-email");
+const cuentaRol = document.getElementById("cuenta-administrativo-rol");
+const cuentaEstado = document.getElementById("cuenta-administrativo-estado");
 
 // Reclamos pendientes en memoria.
 let reclamosAValidar = [];
+let usuarioActual = null;
+
+function completarCuenta(usuario) {
+    cuentaNombre.textContent = usuario.nombre || "No registrado";
+    cuentaCedula.textContent = usuario.cedula || "No registrada";
+    cuentaTelefono.textContent = usuario.telefono || "No registrado";
+    cuentaEmail.textContent = usuario.email || "No registrado";
+    cuentaRol.textContent = usuario.rol === "administrativo"
+        ? "Administrativo departamental"
+        : usuario.rol || "No registrado";
+    cuentaEstado.textContent = usuario.activo ? "Activa" : "Inactiva";
+}
+
+function abrirCuenta() {
+    if (!usuarioActual) return;
+
+    completarCuenta(usuarioActual);
+    document.querySelector(".menu-top-notificaciones")?.classList.remove("active");
+    document.querySelector(".notificaciones-btn-top")?.setAttribute("aria-expanded", "false");
+    cuentaModal.classList.add("activa");
+    cuentaModal.setAttribute("aria-hidden", "false");
+    cuentaButton.setAttribute("aria-expanded", "true");
+    document.body.classList.add("cuenta-administrativo-abierta");
+    cuentaCerrar.focus();
+}
+
+function cerrarCuenta() {
+    if (!cuentaModal.classList.contains("activa")) return;
+
+    cuentaModal.classList.remove("activa");
+    cuentaModal.setAttribute("aria-hidden", "true");
+    cuentaButton.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("cuenta-administrativo-abierta");
+    cuentaButton.focus();
+}
 
 // ============================================================================
 // CIERRE DEL MODAL
@@ -47,6 +92,12 @@ function cerrarDetalle() {
 cerrarModal.addEventListener("click", cerrarDetalle);
 fondoModal.addEventListener("click", cerrarDetalle);
 logoutbtn.addEventListener("click", cerrar_sesion);
+cuentaButton.addEventListener("click", abrirCuenta);
+cuentaFondo.addEventListener("click", cerrarCuenta);
+cuentaCerrar.addEventListener("click", cerrarCuenta);
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") cerrarCuenta();
+});
 
 // ============================================================================
 // VERIFICACIÓN DE SESIÓN
@@ -162,6 +213,7 @@ async function iniciar() {
 
         if (!usuario) return;
 
+        usuarioActual = usuario;
         inicializarTema();
         inicializarNotificaciones();
 
@@ -186,9 +238,11 @@ function vistaLista() {
 
     if (reclamosAValidar.length === 0) {
         section.innerHTML = `
-            <p style="padding:20px;">
-                No hay reclamos pendientes de validación.
-            </p>
+            <div class="estado-vacio-administrativo">
+                <span class="material-symbols-outlined" aria-hidden="true">fact_check</span>
+                <h2>No hay reclamos pendientes</h2>
+                <p>Los nuevos reclamos que necesiten validación aparecerán en esta sección.</p>
+            </div>
         `;
         return;
     }
@@ -290,106 +344,94 @@ async function vistaDetalle(id) {
 
     contenidoModal.innerHTML = `
         <div class="primerdiv-reclamo" data-id="${reclamo.id}">
-
             <div class="segundodiv-reclamo">
+                <div class="foto-reclamo">
+                    <div class="evidencia-etiqueta">
+                        <span class="material-symbols-outlined" aria-hidden="true">image</span>
+                        Evidencia adjunta
+                    </div>
+                    ${reclamo.evidencia?.ruta_archivo ? `
+                        <img
+                            src="${obtenerUrlEvidencia(reclamo.evidencia.ruta_archivo)}"
+                            alt="Evidencia del reclamo"
+                        >
+                    ` : `
+                        <div class="evidencia-vacia">
+                            <span class="material-symbols-outlined" aria-hidden="true">image_not_supported</span>
+                            <strong>Sin evidencia adjunta</strong>
+                        </div>
+                    `}
+                </div>
 
                 <div class="info-reclamo">
-
-                    <p class="reclamo-titulo" contenteditable="false">
-                        ${reclamo.description ?? "Sin descripción"}
-                    </p>
-
-                    <button class="camb-titulo">
-                        Editar descripción
-                    </button>
-
-                    <p class="user-p">
-                        Usuario:
-                        ${reclamo.usuario?.nombre ?? "No disponible"}
-                    </p>
-
-                    <p class="user-p">
-                        Edificio:
-                        ${reclamo.edificio?.nombre ?? "No disponible"}
-                    </p>
-
-                    <p class="user-p">
-                        Área:
-                        ${reclamo.area?.nombre ?? "Sin área asignada"}
-                    </p>
-
-                    <p class="user-p">
-                        Dirección:
-                        ${reclamo.edificio?.direccion ?? "No disponible"}
-                    </p>
-
-                    <p class="user-p">
-                        Clasificación:
-                        ${reclamo.clasificacion?.clasificacion
-                            ?? "No disponible"}
-                    </p>
-
-                    <div class="estado">
-                        Estado: ${reclamo.estado ?? "No disponible"}
-                    </div>
-
-                    <div class="acciones-reclamo">
-
-                        <button class="btn-prioridad">
-                            ${reclamo.prioridad === "Urgente"
-                                ? "Quitar urgencia"
-                                : "Marcar urgencia"}
+                    <div class="detalle-reclamo-cabecera">
+                        <div class="detalle-reclamo-descripcion">
+                            <span class="detalle-reclamo-etiqueta">Descripción del reclamo</span>
+                            <p class="reclamo-titulo" contenteditable="false">
+                                ${reclamo.description ?? "Sin descripción"}
+                            </p>
+                        </div>
+                        <button class="camb-titulo" type="button" aria-label="Editar descripción">
+                            <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                            <span class="camb-titulo-texto">Editar</span>
                         </button>
-
                     </div>
 
-                    <p class="fecha">
-                        ${reclamo.created_at
-                            ? new Date(
-                                reclamo.created_at
-                            ).toLocaleDateString("es-UY")
-                            : "Fecha no disponible"}
-                    </p>
+                    <div class="detalle-reclamo-datos">
+                        <div class="detalle-reclamo-dato">
+                            <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                            <div><small>Usuario</small><strong>${reclamo.usuario?.nombre ?? "No disponible"}</strong></div>
+                        </div>
+                        <div class="detalle-reclamo-dato">
+                            <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+                            <div><small>Edificio</small><strong>${reclamo.edificio?.nombre ?? "No disponible"}</strong></div>
+                        </div>
+                        <div class="detalle-reclamo-dato">
+                            <span class="material-symbols-outlined" aria-hidden="true">meeting_room</span>
+                            <div><small>Área</small><strong>${reclamo.area?.nombre ?? "Sin área asignada"}</strong></div>
+                        </div>
+                        <div class="detalle-reclamo-dato">
+                            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                            <div><small>Dirección</small><strong>${reclamo.edificio?.direccion ?? "No disponible"}</strong></div>
+                        </div>
+                        <div class="detalle-reclamo-dato detalle-reclamo-dato-ancho">
+                            <span class="material-symbols-outlined" aria-hidden="true">category</span>
+                            <div><small>Clasificación</small><strong>${reclamo.clasificacion?.clasificacion ?? "No disponible"}</strong></div>
+                        </div>
+                    </div>
 
-                    <select class="select-area">
-
-                        <option value="" selected disabled>
-                            Seleccionar proveedor
-                        </option>
-
-                    </select>
-
-                    <div class="enviar-area">
-
-                        <button class="btn-enviar-area">
-
-                            <span class="material-symbols-outlined">
-                                send
-                            </span>
-
-                            Validar y asignar proveedor
-
+                    <div class="detalle-reclamo-resumen">
+                        <div class="detalle-resumen-item">
+                            <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+                            <div><small>Estado</small><strong>${reclamo.estado ?? "No disponible"}</strong></div>
+                        </div>
+                        <div class="detalle-resumen-item">
+                            <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
+                            <div><small>Fecha</small><strong>${reclamo.created_at ? new Date(reclamo.created_at).toLocaleDateString("es-UY") : "No disponible"}</strong></div>
+                        </div>
+                        <button class="btn-prioridad ${reclamo.prioridad === "Urgente" ? "urgente" : ""}" type="button">
+                            <span class="material-symbols-outlined" aria-hidden="true">priority_high</span>
+                            <span class="btn-prioridad-texto">${reclamo.prioridad === "Urgente" ? "Quitar urgencia" : "Marcar urgencia"}</span>
                         </button>
-
                     </div>
 
+                    <div class="detalle-asignacion">
+                        <label for="proveedor-reclamo-${reclamo.id}">
+                            <span class="material-symbols-outlined" aria-hidden="true">engineering</span>
+                            Asignar proveedor
+                        </label>
+                        <div class="detalle-asignacion-controles">
+                            <select id="proveedor-reclamo-${reclamo.id}" class="select-area">
+                                <option value="" selected disabled>Seleccionar proveedor</option>
+                            </select>
+                            <button class="btn-enviar-area" type="button">
+                                <span class="material-symbols-outlined" aria-hidden="true">send</span>
+                                Validar y asignar
+                            </button>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="foto-reclamo">
-
-                    <img
-                        src="${reclamo.evidencia
-                            ? obtenerUrlEvidencia(
-                                reclamo.evidencia.ruta_archivo
-                            )
-                            : ""}"
-                        alt="Evidencia del reclamo"
-                    >
-
-                </div>
-
             </div>
-
         </div>
     `;
 
@@ -452,6 +494,7 @@ async function vistaDetalle(id) {
     // ========================================================================
 
     const btnDescripcion = card.querySelector(".camb-titulo");
+    const textoBtnDescripcion = card.querySelector(".camb-titulo-texto");
     const descripcion = card.querySelector(".reclamo-titulo");
 
     btnDescripcion.addEventListener("click", () => {
@@ -462,7 +505,8 @@ async function vistaDetalle(id) {
             descripcion.classList.add("editando");
             descripcion.focus();
 
-            btnDescripcion.textContent = "Guardar descripción";
+            textoBtnDescripcion.textContent = "Guardar";
+            btnDescripcion.setAttribute("aria-label", "Guardar descripción");
         }
     });
 
@@ -477,7 +521,8 @@ async function vistaDetalle(id) {
         descripcion.contentEditable = false;
         descripcion.classList.remove("editando");
 
-        btnDescripcion.textContent = "Editar descripción";
+        textoBtnDescripcion.textContent = "Editar";
+        btnDescripcion.setAttribute("aria-label", "Editar descripción");
 
         reclamo.description = descripcion.textContent.trim();
 
@@ -493,14 +538,17 @@ async function vistaDetalle(id) {
     }
 
     const btnPrioridad = card.querySelector(".btn-prioridad");
+    const textoPrioridad = card.querySelector(".btn-prioridad-texto");
 
     btnPrioridad.addEventListener("click", () => {
         if (reclamo.prioridad === "Urgente") {
             reclamo.prioridad = "Normal";
-            btnPrioridad.textContent = "Marcar urgencia";
+            textoPrioridad.textContent = "Marcar urgencia";
+            btnPrioridad.classList.remove("urgente");
         } else {
             reclamo.prioridad = "Urgente";
-            btnPrioridad.textContent = "Quitar urgencia";
+            textoPrioridad.textContent = "Quitar urgencia";
+            btnPrioridad.classList.add("urgente");
         }
     });
 

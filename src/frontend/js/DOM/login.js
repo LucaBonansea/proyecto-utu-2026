@@ -210,10 +210,11 @@ function redirigirSegunRol(rol) {
     const destinos = {
         administrador: "./administrador.html",
         administrativo: "./Administrativos.html",
-        usuario_proveedor: "./Provedores.html"
+        usuario_proveedor: "./Provedores.html",
+        usuario_edificio: "./inicio.html"
     };
 
-    window.location.replace(destinos[rol] || "./inicio.html");
+    window.location.replace(destinos[rol] || "./index.html");
 }
 
 function cambiarEstadoLogin(cargando, texto) {

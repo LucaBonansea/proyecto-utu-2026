@@ -107,7 +107,7 @@ class ValidacionUsuariosProveedoresTest extends TestCase
         $this->assertDatabaseCount('proveedores', 1);
     }
 
-    public function test_finalizacion_de_proveedor_rechaza_costos_con_mas_de_dos_decimales(): void
+    public function test_finalizacion_de_proveedor_valida_y_guarda_los_costos(): void
     {
         Storage::fake('public');
         $proveedor = Proveedor::create($this->datosProveedor());
@@ -150,6 +150,62 @@ class ValidacionUsuariosProveedoresTest extends TestCase
             'id' => $reclamo->id,
             'estado' => 'en_proceso',
         ]);
+
+        $this->postJson("/api/proveedor/reclamos/{$reclamo->id}/finalizar", [
+            'foto' => UploadedFile::fake()->createWithContent(
+                'evidencia-final.png',
+                base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=')
+            ),
+            'observaciones' => 'Trabajo terminado',
+            'costo_mano_obra' => 1250.50,
+            'costo_materiales' => 800,
+        ])
+            ->assertOk()
+            ->assertJsonPath('reclamo.estado', 'completado');
+
+        $this->assertDatabaseHas('reclamos', [
+            'id' => $reclamo->id,
+            'estado' => 'completado',
+            'costo_mano_obra' => 1250.50,
+            'costo_materiales' => 800,
+        ]);
+    }
+
+    public function test_usuario_de_edificio_ve_el_proveedor_asignado_en_sus_reclamos(): void
+    {
+        $proveedor = Proveedor::create($this->datosProveedor());
+        $usuario = Usuario::create([
+            'cedula' => '57620259',
+            'nombre' => 'Usuario edificio',
+            'password' => Hash::make('clave-segura'),
+            'rol' => 'usuario_edificio',
+            'activo' => true,
+            'politicas_aceptadas' => true,
+            'politicas_aceptadas_at' => now(),
+        ]);
+        $edificio = Edificio::create([
+            'nombre' => 'Edificio Administrativo',
+            'direccion' => '18 de Julio 1234',
+        ]);
+        $clasificacion = Clasificacion::create([
+            'clasificacion' => 'Iluminación',
+        ]);
+
+        Reclamo::create([
+            'usuario_cedula' => $usuario->cedula,
+            'edificio_id' => $edificio->id,
+            'clasificacion_id' => $clasificacion->id,
+            'description' => 'Luz',
+            'proveedor_id' => $proveedor->id,
+            'estado' => 'aceptado',
+        ]);
+
+        Sanctum::actingAs($usuario);
+
+        $this->getJson('/api/reclamos')
+            ->assertOk()
+            ->assertJsonPath('reclamos.0.estado', 'aceptado')
+            ->assertJsonPath('reclamos.0.proveedor.nombre', 'Proveedor de prueba');
     }
 
     private function autenticarAdministrador(): void
