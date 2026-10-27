@@ -10,8 +10,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrativo Departamental</title>
-    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrativos.css?v=20261016-2">
-    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css?v=20261016-2">
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/style-administrativos.css?v=20261027-1">
+    <link rel="stylesheet" href="/proyecto-utu-2026/src/frontend/css/ui-common.css?v=20261027-1">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     
@@ -33,6 +33,71 @@
 
         </div>
 
+    </div>
+
+    <div id="cuenta-administrativo" class="cuenta-administrativo-modal" aria-hidden="true">
+        <button class="cuenta-administrativo-fondo" type="button" aria-label="Cerrar cuenta"></button>
+
+        <section class="cuenta-administrativo-card" role="dialog" aria-modal="true" aria-labelledby="cuenta-administrativo-titulo">
+            <button class="cuenta-administrativo-cerrar" type="button" aria-label="Cerrar cuenta">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            </button>
+
+            <div class="cuenta-administrativo-encabezado">
+                <div class="cuenta-administrativo-avatar">
+                    <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                </div>
+                <div>
+                    <h2 id="cuenta-administrativo-titulo">Mi cuenta</h2>
+                    <p>Información de tu cuenta de administrativo</p>
+                </div>
+            </div>
+
+            <div class="cuenta-administrativo-datos">
+                <div class="cuenta-administrativo-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                    <div>
+                        <small>Nombre completo</small>
+                        <strong id="cuenta-administrativo-nombre">-</strong>
+                    </div>
+                </div>
+                <div class="cuenta-administrativo-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">badge</span>
+                    <div>
+                        <small>Cédula</small>
+                        <strong id="cuenta-administrativo-cedula">-</strong>
+                    </div>
+                </div>
+                <div class="cuenta-administrativo-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">phone</span>
+                    <div>
+                        <small>Teléfono</small>
+                        <strong id="cuenta-administrativo-telefono">-</strong>
+                    </div>
+                </div>
+                <div class="cuenta-administrativo-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+                    <div>
+                        <small>Correo electrónico</small>
+                        <strong id="cuenta-administrativo-email">-</strong>
+                    </div>
+                </div>
+                <div class="cuenta-administrativo-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
+                    <div>
+                        <small>Rol</small>
+                        <strong id="cuenta-administrativo-rol">Administrativo departamental</strong>
+                    </div>
+                </div>
+                <div class="cuenta-administrativo-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
+                    <div>
+                        <small>Estado de la cuenta</small>
+                        <strong id="cuenta-administrativo-estado">-</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <main>
@@ -63,6 +128,17 @@
                     aria-label="Cambiar tema"
                 >
                     <span class="material-symbols-outlined">contrast</span>
+                </button>
+                <button
+                    class="header-account-button"
+                    id="btn-cuenta-administrativo"
+                    type="button"
+                    aria-label="Mi cuenta"
+                    aria-controls="cuenta-administrativo"
+                    aria-expanded="false"
+                    title="Mi cuenta"
+                >
+                    <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
                 </button>
                 <button
                     class="notificaciones-btn-top"
@@ -106,6 +182,6 @@
     <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
     <!-- Carga compartida y lógica específica de revisión de reclamos. -->
     <script src="/proyecto-utu-2026/src/frontend/js/global-loading.js?v=20261022-2"></script>
-    <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrativos.js?v=20261022-2" type="module"></script>
+    <script src="/proyecto-utu-2026/src/frontend/js/DOM/administrativos.js?v=20261027-1" type="module"></script>
 </body>
 </html>
