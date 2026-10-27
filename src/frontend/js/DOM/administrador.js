@@ -2648,36 +2648,13 @@ function vistaUsuarios(filtro = "") {
 
                     </div>
 
-
-                    <div class="campo-usuario">
-
-                        <label>Contraseña</label>
-
-                        <input
-                            class="password-usuario"
+                 <div class="campo-usuario">
+                      <label>Contraseña</label>
+                        <div class="campo-password-wrapper">
+                            <input
+                         class="password-usuario"
                             type="password"
-                            placeholder="Contraseña"
-                        >
-
-
-                    </div>
-
-                     <div class="campo-usuario">
-                          <label>Repetir contraseña</label>
-                        
-                          <input
-                              class="confirm-password-usuario"
-                              type="password"
-                              placeholder="Repetir contraseña"
-                          >
-                    </div>
-                    <div class="campo-usuario">
-                   <label>Contraseña</label>
-                     <div class="campo-password-wrapper">
-                         <input
-                            class="password-usuario"
-                            type="password"
-                            placeholder="Contraseña"
+                         placeholder="Contraseña"
                           >
                          <button type="button" class="btn-toggle-password-input" aria-label="Mostrar contraseña">
                        <span class="material-symbols-outlined">visibility</span>
@@ -3092,6 +3069,18 @@ function vistaUsuarios(filtro = "") {
 
             return;
 
+        }
+
+        if (!validarCedulaUruguaya(cedula)) {
+            notify.error("La cédula de identidad ingresada no es válida.");
+            cedulaInput.focus();
+            return;
+        }
+
+        if (!validarCedulaUruguaya(cedula)) {
+            notify.error("La cédula de identidad ingresada no es válida.");
+            cedulaInput.focus();
+            return;
         }
         
         if (!/^\d{7,8}$/.test(cedula)) {
@@ -5350,3 +5339,28 @@ document.addEventListener("click", (event) => {
     icono.textContent = esPassword ? "visibility_off" : "visibility";
     btnToggle.setAttribute("aria-label", esPassword ? "Ocultar contraseña" : "Mostrar contraseña");
 });
+
+// ==========================================
+// FUNCIÓN DE VALIDACIÓN DE CÉDULA URUGUAYA
+// ==========================================
+
+function validarCedulaUruguaya(cedula) {
+     const limpio = String(cedula || "").replace(/\D/g, "");
+     if (limpio.length < 7 || limpio.length > 8) {
+        return false;
+    }
+    const cedulaCompleta = limpio.padStart(8, "0");
+
+    const cuerpo = cedulaCompleta.slice(0, 7);
+    const digitoVerificador = Number(cedulaCompleta.slice(7, 8));
+    const factores = [2, 9, 8, 7, 6, 3, 4];
+    let suma = 0;
+
+    for (let i = 0; i < 7; i++) {
+        suma += Number(cuerpo[i]) * factores[i];
+    }
+    const resto = suma % 10;
+    const digitoCalculado = resto === 0 ? 0 : 10 - resto;
+    
+    return digitoCalculado === digitoVerificador;
+}
