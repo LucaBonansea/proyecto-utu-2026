@@ -2600,7 +2600,7 @@ function vistaUsuarios(filtro = "") {
                             type="text"
                             inputmode="numeric"
                             maxlength="8"
-                            placeholder="Ej. 12345678"
+                            placeholder="Ej. 56789123"
                         >
 
                     </div>
