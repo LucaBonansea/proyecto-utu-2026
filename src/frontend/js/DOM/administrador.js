@@ -68,6 +68,8 @@ const accountMenuWrapper = document.querySelector(".account-menu-wrapper");
 const accountTrigger = document.querySelector(".account-trigger");
 const accountMenu = document.querySelector(".account-menu");
 const accountMenuContent = document.querySelector(".account-menu-content");
+const accountMenuBackdrop = document.querySelector(".account-menu-backdrop");
+const accountModalClose = document.querySelector(".account-modal-close");
 const logoutbtn = document.querySelector(".account-logout");
 const estadisticasbtn = document.querySelector(".estadisticas-btn");
 
@@ -423,6 +425,14 @@ async function iniciarAplicacion() {
     );
 
     accountTrigger.addEventListener("click", alternarMenuCuenta);
+    accountMenuBackdrop.addEventListener("click", () => {
+        cerrarMenuCuenta();
+        accountTrigger.focus();
+    });
+    accountModalClose.addEventListener("click", () => {
+        cerrarMenuCuenta();
+        accountTrigger.focus();
+    });
 
     document.addEventListener("click", cerrarMenuCuentaAlHacerClickFuera);
     document.addEventListener("keydown", cerrarMenuCuentaConEscape);
@@ -456,7 +466,13 @@ function alternarMenuCuenta(event) {
     accountTrigger.setAttribute("aria-expanded", String(estaAbierto));
 
     if (estaAbierto) {
+        document.querySelector(".menu-top-notificaciones")?.classList.remove("active");
+        document.querySelector(".notificaciones-btn-top")?.setAttribute("aria-expanded", "false");
+        document.body.classList.add("account-modal-open");
         cargarCuentaMenu();
+        accountModalClose.focus();
+    } else {
+        document.body.classList.remove("account-modal-open");
     }
 }
 //Abre o cierra el menú flotante de la esquina superior derecha al hacer clic en el avatar,
@@ -465,6 +481,7 @@ function cerrarMenuCuenta() {
     accountMenu.classList.remove("open");
     accountMenu.setAttribute("aria-hidden", "true");
     accountTrigger.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("account-modal-open");
 }
 
 function cerrarMenuCuentaAlHacerClickFuera(event) {
@@ -834,6 +851,8 @@ function renderListaReclamos(busqueda, estadoSeleccionado) {
             `;
         });
     });
+
+    conectarInformacionReclamos(contenedor);
 }
 
 function renderCardReclamo(reclamo) {
@@ -868,24 +887,31 @@ function renderCardReclamo(reclamo) {
 
             <div class="reclamo-admin-contenido">
                 <div class="reclamo-admin-encabezado">
-                    <span class="reclamo-admin-id">Reclamo #${escaparHtml(reclamo.id)}</span>
+                    <div class="reclamo-admin-titulo">
+                        <span class="reclamo-admin-id">Reclamo #${escaparHtml(reclamo.id)}</span>
+                        <h3>${escaparHtml(reclamo.description || "Sin descripción")}</h3>
+                    </div>
                     <span class="reclamo-admin-estado estado-${escaparHtml(estado)}">
                         ${escaparHtml(nombreEstado)}
                     </span>
                 </div>
 
-                <p class="reclamo-admin-descripcion">
-                    ${escaparHtml(reclamo.description || "Sin descripción")}
-                </p>
-
                 <dl class="reclamo-admin-datos">
                     <div>
                         <dt><span class="material-symbols-outlined" aria-hidden="true">person</span> Usuario</dt>
-                        <dd>${escaparHtml(reclamo.usuario?.nombre || reclamo.usuario_cedula || "No disponible")}</dd>
+                        <dd>
+                            <button class="reclamo-admin-enlace" type="button" data-entidad="usuario" data-reclamo-id="${escaparHtml(reclamo.id)}" title="Ver información del usuario">
+                                <span>${escaparHtml(reclamo.usuario?.nombre || reclamo.usuario_cedula || "No disponible")}</span>
+                            </button>
+                        </dd>
                     </div>
                     <div>
                         <dt><span class="material-symbols-outlined" aria-hidden="true">apartment</span> Edificio</dt>
-                        <dd>${escaparHtml(reclamo.edificio?.nombre || "No disponible")}</dd>
+                        <dd>
+                            <button class="reclamo-admin-enlace" type="button" data-entidad="edificio" data-reclamo-id="${escaparHtml(reclamo.id)}" title="Ver información del edificio">
+                                <span>${escaparHtml(reclamo.edificio?.nombre || "No disponible")}</span>
+                            </button>
+                        </dd>
                     </div>
                     <div>
                         <dt><span class="material-symbols-outlined" aria-hidden="true">category</span> Clasificación</dt>
@@ -911,6 +937,125 @@ function renderCardReclamo(reclamo) {
             </div>
         </article>
     `;
+}
+
+function conectarInformacionReclamos(contenedor) {
+    contenedor.querySelectorAll(".reclamo-admin-enlace").forEach(boton => {
+        boton.addEventListener("click", () => {
+            const reclamo = reclamos.find(item =>
+                String(item.id) === String(boton.dataset.reclamoId)
+            );
+
+            if (reclamo) {
+                abrirInformacionReclamo(boton.dataset.entidad, reclamo, boton);
+            }
+        });
+    });
+}
+
+function abrirInformacionReclamo(entidad, reclamo, disparador) {
+    const esUsuario = entidad === "usuario";
+    const cedula = reclamo.usuario?.cedula || reclamo.usuario_cedula;
+    const edificioId = reclamo.edificio?.id || reclamo.edificio_id;
+    const usuario = usuarios.find(item => String(item.cedula) === String(cedula))
+        || reclamo.usuario
+        || {};
+    const edificio = edificios.find(item => Number(item.id) === Number(edificioId))
+        || reclamo.edificio
+        || {};
+    const nombresRol = {
+        administrador: "Administrador",
+        administrativo: "Administrativo",
+        usuario_edificio: "Usuario de edificio",
+        usuario_proveedor: "Usuario de proveedor"
+    };
+    const edificiosUsuario = Array.isArray(usuario.edificios) ? usuario.edificios : [];
+    const cantidadReclamosUsuario = reclamos.filter(item =>
+        String(item.usuario?.cedula || item.usuario_cedula) === String(cedula)
+    ).length;
+    const cantidadUsuariosEdificio = usuarios.filter(item =>
+        Array.isArray(item.edificios)
+        && item.edificios.some(itemEdificio => Number(itemEdificio.id) === Number(edificioId))
+    ).length;
+    const cantidadReclamosEdificio = reclamos.filter(item =>
+        Number(item.edificio?.id || item.edificio_id) === Number(edificioId)
+    ).length;
+    const estadoUsuario = usuario.activo === undefined
+        ? "No disponible"
+        : usuario.activo ? "Activa" : "Inactiva";
+    const edificiosUsuarioTexto = edificiosUsuario.length
+        ? edificiosUsuario.map(item => item.nombre).filter(Boolean).join(", ")
+        : reclamo.edificio?.nombre || "No disponible";
+    const titulo = esUsuario
+        ? usuario.nombre || reclamo.usuario?.nombre || "Información del usuario"
+        : edificio.nombre || reclamo.edificio?.nombre || "Información del edificio";
+    const subtitulo = esUsuario ? "Datos del usuario que realizó el reclamo" : "Datos del edificio del reclamo";
+    const icono = esUsuario ? "person" : "apartment";
+    const datos = esUsuario
+        ? [
+            ["badge", "Cédula", usuario.cedula || cedula || "No disponible"],
+            ["phone", "Teléfono", usuario.telefono || "No registrado"],
+            ["mail", "Correo electrónico", usuario.email || "No registrado"],
+            ["account_circle", "Tipo de usuario", nombresRol[usuario.rol] || usuario.rol || "No disponible"],
+            ["verified_user", "Estado de la cuenta", estadoUsuario],
+            ["apartment", "Edificios asociados", edificiosUsuarioTexto],
+            ["assignment", "Reclamos registrados", cantidadReclamosUsuario]
+        ]
+        : [
+            ["tag", "ID del edificio", edificio.id || edificioId || "No disponible"],
+            ["location_on", "Dirección", edificio.direccion || reclamo.edificio?.direccion || "No registrada"],
+            ["group", "Usuarios asociados", cantidadUsuariosEdificio],
+            ["assignment", "Reclamos registrados", cantidadReclamosEdificio]
+        ];
+
+    const fondo = document.createElement("div");
+    fondo.className = "modal-info-reclamo-admin";
+    fondo.innerHTML = `
+        <button class="modal-info-reclamo-fondo" type="button" aria-label="Cerrar información"></button>
+        <section class="dialogo-info-reclamo-admin" role="dialog" aria-modal="true" aria-labelledby="titulo-info-reclamo">
+            <button class="cerrar-info-reclamo" type="button" aria-label="Cerrar información">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            </button>
+            <div class="encabezado-info-reclamo">
+                <div class="icono-info-reclamo">
+                    <span class="material-symbols-outlined" aria-hidden="true">${icono}</span>
+                </div>
+                <div>
+                    <span class="etiqueta-info-reclamo">${esUsuario ? "Usuario" : "Edificio"}</span>
+                    <h2 id="titulo-info-reclamo">${escaparHtml(titulo)}</h2>
+                    <p>${escaparHtml(subtitulo)}</p>
+                </div>
+            </div>
+            <div class="datos-info-reclamo">
+                ${datos.map(([iconoDato, etiqueta, valor]) => `
+                    <div class="dato-info-reclamo">
+                        <span class="material-symbols-outlined" aria-hidden="true">${iconoDato}</span>
+                        <div>
+                            <small>${escaparHtml(etiqueta)}</small>
+                            <strong>${escaparHtml(valor)}</strong>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        </section>
+    `;
+
+    const cerrar = () => {
+        document.removeEventListener("keydown", cerrarConEscape);
+        document.body.classList.remove("modal-info-reclamo-abierto");
+        fondo.remove();
+        disparador?.focus();
+    };
+    const cerrarConEscape = event => {
+        if (event.key === "Escape") cerrar();
+    };
+
+    fondo.querySelector(".modal-info-reclamo-fondo").addEventListener("click", cerrar);
+    fondo.querySelector(".cerrar-info-reclamo").addEventListener("click", cerrar);
+    document.addEventListener("keydown", cerrarConEscape);
+    document.body.appendChild(fondo);
+    document.body.classList.add("modal-info-reclamo-abierto");
+    fondo.querySelector(".cerrar-info-reclamo").focus();
 }
 
 function renderTarjetaArea(area) {
@@ -1115,10 +1260,13 @@ function vistaProveedores(){
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
     const hayProveedores = proveedores.length > 0;
 
-    const proveedoresFiltrados = proveedores.filter(p =>
-        filtroEstadoProveedor === "todos" ||
-        p.estado === filtroEstadoProveedor
-    );
+  const proveedoresFiltrados = proveedores.filter(p => {
+        const estadoProveedor = String(p.estado || "").toLowerCase().trim();
+        const filtroSeleccionado = String(filtroEstadoProveedor || "todos").toLowerCase().trim();
+
+        return filtroSeleccionado === "todos" || estadoProveedor === filtroSeleccionado;
+    });
+
     const paginacion = paginarElementos(
         proveedoresFiltrados,
         paginaProveedores
@@ -1136,17 +1284,17 @@ function vistaProveedores(){
                     Agregar proveedor
                 </button>
             </div>
-            ${hayProveedores ? `<div class="filtro-estado-proveedores">
+           ${hayProveedores ? `<div class="filtro-estado-proveedores">
 
                 <button class="filtro-estado-btn" data-estado="todos">
                     Todos
                 </button>
 
-                <button class="filtro-estado-btn" data-estado="Activo">
+                <button class="filtro-estado-btn" data-estado="activo">
                     Activos
                 </button>
 
-                <button class="filtro-estado-btn" data-estado="Inactivo">
+                <button class="filtro-estado-btn" data-estado="inactivo">
                     Desactivados
                 </button>
 
@@ -1507,7 +1655,7 @@ function vistaProveedores(){
                 const id =
                     Number(boton.dataset.id);
 
-                vistaDetalleProveedor(id);
+                vistaDetalleProveedor(id, boton);
 
             });
 
@@ -1541,7 +1689,8 @@ function renderCardProveedor(p){
                 Number(u.proveedor.id) === Number(p.id)
         );
 
-    const esActivo = p.estado === "Activo";
+    const estadoLimpio = String(p.estado || "").toLowerCase().trim();
+    const esActivo = estadoLimpio === "activo";
 
     return `
 
@@ -1645,15 +1794,13 @@ async function cambiarEstadoProveedor(id) {
 }
 
 
-function vistaDetalleProveedor(id){
+function vistaDetalleProveedor(id, disparador){
 
     const proveedor =
-        proveedores.find(p => p.id === id);
+        proveedores.find(p => Number(p.id) === Number(id));
 
     if(!proveedor) return;
 
-
-    // ✅ corregido
     const usuariosDelProveedor =
     usuarios.filter(
         u =>
@@ -1662,147 +1809,81 @@ function vistaDetalleProveedor(id){
             Number(u.proveedor.id) === Number(id)
     );
 
+    document.querySelector(".modal-detalle-proveedor-admin")?.remove();
 
-    section.innerHTML = `
-
-        <div class="lista-proveedores">
-
-            <button class="btn-volver-proveedores">
-                ← Volver a Proveedores
+    const valorProveedor = valor => escaparHtml(valor || "No registrado");
+    const fondo = document.createElement("div");
+    fondo.className = "modal-detalle-proveedor-admin";
+    fondo.innerHTML = `
+        <button class="modal-detalle-proveedor-fondo" type="button" aria-label="Cerrar detalle del proveedor"></button>
+        <section class="dialogo-detalle-proveedor-admin" role="dialog" aria-modal="true" aria-labelledby="titulo-detalle-proveedor">
+            <button class="cerrar-detalle-proveedor" type="button" aria-label="Cerrar detalle del proveedor">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
             </button>
-
-
-            <div class="titulo-proveedores">
-
-                <div>
-                    <h2>${proveedor.nombre}</h2>
-                    <span class="proveedor-razon-social">
-                        ${proveedor.razon_social}
-                    </span>
+            <div class="encabezado-detalle-proveedor">
+                <div class="icono-detalle-proveedor">
+                    <span class="material-symbols-outlined" aria-hidden="true">business</span>
                 </div>
-
-                
-
+                <div class="titulo-detalle-proveedor">
+                    <span class="etiqueta-detalle-proveedor">Proveedor</span>
+                    <h2 id="titulo-detalle-proveedor">${valorProveedor(proveedor.nombre)}</h2>
+                    <p>${valorProveedor(proveedor.razon_social)}</p>
+                </div>
+                <span class="proveedor-estado ${proveedor.estado === "Activo" ? "estado-activo" : "estado-inactivo"}">
+                    ${valorProveedor(proveedor.estado)}
+                </span>
             </div>
-
-
-            
-
-            <div class="proveedor-detalle-info">
-
+            <div class="proveedor-detalle-info proveedor-detalle-info-modal">
                 <h3>Datos de la empresa</h3>
-
                 <div class="detalle-proveedor-grid">
-
-                    <p>
-                        <strong>RUT</strong>
-                        ${proveedor.rut}
-                    </p>
-
-                    <p>
-                        <strong>Teléfono</strong>
-                        ${proveedor.telefono}
-                    </p>
-
-                    <p>
-                        <strong>Correo</strong>
-                        ${proveedor.email}
-                    </p>
-
-                    <p>
-                        <strong>Dirección</strong>
-                        ${proveedor.direccion}
-                    </p>
-
-                    <p>
-                        <strong>Contacto responsable</strong>
-                        ${proveedor.contacto_responsable}
-                    </p>
-
-                    <p>
-                        <strong>Teléfono del contacto</strong>
-                        ${proveedor.telefono_contacto}
-                    </p>
-
-                    <p>
-                        <strong>Correo del contacto</strong>
-                        ${proveedor.email_contacto}
-                    </p>
-
-                    <p>
-                        <strong>Estado</strong>
-                        ${proveedor.estado}
-                    </p>
-
+                    <p><strong>RUT</strong>${valorProveedor(proveedor.rut)}</p>
+                    <p><strong>Teléfono</strong>${valorProveedor(proveedor.telefono)}</p>
+                    <p><strong>Correo</strong>${valorProveedor(proveedor.email)}</p>
+                    <p><strong>Dirección</strong>${valorProveedor(proveedor.direccion)}</p>
+                    <p><strong>Contacto responsable</strong>${valorProveedor(proveedor.contacto_responsable)}</p>
+                    <p><strong>Teléfono del contacto</strong>${valorProveedor(proveedor.telefono_contacto)}</p>
+                    <p><strong>Correo del contacto</strong>${valorProveedor(proveedor.email_contacto)}</p>
+                    <p><strong>Estado</strong>${valorProveedor(proveedor.estado)}</p>
                 </div>
-
             </div>
-
-            <h3 class="proveedor-detalle-subtitulo">
-                Usuarios de proveedor
-            </h3>
-
-
-            <div class="contenedor-usuarios">
-
-                ${
-                    usuariosDelProveedor.length > 0
-
-                    ?
-
-                    usuariosDelProveedor.map(u => `
-
-                        <div class="usuario-card">
-
+            <h3 class="proveedor-detalle-subtitulo">Usuarios de proveedor</h3>
+            <div class="contenedor-usuarios usuarios-detalle-proveedor">
+                ${usuariosDelProveedor.length > 0
+                    ? usuariosDelProveedor.map(u => `
+                        <article class="usuario-card">
                             <div class="usuario-info">
-
-                                <h3>${u.nombre}</h3>
-
-                                <p>
-                                    Tel: ${u.telefono}
-                                </p>
-
-                                ${
-                                    u.email
-                                    ?
-                                    `<p>Email: ${u.email}</p>`
-                                    :
-                                    ""
-                                }
-
-                                <span class="usuario-rol-actual rol-usuario-proveedor">
-                                    Usuario de proveedor
-                                </span>
-
+                                <h3>${valorProveedor(u.nombre)}</h3>
+                                <p>Tel: ${valorProveedor(u.telefono)}</p>
+                                ${u.email ? `<p>Email: ${valorProveedor(u.email)}</p>` : ""}
+                                <span class="usuario-rol-actual rol-usuario-proveedor">Usuario de proveedor</span>
                             </div>
-
-                        </div>
-
+                        </article>
                     `).join("")
-
-                    :
-
-                    `
-                        <p style="padding:10px;">
-                            Este proveedor todavía no tiene
-                            usuarios asignados.
-                        </p>
-                    `
+                    : `<div class="sin-usuarios-detalle-proveedor">
+                        <span class="material-symbols-outlined" aria-hidden="true">group_off</span>
+                        <p>Este proveedor todavía no tiene usuarios asignados.</p>
+                    </div>`
                 }
-
             </div>
-
-        </div>
-
+        </section>
     `;
 
+    const cerrar = () => {
+        document.removeEventListener("keydown", cerrarConEscape);
+        document.body.classList.remove("modal-detalle-proveedor-abierto");
+        fondo.remove();
+        disparador?.focus();
+    };
+    const cerrarConEscape = event => {
+        if (event.key === "Escape") cerrar();
+    };
 
-    document
-        .querySelector(".btn-volver-proveedores")
-        .addEventListener(
-            "click",
-            vistaProveedores
-        );
+    fondo.querySelector(".modal-detalle-proveedor-fondo").addEventListener("click", cerrar);
+    fondo.querySelector(".cerrar-detalle-proveedor").addEventListener("click", cerrar);
+    document.addEventListener("keydown", cerrarConEscape);
+    document.body.appendChild(fondo);
+    document.body.classList.add("modal-detalle-proveedor-abierto");
+    fondo.querySelector(".cerrar-detalle-proveedor").focus();
 
 }
 
@@ -2600,7 +2681,7 @@ function vistaUsuarios(filtro = "") {
                             type="text"
                             inputmode="numeric"
                             maxlength="8"
-                            placeholder="Ej. 12345678"
+                            placeholder="Ej. 56789123"
                         >
 
                     </div>
@@ -2648,36 +2729,13 @@ function vistaUsuarios(filtro = "") {
 
                     </div>
 
-
-                    <div class="campo-usuario">
-
-                        <label>Contraseña</label>
-
-                        <input
-                            class="password-usuario"
+                 <div class="campo-usuario">
+                      <label>Contraseña</label>
+                        <div class="campo-password-wrapper">
+                            <input
+                         class="password-usuario"
                             type="password"
-                            placeholder="Contraseña"
-                        >
-
-
-                    </div>
-
-                     <div class="campo-usuario">
-                          <label>Repetir contraseña</label>
-                        
-                          <input
-                              class="confirm-password-usuario"
-                              type="password"
-                              placeholder="Repetir contraseña"
-                          >
-                    </div>
-                    <div class="campo-usuario">
-                   <label>Contraseña</label>
-                     <div class="campo-password-wrapper">
-                         <input
-                            class="password-usuario"
-                            type="password"
-                            placeholder="Contraseña"
+                         placeholder="Contraseña"
                           >
                          <button type="button" class="btn-toggle-password-input" aria-label="Mostrar contraseña">
                        <span class="material-symbols-outlined">visibility</span>
@@ -3092,6 +3150,18 @@ function vistaUsuarios(filtro = "") {
 
             return;
 
+        }
+
+        if (!validarCedulaUruguaya(cedula)) {
+            notify.error("La cédula de identidad ingresada no es válida.");
+            cedulaInput.focus();
+            return;
+        }
+
+        if (!validarCedulaUruguaya(cedula)) {
+            notify.error("La cédula de identidad ingresada no es válida.");
+            cedulaInput.focus();
+            return;
         }
         
         if (!/^\d{7,8}$/.test(cedula)) {
@@ -5077,6 +5147,19 @@ function renderEstadisticasAdmin(lista = reclamos, edificioSeleccionado = "todos
         r => r.edificio?.nombre || "Edificio no identificado"
     );
 
+    const obtenerCostos = reclamo => {
+        const manoObra = numeroEstadistica(reclamo.costo_mano_obra);
+        const materiales = numeroEstadistica(reclamo.costo_materiales);
+
+        return {
+            reclamo,
+            manoObra,
+            materiales,
+            completo: manoObra !== null && materiales !== null,
+            total: (manoObra ?? 0) + (materiales ?? 0)
+        };
+    };
+
     // Calculamos por edificio qué clasificación aparece con mayor frecuencia.
     const detalleEdificios = edificios.map(edificio => {
         const delEdificio = reclamosVista.filter(
@@ -5088,6 +5171,14 @@ function renderEstadisticasAdmin(lista = reclamos, edificioSeleccionado = "todos
             r => r.clasificacion?.clasificacion
         );
 
+        const costosEdificio = delEdificio.map(obtenerCostos);
+        const costoMateriales = costosEdificio.reduce(
+            (suma, costo) => suma + (costo.materiales ?? 0), 0
+        );
+        const costoManoObra = costosEdificio.reduce(
+            (suma, costo) => suma + (costo.manoObra ?? 0), 0
+        );
+
         return {
             edificio,
             cantidad: delEdificio.length,
@@ -5096,37 +5187,33 @@ function renderEstadisticasAdmin(lista = reclamos, edificioSeleccionado = "todos
                 : "Sin reclamos",
             cantidadTipoPrincipal: delEdificio.length
                 ? tipos[0].cantidad
-                : 0
+                : 0,
+            reclamosConCostos: costosEdificio.filter(costo => costo.completo).length,
+            costoMateriales,
+            costoManoObra,
+            costoTotal: costoMateriales + costoManoObra
         };
     }).sort((a, b) => b.cantidad - a.cantidad);
 
     // Sumar los costos que realmente están informados.
     // Los null se cuentan como importes faltantes, no como costos de $0.
-    const costos = reclamosVista.map(r => {
-        const manoObra = numeroEstadistica(r.costo_mano_obra);
-        const materiales = numeroEstadistica(r.costo_materiales);
-
-        return {
-            reclamo: r,
-            manoObra,
-            materiales,
-            completo: manoObra !== null && materiales !== null,
-            total: (manoObra ?? 0) + (materiales ?? 0)
-        };
-    });
+    const reclamosFinalizados = reclamosVista.filter(r => [
+        "completado",
+        "finalizacion_confirmada",
+        "rechazada"
+    ].includes(estadoNormalizado(r)));
+    const costos = reclamosFinalizados.map(obtenerCostos);
 
     const costosCompletos = costos.filter(c => c.completo);
     const costosFaltantes = costos.length - costosCompletos.length;
 
-    const gastoRegistrado = costosCompletos.reduce(
-        (suma, c) => suma + c.total, 0
+    const gastoMateriales = costos.reduce(
+        (suma, c) => suma + (c.materiales ?? 0), 0
     );
-    const gastoMateriales = costosCompletos.reduce(
-        (suma, c) => suma + c.materiales, 0
+    const gastoManoObra = costos.reduce(
+        (suma, c) => suma + (c.manoObra ?? 0), 0
     );
-    const gastoManoObra = costosCompletos.reduce(
-        (suma, c) => suma + c.manoObra, 0
-    );
+    const gastoRegistrado = gastoMateriales + gastoManoObra;
 
     const edificiosOptions = edificios.map(edificio => `
         <option value="${Number(edificio.id)}">
@@ -5246,6 +5333,41 @@ function renderEstadisticasAdmin(lista = reclamos, edificioSeleccionado = "todos
             ${renderProblemasPorEdificio(detalleEdificios)}
         </article>
 
+        <article class="estadistica-panel estadistica-tabla-panel" data-stats-widget="gastos-edificios">
+            <div class="estadistica-panel-titulo">
+                <div>
+                    <h3>Gastos por edificio</h3>
+                    <p>Materiales y mano de obra informados por los proveedores.</p>
+                </div>
+                <span class="material-symbols-outlined">account_balance_wallet</span>
+            </div>
+
+            <div class="estadistica-tabla-scroll">
+                <table class="tabla-estadisticas tabla-gastos-edificios">
+                    <thead>
+                        <tr>
+                            <th>Edificio</th>
+                            <th>Reclamos con costos</th>
+                            <th>Materiales</th>
+                            <th>Mano de obra</th>
+                            <th>Gasto total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${detalleEdificios.map(item => `
+                            <tr data-edificio="${Number(item.edificio.id)}">
+                                <td>${escaparHtml(item.edificio.nombre)}</td>
+                                <td>${item.reclamosConCostos}</td>
+                                <td class="estadistica-monto">${monedaEstadistica(item.costoMateriales)}</td>
+                                <td class="estadistica-monto">${monedaEstadistica(item.costoManoObra)}</td>
+                                <td class="estadistica-monto estadistica-monto-total">${monedaEstadistica(item.costoTotal)}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
         <div class="estadisticas-grid">
             <article class="estadistica-panel" data-stats-widget="estados">
                 <div class="estadistica-panel-titulo">
@@ -5276,7 +5398,7 @@ function renderEstadisticasAdmin(lista = reclamos, edificioSeleccionado = "todos
                 </div>
 
                 <div class="estadistica-gasto-total">
-                    <span>Gasto registrado completo</span>
+                    <span>Gasto total registrado</span>
                     <strong>${monedaEstadistica(gastoRegistrado)}</strong>
                 </div>
 
@@ -5292,6 +5414,12 @@ function renderEstadisticasAdmin(lista = reclamos, edificioSeleccionado = "todos
                 </div>
 
                 <div class="estadistica-gasto-desglose">
+                    <p>Materiales:
+                        <strong>${monedaEstadistica(gastoMateriales)}</strong>
+                    </p>
+                    <p>Mano de obra:
+                        <strong>${monedaEstadistica(gastoManoObra)}</strong>
+                    </p>
                     <p>Reclamos con costos completos:
                         <strong>${costosCompletos.length}</strong>
                     </p>
@@ -5300,6 +5428,11 @@ function renderEstadisticasAdmin(lista = reclamos, edificioSeleccionado = "todos
                     </p>
                 </div>
 
+                <p class="estadistica-nota">
+                    El total suma los importes registrados por los proveedores.
+                    Los reclamos anteriores que no tengan costos cargados se
+                    muestran como datos faltantes.
+                </p>
             </article>
         </div>
     `;
@@ -5350,3 +5483,28 @@ document.addEventListener("click", (event) => {
     icono.textContent = esPassword ? "visibility_off" : "visibility";
     btnToggle.setAttribute("aria-label", esPassword ? "Ocultar contraseña" : "Mostrar contraseña");
 });
+
+// ==========================================
+// FUNCIÓN DE VALIDACIÓN DE CÉDULA URUGUAYA
+// ==========================================
+
+function validarCedulaUruguaya(cedula) {
+     const limpio = String(cedula || "").replace(/\D/g, "");
+     if (limpio.length < 7 || limpio.length > 8) {
+        return false;
+    }
+    const cedulaCompleta = limpio.padStart(8, "0");
+
+    const cuerpo = cedulaCompleta.slice(0, 7);
+    const digitoVerificador = Number(cedulaCompleta.slice(7, 8));
+    const factores = [2, 9, 8, 7, 6, 3, 4];
+    let suma = 0;
+
+    for (let i = 0; i < 7; i++) {
+        suma += Number(cuerpo[i]) * factores[i];
+    }
+    const resto = suma % 10;
+    const digitoCalculado = resto === 0 ? 0 : 10 - resto;
+    
+    return digitoCalculado === digitoVerificador;
+}
