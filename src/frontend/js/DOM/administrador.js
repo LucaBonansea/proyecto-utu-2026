@@ -1115,10 +1115,13 @@ function vistaProveedores(){
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
     const hayProveedores = proveedores.length > 0;
 
-    const proveedoresFiltrados = proveedores.filter(p =>
-        filtroEstadoProveedor === "todos" ||
-        p.estado === filtroEstadoProveedor
-    );
+  const proveedoresFiltrados = proveedores.filter(p => {
+        const estadoProveedor = String(p.estado || "").toLowerCase().trim();
+        const filtroSeleccionado = String(filtroEstadoProveedor || "todos").toLowerCase().trim();
+
+        return filtroSeleccionado === "todos" || estadoProveedor === filtroSeleccionado;
+    });
+    
     const paginacion = paginarElementos(
         proveedoresFiltrados,
         paginaProveedores
