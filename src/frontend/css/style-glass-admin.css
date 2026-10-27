@@ -1,0 +1,96 @@
+/* Vidrio suave, limitado al tablero de estadísticas. */
+.admin-page .estadisticas-admin {
+    --stats-glass-surface: rgba(255, 255, 255, .78);
+    --stats-glass-control: rgba(255, 255, 255, .72);
+    --stats-glass-hover: rgba(242, 249, 255, .92);
+    --stats-glass-edge: rgba(255, 255, 255, .9);
+    --stats-glass-inset: rgba(255, 255, 255, .75);
+    --stats-glass-shadow: 0 14px 30px rgba(53, 77, 99, .11);
+}
+
+:root[data-theme="dark"] .admin-page .estadisticas-admin {
+    --stats-glass-surface: rgba(43, 49, 57, .88);
+    --stats-glass-control: rgba(53, 64, 75, .82);
+    --stats-glass-hover: rgba(65, 84, 100, .92);
+    --stats-glass-edge: rgba(218, 235, 250, .2);
+    --stats-glass-inset: rgba(244, 250, 255, .11);
+    --stats-glass-shadow: 0 16px 36px rgba(0, 0, 0, .22);
+}
+
+.admin-page .estadisticas-admin :is(.estadistica-kpi, .estadistica-panel, .estadisticas-cargando) {
+    border: 1px solid var(--stats-glass-edge);
+    background: var(--stats-glass-surface);
+    -webkit-backdrop-filter: blur(18px) saturate(1.15);
+    backdrop-filter: blur(18px) saturate(1.15);
+    box-shadow: var(--stats-glass-shadow), inset 0 1px 0 var(--stats-glass-inset);
+}
+
+:root[data-theme] .admin-page .estadisticas-admin :is(
+    .btn-actualizar-estadisticas,
+    .estadisticas-cargando button,
+    .estadisticas-filtros select
+) {
+    border: 1px solid var(--stats-glass-edge);
+    border-radius: 999px;
+    background: var(--stats-glass-control);
+    color: var(--stats-texto);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
+    box-shadow: var(--stats-glass-shadow), inset 0 1px 0 var(--stats-glass-inset);
+    transition: background-color .18s ease, border-color .18s ease,
+        box-shadow .18s ease, transform .18s ease;
+}
+
+.admin-page .estadisticas-admin :is(.btn-actualizar-estadisticas, .estadisticas-cargando button):hover {
+    border-color: var(--stats-acento);
+    background: var(--stats-glass-hover);
+    transform: translateY(-1px);
+}
+
+.admin-page .estadisticas-admin :is(.btn-actualizar-estadisticas, .estadisticas-cargando button):active {
+    transform: scale(.98);
+}
+
+.admin-page .estadisticas-admin .estadisticas-filtros select:hover {
+    border-color: var(--stats-acento);
+    background: var(--stats-glass-hover);
+}
+
+.admin-page .estadisticas-admin :is(.grafico-sectores-tooltip, .grafico-linea-tooltip) {
+    border-color: var(--stats-glass-edge);
+    background: var(--stats-glass-control);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: var(--stats-glass-shadow);
+}
+
+.admin-page .estadisticas-admin .grafico-linea-tooltip {
+    padding: 2px 4px;
+    border: 0;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+    font-size: 12px;
+    text-shadow: 0 1px 3px var(--stats-widget), 0 -1px 3px var(--stats-widget);
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    :root[data-theme] .admin-page .estadisticas-admin {
+        --stats-glass-surface: var(--stats-widget);
+        --stats-glass-control: var(--stats-widget);
+        --stats-glass-hover: var(--stats-pista);
+    }
+    .admin-page .estadisticas-admin :is(.estadistica-kpi, .estadistica-panel,
+        .estadisticas-cargando, .btn-actualizar-estadisticas,
+        .estadisticas-cargando button, .estadisticas-filtros select,
+        .grafico-sectores-tooltip, .grafico-linea-tooltip) {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-page .estadisticas-admin :is(.btn-actualizar-estadisticas, .estadisticas-cargando button,
+        .estadisticas-filtros select) { transition: none; }
+}
