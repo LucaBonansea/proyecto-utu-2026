@@ -4319,6 +4319,9 @@ main{
     background: var(--bg-surface);
     box-sizing: border-box;
 }
+.filtro-rol-usuarios{
+    border-radius: 100px!important;
+}
 
 .admin-page .selector-estado-reclamos select,
 .admin-page .filtro-rol-usuarios select {
