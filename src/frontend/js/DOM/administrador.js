@@ -2648,36 +2648,13 @@ function vistaUsuarios(filtro = "") {
 
                     </div>
 
-
-                    <div class="campo-usuario">
-
-                        <label>Contraseña</label>
-
-                        <input
-                            class="password-usuario"
+                 <div class="campo-usuario">
+                      <label>Contraseña</label>
+                        <div class="campo-password-wrapper">
+                            <input
+                         class="password-usuario"
                             type="password"
-                            placeholder="Contraseña"
-                        >
-
-
-                    </div>
-
-                     <div class="campo-usuario">
-                          <label>Repetir contraseña</label>
-                        
-                          <input
-                              class="confirm-password-usuario"
-                              type="password"
-                              placeholder="Repetir contraseña"
-                          >
-                    </div>
-                    <div class="campo-usuario">
-                   <label>Contraseña</label>
-                     <div class="campo-password-wrapper">
-                         <input
-                            class="password-usuario"
-                            type="password"
-                            placeholder="Contraseña"
+                         placeholder="Contraseña"
                           >
                          <button type="button" class="btn-toggle-password-input" aria-label="Mostrar contraseña">
                        <span class="material-symbols-outlined">visibility</span>
