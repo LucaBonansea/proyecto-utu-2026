@@ -1121,7 +1121,7 @@ function vistaProveedores(){
 
         return filtroSeleccionado === "todos" || estadoProveedor === filtroSeleccionado;
     });
-    
+
     const paginacion = paginarElementos(
         proveedoresFiltrados,
         paginaProveedores
@@ -1139,17 +1139,17 @@ function vistaProveedores(){
                     Agregar proveedor
                 </button>
             </div>
-            ${hayProveedores ? `<div class="filtro-estado-proveedores">
+           ${hayProveedores ? `<div class="filtro-estado-proveedores">
 
                 <button class="filtro-estado-btn" data-estado="todos">
                     Todos
                 </button>
 
-                <button class="filtro-estado-btn" data-estado="Activo">
+                <button class="filtro-estado-btn" data-estado="activo">
                     Activos
                 </button>
 
-                <button class="filtro-estado-btn" data-estado="Inactivo">
+                <button class="filtro-estado-btn" data-estado="inactivo">
                     Desactivados
                 </button>
 
@@ -1544,7 +1544,8 @@ function renderCardProveedor(p){
                 Number(u.proveedor.id) === Number(p.id)
         );
 
-    const esActivo = p.estado === "Activo";
+    const estadoLimpio = String(p.estado || "").toLowerCase().trim();
+    const esActivo = estadoLimpio === "activo";
 
     return `
 
