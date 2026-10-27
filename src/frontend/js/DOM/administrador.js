@@ -3076,6 +3076,12 @@ function vistaUsuarios(filtro = "") {
             return;
 
         }
+
+        if (!validarCedulaUruguaya(cedula)) {
+            notify.error("La cédula de identidad ingresada no es válida.");
+            cedulaInput.focus();
+            return;
+        }
         
         if (!/^\d{7,8}$/.test(cedula)) {
             notify.warning("La cédula debe tener entre 7 y 8 números.");
@@ -5002,3 +5008,28 @@ document.addEventListener("click", (event) => {
     icono.textContent = esPassword ? "visibility_off" : "visibility";
     btnToggle.setAttribute("aria-label", esPassword ? "Ocultar contraseña" : "Mostrar contraseña");
 });
+
+// ==========================================
+// FUNCIÓN DE VALIDACIÓN DE CÉDULA URUGUAYA
+// ==========================================
+
+function validarCedulaUruguaya(cedula) {
+     const limpio = String(cedula || "").replace(/\D/g, "");
+     if (limpio.length < 7 || limpio.length > 8) {
+        return false;
+    }
+    const cedulaCompleta = limpio.padStart(8, "0");
+
+    const cuerpo = cedulaCompleta.slice(0, 7);
+    const digitoVerificador = Number(cedulaCompleta.slice(7, 8));
+    const factores = [2, 9, 8, 7, 6, 3, 4];
+    let suma = 0;
+
+    for (let i = 0; i < 7; i++) {
+        suma += Number(cuerpo[i]) * factores[i];
+    }
+    const resto = suma % 10;
+    const digitoCalculado = resto === 0 ? 0 : 10 - resto;
+    
+    return digitoCalculado === digitoVerificador;
+}
