@@ -2837,7 +2837,7 @@ function vistaUsuarios(filtro = "") {
                             </option>
 
                             ${
-                                proveedores.map(p => `
+                                proveedores.filter(p => p.estado === "Activo").map(p => `
                                     <option value="${p.id}">
                                         ${p.nombre}
                                     </option>
