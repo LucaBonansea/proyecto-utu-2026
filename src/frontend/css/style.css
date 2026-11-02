@@ -406,3 +406,53 @@ body.modal-abierto{ overflow:hidden; }
     .btn-politicas-secundario,
     .btn-politicas-aceptar{ width:100%; }
 }
+
+@media (min-width:900px) and (min-height:650px){
+    .politicas-dialogo{
+        width:min(1040px, 100%);
+        max-height:none;
+        overflow:visible;
+    }
+
+    .politicas-header{
+        padding:18px 22px 14px;
+    }
+
+    .politicas-contenido{
+        display:grid;
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        column-gap:28px;
+        overflow:visible;
+        padding:4px 22px;
+    }
+
+    .politicas-seccion{
+        padding:11px 0;
+    }
+
+    .politicas-seccion:nth-last-child(-n + 2){
+        border-bottom:0;
+    }
+
+    .politicas-seccion p{
+        font-size:12.5px;
+        line-height:1.48;
+    }
+
+    .politicas-footer{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:22px;
+        padding:14px 22px 16px;
+    }
+
+    .politicas-aceptacion{
+        flex:1 1 auto;
+    }
+
+    .politicas-acciones{
+        flex:0 0 auto;
+        margin-top:0;
+    }
+}

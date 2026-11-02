@@ -1,7 +1,7 @@
 ﻿// import (importaciones de los objetos)
-import { Reclamos } from "./reclamos.js?v=20261016-3";
+import { Reclamos } from "./reclamos.js?v=20261027-2";
 import { Nuevo_reclamos } from "./nuevo_reclamos.js?v=20261022-1";
-import { Cuenta } from "./cuenta.js?v=20261016-1";
+import { Cuenta } from "./cuenta.js?v=20261027-1";
 import { inicializarNotificaciones } from "./notifications.js?v=20261007-3";
 import { inicializarTema } from "../theme.js";
 import { obtenerSesion } from "../services/auth-service.js";
@@ -28,6 +28,9 @@ async function verificar_sesion() {
                 return null;
 
             case "administrativo":
+                window.location.replace("./Administrativos.html");
+                return null;
+
             case "usuario_edificio":
                 return usuario;
 
@@ -132,6 +135,7 @@ function iniciarAplicacion() {
     });
 
     function iniciarReclamo() {
+        button_restart_actives();
         $btn_newReclamo_top.classList.add("active");
         nuevo_reclamos.third_view();
         nuevo_reclamos.descripcion_eventos();
@@ -139,10 +143,16 @@ function iniciarAplicacion() {
 
     // Eventos de cada botón
     $btn_inicio_top.addEventListener("click", () => {
+        button_restart_actives();
+        $btn_inicio_top.classList.add("active");
+        $btn_inicio.classList.add("active");
         reclamos.second_view();
     });
 
     $btn_inicio.addEventListener("click", () => {
+        button_restart_actives();
+        $btn_inicio_top.classList.add("active");
+        $btn_inicio.classList.add("active");
         reclamos.second_view();
     });
 
@@ -168,6 +178,7 @@ function iniciarAplicacion() {
 
     // La vista de entrada de la app es "Mis Reclamos" (etiquetada "Inicio").
     $btn_inicio_top.classList.add("active");
+    $btn_inicio.classList.add("active");
     return reclamos.second_view();
 }
 

@@ -10,178 +10,154 @@ Este documento justifica el [Modelo Entidad-Relación](MER_proyecto_final.drawio
 - [Entrevista al cliente](../entrevista/Entrevista_Reclamos_Ciudadanos.md).
 - [Project Charter](../project_charter.md).
 
-El MER transforma en entidades las clases cuyo estado debe conservarse. Esto responde a RNF-06, que exige persistencia entre sesiones, y RNF-08, que exige centralizar reclamos, usuarios, edificios y proveedores.
+## 2. Metodología de análisis
 
-Las enumeraciones `Roles`, `EstadoReclamo` y `Prioridad` no se convierten en entidades independientes porque representan conjuntos cerrados sin atributos propios. Se almacenan como dominios controlados dentro de `Usuario` y `Reclamo`.
+Se aplicó el método de derivación en cinco pasos:
 
-## 2. Trazabilidad general
-
-| Entidad | Requerimientos | Historias de usuario | Motivo de persistencia |
-|---|---|---|---|
-| `Usuario` | RF-01, RF-02, RF-03, RF-15, RF-16, RF-21, RF-22, RF-23 | HU1, HU2, HU3, HU26, HU27 | Conserva identidad, credenciales y rol |
-| `Edificio` | RF-19, RF-20, RF-25 | HU24, HU25 | Conserva edificios públicos y su relación con usuarios y reclamos |
-| `Reclamo` | RF-04, RF-05, RF-06, RF-08, RF-10, RF-25 | HU4, HU5, HU6, HU7, HU10, HU21 | Conserva la incidencia y su avance |
-| `Clasificacion` | RF-04, RF-05 | HU4, HU5, HU10, HU14, HU23 | Mantiene un catálogo administrable de problemas |
-| `Proveedor` | RF-07, RF-13, RF-17, RF-18, RF-22 | HU13, HU14, HU15, HU22, HU27 | Conserva las empresas responsables y sus datos |
-| `Solucion` | RF-12, RF-14, RF-24 | HU16, HU17, HU19, HU20 | Conserva cada intento de resolución y su revisión |
-| `Notificacion` | RF-09 | HU8 | Conserva avisos vinculados con usuario y reclamo |
-
-## 3. Justificación de entidades y campos
-
-### 3.1 `Usuario`
-
-| Campo | Justificación |
-|---|---|
-| `cedula` PK | RF-01 y RF-23 requieren registrar la cédula. El diagrama la utiliza para identificar al usuario. |
-| `nombre` | RF-01/HU1 y RF-23/HU27. |
-| `telefono` | RF-01/RF-02/HU1. `varchar(9)` conserva el cero inicial y permite validar el formato solicitado. |
-| `passwordHash` | RF-03/HU2 y protección de credenciales según RNF-03/RNF-10. |
-| `rol` | RF-15/HU3. Permite aplicar el control de acceso de RF-16/RNF-01. |
-
-Una sola entidad evita duplicar datos y autenticación. Las asociaciones con `Edificio` y `Proveedor` representan la información específica de los roles Usuario de edificio y Usuario de proveedor.
-
-### 3.2 `Edificio`
-
-| Campo | Justificación |
-|---|---|
-| `id` PK | Identificador mínimo solicitado por RF-19/HU24. |
-| `nombre` | RF-19/HU24 y listado administrativo de HU10. |
-| `direccion` | RF-19/HU24. Ubica el reclamo después de eliminar la geolocalización mediante el Control de cambios 2. |
-
-### 3.3 `Reclamo`
-
-| Campo | Justificación |
-|---|---|
-| `id` PK | Identifica la incidencia durante todo su ciclo. |
-| `descripcion` | RF-04/HU4. |
-| `fechaCreacion` | Permite ordenar y consultar el avance según RF-08/HU7. |
-| `estado` | RF-08/HU7, RF-09/HU8 y HU20. |
-| `prioridad` | RF-06/HU6. |
-| `rutaArchivo` | Representa la evidencia inicial de RF-04/HU4. Guardar la ruta es coherente con el filesystem definido en RNF-05. |
-
-Las relaciones añaden las referencias al creador, edificio, clasificación y proveedor. En el modelo lógico o físico deben materializarse mediante claves foráneas, aunque el MER conceptual utilice rombos.
-
-### 3.4 `Clasificacion`
-
-| Campo | Justificación |
-|---|---|
-| `id` PK | Mantiene identidad estable aunque se modifique el nombre. |
-| `nombre` | RF-04, RF-05 y HU23. Permite listar, filtrar y modificar las categorías. |
-
-Se utiliza una entidad y no un enum porque HU23 permite crear y editar clasificaciones sin modificar el esquema de la base de datos.
-
-### 3.5 `Proveedor`
-
-| Campo | Justificación |
-|---|---|
-| `RUT` PK | Identificador empresarial solicitado en RF-18. Se representa como `varchar` porque no se utiliza para cálculos. |
-| `Nombre` y `razonSocial` | Nombre comercial y razón social indicados por RF-18. |
-| `direccion`, `telefono` y `correo` | Datos de contacto empresarial de RF-18/HU22. |
-| `activo` | HU22 exige desactivar proveedores sin eliminar sus asociaciones históricas. |
-| Campos terminados en `Contacto` | Representan al contacto responsable solicitado por RF-18 y el Control de cambios 2. |
-
-`Proveedor` se mantiene separado de `Usuario` porque es una empresa. RF-22/RF-23/HU27 indican que una empresa puede tener uno o más usuarios que trabajan en su representación.
-
-### 3.6 `Solucion`
-
-| Campo | Justificación |
-|---|---|
-| `id` PK | Distingue los distintos intentos de resolución admitidos por HU17. |
-| `observaciones` | RF-24/HU16. |
-| `materialesUtilizados` | Criterio de aceptación de HU16. |
-| `fechaHora` | HU16 y entrevista P30. |
-| `estadoRevision` | HU20 requiere distinguir `PENDIENTE`, `APROBADA` y `RECHAZADA`. |
-| `motivoRechazo` | Es obligatorio cuando se rechaza según HU20 y debe consultarse durante el reproceso de HU17. |
-| `rutaArchivo` | Evidencia obligatoria de RF-12/HU16/HU19 almacenada en filesystem según RNF-05. |
-
-Permitir varias soluciones por reclamo conserva los intentos rechazados en lugar de sobrescribirlos. Esto aporta la trazabilidad necesaria para HU17 sin incorporar el historial completo excluido por el Project Charter.
-
-### 3.7 `Notificacion`
-
-| Campo | Justificación |
-|---|---|
-| `id` PK | Identifica cada aviso. |
-| `mensaje` | Informa el cambio relevante exigido por HU8. |
-| `fechaHora` | Permite ordenar y contextualizar las notificaciones. |
-
-Las relaciones con `Usuario` y `Reclamo` indican quién recibe el mensaje y qué incidencia lo generó.
-
-## 4. Justificación de relaciones y cardinalidades
-
-| Relación | Cardinalidad | Implementación relacional esperada | Justificación |
-|---|---|---|---|
-| `Usuario` - `Edificio` | Muchos a muchos | Tabla intermedia con `usuario_id` y `edificio_id` | RF-20/HU25 permiten varios edificios por usuario y varios usuarios por edificio. |
-| `Usuario` - `Proveedor` | Muchos usuarios a un proveedor; opcional para el usuario genérico | FK `proveedor_id` nullable en `Usuario`, obligatoria para `Usuario_proveedor` | RF-22/RF-23/HU27. |
-| `Usuario` - `Reclamo` | Uno a muchos | FK no nula del creador en `Reclamo` | RF-04/HU4 y consulta de reclamos propios de RF-08/HU7. |
-| `Edificio` - `Reclamo` | Uno a muchos | FK no nula `edificio_id` en `Reclamo` | RF-25/HU25. Cada reclamo corresponde a uno de los edificios del creador. |
-| `Clasificacion` - `Reclamo` | Uno a muchos | FK `clasificacion_id` en `Reclamo` | RF-04/HU4, RF-05/HU5 y filtros de HU10. |
-| `Proveedor` - `Reclamo` | Un proveedor atiende muchos; un reclamo tiene cero o uno | FK nullable `proveedor_id` en `Reclamo` | HU13 contempla reclamos todavía sin asignar. |
-| `Proveedor` - `Clasificacion` | Muchos a muchos y opcional en ambos lados | Tabla intermedia con `proveedor_id` y `clasificacion_id` | HU14 permite sugerir proveedores según la clasificación y contempla que la relación pueda no existir. |
-| `Reclamo` - `Solucion` | Uno a muchos | FK no nula `reclamo_id` en `Solucion` | HU16 crea una solución y HU17 permite nuevos intentos. |
-| `Usuario` - `Solucion` (`registrar`) | Uno a muchos | FK no nula `registrada_por_id` | RF-24/HU16 permiten identificar al Usuario de proveedor que registró el trabajo. |
-| `Usuario` - `Solucion` (`revisar`) | Uno a muchos; cero o un revisor por solución | FK nullable `revisada_por_id` | HU20. La referencia permanece vacía mientras la solución está pendiente. |
-| `Reclamo` - `Notificacion` | Uno a muchos | FK no nula `reclamo_id` | RF-09/HU8 vinculan el aviso con un reclamo concreto. |
-| `Usuario` - `Notificacion` | Uno a muchos | FK no nula `usuario_id` | HU8 y las restricciones de acceso de RNF-01/RNF-03. |
-
-## 5. Decisiones del modelo relacional
-
-| Decisión | Justificación | Referencia |
+| Paso | Técnica | Resultado |
 |---|---|---|
-| Una entidad común `Usuario` | Evita duplicar datos y credenciales; el rol determina los permisos | RF-03, RF-15, RF-16, HU2, HU3 |
-| `Proveedor` separado de `Usuario` | El proveedor es una empresa con varias cuentas asociadas | RF-17, RF-18, RF-22, RF-23, HU22, HU27 |
-| Relación N:M entre usuario y edificio | Refleja la pertenencia real definida por el cambio de alcance | RF-20, HU25 |
-| FK de edificio en reclamo | Ubica la incidencia sin depender de geolocalización | RF-25, HU25, Cambio 2 |
-| `Clasificacion` como tabla | Sus valores son administrables y no fijos | HU23 |
-| Estado y prioridad como dominios cerrados | No tienen identidad ni atributos propios | RF-06, RF-08, HU6, HU7 |
-| FK de proveedor nullable en reclamo | El reclamo existe antes de su asignación | RF-07, HU13 |
-| Varias soluciones por reclamo | Conserva cada reproceso rechazado | RF-14, HU17, HU20 |
-| `motivoRechazo` nullable | Solo corresponde a soluciones rechazadas | HU17, HU20 |
-| Rutas de archivos en lugar de binarios | Los archivos se almacenan en filesystem | RNF-05 |
-| `Proveedor.activo` en lugar de borrado físico | Evita nuevas asignaciones sin perder referencias históricas | HU22 |
-| Sin historial general | El historial completo y la reapertura están fuera del alcance inicial | Project Charter, alcance excluido 4 y 5 |
-| Sin geolocalización | Fue reemplazada por la asociación con edificio | RF-25, HU25, Cambio 2 |
-| Sin Kanban | HU11 fue cancelada | Control de cambios 1 |
-| Sin estadísticas | Se prioriza el flujo principal en la primera versión | Project Charter, alcance excluido 7 |
+| 1 | Sustantivos relevantes en RF y HU → entidades | Usuario, Proveedor, Edificio, Área, Clasificación, Reclamo, Evidencia y Notificación. |
+| 2 | Datos nombrados para cada entidad → atributos | Por ejemplo, RF-18 especifica RUT, razón social, dirección, teléfono, correo y contacto para `Proveedor`. |
+| 3 | Acciones y reglas del negocio → restricciones y estados | La máquina de estados define los valores posibles de `Reclamo.estado`. |
+| 4 | Vínculos entre entidades y expresiones de cantidad → relaciones y cardinalidades | RF-20 indica que un usuario puede pertenecer a uno o más edificios; por tanto, la relación es N:M. |
+| 5 | Entidades persistentes → tablas; relaciones N:M → tablas intermedias | `UsuarioEdificio` y `ProveedorClasificacion` deben implementarse como tablas asociativas. |
 
-## 6. Recorrido funcional del modelo
+Este método permite relacionar cada elemento con un requerimiento o historia de usuario, manteniendo trazabilidad.
 
-1. El Administrador registra `Usuario` y establece su rol según RF-01, RF-15, HU1 y HU3.
-2. El Usuario de edificio se vincula con uno o más registros de `Edificio` mediante la tabla intermedia requerida por RF-20/HU25.
-3. El usuario crea un `Reclamo` vinculado con su cuenta, un edificio y una clasificación según RF-04/HU4 y RF-25/HU25.
-4. El Administrativo actualiza clasificación y prioridad mediante RF-05, RF-06, HU5 y HU6.
-5. La FK de proveedor comienza vacía y se completa al realizar la asignación de RF-07/HU13.
-6. Un Usuario de proveedor crea una `Solucion` con observaciones, materiales, fecha, hora y evidencia según RF-12, RF-24, HU16 y HU19.
-7. La solución queda pendiente hasta que el Usuario de edificio la aprueba o rechaza según HU20. Si se rechaza, HU17 permite insertar otra solución sin borrar la anterior.
-8. Cada actualización relevante genera una `Notificacion` asociada con el reclamo y su destinatario según RF-09/HU8.
+---
 
-## 7. Ajustes detectados
+## 3. Tabla de trazabilidad general
 
-| Hallazgo | Referencia | Ajuste recomendado |
-|---|---|---|
-| `cedula` aparece como `int` | RF-01, RF-23 y naturaleza del dato | Usar `varchar`, porque es un identificador y no una magnitud. |
-| La cédula es PK, pero documentos anteriores indican teléfono o correo como identificador único | Entrevista P38 y acta del 28/7 | Definir una regla vigente. Se recomienda una PK interna y restricciones `UNIQUE` para cédula y teléfono. |
-| Falta un campo para desactivar usuarios individuales | HU27 | Incorporar `activo: boolean` en `Usuario`; `Proveedor.activo` no sustituye el estado de sus cuentas. |
-| Los campos de archivo solo representan una evidencia | HU9, HU12, HU16, HU18 y HU19 | Incorporar `Evidencia` con FK obligatoria a `Reclamo` y FK opcional a `Solucion`. El backend ya posee una tabla y un modelo de evidencias. |
-| No se muestran explícitamente las claves foráneas | RNF-06 y relaciones del MER | Incorporar las FK descritas en la sección 4 al pasar al modelo lógico/físico. |
-| La cardinalidad `Proveedor`-`Reclamo` debe admitir reclamos sin asignar | HU13 | Mantener `proveedor_id` nullable hasta la asignación. |
-| La cardinalidad `Proveedor`-`Clasificacion` resulta ambigua | HU14 | Utilizar una tabla intermedia N:M; cualquier proveedor predeterminado debe modelarse como una regla adicional. |
-| Los estados no coinciden entre todos los documentos y el UML | Control de cambios 1 y HU20 | Definir un único catálogo de estados compartido por UML, MER y backend. |
-| El Project Charter conserva geolocalización y roles anteriores | Control de cambios 2 | Actualizarlo; para el modelo vigente prevalece el Control de cambios 2. |
+| Entidad | RF de origen | HU de origen | Épica |
+|---|---|---|---|
+| `Usuario` | RF-01, RF-02, RF-03, RF-15, RF-16, RF-20, RF-21, RF-22, RF-23 | HU1, HU2, HU3, HU25, HU26, HU27 | EP-01, EP-02, EP-06 |
+| `Proveedor` | RF-07, RF-17, RF-18, RF-22 | HU13, HU14, HU22, HU27 | EP-05, EP-06 |
+| `Edificio` | RF-19, RF-20, RF-25 | HU4, HU24, HU25 | EP-02, EP-03 |
+| `Area` | RF-26, RF-29, RF-30 | HU28, HU31 | Ampliación funcional |
+| `Clasificacion` | RF-04, RF-05, RF-07 | HU4, HU5, HU13, HU14, HU23 | EP-03, EP-04, EP-05, EP-09 |
+| `Reclamo` | RF-04 a RF-14, RF-24 a RF-30 | HU4 a HU21, HU28, HU29, HU31 | EP-03, EP-04, EP-05, EP-07, EP-08 |
+| `Evidencia` | RF-04, RF-11, RF-12, RF-24 | HU4, HU9, HU12, HU16, HU18, HU19, HU20 | EP-03, EP-07, EP-08 |
+| `Notificacion` | RF-09 | HU8 | EP-08 |
 
-## 8. Requerimientos no funcionales fuera del MER
+---
 
-| Requerimiento | Tratamiento |
+## 5. Justificación de entidades y atributos
+
+### 5.1 Usuario
+
+| Elemento | Justificación |
 |---|---|
-| RNF-01, control de acceso | El campo `rol` colabora con la autorización, pero los permisos se implementan en el backend. |
-| RNF-02, validación | Los tipos y longitudes aportan restricciones; las reglas completas se aplican en la aplicación. |
-| RNF-03 y RNF-10, protección de datos | Justifican el hash de contraseña, las relaciones con propietarios y el acceso restringido. |
-| RNF-04, PWA mobile-first | Corresponde a la interfaz y no genera entidades. |
-| RNF-05, arquitectura | Justifica MySQL y el almacenamiento de rutas de archivos. |
-| RNF-06, persistencia | Justifica la transformación de objetos con estado en entidades. |
-| RNF-07, integración segura | Corresponde al backend; TuID fue excluido. |
-| RNF-08, centralización | Se materializa al conservar todas las entidades en una base común. |
-| RNF-09, experiencia sencilla | Corresponde principalmente a la interfaz; `Clasificacion` permite ofrecer opciones controladas. |
+| Entidad `Usuario` | RF-01, RF-03, RF-15, RF-22 y RF-23 requieren registrar personas que acceden al sistema: usuarios de edificio, administradores, administrativos y usuarios de proveedor. |
+| `cedula` | RF-01 y RF-23 la incluyen como dato de registro del usuario. Debe ser única para identificar a cada persona. |
+| `nombre` | RF-01 y RF-23 exigen registrar el nombre de los usuarios. |
+| `password` | RF-01, RF-03 y RF-21 requieren credenciales para acceder y restablecer el acceso. En la implementación debe guardarse como `password_hash`, no como contraseña en texto plano, por RNF-03. |
+| `telefono` | RF-01, RF-02 y RF-23 exigen el número telefónico. RF-02 establece que debe tener nueve dígitos y comenzar con `09`. |
+| `email` | Dato de contacto |
+| `rol` | RF-15 y HU3 establecen los roles: Usuario de edificio, Administrador, Administrativo y Usuario de proveedor. |
+| `activo` | HU22 y HU27 indican que proveedores y usuarios de proveedor pueden desactivarse. Permite bloquear acceso sin borrar información histórica. |
+| `proveedor_id` | RF-22 y RF-23 establecen que cada Usuario de proveedor debe estar asociado al proveedor correspondiente. Es opcional para los demás roles. |
+| `politicas_aceptadas` | Requiere poder aceptar politicas ppr temas legales |
+| `fecha_aceptacion_politicas` | Depende del atributo anterior. Permite registrar cuándo el usuario aceptó las políticas. |
 
-## 9. Conclusión
+### 5.2 Proveedor
 
-El MER conserva la información necesaria para recorrer el reclamo desde su creación hasta su resolución. Las entidades y relaciones principales se encuentran respaldadas por RF, HU y decisiones de alcance. Los ajustes identificados, especialmente la entidad `Evidencia`, las claves foráneas y los identificadores de usuario, deben incorporarse para que el modelo lógico refleje completamente la documentación y la implementación vigente.
+| Elemento | Justificación |
+|---|---|
+| Entidad `Proveedor` | RF-17 establece la gestión de empresas u organizaciones que resolverán reclamos. HU22 contempla su administración. |
+| `nombre` | RF-18 permite registrar razón social o nombre comercial. Este atributo representa el nombre comercial. |
+| `razon_social` | RF-18 lo menciona expresamente como dato del proveedor. |
+| `rut` | RF-18 exige registrar el RUT de cada proveedor. Debe ser único. |
+| `telefono` | RF-18 lo define como dato de contacto empresarial. |
+| `direccion` | RF-18 lo exige para identificar la ubicación del proveedor. |
+| `email` | RF-18 exige correo electrónico del proveedor. |
+| `contacto_responsable` | RF-18 indica que se deben registrar los datos de un contacto responsable, como propietario, encargado o representante. |
+| `telefono_contacto` | Complementa los datos del contacto responsable definidos en RF-18. |
+| `email_contacto` | Complementa los datos del contacto responsable definidos en RF-18. |
+| `estado` | HU22 indica que un proveedor puede desactivarse y que los proveedores desactivados no deben aparecer al asignar nuevos reclamos. Es preferible usar valores como `ACTIVO` e `INACTIVO`. |
+
+### 5.3 Edificio
+
+| Elemento | Justificación |
+|---|---|
+| Entidad `Edificio` | RF-19 exige administrar los edificios públicos sobre los que se realizarán reclamos. |
+| `id` | RF-19 exige que cada edificio tenga identificador. Funciona como clave primaria. |
+| `nombre` | RF-19 exige registrar el nombre del edificio. |
+| `direccion` | RF-19 exige registrar la dirección del edificio. |
+
+### 5.4 Area
+
+| Elemento | Justificación |
+|---|---|
+| Entidad `Area` | RF-29 y HU31 requieren asociar reclamos a áreas específicas dentro de un edificio, para ubicar mejor el problema. |
+| `id` | Identificador técnico y clave primaria necesaria para distinguir cada área. |
+| `id_edificio` | Cada área pertenece a un edificio. Es la clave foránea que implementa la relación Edificio–Área. |
+| `nombre` | RF-29 requiere identificar el área afectada; por ejemplo, “Baño”, “Pasillo”, “Salón de actos” o “Entrada”. |
+
+### 5.5 Clasificacion
+
+| Elemento | Justificación |
+|---|---|
+| Entidad `Clasificacion` | RF-04 permite clasificar reclamos; HU23 permite administrar las clasificaciones disponibles. |
+| `id` | Identificador técnico de cada clasificación. |
+| `clasificacion` | HU23 establece que el administrador crea clasificaciones indicando su nombre. Ejemplos: iluminación, infraestructura y mantenimiento. |
+
+### 5.6 Reclamo
+
+| Elemento | Justificación |
+|---|---|
+| Entidad `Reclamo` | Es la entidad principal del sistema. RF-04 permite crearlo; RF-05, RF-06 y RF-07 permiten moderarlo, priorizarlo y asignarlo; RF-08 permite consultarlo. |
+| `id` | Identificador único del reclamo. |
+| `usuario_cedula` | RF-04, RF-08 y RF-25 indican que todo reclamo es creado por un Usuario de edificio. |
+| `proveedor_id` | RF-07 exige asignar manualmente un proveedor. Debe permitir `NULL` mientras el reclamo está en estados `INGRESADO` o `MODERADO`. |
+| `clasificacion_id` | RF-04 exige seleccionar una clasificación al crear el reclamo; |
+| `edificio_id` | RF-25 establece que es obligatorio y debe pertenecer al usuario creador del reclamo. |
+| `descripcion` | RF-04 exige que el Usuario de edificio ingrese una descripción del problema. |
+| `estado` | La máquina de estados define los valores: `INGRESADO`, `INVALIDO`, `MODERADO`, `ASIGNADO`, `PENDIENTE_APROBACION`, `COMPLETADO` y `RECHAZADO`. |
+| `prioridad` | RF-06 y HU6 requieren identificar reclamos urgentes. |
+| `motivo_rechazo` | HU20 exige indicar obligatoriamente el motivo cuando un Usuario de edificio rechaza una resolución. |
+| `costo_mano_de_obra` | RF-28 exige registrar los costos de mano de obra al finalizar una tarea. |
+| `costo_materiales` | RF-27 exige registrar los costos de materiales utilizados por el proveedor. |
+| `area_id`| RF-29 y HU31: cada reclamo debe poder asociarse a un área del edificio afectado. |
+
+### 5.7 Evidencia
+
+| Elemento | Justificación |
+|---|---|
+| Entidad `Evidencia` | RF-04 permite adjuntar evidencia inicial; RF-11 permite visualizarla; RF-12, RF-24 y HU19 exigen evidencia de resolución. |
+| `id` | Identificador único de cada archivo de evidencia. |
+| `reclamo_id` | RF-18, HU18 y HU19 requieren que los archivos queden asociados al reclamo correspondiente. |
+| `ruta_archivo` | RNF-05 establece almacenamiento de archivos en filesystem; este atributo guarda la ruta o referencia del archivo almacenado. |
+| `observaciones` | RF-24 y HU16 exigen registrar observaciones al finalizar el trabajo. Puede utilizarse para describir una evidencia, aunque también podría modelarse como atributo de `Reclamo` o de una entidad `Resolucion`. |
+| `fecha_carga` | HU16 exige registrar fecha y hora de la finalización; el modelo funcional mínimo usa `created_at`. |
+
+
+### 5.8 Notificacion
+
+| Elemento | Justificación |
+|---|---|
+| Entidad `Notificacion` | RF-09 y HU8 exigen almacenar notificaciones internas sobre actualizaciones relevantes de los reclamos. |
+| `id` | Identificador único de la notificación. |
+| `usuario_cedula` | RF-09 indica que la notificación se dirige al Usuario de edificio. |
+| `reclamo_id` | Permite vincular la actualización notificada con el reclamo correspondiente. |
+| `titulo` | No se define expresamente en RF-09, pero permite resumir la notificación; por ejemplo, “Reclamo finalizado”. |
+| `mensaje` | RF-09 y HU8 requieren informar el cambio o actualización producida sobre el reclamo. |
+| `tipo` | Permite clasificar notificaciones como `FINALIZACION`, `RECHAZO` o `CAMBIO_ESTADO`. Es una decisión de diseño válida. |
+| `leida` |Para distinguir notificaciones consultadas de pendientes. |
+
+
+---
+
+## 6. Justificación de relaciones y cardinalidades
+
+| Relación | Cardinalidad correcta | Justificación |
+|---|---|---|
+| Usuario — Proveedor (`Trabaja para`) | Usuario N -Trabaja para- 1 Proveedor | RF-22 y RF-23 indican que un proveedor puede tener uno o más Usuarios de proveedor y que cada uno pertenece a un proveedor. La relación no aplica a administradores, administrativos ni usuarios de edificio, por eso `proveedor_id` es opcional. |
+| Usuario — Edificio (`Gestiona` o `Pertenece a`) | Usuario N -Gestiona- N Edificio | RF-20 y HU25 establecen que un usuario puede asociarse a uno o más edificios y que un edificio puede tener varios usuarios. |
+| Edificio — Area (`Contiene`) | Edificio 1 -Tiene- N Área | RF-29 y HU31 requieren áreas internas de cada edificio. Cada área pertenece a un único edificio. |
+| Edificio — Reclamo (`Corresponde a`) | Edificio 1 -Corresponde a- N Reclamo | RF-25 exige que todo reclamo se asocie obligatoriamente con un edificio al que pertenece el usuario creador. |
+| Clasificacion — Reclamo (`Clasifica`) | Clasificación 1 -Clasifica- N Reclamo | RF-04 requiere seleccionar una clasificación y RF-05 permite validarla o modificarla. Cada reclamo mantiene una clasificación vigente. |
+| Proveedor — Reclamo (`Atiende`) | Proveedor 1 -Atiende- N Reclamo;| RF-07 exige asignar un proveedor manualmente. |
+| Usuario — Reclamo (`Crea`) | Usuario 1 -Crea- N Reclamo | RF-04 y RF-08 indican que un Usuario de edificio crea y consulta sus propios reclamos. Cada reclamo posee un único creador. |
+| Reclamo — Evidencia (`Tiene`) | Reclamo 1 -Tiene- N Evidencia | RF-04 solicita evidencia fotográfica inicial y RF-12 exige evidencia de resolución. |
+| Reclamo — Notificacion (`Genera`) | Reclamo 1 Genera N Notificación | RF-09 indica que se generan notificaciones cuando hay actualizaciones relevantes. Un reclamo puede no tener notificaciones al inicio y generar varias durante su ciclo de vida. |
+| Usuario — Notificacion (`Recibe`) | Usuario 1 -Recibe- N Notificación | RF-09 y HU8 indican que el Usuario de edificio recibe notificaciones sobre sus reclamos. Cada notificación corresponde a un destinatario. |

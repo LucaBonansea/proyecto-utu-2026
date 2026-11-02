@@ -24,8 +24,12 @@ export const obtenerUsuarios = () => obtenerListado("/api/usuarios");
 export const obtenerProveedores = () => obtenerListado("/api/proveedores");
 export const obtenerClasificaciones = () =>
     obtenerListado("/api/clasificaciones");
-export const obtenerReclamosAdministrador = () =>
-    obtenerListado("/api/admin/reclamos");
+export const obtenerReclamosAdministrador = () => apiFetch("/api/admin/reclamos", {
+    method: "GET",
+    credentials: "include",
+    cache: "no-store",
+    headers: { "Accept": "application/json" }
+});
 
 export const crearProveedor = datos =>
     enviarJsonConCsrf("/api/proveedores", "POST", datos);

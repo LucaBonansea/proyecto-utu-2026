@@ -52,7 +52,7 @@ import {
     obtenerProveedores,
     obtenerReclamosAdministrador,
     obtenerUsuarios
-} from "../services/administrador-service.js?v=20261023-11";
+} from "../services/administrador-service.js?v=20261027-1";
 import { obtenerUrlEvidencia } from "../services/reclamos-service.js";
 
 // Referencias a elementos HTML que se actualizan desde JavaScript.
@@ -68,6 +68,8 @@ const accountMenuWrapper = document.querySelector(".account-menu-wrapper");
 const accountTrigger = document.querySelector(".account-trigger");
 const accountMenu = document.querySelector(".account-menu");
 const accountMenuContent = document.querySelector(".account-menu-content");
+const accountMenuBackdrop = document.querySelector(".account-menu-backdrop");
+const accountModalClose = document.querySelector(".account-modal-close");
 const logoutbtn = document.querySelector(".account-logout");
 const estadisticasbtn = document.querySelector(".estadisticas-btn");
 
@@ -96,6 +98,24 @@ let paginaReclamos = 1;
 let paginaProveedores = 1;
 let paginaEdificios = 1;
 let observadorAlturaUsuarios = null;
+let intervaloEstadisticas = null;
+let generacionEstadisticas = 0;
+let observadorWidgetsEstadisticas = null;
+const htmlWidgetsEstadisticas = new Map();
+
+function detenerActualizacionEstadisticas() {
+    window.clearInterval(intervaloEstadisticas);
+    intervaloEstadisticas = null;
+    observadorWidgetsEstadisticas?.disconnect();
+    observadorWidgetsEstadisticas = null;
+    generacionEstadisticas += 1;
+}
+
+function observarAnimacionesEstadisticas(contenedor) {
+    if (!observadorWidgetsEstadisticas) return;
+    contenedor.querySelectorAll('[data-stats-widget]:not(.stats-en-vista)')
+        .forEach(widget => observadorWidgetsEstadisticas.observe(widget));
+}
 
 const NOMBRES_ESTADO_RECLAMO = {
     pendiente: "Pendiente",
@@ -165,10 +185,6 @@ function paginarElementos(elementos, paginaSolicitada) {
         inicio
     };
 }
-estadisticasbtn?.addEventListener("click", () => {
-    vistaEstadisticas();
-});
-
 function renderPaginacionAdministrador(
     totalElementos,
     paginaActual,
@@ -363,6 +379,7 @@ async function iniciarAplicacion() {
 
     botones.forEach(boton => {
         boton.addEventListener("click", () => {
+            if (boton !== estadisticasbtn) detenerActualizacionEstadisticas();
             botones.forEach(item =>
                 item.classList.remove("active")
             );
@@ -370,6 +387,8 @@ async function iniciarAplicacion() {
             boton.classList.add("active");
         });
     });
+
+    estadisticasbtn?.addEventListener("click", vistaEstadisticas);
 
     proveedoresbtn.addEventListener(
         "click",
@@ -406,6 +425,14 @@ async function iniciarAplicacion() {
     );
 
     accountTrigger.addEventListener("click", alternarMenuCuenta);
+    accountMenuBackdrop.addEventListener("click", () => {
+        cerrarMenuCuenta();
+        accountTrigger.focus();
+    });
+    accountModalClose.addEventListener("click", () => {
+        cerrarMenuCuenta();
+        accountTrigger.focus();
+    });
 
     document.addEventListener("click", cerrarMenuCuentaAlHacerClickFuera);
     document.addEventListener("keydown", cerrarMenuCuentaConEscape);
@@ -439,7 +466,13 @@ function alternarMenuCuenta(event) {
     accountTrigger.setAttribute("aria-expanded", String(estaAbierto));
 
     if (estaAbierto) {
+        document.querySelector(".menu-top-notificaciones")?.classList.remove("active");
+        document.querySelector(".notificaciones-btn-top")?.setAttribute("aria-expanded", "false");
+        document.body.classList.add("account-modal-open");
         cargarCuentaMenu();
+        accountModalClose.focus();
+    } else {
+        document.body.classList.remove("account-modal-open");
     }
 }
 //Abre o cierra el menú flotante de la esquina superior derecha al hacer clic en el avatar,
@@ -448,6 +481,7 @@ function cerrarMenuCuenta() {
     accountMenu.classList.remove("open");
     accountMenu.setAttribute("aria-hidden", "true");
     accountTrigger.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("account-modal-open");
 }
 
 function cerrarMenuCuentaAlHacerClickFuera(event) {
@@ -817,6 +851,8 @@ function renderListaReclamos(busqueda, estadoSeleccionado) {
             `;
         });
     });
+
+    conectarInformacionReclamos(contenedor);
 }
 
 function renderCardReclamo(reclamo) {
@@ -828,6 +864,21 @@ function renderCardReclamo(reclamo) {
         ? `<img src="${escaparHtml(urlEvidencia)}" alt="Evidencia del reclamo ${escaparHtml(reclamo.id)}" loading="lazy">`
         : `<span class="material-symbols-outlined" aria-hidden="true">image_not_supported</span>`;
 
+    // Costos de mano de obra y materiales
+    const manoObra = reclamo.costo_mano_obra !== null && reclamo.costo_mano_obra !== undefined ? Number(reclamo.costo_mano_obra) : null;
+    const materiales = reclamo.costo_materiales !== null && reclamo.costo_materiales !== undefined ? Number(reclamo.costo_materiales) : null;
+    
+    const formatoMoneda = (valor) => {
+        if (valor === null || Number.isNaN(valor)) return "No registrado";
+        return new Intl.NumberFormat("es-UY", {
+            style: "currency",
+            currency: "UYU",
+            maximumFractionDigits: 2
+        }).format(valor);
+    };
+
+    const totalCalculado = (manoObra !== null && materiales !== null) ? (manoObra + materiales) : null;
+
     return `
         <article class="reclamo-admin-card">
             <div class="reclamo-admin-imagen ${urlEvidencia ? "" : "sin-imagen"}">
@@ -836,24 +887,31 @@ function renderCardReclamo(reclamo) {
 
             <div class="reclamo-admin-contenido">
                 <div class="reclamo-admin-encabezado">
-                    <span class="reclamo-admin-id">Reclamo #${escaparHtml(reclamo.id)}</span>
+                    <div class="reclamo-admin-titulo">
+                        <span class="reclamo-admin-id">Reclamo #${escaparHtml(reclamo.id)}</span>
+                        <h3>${escaparHtml(reclamo.description || "Sin descripción")}</h3>
+                    </div>
                     <span class="reclamo-admin-estado estado-${escaparHtml(estado)}">
                         ${escaparHtml(nombreEstado)}
                     </span>
                 </div>
 
-                <p class="reclamo-admin-descripcion">
-                    ${escaparHtml(reclamo.description || "Sin descripción")}
-                </p>
-
                 <dl class="reclamo-admin-datos">
                     <div>
                         <dt><span class="material-symbols-outlined" aria-hidden="true">person</span> Usuario</dt>
-                        <dd>${escaparHtml(reclamo.usuario?.nombre || reclamo.usuario_cedula || "No disponible")}</dd>
+                        <dd>
+                            <button class="reclamo-admin-enlace" type="button" data-entidad="usuario" data-reclamo-id="${escaparHtml(reclamo.id)}" title="Ver información del usuario">
+                                <span>${escaparHtml(reclamo.usuario?.nombre || reclamo.usuario_cedula || "No disponible")}</span>
+                            </button>
+                        </dd>
                     </div>
                     <div>
                         <dt><span class="material-symbols-outlined" aria-hidden="true">apartment</span> Edificio</dt>
-                        <dd>${escaparHtml(reclamo.edificio?.nombre || "No disponible")}</dd>
+                        <dd>
+                            <button class="reclamo-admin-enlace" type="button" data-entidad="edificio" data-reclamo-id="${escaparHtml(reclamo.id)}" title="Ver información del edificio">
+                                <span>${escaparHtml(reclamo.edificio?.nombre || "No disponible")}</span>
+                            </button>
+                        </dd>
                     </div>
                     <div>
                         <dt><span class="material-symbols-outlined" aria-hidden="true">category</span> Clasificación</dt>
@@ -863,10 +921,141 @@ function renderCardReclamo(reclamo) {
                         <dt><span class="material-symbols-outlined" aria-hidden="true">calendar_today</span> Fecha</dt>
                         <dd>${escaparHtml(formatearFechaReclamo(reclamo.created_at))}</dd>
                     </div>
+                    <div>
+                        <dt><span class="material-symbols-outlined" aria-hidden="true">engineering</span> Mano de obra</dt>
+                        <dd>${escaparHtml(formatoMoneda(manoObra))}</dd>
+                    </div>
+                    <div>
+                        <dt><span class="material-symbols-outlined" aria-hidden="true">inventory_2</span> Materiales</dt>
+                        <dd>${escaparHtml(formatoMoneda(materiales))}</dd>
+                    </div>
+                    <div class="reclamo-admin-gasto-total">
+                        <dt><span class="material-symbols-outlined" aria-hidden="true">payments</span> Costo Total</dt>
+                        <dd><strong>${escaparHtml(formatoMoneda(totalCalculado))}</strong></dd>
+                    </div>
                 </dl>
             </div>
         </article>
     `;
+}
+
+function conectarInformacionReclamos(contenedor) {
+    contenedor.querySelectorAll(".reclamo-admin-enlace").forEach(boton => {
+        boton.addEventListener("click", () => {
+            const reclamo = reclamos.find(item =>
+                String(item.id) === String(boton.dataset.reclamoId)
+            );
+
+            if (reclamo) {
+                abrirInformacionReclamo(boton.dataset.entidad, reclamo, boton);
+            }
+        });
+    });
+}
+
+function abrirInformacionReclamo(entidad, reclamo, disparador) {
+    const esUsuario = entidad === "usuario";
+    const cedula = reclamo.usuario?.cedula || reclamo.usuario_cedula;
+    const edificioId = reclamo.edificio?.id || reclamo.edificio_id;
+    const usuario = usuarios.find(item => String(item.cedula) === String(cedula))
+        || reclamo.usuario
+        || {};
+    const edificio = edificios.find(item => Number(item.id) === Number(edificioId))
+        || reclamo.edificio
+        || {};
+    const nombresRol = {
+        administrador: "Administrador",
+        administrativo: "Administrativo",
+        usuario_edificio: "Usuario de edificio",
+        usuario_proveedor: "Usuario de proveedor"
+    };
+    const edificiosUsuario = Array.isArray(usuario.edificios) ? usuario.edificios : [];
+    const cantidadReclamosUsuario = reclamos.filter(item =>
+        String(item.usuario?.cedula || item.usuario_cedula) === String(cedula)
+    ).length;
+    const cantidadUsuariosEdificio = usuarios.filter(item =>
+        Array.isArray(item.edificios)
+        && item.edificios.some(itemEdificio => Number(itemEdificio.id) === Number(edificioId))
+    ).length;
+    const cantidadReclamosEdificio = reclamos.filter(item =>
+        Number(item.edificio?.id || item.edificio_id) === Number(edificioId)
+    ).length;
+    const estadoUsuario = usuario.activo === undefined
+        ? "No disponible"
+        : usuario.activo ? "Activa" : "Inactiva";
+    const edificiosUsuarioTexto = edificiosUsuario.length
+        ? edificiosUsuario.map(item => item.nombre).filter(Boolean).join(", ")
+        : reclamo.edificio?.nombre || "No disponible";
+    const titulo = esUsuario
+        ? usuario.nombre || reclamo.usuario?.nombre || "Información del usuario"
+        : edificio.nombre || reclamo.edificio?.nombre || "Información del edificio";
+    const subtitulo = esUsuario ? "Datos del usuario que realizó el reclamo" : "Datos del edificio del reclamo";
+    const icono = esUsuario ? "person" : "apartment";
+    const datos = esUsuario
+        ? [
+            ["badge", "Cédula", usuario.cedula || cedula || "No disponible"],
+            ["phone", "Teléfono", usuario.telefono || "No registrado"],
+            ["mail", "Correo electrónico", usuario.email || "No registrado"],
+            ["account_circle", "Tipo de usuario", nombresRol[usuario.rol] || usuario.rol || "No disponible"],
+            ["verified_user", "Estado de la cuenta", estadoUsuario],
+            ["apartment", "Edificios asociados", edificiosUsuarioTexto],
+            ["assignment", "Reclamos registrados", cantidadReclamosUsuario]
+        ]
+        : [
+            ["tag", "ID del edificio", edificio.id || edificioId || "No disponible"],
+            ["location_on", "Dirección", edificio.direccion || reclamo.edificio?.direccion || "No registrada"],
+            ["group", "Usuarios asociados", cantidadUsuariosEdificio],
+            ["assignment", "Reclamos registrados", cantidadReclamosEdificio]
+        ];
+
+    const fondo = document.createElement("div");
+    fondo.className = "modal-info-reclamo-admin";
+    fondo.innerHTML = `
+        <button class="modal-info-reclamo-fondo" type="button" aria-label="Cerrar información"></button>
+        <section class="dialogo-info-reclamo-admin" role="dialog" aria-modal="true" aria-labelledby="titulo-info-reclamo">
+            <button class="cerrar-info-reclamo" type="button" aria-label="Cerrar información">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            </button>
+            <div class="encabezado-info-reclamo">
+                <div class="icono-info-reclamo">
+                    <span class="material-symbols-outlined" aria-hidden="true">${icono}</span>
+                </div>
+                <div>
+                    <span class="etiqueta-info-reclamo">${esUsuario ? "Usuario" : "Edificio"}</span>
+                    <h2 id="titulo-info-reclamo">${escaparHtml(titulo)}</h2>
+                    <p>${escaparHtml(subtitulo)}</p>
+                </div>
+            </div>
+            <div class="datos-info-reclamo">
+                ${datos.map(([iconoDato, etiqueta, valor]) => `
+                    <div class="dato-info-reclamo">
+                        <span class="material-symbols-outlined" aria-hidden="true">${iconoDato}</span>
+                        <div>
+                            <small>${escaparHtml(etiqueta)}</small>
+                            <strong>${escaparHtml(valor)}</strong>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        </section>
+    `;
+
+    const cerrar = () => {
+        document.removeEventListener("keydown", cerrarConEscape);
+        document.body.classList.remove("modal-info-reclamo-abierto");
+        fondo.remove();
+        disparador?.focus();
+    };
+    const cerrarConEscape = event => {
+        if (event.key === "Escape") cerrar();
+    };
+
+    fondo.querySelector(".modal-info-reclamo-fondo").addEventListener("click", cerrar);
+    fondo.querySelector(".cerrar-info-reclamo").addEventListener("click", cerrar);
+    document.addEventListener("keydown", cerrarConEscape);
+    document.body.appendChild(fondo);
+    document.body.classList.add("modal-info-reclamo-abierto");
+    fondo.querySelector(".cerrar-info-reclamo").focus();
 }
 
 function renderTarjetaArea(area) {
@@ -1073,14 +1262,10 @@ function vistaProveedores(){
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
     const hayProveedores = proveedores.length > 0;
 
-//uestra Activos (los que trabajan hoy) e Inactivos (dados de baja pero guardados por historial).
-//«Todos» junta ambos grupos sin volver a pedir datos al backend.
- const proveedoresFiltrados = proveedores.filter(p =>
+    const proveedoresFiltrados = proveedores.filter(p =>
         filtroEstadoProveedor === "todos" ||
         p.estado === filtroEstadoProveedor
     );
-    //Divide los elementos en bloques fijos (de 6 en 6). 
-    //Si los datos caben en una sola pantalla, oculta los controles; si los supera, calcula el total de páginas y genera dinámicamente los botones de Anterior/Siguiente y el resumen de navegación.
     const paginacion = paginarElementos(
         proveedoresFiltrados,
         paginaProveedores
@@ -1100,17 +1285,17 @@ function vistaProveedores(){
                     Agregar proveedor
                 </button>
             </div>
-            ${hayProveedores ? `<div class="filtro-estado-proveedores">
+           ${hayProveedores ? `<div class="filtro-estado-proveedores">
 
                 <button class="filtro-estado-btn" data-estado="todos">
                     Todos
                 </button>
 
-                <button class="filtro-estado-btn" data-estado="Activo">
+                <button class="filtro-estado-btn" data-estado="activo">
                     Activos
                 </button>
 
-                <button class="filtro-estado-btn" data-estado="Inactivo">
+                <button class="filtro-estado-btn" data-estado="inactivo">
                     Desactivados
                 </button>
 
@@ -1473,7 +1658,7 @@ function vistaProveedores(){
                 const id =
                     Number(boton.dataset.id);
 
-                vistaDetalleProveedor(id);
+                vistaDetalleProveedor(id, boton);
 
             });
 
@@ -1508,7 +1693,8 @@ function renderCardProveedor(p){
                 Number(u.proveedor.id) === Number(p.id)
         );
 
-    const esActivo = p.estado === "Activo";
+    const estadoLimpio = String(p.estado || "").toLowerCase().trim();
+    const esActivo = estadoLimpio === "activo";
 
     return `
 
@@ -1612,15 +1798,13 @@ async function cambiarEstadoProveedor(id) {
 }
 
 
-function vistaDetalleProveedor(id){
+function vistaDetalleProveedor(id, disparador){
 
     const proveedor =
-        proveedores.find(p => p.id === id);
+        proveedores.find(p => Number(p.id) === Number(id));
 
     if(!proveedor) return;
 
-
-    // ✅ corregido
     const usuariosDelProveedor =
     usuarios.filter(
         u =>
@@ -1629,147 +1813,81 @@ function vistaDetalleProveedor(id){
             Number(u.proveedor.id) === Number(id)
     );
 
+    document.querySelector(".modal-detalle-proveedor-admin")?.remove();
 
-    section.innerHTML = `
-
-        <div class="lista-proveedores">
-
-            <button class="btn-volver-proveedores">
-                ← Volver a Proveedores
+    const valorProveedor = valor => escaparHtml(valor || "No registrado");
+    const fondo = document.createElement("div");
+    fondo.className = "modal-detalle-proveedor-admin";
+    fondo.innerHTML = `
+        <button class="modal-detalle-proveedor-fondo" type="button" aria-label="Cerrar detalle del proveedor"></button>
+        <section class="dialogo-detalle-proveedor-admin" role="dialog" aria-modal="true" aria-labelledby="titulo-detalle-proveedor">
+            <button class="cerrar-detalle-proveedor" type="button" aria-label="Cerrar detalle del proveedor">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
             </button>
-
-
-            <div class="titulo-proveedores">
-
-                <div>
-                    <h2>${proveedor.nombre}</h2>
-                    <span class="proveedor-razon-social">
-                        ${proveedor.razon_social}
-                    </span>
+            <div class="encabezado-detalle-proveedor">
+                <div class="icono-detalle-proveedor">
+                    <span class="material-symbols-outlined" aria-hidden="true">business</span>
                 </div>
-
-                
-
+                <div class="titulo-detalle-proveedor">
+                    <span class="etiqueta-detalle-proveedor">Proveedor</span>
+                    <h2 id="titulo-detalle-proveedor">${valorProveedor(proveedor.nombre)}</h2>
+                    <p>${valorProveedor(proveedor.razon_social)}</p>
+                </div>
+                <span class="proveedor-estado ${proveedor.estado === "Activo" ? "estado-activo" : "estado-inactivo"}">
+                    ${valorProveedor(proveedor.estado)}
+                </span>
             </div>
-
-
-            
-
-            <div class="proveedor-detalle-info">
-
+            <div class="proveedor-detalle-info proveedor-detalle-info-modal">
                 <h3>Datos de la empresa</h3>
-
                 <div class="detalle-proveedor-grid">
-
-                    <p>
-                        <strong>RUT</strong>
-                        ${proveedor.rut}
-                    </p>
-
-                    <p>
-                        <strong>Teléfono</strong>
-                        ${proveedor.telefono}
-                    </p>
-
-                    <p>
-                        <strong>Correo</strong>
-                        ${proveedor.email}
-                    </p>
-
-                    <p>
-                        <strong>Dirección</strong>
-                        ${proveedor.direccion}
-                    </p>
-
-                    <p>
-                        <strong>Contacto responsable</strong>
-                        ${proveedor.contacto_responsable}
-                    </p>
-
-                    <p>
-                        <strong>Teléfono del contacto</strong>
-                        ${proveedor.telefono_contacto}
-                    </p>
-
-                    <p>
-                        <strong>Correo del contacto</strong>
-                        ${proveedor.email_contacto}
-                    </p>
-
-                    <p>
-                        <strong>Estado</strong>
-                        ${proveedor.estado}
-                    </p>
-
+                    <p><strong>RUT</strong>${valorProveedor(proveedor.rut)}</p>
+                    <p><strong>Teléfono</strong>${valorProveedor(proveedor.telefono)}</p>
+                    <p><strong>Correo</strong>${valorProveedor(proveedor.email)}</p>
+                    <p><strong>Dirección</strong>${valorProveedor(proveedor.direccion)}</p>
+                    <p><strong>Contacto responsable</strong>${valorProveedor(proveedor.contacto_responsable)}</p>
+                    <p><strong>Teléfono del contacto</strong>${valorProveedor(proveedor.telefono_contacto)}</p>
+                    <p><strong>Correo del contacto</strong>${valorProveedor(proveedor.email_contacto)}</p>
+                    <p><strong>Estado</strong>${valorProveedor(proveedor.estado)}</p>
                 </div>
-
             </div>
-
-            <h3 class="proveedor-detalle-subtitulo">
-                Usuarios de proveedor
-            </h3>
-
-
-            <div class="contenedor-usuarios">
-
-                ${
-                    usuariosDelProveedor.length > 0
-
-                    ?
-
-                    usuariosDelProveedor.map(u => `
-
-                        <div class="usuario-card">
-
+            <h3 class="proveedor-detalle-subtitulo">Usuarios de proveedor</h3>
+            <div class="contenedor-usuarios usuarios-detalle-proveedor">
+                ${usuariosDelProveedor.length > 0
+                    ? usuariosDelProveedor.map(u => `
+                        <article class="usuario-card">
                             <div class="usuario-info">
-
-                                <h3>${u.nombre}</h3>
-
-                                <p>
-                                    Tel: ${u.telefono}
-                                </p>
-
-                                ${
-                                    u.email
-                                    ?
-                                    `<p>Email: ${u.email}</p>`
-                                    :
-                                    ""
-                                }
-
-                                <span class="usuario-rol-actual rol-usuario-proveedor">
-                                    Usuario de proveedor
-                                </span>
-
+                                <h3>${valorProveedor(u.nombre)}</h3>
+                                <p>Tel: ${valorProveedor(u.telefono)}</p>
+                                ${u.email ? `<p>Email: ${valorProveedor(u.email)}</p>` : ""}
+                                <span class="usuario-rol-actual rol-usuario-proveedor">Usuario de proveedor</span>
                             </div>
-
-                        </div>
-
+                        </article>
                     `).join("")
-
-                    :
-
-                    `
-                        <p style="padding:10px;">
-                            Este proveedor todavía no tiene
-                            usuarios asignados.
-                        </p>
-                    `
+                    : `<div class="sin-usuarios-detalle-proveedor">
+                        <span class="material-symbols-outlined" aria-hidden="true">group_off</span>
+                        <p>Este proveedor todavía no tiene usuarios asignados.</p>
+                    </div>`
                 }
-
             </div>
-
-        </div>
-
+        </section>
     `;
 
+    const cerrar = () => {
+        document.removeEventListener("keydown", cerrarConEscape);
+        document.body.classList.remove("modal-detalle-proveedor-abierto");
+        fondo.remove();
+        disparador?.focus();
+    };
+    const cerrarConEscape = event => {
+        if (event.key === "Escape") cerrar();
+    };
 
-    document
-        .querySelector(".btn-volver-proveedores")
-        .addEventListener(
-            "click",
-            vistaProveedores
-        );
+    fondo.querySelector(".modal-detalle-proveedor-fondo").addEventListener("click", cerrar);
+    fondo.querySelector(".cerrar-detalle-proveedor").addEventListener("click", cerrar);
+    document.addEventListener("keydown", cerrarConEscape);
+    document.body.appendChild(fondo);
+    document.body.classList.add("modal-detalle-proveedor-abierto");
+    fondo.querySelector(".cerrar-detalle-proveedor").focus();
 
 }
 
@@ -2567,7 +2685,7 @@ function vistaUsuarios(filtro = "") {
                             type="text"
                             inputmode="numeric"
                             maxlength="8"
-                            placeholder="Ej. 12345678"
+                            placeholder="Ej. 56789123"
                         >
 
                     </div>
@@ -2615,29 +2733,33 @@ function vistaUsuarios(filtro = "") {
 
                     </div>
 
+                 <div class="campo-usuario">
+                      <label>Contraseña</label>
+                        <div class="campo-password-wrapper">
+                            <input
+                         class="password-usuario"
+                            type="password"
+                         placeholder="Contraseña"
+                          >
+                         <button type="button" class="btn-toggle-password-input" aria-label="Mostrar contraseña">
+                       <span class="material-symbols-outlined">visibility</span>
+                     </button>
+                   </div>
+                  </div>
 
                     <div class="campo-usuario">
-
-                        <label>Contraseña</label>
-
-                        <input
-                            class="password-usuario"
-                            type="password"
-                            placeholder="Contraseña"
-                        >
-
-                    </div>
-
-                     <div class="campo-usuario">
-                          <label>Repetir contraseña</label>
-                        
-                          <input
+                        <label>Repetir contraseña</label>
+                            <div class="campo-password-wrapper">
+                               <input
                               class="confirm-password-usuario"
-                              type="password"
-                              placeholder="Repetir contraseña"
-                          >
+                                 type="password"
+                               placeholder="Repetir contraseña"
+                                >
+                         <button type="button" class="btn-toggle-password-input" aria-label="Mostrar contraseña">
+                              <span class="material-symbols-outlined">visibility</span>
+                          </button>
+                      </div>
                     </div>
-
                     <div class="campo-usuario">
 
                         <label>Tipo de usuario</label>
@@ -3032,6 +3154,18 @@ function vistaUsuarios(filtro = "") {
 
             return;
 
+        }
+
+        if (!validarCedulaUruguaya(cedula)) {
+            notify.error("La cédula de identidad ingresada no es válida.");
+            cedulaInput.focus();
+            return;
+        }
+
+        if (!validarCedulaUruguaya(cedula)) {
+            notify.error("La cédula de identidad ingresada no es válida.");
+            cedulaInput.focus();
+            return;
         }
         
         if (!/^\d{7,8}$/.test(cedula)) {
@@ -4462,6 +4596,8 @@ function vistaUsuarios(filtro = "") {
    ========================================================== */
 
 async function vistaEstadisticas() {
+    detenerActualizacionEstadisticas();
+    const generacion = generacionEstadisticas;
     filtro_container.innerHTML = "";
     section.style.display = "grid";
     section.style.gridTemplateColumns = "minmax(0, 1fr)";
@@ -4470,10 +4606,7 @@ async function vistaEstadisticas() {
         <div class="estadisticas-admin">
             <header class="estadisticas-header">
                 <div>
-                    <span class="estadisticas-etiqueta">PANEL DE CONTROL</span>
                     <h2>Estadísticas de gestión</h2>
-                    <p>Indicadores para la gestión y el mantenimiento
-                       de los edificios.</p>
                 </div>
 
                 <button type="button" class="btn-actualizar-estadisticas">
@@ -4489,16 +4622,50 @@ async function vistaEstadisticas() {
         </div>
     `;
 
-    const cargar = async () => {
-        const contenedor = section.querySelector(".estadisticas-admin");
+    const contenedor = section.querySelector(".estadisticas-admin");
+    let cargando = false;
+    let inicializada = false;
+    const vistaActiva = () => generacion === generacionEstadisticas
+        && estadisticasbtn?.classList.contains("active")
+        && section.querySelector(".estadisticas-admin") === contenedor;
 
-        if (!contenedor) return;
+    if (typeof IntersectionObserver === "function"
+        && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        contenedor.classList.add("animacion-por-scroll");
+        const pendientes = new WeakSet();
+        let proximoInicio = 0;
+        const observador = new IntersectionObserver(entradas => {
+            entradas.filter(entrada => entrada.isIntersecting)
+                .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+                    || a.boundingClientRect.left - b.boundingClientRect.left)
+                .forEach(entrada => {
+                    const widget = entrada.target;
+                    if (pendientes.has(widget) || widget.classList.contains("stats-en-vista")) return;
+                    pendientes.add(widget);
+                    const ahora = performance.now();
+                    const demora = Math.max(0, proximoInicio - ahora);
+                    proximoInicio = Math.max(proximoInicio, ahora) + 140;
+                    window.setTimeout(() => {
+                        pendientes.delete(widget);
+                        if (!vistaActiva() || !widget.isConnected) return;
+                        const limites = widget.getBoundingClientRect();
+                        const zona = section.getBoundingClientRect();
+                        if (limites.bottom <= zona.top || limites.top >= zona.bottom) return;
+                        widget.classList.add("stats-en-vista");
+                        observador.unobserve(widget);
+                    }, demora);
+                });
+        }, { root: section, rootMargin: "0px 0px -4% 0px", threshold: .08 });
+        observadorWidgetsEstadisticas = observador;
+    }
 
+    const cargar = async ({ manual = false } = {}) => {
+        if (!vistaActiva() || cargando) return;
+        cargando = true;
         const boton = contenedor.querySelector(
             ".btn-actualizar-estadisticas"
         );
-
-        boton.disabled = true;
+        if (boton) boton.disabled = true;
 
         try {
             const response = await obtenerReclamosAdministrador();
@@ -4515,36 +4682,164 @@ async function vistaEstadisticas() {
                 );
             }
 
-            // No modificar otra sección si el usuario navegó mientras cargaban.
-            if (!estadisticasbtn?.classList.contains("active")) return;
+            if (!vistaActiva()) return;
 
             reclamos = Array.isArray(data.reclamos) ? data.reclamos : [];
-
-            renderEstadisticasAdmin();
+            const filtro = contenedor.querySelector("#filtro-edificio-estadisticas");
+            const huboCambios = renderEstadisticasAdmin(
+                reclamos, filtro?.value || "todos", inicializada
+            );
+            if (inicializada && huboCambios) {
+                notify.success("Estadísticas actualizadas.");
+            } else if (manual && inicializada) {
+                notify.success("Las estadísticas están al día.");
+            }
+            inicializada = true;
         } catch (error) {
             console.error("Error al cargar estadísticas:", error);
-
-            if (!estadisticasbtn?.classList.contains("active")) return;
-
-            contenedor.querySelector(".estadisticas-cargando").innerHTML = `
-                <span class="material-symbols-outlined">error</span>
-                <p>${escaparHtml(error.message)}</p>
-                <button type="button" class="btn-reintentar-estadisticas">
-                    Reintentar
-                </button>
-            `;
-
-            contenedor.querySelector(".btn-reintentar-estadisticas")
-                ?.addEventListener("click", cargar);
+            if (!vistaActiva()) return;
+            const carga = contenedor.querySelector(".estadisticas-cargando");
+            if (carga) {
+                carga.innerHTML = `
+                    <span class="material-symbols-outlined">error</span>
+                    <p>${escaparHtml(error.message)}</p>
+                    <button type="button" class="btn-reintentar-estadisticas">
+                        Reintentar
+                    </button>
+                `;
+            } else if (manual) {
+                notify.error(error.message || "No se pudieron actualizar las estadísticas.");
+            }
         } finally {
             if (boton?.isConnected) boton.disabled = false;
+            cargando = false;
         }
     };
 
-    section.querySelector(".btn-actualizar-estadisticas")
-        ?.addEventListener("click", cargar);
+    contenedor.addEventListener("click", event => {
+        if (event.target.closest(".btn-actualizar-estadisticas")) {
+            cargar({ manual: true });
+        } else if (event.target.closest(".btn-reintentar-estadisticas")) {
+            cargar();
+        }
+    });
+    contenedor.addEventListener("change", event => {
+        if (event.target.matches("#filtro-edificio-estadisticas")) {
+            renderEstadisticasAdmin(reclamos, event.target.value, true);
+        }
+    });
+
+    const mostrarPuntoEvolucion = punto => {
+        const lienzo = punto.closest(".grafico-linea-lienzo");
+        const svg = lienzo?.querySelector(".grafico-linea");
+        const tooltip = lienzo?.querySelector(".grafico-linea-tooltip");
+        if (!svg || !tooltip) return;
+        const dimensiones = svg.getBoundingClientRect();
+        const cantidad = Number(punto.dataset.cantidad);
+        tooltip.textContent = `${punto.dataset.mes}: ${cantidad} ${cantidad === 1 ? "reclamo" : "reclamos"}`;
+        tooltip.style.left = `${Math.max(70, Math.min(dimensiones.width - 70,
+            Number(punto.dataset.x) / 720 * dimensiones.width))}px`;
+        tooltip.style.top = `${Number(punto.dataset.y) / 224 * dimensiones.height
+            + (Number(punto.dataset.y) < 65 ? 12 : -10)}px`;
+        tooltip.classList.toggle("debajo", Number(punto.dataset.y) < 65);
+        tooltip.hidden = false;
+        punto.classList.add("activa");
+    };
+    const ocultarPuntoEvolucion = punto => {
+        punto.classList.remove("activa");
+        const tooltip = punto.closest(".grafico-linea-lienzo")
+            ?.querySelector(".grafico-linea-tooltip");
+        if (tooltip) tooltip.hidden = true;
+    };
+
+    const mostrarEstado = (elemento, event = null) => {
+        const grafico = elemento.closest(".grafico-sectores");
+        if (!grafico) return;
+        const indice = elemento.dataset.indice;
+        const porcion = [...grafico.querySelectorAll(".grafico-sectores-porcion")]
+            .find(item => item.dataset.indice === indice);
+        const leyenda = [...grafico.querySelectorAll(".grafico-sectores-leyenda-item")]
+            .find(item => item.dataset.indice === indice);
+        if (!porcion || !leyenda) return;
+
+        grafico.querySelectorAll(".grafico-sectores-porcion, .grafico-sectores-leyenda-item")
+            .forEach(item => item.classList.toggle("activa", item === porcion || item === leyenda));
+
+        const visual = grafico.querySelector(".grafico-sectores-visual");
+        const svg = visual.querySelector("svg");
+        const color = leyenda.querySelector(".grafico-sectores-color");
+        const conector = grafico.querySelector(".grafico-sectores-conector");
+        const linea = conector.querySelector("line");
+        const extremo = conector.querySelector("circle");
+        const limites = grafico.getBoundingClientRect();
+        const limitesSvg = svg.getBoundingClientRect();
+        const limitesColor = color.getBoundingClientRect();
+        const x1 = limitesSvg.left - limites.left + Number(porcion.dataset.centroX) / 300 * limitesSvg.width;
+        const y1 = limitesSvg.top - limites.top + Number(porcion.dataset.centroY) / 300 * limitesSvg.height;
+        const x2 = limitesColor.left - limites.left + limitesColor.width / 2;
+        const y2 = limitesColor.top - limites.top + limitesColor.height / 2;
+        linea.setAttribute("x1", x1);
+        linea.setAttribute("y1", y1);
+        linea.setAttribute("x2", x2);
+        linea.setAttribute("y2", y2);
+        extremo.setAttribute("cx", x2);
+        extremo.setAttribute("cy", y2);
+        conector.removeAttribute("hidden");
+
+        const tooltip = visual.querySelector(".grafico-sectores-tooltip");
+        if (elemento !== porcion) {
+            tooltip.hidden = true;
+            return;
+        }
+        tooltip.textContent = `${porcion.dataset.nombre}: ${porcion.dataset.cantidad} reclamos`;
+        const limitesVisual = visual.getBoundingClientRect();
+        tooltip.style.left = event
+            ? `${Math.max(62, Math.min(limitesVisual.width - 62, event.clientX - limitesVisual.left))}px`
+            : "50%";
+        tooltip.style.top = event
+            ? `${Math.max(20, event.clientY - limitesVisual.top - 8)}px`
+            : "46%";
+        tooltip.hidden = false;
+    };
+    const ocultarEstado = elemento => {
+        const grafico = elemento.closest(".grafico-sectores");
+        if (!grafico) return;
+        grafico.querySelectorAll(".grafico-sectores-porcion, .grafico-sectores-leyenda-item")
+            .forEach(item => item.classList.remove("activa"));
+        grafico.querySelector(".grafico-sectores-conector").setAttribute("hidden", "");
+        grafico.querySelector(".grafico-sectores-tooltip").hidden = true;
+    };
+
+    const activarGrafico = (event, conCursor) => {
+        const punto = event.target.closest?.(".grafico-linea-punto");
+        if (punto) mostrarPuntoEvolucion(punto);
+        const estado = event.target.closest?.(
+            ".grafico-sectores-porcion, .grafico-sectores-leyenda-item"
+        );
+        if (estado) mostrarEstado(estado, conCursor ? event : null);
+    };
+    contenedor.addEventListener("pointerover", event => activarGrafico(event, true));
+    contenedor.addEventListener("pointermove", event => activarGrafico(event, true));
+    contenedor.addEventListener("focusin", event => {
+        if (event.target.matches?.(":focus-visible")) activarGrafico(event, false);
+    });
+    const desactivarGrafico = event => {
+        const punto = event.target.closest?.(".grafico-linea-punto");
+        if (punto && !punto.contains(event.relatedTarget)) ocultarPuntoEvolucion(punto);
+        const estado = event.target.closest?.(
+            ".grafico-sectores-porcion, .grafico-sectores-leyenda-item"
+        );
+        if (estado && !estado.contains(event.relatedTarget)) ocultarEstado(estado);
+    };
+    contenedor.addEventListener("pointerout", desactivarGrafico);
+    contenedor.addEventListener("focusout", desactivarGrafico);
 
     await cargar();
+    if (vistaActiva()) {
+        intervaloEstadisticas = window.setInterval(() => {
+            if (!document.hidden) cargar();
+        }, 60000);
+    }
 }
 
 // Convierte un valor a número sin considerar null como un costo real.
@@ -4582,31 +4877,241 @@ function contarPorEstadistica(lista, obtenerClave) {
         .sort((a, b) => b.cantidad - a.cantidad);
 }
 
-function renderBarraEstadistica(nombre, cantidad, maximo, detalle = "") {
-    const ancho = maximo > 0 ? (cantidad / maximo) * 100 : 0;
+const coloresSectoresEstadisticas = ["#377eb3", "#5a9cc6", "#8dbdd8", "#b7d3e6"];
 
-    return `
-        <div class="estadistica-barra-item">
-            <div class="estadistica-barra-info">
-                <span>${escaparHtml(nombre)}</span>
-                <strong>${cantidad}${detalle}</strong>
-            </div>
-            <div class="estadistica-barra-fondo">
-                <div class="estadistica-barra-valor"
-                     style="width:${ancho}%"></div>
-            </div>
-        </div>
-    `;
+function renderAnilloEstadistica(icono, porcentaje = 100, demora = 0) {
+    const progreso = Math.max(0, Math.min(100, Number(porcentaje) || 0));
+    return `<span class="estadistica-kpi-anillo" aria-hidden="true">
+        <svg viewBox="0 0 64 64" focusable="false">
+            <circle class="estadistica-kpi-anillo-pista" cx="32" cy="32" r="25" />
+            <circle class="estadistica-kpi-anillo-valor" cx="32" cy="32" r="25"
+                    pathLength="100" stroke-dasharray="${progreso} 100"
+                    style="--anillo-meta:${progreso};--anillo-demora:${demora}ms" />
+        </svg>
+        <span class="material-symbols-outlined">${icono}</span>
+    </span>`;
 }
 
+function renderGraficoSectores(
+    datos,
+    formatearValor = valor => String(valor),
+    colores = coloresSectoresEstadisticas
+) {
+    const partes = datos.filter(item => Number.isFinite(item.cantidad) && item.cantidad >= 0);
+    const sectoresConDatos = partes.map((item, indice) => ({ ...item, indice }))
+        .filter(item => item.cantidad > 0);
+    const total = partes.reduce((suma, item) => suma + item.cantidad, 0);
 
+    if (!total) {
+        return '<p class="estadistica-vacia">No hay valores positivos para representar.</p>';
+    }
 
+    let angulo = 0;
+    const sectores = sectoresConDatos.map(item => {
+        const inicio = angulo;
+        const barrido = (item.cantidad / total) * 360;
+        angulo += barrido;
+        const color = colores[item.indice % colores.length];
+        const centroX = 150;
+        const centroY = 150;
+        const punto = (grados, radio) => {
+            const rad = (grados - 90) * Math.PI / 180;
+            return [centroX + Math.cos(rad) * radio, centroY + Math.sin(rad) * radio];
+        };
+        const separacion = Math.min(.7, barrido / 8);
+        const [xInicio, yInicio] = punto(inicio + separacion, 105);
+        const [xFin, yFin] = punto(inicio + barrido - separacion, 105);
+        const [xCentro, yCentro] = punto(inicio + barrido / 2, 107);
+        const camino = sectoresConDatos.length === 1
+            ? `<circle cx="150" cy="150" r="105" fill="${color}" />`
+            : `<path d="M ${centroX} ${centroY} L ${xInicio} ${yInicio} A 105 105 0 ${barrido - separacion * 2 > 180 ? 1 : 0} 1 ${xFin} ${yFin} Z" fill="${color}" />`;
+        return `<g class="grafico-sectores-porcion" tabindex="0"
+            style="--sector-demora:${item.indice * 110}ms"
+            role="img" aria-label="${escaparHtml(item.nombre)}: ${escaparHtml(formatearValor(item.cantidad))} reclamos"
+            data-indice="${item.indice}" data-centro-x="${xCentro}" data-centro-y="${yCentro}"
+            data-nombre="${escaparHtml(item.nombre)}" data-cantidad="${item.cantidad}">
+            ${camino}
+        </g>`;
+    }).join("");
 
+    const leyenda = partes.map((item, indice) => {
+        const color = colores[indice % colores.length];
+        const porcentaje = new Intl.NumberFormat("es-UY", {
+            maximumFractionDigits: 1
+        }).format((item.cantidad / total) * 100);
 
+        return `<li class="grafico-sectores-leyenda-item" data-indice="${indice}"
+            ${item.cantidad > 0 ? 'tabindex="0"' : ""}>
+            <span class="grafico-sectores-color" style="background:${color}" aria-hidden="true"></span>
+            <span class="grafico-sectores-nombre">${escaparHtml(item.nombre)}
+                <small>${porcentaje}% de los datos mostrados</small>
+            </span>
+            <strong>${escaparHtml(formatearValor(item.cantidad))}</strong>
+        </li>`;
+    }).join("");
 
-function renderEstadisticasAdmin() {
+    return `<div class="grafico-sectores">
+        <div class="grafico-sectores-visual">
+            <svg viewBox="0 0 300 300" aria-label="Distribución de reclamos por estado">
+                ${sectores}
+                <circle cx="150" cy="150" r="61" class="grafico-sectores-centro" />
+            </svg>
+            <span class="grafico-sectores-tooltip" hidden></span>
+        </div>
+        <ul class="grafico-sectores-leyenda">${leyenda}</ul>
+        <svg class="grafico-sectores-conector" aria-hidden="true" hidden>
+            <line />
+            <circle r="3" />
+        </svg>
+    </div>`;
+}
+
+function renderGraficoBarras(datos) {
+    if (!datos.length) {
+        return '<p class="estadistica-vacia">Todavía no hay reclamos para mostrar.</p>';
+    }
+
+    const maximo = Math.max(...datos.map(item => item.cantidad));
+    return `<div class="grafico-barras">
+        ${datos.map((item, indice) => `
+            <div class="grafico-barras-fila">
+                <div class="grafico-barras-datos">
+                    <span>${escaparHtml(item.nombre)}</span>
+                    <strong>${item.cantidad}</strong>
+                </div>
+                <div class="grafico-barras-pista" aria-hidden="true">
+                    <span style="width:${maximo ? item.cantidad / maximo * 100 : 0}%;--barra-demora:${indice * 85}ms"></span>
+                </div>
+            </div>
+        `).join("")}
+    </div>`;
+}
+
+function renderGraficoLineaMensual(lista) {
+    const fechas = lista.map(item => new Date(item.created_at))
+        .filter(fecha => !Number.isNaN(fecha.getTime()));
+
+    if (!fechas.length) {
+        return '<p class="estadistica-vacia">No hay fechas de creación para mostrar la evolución.</p>';
+    }
+
+    const ultima = fechas.reduce((mayor, fecha) => fecha > mayor ? fecha : mayor);
+    const inicio = new Date(ultima.getFullYear(), ultima.getMonth() - 5, 1);
+    const claveMes = fecha => `${fecha.getFullYear()}-${fecha.getMonth()}`;
+    const cantidadPorMes = new Map();
+
+    fechas.forEach(fecha => {
+        const clave = claveMes(fecha);
+        cantidadPorMes.set(clave, (cantidadPorMes.get(clave) || 0) + 1);
+    });
+
+    const meses = Array.from({ length: 6 }, (_, indice) => {
+        const fecha = new Date(inicio.getFullYear(), inicio.getMonth() + indice, 1);
+        return {
+            nombre: new Intl.DateTimeFormat("es-UY", {
+                month: "short", year: "2-digit"
+            }).format(fecha).replace(".", ""),
+            cantidad: cantidadPorMes.get(claveMes(fecha)) || 0
+        };
+    });
+
+    const maximo = Math.max(3, Math.ceil(Math.max(...meses.map(mes => mes.cantidad)) / 3) * 3);
+    const puntos = meses.map((mes, indice) => ({
+        ...mes,
+        x: 56 + indice * 124,
+        y: 174 - mes.cantidad / maximo * 144
+    }));
+    const cuadricula = Array.from({ length: 4 }, (_, indice) => {
+        const y = 30 + indice * 48;
+        return `<line x1="56" y1="${y}" x2="676" y2="${y}" />
+            <text x="43" y="${y + 4}" text-anchor="end">${maximo - indice * maximo / 3}</text>`;
+    }).join("");
+
+    return `<div class="grafico-linea-scroll">
+        <div class="grafico-linea-lienzo">
+            <svg class="grafico-linea" viewBox="0 0 720 224" role="img"
+                 aria-label="Reclamos recibidos por mes: ${puntos.map(punto => `${punto.nombre}, ${punto.cantidad}`).join("; ")}">
+                <g class="grafico-linea-cuadricula">${cuadricula}</g>
+                <polyline points="${puntos.map(punto => `${punto.x},${punto.y}`).join(" ")}" />
+                ${puntos.map((punto, indice) => `<g class="grafico-linea-punto" tabindex="0"
+                    role="img" aria-label="${punto.nombre}: ${punto.cantidad} reclamos"
+                    data-mes="${punto.nombre}" data-cantidad="${punto.cantidad}"
+                    data-x="${punto.x}" data-y="${punto.y}">
+                    <circle class="grafico-linea-punto-visible" cx="${punto.x}" cy="${punto.y}" r="5"
+                            style="--punto-demora:${240 + indice * 115}ms" />
+                    <circle class="grafico-linea-punto-hit" cx="${punto.x}" cy="${punto.y}" r="18" />
+                </g>`).join("")}
+                ${puntos.map(punto => `<text x="${punto.x}" y="209" text-anchor="middle">${punto.nombre}</text>`).join("")}
+            </svg>
+            <span class="grafico-linea-tooltip" hidden></span>
+        </div>
+    </div>`;
+}
+
+function renderProblemasPorEdificio(detalle) {
+    const conReclamos = detalle.filter(item => item.cantidad > 0);
+    if (!conReclamos.length) {
+        return '<p class="estadistica-vacia">Todavía no hay reclamos por edificio para comparar.</p>';
+    }
+
+    const maximo = Math.max(...conReclamos.map(item => item.cantidad));
+    const ancho = Math.max(560, conReclamos.length * 76);
+    const columnas = conReclamos.map((item, indice) => {
+        const proporcion = item.cantidadTipoPrincipal / item.cantidad * 100;
+        const numero = String(indice + 1).padStart(2, "0");
+
+        return `<div class="problemas-columna"
+                     title="${escaparHtml(item.edificio.nombre)}: ${item.cantidadTipoPrincipal} de ${item.cantidad} reclamos por ${escaparHtml(item.tipoPrincipal)}">
+            <div class="problemas-columna-barra" style="height:${item.cantidad / maximo * 100}%;--columna-demora:${indice * 100}ms">
+                <span class="problemas-columna-principal" style="height:${proporcion}%"></span>
+            </div>
+            <span class="problemas-columna-indice">${numero}</span>
+        </div>`;
+    }).join("");
+
+    const resumen = conReclamos.map((item, indice) => `
+        <li class="problemas-resumen-item">
+            <span class="problemas-resumen-indice">${String(indice + 1).padStart(2, "0")}</span>
+            <div class="problemas-resumen-edificio">
+                <strong>${escaparHtml(item.edificio.nombre)}</strong>
+                <span>${escaparHtml(item.tipoPrincipal)}</span>
+            </div>
+            <div class="problemas-resumen-cantidad">
+                <strong>${item.cantidadTipoPrincipal} de ${item.cantidad}</strong>
+                <span>reclamos</span>
+            </div>
+        </li>
+    `).join("");
+
+    return `<div class="problemas-por-edificio">
+        <div class="problemas-leyenda">
+            <span><i class="problemas-leyenda-principal" aria-hidden="true"></i>Problema principal</span>
+            <span><i class="problemas-leyenda-otros" aria-hidden="true"></i>Otros reclamos</span>
+        </div>
+        <div class="problemas-grafico-scroll">
+            <div class="problemas-grafico" style="width:${ancho}px;--columnas:${conReclamos.length}"
+                 aria-hidden="true">
+                <div class="problemas-eje">
+                    <span>${maximo}</span>
+                    <span>${Math.round(maximo / 2)}</span>
+                    <span>0</span>
+                </div>
+                <div class="problemas-columnas">${columnas}</div>
+            </div>
+        </div>
+        <div class="problemas-resumen">
+            <h4>Resumen por edificio</h4>
+            <ul>${resumen}</ul>
+        </div>
+    </div>`;
+}
+
+function renderEstadisticasAdmin(lista = reclamos, edificioSeleccionado = "todos", soloCambios = false) {
     const contenedor = section.querySelector(".estadisticas-admin");
-    if (!contenedor) return;
+    if (!contenedor) return false;
+    const reclamosVista = edificioSeleccionado === "todos"
+        ? lista
+        : lista.filter(r => Number(r.edificio_id) === Number(edificioSeleccionado));
 
     const estadoNormalizado = reclamo => {
         const estado = normalizarEstadoReclamo(reclamo.estado);
@@ -4619,42 +5124,63 @@ function renderEstadisticasAdmin() {
         return estado;
     };
 
-    const total = reclamos.length;
-    const pendientes = reclamos.filter(
+    const total = reclamosVista.length;
+    const pendientes = reclamosVista.filter(
         r => estadoNormalizado(r) === "pendiente"
     ).length;
 
-    const enProceso = reclamos.filter(
+    const enProceso = reclamosVista.filter(
         r => estadoNormalizado(r) === "en_proceso"
     ).length;
 
-    const completados = reclamos.filter(
+    const completados = reclamosVista.filter(
         r => estadoNormalizado(r) === "completado"
     ).length;
 
-    const rechazados = reclamos.filter(
+    const rechazados = reclamosVista.filter(
         r => estadoNormalizado(r) === "rechazado"
     ).length;
 
     const clasificaciones = contarPorEstadistica(
-        reclamos,
+        reclamosVista,
         r => r.clasificacion?.clasificacion
     );
 
     const edificiosConReclamos = contarPorEstadistica(
-        reclamos,
+        reclamosVista,
         r => r.edificio?.nombre || "Edificio no identificado"
     );
 
+    const obtenerCostos = reclamo => {
+        const manoObra = numeroEstadistica(reclamo.costo_mano_obra);
+        const materiales = numeroEstadistica(reclamo.costo_materiales);
+
+        return {
+            reclamo,
+            manoObra,
+            materiales,
+            completo: manoObra !== null && materiales !== null,
+            total: (manoObra ?? 0) + (materiales ?? 0)
+        };
+    };
+
     // Calculamos por edificio qué clasificación aparece con mayor frecuencia.
     const detalleEdificios = edificios.map(edificio => {
-        const delEdificio = reclamos.filter(
+        const delEdificio = reclamosVista.filter(
             r => Number(r.edificio_id) === Number(edificio.id)
         );
 
         const tipos = contarPorEstadistica(
             delEdificio,
             r => r.clasificacion?.clasificacion
+        );
+
+        const costosEdificio = delEdificio.map(obtenerCostos);
+        const costoMateriales = costosEdificio.reduce(
+            (suma, costo) => suma + (costo.materiales ?? 0), 0
+        );
+        const costoManoObra = costosEdificio.reduce(
+            (suma, costo) => suma + (costo.manoObra ?? 0), 0
         );
 
         return {
@@ -4665,31 +5191,33 @@ function renderEstadisticasAdmin() {
                 : "Sin reclamos",
             cantidadTipoPrincipal: delEdificio.length
                 ? tipos[0].cantidad
-                : 0
+                : 0,
+            reclamosConCostos: costosEdificio.filter(costo => costo.completo).length,
+            costoMateriales,
+            costoManoObra,
+            costoTotal: costoMateriales + costoManoObra
         };
     }).sort((a, b) => b.cantidad - a.cantidad);
 
     // Sumar los costos que realmente están informados.
     // Los null se cuentan como importes faltantes, no como costos de $0.
-    const costos = reclamos.map(r => {
-        const manoObra = numeroEstadistica(r.costo_mano_obra);
-        const materiales = numeroEstadistica(r.costo_materiales);
-
-        return {
-            reclamo: r,
-            manoObra,
-            materiales,
-            completo: manoObra !== null && materiales !== null,
-            total: (manoObra ?? 0) + (materiales ?? 0)
-        };
-    });
+    const reclamosFinalizados = reclamosVista.filter(r => [
+        "completado",
+        "finalizacion_confirmada",
+        "rechazada"
+    ].includes(estadoNormalizado(r)));
+    const costos = reclamosFinalizados.map(obtenerCostos);
 
     const costosCompletos = costos.filter(c => c.completo);
     const costosFaltantes = costos.length - costosCompletos.length;
 
-    const gastoRegistrado = costosCompletos.reduce(
-        (suma, c) => suma + c.total, 0
+    const gastoMateriales = costos.reduce(
+        (suma, c) => suma + (c.materiales ?? 0), 0
     );
+    const gastoManoObra = costos.reduce(
+        (suma, c) => suma + (c.manoObra ?? 0), 0
+    );
+    const gastoRegistrado = gastoMateriales + gastoManoObra;
 
     const edificiosOptions = edificios.map(edificio => `
         <option value="${Number(edificio.id)}">
@@ -4697,20 +5225,11 @@ function renderEstadisticasAdmin() {
         </option>
     `).join("");
 
-    const maxEdificio = Math.max(
-        0, ...edificiosConReclamos.map(e => e.cantidad)
-    );
-
-    const maxClasificacion = Math.max(
-        0, ...clasificaciones.map(c => c.cantidad)
-    );
-
-    contenedor.innerHTML = `
+    const vista = document.createElement("div");
+    vista.innerHTML = `
         <header class="estadisticas-header">
             <div>
-                <span class="estadisticas-etiqueta">PANEL DE CONTROL</span>
                 <h2>Estadísticas de gestión</h2>
-                <p>Indicadores generales de reclamos y mantenimiento.</p>
             </div>
             <button type="button" class="btn-actualizar-estadisticas">
                 <span class="material-symbols-outlined">refresh</span>
@@ -4726,14 +5245,12 @@ function renderEstadisticasAdmin() {
                 <option value="todos">Todos los edificios</option>
                 ${edificiosOptions}
             </select>
-            <p>Los indicadores se calculan con los reclamos recibidos.</p>
         </div>
 
+        <div class="estadisticas-resumen">
         <div class="estadisticas-kpis">
-            <article class="estadistica-kpi">
-                <span class="estadistica-kpi-icono azul">
-                    <span class="material-symbols-outlined">assignment</span>
-                </span>
+            <article class="estadistica-kpi" data-stats-widget="total">
+                ${renderAnilloEstadistica("assignment", 100, 0)}
                 <div>
                     <p>Total de reclamos</p>
                     <strong>${total}</strong>
@@ -4741,10 +5258,8 @@ function renderEstadisticasAdmin() {
                 </div>
             </article>
 
-            <article class="estadistica-kpi">
-                <span class="estadistica-kpi-icono naranja">
-                    <span class="material-symbols-outlined">schedule</span>
-                </span>
+            <article class="estadistica-kpi" data-stats-widget="pendientes">
+                ${renderAnilloEstadistica("schedule", porcentajeEstadistica(pendientes, total), 120)}
                 <div>
                     <p>Pendientes</p>
                     <strong>${pendientes}</strong>
@@ -4752,21 +5267,17 @@ function renderEstadisticasAdmin() {
                 </div>
             </article>
 
-            <article class="estadistica-kpi">
-                <span class="estadistica-kpi-icono violeta">
-                    <span class="material-symbols-outlined">engineering</span>
-                </span>
+            <article class="estadistica-kpi" data-stats-widget="en-proceso">
+                ${renderAnilloEstadistica("engineering", porcentajeEstadistica(enProceso, total), 240)}
                 <div>
                     <p>En proceso</p>
                     <strong>${enProceso}</strong>
-                    <small>En atención</small>
+                    <small>${porcentajeEstadistica(enProceso, total)}% del total</small>
                 </div>
             </article>
 
-            <article class="estadistica-kpi">
-                <span class="estadistica-kpi-icono verde">
-                    <span class="material-symbols-outlined">task_alt</span>
-                </span>
+            <article class="estadistica-kpi" data-stats-widget="completados">
+                ${renderAnilloEstadistica("check", porcentajeEstadistica(completados, total), 360)}
                 <div>
                     <p>Completados</p>
                     <strong>${completados}</strong>
@@ -4775,8 +5286,20 @@ function renderEstadisticasAdmin() {
             </article>
         </div>
 
+        <article class="estadistica-panel estadistica-panel-linea" data-stats-widget="evolucion">
+            <div class="estadistica-panel-titulo">
+                <div>
+                    <h3>Evolución de reclamos</h3>
+                    <p>Últimos seis meses hasta el registro más reciente.</p>
+                </div>
+                <span class="material-symbols-outlined">show_chart</span>
+            </div>
+            ${renderGraficoLineaMensual(reclamosVista)}
+        </article>
+        </div>
+
         <div class="estadisticas-grid">
-            <article class="estadistica-panel">
+            <article class="estadistica-panel" data-stats-widget="edificios">
                 <div class="estadistica-panel-titulo">
                     <div>
                         <h3>Reclamos por edificio</h3>
@@ -4784,18 +5307,12 @@ function renderEstadisticasAdmin() {
                     </div>
                     <span class="material-symbols-outlined">apartment</span>
                 </div>
-                <div class="estadistica-barras" id="grafico-edificios">
-                    ${edificiosConReclamos.length
-                        ? edificiosConReclamos.map(e =>
-                            renderBarraEstadistica(
-                                e.nombre, e.cantidad, maxEdificio
-                            )
-                        ).join("")
-                        : '<p class="estadistica-vacia">Todavía no hay reclamos.</p>'}
+                <div id="grafico-edificios">
+                    ${renderGraficoBarras(edificiosConReclamos)}
                 </div>
             </article>
 
-            <article class="estadistica-panel">
+            <article class="estadistica-panel" data-stats-widget="clasificaciones">
                 <div class="estadistica-panel-titulo">
                     <div>
                         <h3>Tipos de reclamo</h3>
@@ -4803,44 +5320,51 @@ function renderEstadisticasAdmin() {
                     </div>
                     <span class="material-symbols-outlined">build</span>
                 </div>
-                <div class="estadistica-barras" id="grafico-clasificaciones">
-                    ${clasificaciones.length
-                        ? clasificaciones.map(c =>
-                            renderBarraEstadistica(
-                                c.nombre, c.cantidad, maxClasificacion
-                            )
-                        ).join("")
-                        : '<p class="estadistica-vacia">Todavía no hay datos.</p>'}
+                <div id="grafico-clasificaciones">
+                    ${renderGraficoBarras(clasificaciones)}
                 </div>
             </article>
         </div>
 
-        <article class="estadistica-panel estadistica-tabla-panel">
+        <article class="estadistica-panel estadistica-problemas-panel" data-stats-widget="problemas">
             <div class="estadistica-panel-titulo">
                 <div>
                     <h3>Problema más común por edificio</h3>
-                    <p>Clasificación predominante entre los reclamos registrados.</p>
+                    <p>Casos del problema principal respecto del total de cada edificio.</p>
                 </div>
                 <span class="material-symbols-outlined">domain</span>
             </div>
+            ${renderProblemasPorEdificio(detalleEdificios)}
+        </article>
+
+        <article class="estadistica-panel estadistica-tabla-panel" data-stats-widget="gastos-edificios">
+            <div class="estadistica-panel-titulo">
+                <div>
+                    <h3>Gastos por edificio</h3>
+                    <p>Materiales y mano de obra informados por los proveedores.</p>
+                </div>
+                <span class="material-symbols-outlined">account_balance_wallet</span>
+            </div>
 
             <div class="estadistica-tabla-scroll">
-                <table class="tabla-estadisticas">
+                <table class="tabla-estadisticas tabla-gastos-edificios">
                     <thead>
                         <tr>
                             <th>Edificio</th>
-                            <th>Total de reclamos</th>
-                            <th>Problema más común</th>
-                            <th>Casos del problema principal</th>
+                            <th>Reclamos con costos</th>
+                            <th>Materiales</th>
+                            <th>Mano de obra</th>
+                            <th>Gasto total</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-edificios-estadisticas">
+                    <tbody>
                         ${detalleEdificios.map(item => `
                             <tr data-edificio="${Number(item.edificio.id)}">
                                 <td>${escaparHtml(item.edificio.nombre)}</td>
-                                <td>${item.cantidad}</td>
-                                <td>${escaparHtml(item.tipoPrincipal)}</td>
-                                <td>${item.cantidadTipoPrincipal}</td>
+                                <td>${item.reclamosConCostos}</td>
+                                <td class="estadistica-monto">${monedaEstadistica(item.costoMateriales)}</td>
+                                <td class="estadistica-monto">${monedaEstadistica(item.costoManoObra)}</td>
+                                <td class="estadistica-monto estadistica-monto-total">${monedaEstadistica(item.costoTotal)}</td>
                             </tr>
                         `).join("")}
                     </tbody>
@@ -4849,7 +5373,7 @@ function renderEstadisticasAdmin() {
         </article>
 
         <div class="estadisticas-grid">
-            <article class="estadistica-panel">
+            <article class="estadistica-panel" data-stats-widget="estados">
                 <div class="estadistica-panel-titulo">
                     <div>
                         <h3>Estado de los reclamos</h3>
@@ -4859,36 +5383,47 @@ function renderEstadisticasAdmin() {
                 </div>
 
                 <div class="estadistica-estados">
-                    ${[
-                        ["Pendientes", pendientes],
-                        ["En proceso", enProceso],
-                        ["Completados", completados],
-                        ["Rechazados", rechazados]
-                    ].map(([nombre, cantidad]) => `
-                        <div class="estadistica-estado-item">
-                            <span>${nombre}</span>
-                            <strong>${cantidad}</strong>
-                            <small>${porcentajeEstadistica(cantidad, total)}%</small>
-                        </div>
-                    `).join("")}
+                    ${renderGraficoSectores([
+                        { nombre: "Pendientes", cantidad: pendientes },
+                        { nombre: "En proceso", cantidad: enProceso },
+                        { nombre: "Completados", cantidad: completados },
+                        { nombre: "Rechazados", cantidad: rechazados }
+                    ])}
                 </div>
             </article>
 
-            <article class="estadistica-panel">
+            <article class="estadistica-panel" data-stats-widget="gastos">
                 <div class="estadistica-panel-titulo">
                     <div>
                         <h3>Gastos de mantenimiento</h3>
-                        <p>Importes registrados en los reclamos.</p>
+                        <p>Destino del gasto registrado entre materiales y mano de obra.</p>
                     </div>
                     <span class="material-symbols-outlined">payments</span>
                 </div>
 
                 <div class="estadistica-gasto-total">
-                    <span>Gasto registrado completo</span>
+                    <span>Gasto total registrado</span>
                     <strong>${monedaEstadistica(gastoRegistrado)}</strong>
                 </div>
 
+                <div class="estadistica-gasto-grafico">
+                    <div class="estadistica-gasto-barra" aria-hidden="true">
+                        <span style="width:${gastoRegistrado ? gastoMateriales / gastoRegistrado * 100 : 0}%"></span>
+                        <span style="width:${gastoRegistrado ? gastoManoObra / gastoRegistrado * 100 : 0}%"></span>
+                    </div>
+                    <div class="estadistica-gasto-leyenda">
+                        <p><span>Materiales</span><strong>${monedaEstadistica(gastoMateriales)}</strong></p>
+                        <p><span>Mano de obra</span><strong>${monedaEstadistica(gastoManoObra)}</strong></p>
+                    </div>
+                </div>
+
                 <div class="estadistica-gasto-desglose">
+                    <p>Materiales:
+                        <strong>${monedaEstadistica(gastoMateriales)}</strong>
+                    </p>
+                    <p>Mano de obra:
+                        <strong>${monedaEstadistica(gastoManoObra)}</strong>
+                    </p>
                     <p>Reclamos con costos completos:
                         <strong>${costosCompletos.length}</strong>
                     </p>
@@ -4898,45 +5433,82 @@ function renderEstadisticasAdmin() {
                 </div>
 
                 <p class="estadistica-nota">
-                    El total incluye solamente reclamos con ambos importes
-                    registrados. No representa necesariamente el gasto real
-                    total si hay costos sin cargar.
+                    El total suma los importes registrados por los proveedores.
+                    Los reclamos anteriores que no tengan costos cargados se
+                    muestran como datos faltantes.
                 </p>
             </article>
         </div>
-
-        <p class="estadisticas-pie">
-            Datos calculados a partir de los reclamos devueltos por el backend.
-            Los resultados representan los registros disponibles, no una
-            proyección de gastos futuros.
-        </p>
     `;
 
-    // Filtro por edificio: actualiza los indicadores y tablas.
-    const filtro = contenedor.querySelector("#filtro-edificio-estadisticas");
+    if (!soloCambios || !contenedor.querySelector("[data-stats-widget]")) {
+        contenedor.innerHTML = vista.innerHTML;
+        contenedor.querySelector("#filtro-edificio-estadisticas").value = edificioSeleccionado;
+        htmlWidgetsEstadisticas.clear();
+        vista.querySelectorAll("[data-stats-widget]").forEach(widget => {
+            htmlWidgetsEstadisticas.set(widget.dataset.statsWidget, widget.outerHTML);
+        });
+        observarAnimacionesEstadisticas(contenedor);
+        return true;
+    }
 
-    filtro.addEventListener("change", () => {
-        const id = filtro.value;
-
-        const reclamosFiltrados = id === "todos"
-            ? reclamos
-            : reclamos.filter(
-                r => Number(r.edificio_id) === Number(id)
-            );
-
-        // Recalcular el tablero con el conjunto filtrado.
-        const reclamosOriginales = reclamos;
-        reclamos = reclamosFiltrados;
-        renderEstadisticasAdmin();
-        reclamos = reclamosOriginales;
-
-        // Conservar la selección tras volver a dibujar.
-        const nuevoFiltro = section.querySelector(
-            "#filtro-edificio-estadisticas"
-        );
-        if (nuevoFiltro) nuevoFiltro.value = id;
+    let huboCambios = false;
+    vista.querySelectorAll("[data-stats-widget]").forEach(siguiente => {
+        const actual = [...contenedor.querySelectorAll("[data-stats-widget]")]
+            .find(widget => widget.dataset.statsWidget === siguiente.dataset.statsWidget);
+        if (!actual) return;
+        const htmlSiguiente = siguiente.outerHTML;
+        if (htmlWidgetsEstadisticas.get(siguiente.dataset.statsWidget) !== htmlSiguiente) {
+            observadorWidgetsEstadisticas?.unobserve(actual);
+            actual.replaceWith(siguiente);
+            htmlWidgetsEstadisticas.set(siguiente.dataset.statsWidget, htmlSiguiente);
+            huboCambios = true;
+        }
     });
+    if (huboCambios) observarAnimacionesEstadisticas(contenedor);
+    return huboCambios;
+}
 
-    contenedor.querySelector(".btn-actualizar-estadisticas")
-        ?.addEventListener("click", vistaEstadisticas);
+// ==========================================
+// MOSTRAR / OCULTAR CONTRASEÑA (GLOBAL)
+// ==========================================
+document.addEventListener("click", (event) => {
+    const btnToggle = event.target.closest(".btn-toggle-password-input");
+    if (!btnToggle) return;
+
+    const wrapper = btnToggle.closest(".campo-password-wrapper");
+    const input = wrapper?.querySelector("input");
+    const icono = btnToggle.querySelector(".material-symbols-outlined");
+
+    if (!input || !icono) return;
+
+    const esPassword = input.type === "password";
+    input.type = esPassword ? "text" : "password";
+    icono.textContent = esPassword ? "visibility_off" : "visibility";
+    btnToggle.setAttribute("aria-label", esPassword ? "Ocultar contraseña" : "Mostrar contraseña");
+});
+
+// ==========================================
+// FUNCIÓN DE VALIDACIÓN DE CÉDULA URUGUAYA
+// ==========================================
+
+function validarCedulaUruguaya(cedula) {
+     const limpio = String(cedula || "").replace(/\D/g, "");
+     if (limpio.length < 7 || limpio.length > 8) {
+        return false;
+    }
+    const cedulaCompleta = limpio.padStart(8, "0");
+
+    const cuerpo = cedulaCompleta.slice(0, 7);
+    const digitoVerificador = Number(cedulaCompleta.slice(7, 8));
+    const factores = [2, 9, 8, 7, 6, 3, 4];
+    let suma = 0;
+
+    for (let i = 0; i < 7; i++) {
+        suma += Number(cuerpo[i]) * factores[i];
+    }
+    const resto = suma % 10;
+    const digitoCalculado = resto === 0 ? 0 : 10 - resto;
+    
+    return digitoCalculado === digitoVerificador;
 }

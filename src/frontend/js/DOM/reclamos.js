@@ -398,6 +398,18 @@ renderTarjeta(reclamo, indice, total) {
         </p>
     `;
 
+    const proveedorHtml = estado !== "pendiente" && reclamo.proveedor
+        ? `
+            <div class="reclamo-proveedor-asignado">
+                <span class="material-symbols-outlined" aria-hidden="true">engineering</span>
+                <div>
+                    <span>Proveedor asignado</span>
+                    <strong>${escaparHtml(reclamo.proveedor.nombre || "No disponible")}</strong>
+                </div>
+            </div>
+        `
+        : "";
+
     const motivoRechazoHtml = (
         reclamo.estado === "rechazada" && reclamo.motivo_rechazo
     )
@@ -433,6 +445,7 @@ renderTarjeta(reclamo, indice, total) {
                 <h3 class="reclamo-titulo">${descripcion}</h3>
 
                 ${edificioHtml}
+                ${proveedorHtml}
 
                 ${this.renderEstado(estado)}
                 ${motivoRechazoHtml}

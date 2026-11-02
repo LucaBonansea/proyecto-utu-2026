@@ -33,6 +33,7 @@ const btnLogout = document.getElementById("btn-logout");
 
 const cuentaPanel = document.getElementById("cuenta-panel");
 const btnVolverCuenta = document.getElementById("btn-volver-cuenta");
+const cuentaFondo = document.getElementById("cuenta-proveedor-fondo");
 
 const cuentaMensaje = document.getElementById("cuenta-mensaje");
 const cuentaNombre = document.getElementById("cuenta-nombre");
@@ -51,6 +52,10 @@ const detalleDescripcion = document.getElementById("detalle-descripcion");
 const detalleEdificio = document.getElementById("detalle-edificio");
 const detalleDireccion = document.getElementById("detalle-direccion");
 const detalleClasificacion = document.getElementById("detalle-clasificacion");
+const detalleCostos = document.getElementById("detalle-costos");
+const detalleCostoMateriales = document.getElementById("detalle-costo-materiales");
+const detalleCostoManoObra = document.getElementById("detalle-costo-mano-obra");
+const detalleCostoTotal = document.getElementById("detalle-costo-total");
 const detalleSeccionDescripcion = detalleDescripcion.closest(
     ".detalle-descripcion"
 );
@@ -106,6 +111,8 @@ const previewContainer = document.getElementById("preview-container");
 const previewResolucion = document.getElementById("preview-resolucion");
 
 const observaciones = document.getElementById("observaciones");
+const costoMateriales = document.getElementById("costo-materiales");
+const costoManoObra = document.getElementById("costo-mano-obra");
 const btnFinalizar = document.getElementById("btn-finalizar");
 
 function mostrarMensaje(texto, error = false) {
@@ -117,13 +124,45 @@ function mostrarMensaje(texto, error = false) {
     notify.success(texto);
 }
 
+function normalizarImporte(valor) {
+    const texto = String(valor ?? "")
+        .trim()
+        .replace(/\s/g, "")
+        .replace(",", ".");
+
+    if (!/^\d+(?:\.\d{1,2})?$/.test(texto)) {
+        return null;
+    }
+
+    const numero = Number(texto);
+
+    if (!Number.isFinite(numero) || numero < 0 || numero > 99999999.99) {
+        return null;
+    }
+
+    return numero.toFixed(2);
+}
+
+function formatearImporte(valor) {
+    return new Intl.NumberFormat("es-UY", {
+        style: "currency",
+        currency: "UYU",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(valor);
+}
+
 function mostrarLista() {
     listaReclamos.classList.remove("oculto");
     detalleReclamo.classList.add("oculto");
 
     if (cuentaPanel) {
         cuentaPanel.classList.add("oculto");
+        cuentaPanel.setAttribute("aria-hidden", "true");
     }
+
+    btnCuenta.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("cuenta-proveedor-abierta");
 
     reclamoActual = null;
 
@@ -136,31 +175,36 @@ function mostrarDetalle() {
 
     if (cuentaPanel) {
         cuentaPanel.classList.add("oculto");
+        cuentaPanel.setAttribute("aria-hidden", "true");
     }
+
+    btnCuenta.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("cuenta-proveedor-abierta");
 
     detalleReclamo.classList.remove("oculto");
 }
 
 function mostrarCuenta() {
-    listaReclamos.classList.add("oculto");
-    detalleReclamo.classList.add("oculto");
-
     if (cuentaPanel) {
         cuentaPanel.classList.remove("oculto");
+        cuentaPanel.setAttribute("aria-hidden", "false");
     }
 
+    btnCuenta.setAttribute("aria-expanded", "true");
+    document.body.classList.add("cuenta-proveedor-abierta");
     cargarDatosCuenta();
+    btnVolverCuenta.focus();
 }
 
 function ocultarCuenta() {
     if (cuentaPanel) {
         cuentaPanel.classList.add("oculto");
+        cuentaPanel.setAttribute("aria-hidden", "true");
     }
 
-    listaReclamos.classList.remove("oculto");
-
-    renderizarReclamos();
-    renderizarUrgentes();
+    btnCuenta.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("cuenta-proveedor-abierta");
+    btnCuenta.focus();
 }
 
 function escaparTexto(texto) {
@@ -430,10 +474,9 @@ function renderizarReclamos() {
         if (reclamos.length === 0) {
             containerReclamos.innerHTML = `
                 <div class="reclamos-vacio" role="status">
-                    <span class="material-symbols-outlined" aria-hidden="true">
-                        assignment
-                    </span>
-                    <p>No hay reclamos todavía.</p>
+                    <span class="material-symbols-outlined" aria-hidden="true">assignment_turned_in</span>
+                    <h2>No hay reclamos asignados</h2>
+                    <p>Cuando recibas un reclamo, aparecerá aquí para que puedas gestionarlo.</p>
                 </div>
             `;
 
@@ -668,6 +711,28 @@ function abrirDetalle(reclamo) {
     detalleClasificacion.textContent =
         obtenerNombreClasificacion(reclamo);
 
+    const materialesRegistrados = normalizarImporte(reclamo.costo_materiales);
+    const manoObraRegistrada = normalizarImporte(reclamo.costo_mano_obra);
+
+    if (materialesRegistrados !== null || manoObraRegistrada !== null) {
+        const materiales = Number(materialesRegistrados || 0);
+        const manoObra = Number(manoObraRegistrada || 0);
+
+        detalleCostoMateriales.textContent = materialesRegistrados !== null
+            ? formatearImporte(materiales)
+            : "Sin registrar";
+        detalleCostoManoObra.textContent = manoObraRegistrada !== null
+            ? formatearImporte(manoObra)
+            : "Sin registrar";
+        detalleCostoTotal.textContent = formatearImporte(materiales + manoObra);
+        detalleCostos.classList.remove("oculto");
+    } else {
+        detalleCostoMateriales.textContent = "";
+        detalleCostoManoObra.textContent = "";
+        detalleCostoTotal.textContent = "";
+        detalleCostos.classList.add("oculto");
+    }
+
     const observacionesUltimaResolucion =
         reclamo.evidencia?.observaciones?.trim();
 
@@ -747,6 +812,14 @@ function limpiarFormulario() {
 
     if (observaciones) {
         observaciones.value = "";
+    }
+
+    if (costoMateriales) {
+        costoMateriales.value = "";
+    }
+
+    if (costoManoObra) {
+        costoManoObra.value = "";
     }
 }
 
@@ -993,6 +1066,16 @@ if (btnVolverCuenta) {
     );
 }
 
+if (cuentaFondo) {
+    cuentaFondo.addEventListener("click", ocultarCuenta);
+}
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !cuentaPanel.classList.contains("oculto")) {
+        ocultarCuenta();
+    }
+});
+
 btnLogout.addEventListener(
     "click",
     async () => {
@@ -1154,6 +1237,9 @@ formResolver.addEventListener(
         const observacion =
             observaciones.value.trim();
 
+        const materiales = normalizarImporte(costoMateriales.value);
+        const manoObra = normalizarImporte(costoManoObra.value);
+
         if (!foto) {
 
             mostrarMensaje(
@@ -1174,6 +1260,24 @@ formResolver.addEventListener(
             return;
         }
 
+        if (materiales === null) {
+            mostrarMensaje(
+                "Ingresá un costo de materiales válido, con hasta dos decimales.",
+                true
+            );
+            costoMateriales.focus();
+            return;
+        }
+
+        if (manoObra === null) {
+            mostrarMensaje(
+                "Ingresá un costo de mano de obra válido, con hasta dos decimales.",
+                true
+            );
+            costoManoObra.focus();
+            return;
+        }
+
         btnFinalizar.disabled = true;
 
         try {
@@ -1190,6 +1294,16 @@ formResolver.addEventListener(
                 observacion
             );
 
+            formData.append(
+                "costo_materiales",
+                materiales
+            );
+
+            formData.append(
+                "costo_mano_obra",
+                manoObra
+            );
+
             const response =
                 await apiFetchConCsrf(
                     `/api/proveedor/reclamos/${reclamoActual.id}/finalizar`,
@@ -1203,7 +1317,12 @@ formResolver.addEventListener(
                 await response.json();
 
             if (!response.ok) {
+                const primerError = Object.values(datos.errors || {})
+                    .flat()
+                    .find(Boolean);
+
                 throw new Error(
+                    primerError ||
                     datos.message ||
                     "No se pudo finalizar el reclamo."
                 );

@@ -59,79 +59,102 @@ export class Cuenta {
         if(this.$btn_cuenta) this.$btn_cuenta.classList.add("active");
 
         this.Main.innerHTML = `
-            <div class="vista-cuenta">
-                <div class="div-inicial">
-                    <h2>Cuenta</h2>
+            <section class="vista-cuenta cuenta-usuario-vista">
+                <div class="cuenta-usuario-card">
+                    <div class="cuenta-usuario-contenido">
+                        <div class="cuenta-usuario-cargando">Cargando información de la cuenta...</div>
+                    </div>
                 </div>
-                <p>Cargando información de la cuenta...</p>
-            </div>
+            </section>
         `;
+
+        const vistaCuenta = this.Main.querySelector(".cuenta-usuario-vista");
 
         const usuario = await this.obtener_informacion_cuenta();
 
-        if (!usuario) {
+        if (!usuario || !vistaCuenta?.isConnected) {
             return;
         }
 
-        this.Main.innerHTML = `
-            <div class="vista-cuenta">
-                <div class="div-inicial">
-                    <h2>Cuenta</h2>
+        vistaCuenta.querySelector(".cuenta-usuario-contenido").innerHTML = `
+            <div class="cuenta-usuario-encabezado">
+                <div class="perfil-avatar">
+                    <span class="material-symbols-outlined" aria-hidden="true">person</span>
                 </div>
-
-                <div class="perfil-card">
-                    <div class="perfil-avatar">
-                        <span class="material-symbols-outlined">person</span>
-                    </div>
-                    <p class="perfil-nombre"></p>
-                    <p class="perfil-telefono">
-                        <span class="material-symbols-outlined">badge</span>
-                        <span class="perfil-cedula"></span>
-                    </p>
-                    <div class="perfil-badge">
-                        <span class="material-symbols-outlined">account_circle</span>
-                        <span class="perfil-rol"></span>
-                    </div>
-                </div>
-
-                <div class="perfil-stats">
-                    <button class="stat-item" data-filtro="todos">
-                        <p class="stat-numero" data-estadistica="total">…</p>
-                        <p class="stat-label">Reclamos totales</p>
-                    </button>
-                    <button class="stat-item" data-filtro="resueltos">
-                        <p class="stat-numero" data-estadistica="resueltos">…</p>
-                        <p class="stat-label">Resueltos</p>
-                    </button>
-                    <button class="stat-item" data-filtro="proceso">
-                        <p class="stat-numero" data-estadistica="en_proceso">…</p>
-                        <p class="stat-label">En proceso</p>
-                    </button>
-                </div>
-
-                <div class="cuenta-opciones">
-                    <button class="cuenta-opcion cerrar-sesion" id="btn-cerrar-sesion">
-                        <span class="material-symbols-outlined">logout</span>
-                        Cerrar sesión
-                    </button>
+                <div>
+                    <h2 id="cuenta-usuario-titulo">Mi cuenta</h2>
+                    <p>Información de tu cuenta de edificio</p>
                 </div>
             </div>
+
+            <div class="cuenta-usuario-datos">
+                <div class="cuenta-usuario-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                    <div><small>Nombre completo</small><strong class="perfil-nombre"></strong></div>
+                </div>
+                <div class="cuenta-usuario-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">badge</span>
+                    <div><small>Cédula</small><strong class="perfil-cedula"></strong></div>
+                </div>
+                <div class="cuenta-usuario-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">phone</span>
+                    <div><small>Teléfono</small><strong class="perfil-telefono"></strong></div>
+                </div>
+                <div class="cuenta-usuario-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+                    <div><small>Correo electrónico</small><strong class="perfil-email"></strong></div>
+                </div>
+                <div class="cuenta-usuario-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+                    <div><small>Rol</small><strong class="perfil-rol"></strong></div>
+                </div>
+                <div class="cuenta-usuario-dato">
+                    <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
+                    <div><small>Estado de la cuenta</small><strong class="perfil-estado"></strong></div>
+                </div>
+            </div>
+
+            <div class="perfil-stats">
+                <button class="stat-item" data-filtro="todos">
+                    <p class="stat-numero" data-estadistica="total">…</p>
+                    <p class="stat-label">Reclamos totales</p>
+                </button>
+                <button class="stat-item" data-filtro="resueltos">
+                    <p class="stat-numero" data-estadistica="resueltos">…</p>
+                    <p class="stat-label">Resueltos</p>
+                </button>
+                <button class="stat-item" data-filtro="proceso">
+                    <p class="stat-numero" data-estadistica="en_proceso">…</p>
+                    <p class="stat-label">En proceso</p>
+                </button>
+            </div>
+
+            <button class="cuenta-opcion cerrar-sesion" id="btn-cerrar-sesion">
+                <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+                Cerrar sesión
+            </button>
         `;
 
-        this.Main.querySelector(".perfil-nombre").textContent =
+        vistaCuenta.querySelector(".perfil-nombre").textContent =
             usuario.nombre || "Nombre no disponible";
-
-        this.Main.querySelector(".perfil-cedula").textContent =
-            usuario.cedula ? `Cédula: ${usuario.cedula}` : "Cédula no disponible";
-
-        this.Main.querySelector(".perfil-rol").textContent =
+        vistaCuenta.querySelector(".perfil-cedula").textContent =
+            usuario.cedula || "No disponible";
+        vistaCuenta.querySelector(".perfil-telefono").textContent =
+            usuario.telefono || "No registrado";
+        vistaCuenta.querySelector(".perfil-email").textContent =
+            usuario.email || "No registrado";
+        vistaCuenta.querySelector(".perfil-rol").textContent =
             this.obtener_nombre_rol(usuario.rol);
+        vistaCuenta.querySelector(".perfil-estado").textContent =
+            usuario.activo ? "Activa" : "Inactiva";
 
         try {
             const estadisticas = await this.obtenerEstadisticasReclamos();
 
+            if (!vistaCuenta.isConnected) return;
+
             for (const [campo, valor] of Object.entries(estadisticas)) {
-                const elemento = this.Main.querySelector(
+                const elemento = vistaCuenta.querySelector(
                     `[data-estadistica="${campo}"]`
                 );
 
@@ -140,26 +163,27 @@ export class Cuenta {
                 }
             }
         } catch (error) {
+            if (!vistaCuenta.isConnected) return;
+
             console.error("Error obteniendo estadísticas de reclamos:", error);
-            this.Main.querySelectorAll("[data-estadistica]").forEach(elemento => {
+            vistaCuenta.querySelectorAll("[data-estadistica]").forEach(elemento => {
                 elemento.textContent = "—";
             });
             notify.error("No se pudieron actualizar las estadísticas de reclamos.");
         }
 
-        this.eventos();
+        this.eventos(vistaCuenta);
     }
 
-    
-
-eventos() {
-    this.Main.querySelectorAll(".stat-item").forEach(boton => {
+eventos(vistaCuenta) {
+    vistaCuenta.querySelectorAll(".stat-item").forEach(boton => {
         boton.addEventListener("click", () => {
-            this.irAInicioFiltrado(boton.dataset.filtro);
+            const filtro = boton.dataset.filtro;
+            this.irAInicioFiltrado(filtro);
         });
     });
 
-    const $btn_logout = this.Main.querySelector("#btn-cerrar-sesion");
+    const $btn_logout = vistaCuenta.querySelector("#btn-cerrar-sesion");
 
     if ($btn_logout) {
         $btn_logout.addEventListener(

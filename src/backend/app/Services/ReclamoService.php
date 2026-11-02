@@ -77,7 +77,8 @@ class ReclamoService
             'evidenciaOriginal',
             'clasificacion',
             'edificio',
-            'area'
+            'area',
+            'proveedor'
         ])
             ->where('usuario_cedula', $cedula);
 

@@ -13,11 +13,11 @@
 
     <link
         rel="stylesheet"
-        href="/proyecto-utu-2026/src/frontend/css/style-proveedores.css?v=20261016-7"
+        href="/proyecto-utu-2026/src/frontend/css/style-proveedores.css?v=20261027-1"
     >
     <link
         rel="stylesheet"
-        href="/proyecto-utu-2026/src/frontend/css/ui-common.css?v=20261016-3"
+        href="/proyecto-utu-2026/src/frontend/css/ui-common.css?v=20261027-1"
     >
 </head>
 
@@ -68,6 +68,8 @@
                 id="btn-cuenta"
                 class="header-account-button"
                 aria-label="Mi cuenta"
+                aria-controls="cuenta-panel"
+                aria-expanded="false"
                 title="Mi cuenta"
             >
                 <span class="material-symbols-outlined" aria-hidden="true">
@@ -271,6 +273,27 @@
 
                     </div>
 
+                    <div id="detalle-costos" class="detalle-costos oculto">
+                        <div class="detalle-costos-titulo">
+                            <span class="material-symbols-outlined" aria-hidden="true">payments</span>
+                            <h3>Costos registrados</h3>
+                        </div>
+                        <div class="detalle-costos-grid">
+                            <p>
+                                <span>Materiales</span>
+                                <strong id="detalle-costo-materiales"></strong>
+                            </p>
+                            <p>
+                                <span>Mano de obra</span>
+                                <strong id="detalle-costo-mano-obra"></strong>
+                            </p>
+                            <p class="detalle-costo-total">
+                                <span>Total</span>
+                                <strong id="detalle-costo-total"></strong>
+                            </p>
+                        </div>
+                    </div>
+
 
                     <div
                         id="aceptar-container"
@@ -322,6 +345,44 @@
 
                         </div>
 
+                        <div class="costos-resolucion">
+                            <div class="campo campo-costo">
+                                <label for="costo-materiales">
+                                    Costo de materiales
+                                </label>
+                                <div class="control-costo">
+                                    <span aria-hidden="true">$</span>
+                                    <input
+                                        type="text"
+                                        id="costo-materiales"
+                                        inputmode="decimal"
+                                        autocomplete="off"
+                                        placeholder="0,00"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="campo campo-costo">
+                                <label for="costo-mano-obra">
+                                    Costo de mano de obra
+                                </label>
+                                <div class="control-costo">
+                                    <span aria-hidden="true">$</span>
+                                    <input
+                                        type="text"
+                                        id="costo-mano-obra"
+                                        inputmode="decimal"
+                                        autocomplete="off"
+                                        placeholder="0,00"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="ayuda-costos">
+                            Ingresá los importes en pesos uruguayos. Podés usar coma o punto para los centésimos.
+                        </p>
+
 
                         <div class="campo">
 
@@ -353,66 +414,55 @@
             </div>
 
         </section>
-        <section id="cuenta-panel" class="oculto">
+        <section id="cuenta-panel" class="cuenta-proveedor-modal oculto" aria-hidden="true">
+            <button id="cuenta-proveedor-fondo" class="cuenta-proveedor-fondo" type="button" aria-label="Cerrar cuenta"></button>
 
-    <button id="btn-volver-cuenta" class="btn-volver">
-        ← Volver
-    </button>
+            <div class="cuenta-card" role="dialog" aria-modal="true" aria-labelledby="cuenta-proveedor-titulo">
+                <button id="btn-volver-cuenta" class="cuenta-proveedor-cerrar" type="button" aria-label="Cerrar cuenta">
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                </button>
 
-    <div class="cuenta-card">
+                <div class="cuenta-header">
+                    <div class="cuenta-icono">
+                        <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                    </div>
 
-        <div class="cuenta-header">
-            <div class="cuenta-icono">
-                <span class="material-symbols-outlined">
-                    person
-                </span>
+                    <div>
+                        <h2 id="cuenta-proveedor-titulo">Mi cuenta</h2>
+                        <p>Información de tu cuenta de proveedor</p>
+                    </div>
+                </div>
+
+                <div id="cuenta-mensaje" class="cuenta-mensaje oculto"></div>
+
+                <div class="cuenta-datos">
+                    <div class="cuenta-dato">
+                        <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                        <div><small>Nombre completo</small><strong id="cuenta-nombre">-</strong></div>
+                    </div>
+                    <div class="cuenta-dato">
+                        <span class="material-symbols-outlined" aria-hidden="true">badge</span>
+                        <div><small>Cédula</small><strong id="cuenta-cedula">-</strong></div>
+                    </div>
+                    <div class="cuenta-dato">
+                        <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+                        <div><small>Correo electrónico</small><strong id="cuenta-email">-</strong></div>
+                    </div>
+                    <div class="cuenta-dato">
+                        <span class="material-symbols-outlined" aria-hidden="true">phone</span>
+                        <div><small>Teléfono</small><strong id="cuenta-telefono">-</strong></div>
+                    </div>
+                    <div class="cuenta-dato">
+                        <span class="material-symbols-outlined" aria-hidden="true">handyman</span>
+                        <div><small>Proveedor</small><strong id="cuenta-proveedor">-</strong></div>
+                    </div>
+                    <div class="cuenta-dato">
+                        <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
+                        <div><small>Rol</small><strong id="cuenta-rol">Usuario proveedor</strong></div>
+                    </div>
+                </div>
             </div>
-
-            <div>
-                <h2>Mi cuenta</h2>
-                <p>Información de tu cuenta</p>
-            </div>
-        </div>
-
-        <div id="cuenta-mensaje" class="cuenta-mensaje oculto"></div>
-
-        <div class="cuenta-datos">
-
-            <div class="cuenta-dato">
-                <span>Nombre</span>
-                <strong id="cuenta-nombre">-</strong>
-            </div>
-
-            <div class="cuenta-dato">
-                <span>Cédula</span>
-                <strong id="cuenta-cedula">-</strong>
-            </div>
-
-            <div class="cuenta-dato">
-                <span>Correo electrónico</span>
-                <strong id="cuenta-email">-</strong>
-            </div>
-
-            <div class="cuenta-dato">
-                <span>Teléfono</span>
-                <strong id="cuenta-telefono">-</strong>
-            </div>
-
-            <div class="cuenta-dato">
-                <span>Proveedor</span>
-                <strong id="cuenta-proveedor">-</strong>
-            </div>
-
-            <div class="cuenta-dato">
-                <span>Rol</span>
-                <strong id="cuenta-rol">Usuario proveedor</strong>
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
+        </section>
 
     </main>
 
@@ -421,7 +471,7 @@
     <script src="/proyecto-utu-2026/src/frontend/js/global-loading.js?v=20261022-2"></script>
     <script
         type="module"
-        src="/proyecto-utu-2026/src/frontend/js/DOM/proveedores.js?v=20261022-2"
+        src="/proyecto-utu-2026/src/frontend/js/DOM/proveedores.js?v=20261027-1"
     ></script>
 
 </body>
