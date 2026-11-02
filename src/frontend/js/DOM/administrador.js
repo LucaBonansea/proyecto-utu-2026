@@ -1249,30 +1249,31 @@ async function vistaClasificaciones() {
 
 /**
  * ============================================================================
- * CONCEPTO CLAVE: SECCIÓN PROVEEDORES (CRUD y Gestión de Estados)
+ *  SECCIÓN PROVEEDORES (Administración de proveedores)
  * ============================================================================
- * Explicación: Administra los proveedores mediante paginación, filtros por estado (Activo/Inactivo), 
- * un formulario de alta completa y botones para alternar su estado o ver detalles específicos.
  */
+//Inicializa la interfaz de proveedores, prepara la estructura visual y aplica los filtros locales por estado combinados con la paginación.
+//Cuando tocas el botón de proveedores, el código limpia la pantalla anterior, consulta la caché local, aplica este filtro de estado
+// y genera dinámicamente las tarjetas en columnas para mostrarlas de forma clara y estética en la interfaz.
+
 function vistaProveedores(){
     section.style.display = "grid";
     filtro_container.innerHTML = "";
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
     const hayProveedores = proveedores.length > 0;
 
-  const proveedoresFiltrados = proveedores.filter(p => {
-        const estadoProveedor = String(p.estado || "").toLowerCase().trim();
-        const filtroSeleccionado = String(filtroEstadoProveedor || "todos").toLowerCase().trim();
-
-        return filtroSeleccionado === "todos" || estadoProveedor === filtroSeleccionado;
-    });
-
+    const proveedoresFiltrados = proveedores.filter(p =>
+        filtroEstadoProveedor === "todos" ||
+        p.estado === filtroEstadoProveedor
+    );
     const paginacion = paginarElementos(
         proveedoresFiltrados,
         paginaProveedores
     );
     paginaProveedores = paginacion.paginaActual;
 
+    //Gestión de Creación: Contiene los campos del proveedor (RUT, razón social, nombre comercial, contactos y teléfonos) junto con los botones de Guardar (para validar y registrar la nueva empresa) y Cancelar (para ocultar el formulario sin guardar cambios).
+    //Listado y Filtros: Muestra la botonera de filtros (Todos, Activos, Inactivos) y las tarjetas individuales con la información de los proveedores que ya están cargados en el sistema, preservando el historial de la intendencia.
     section.innerHTML = `
         <div class="lista-proveedores">
 
@@ -1300,8 +1301,6 @@ function vistaProveedores(){
 
             </div>` : ""}
 
-
-          
 
             <div class="form-proveedor oculto">
 
@@ -1431,7 +1430,7 @@ function vistaProveedores(){
                 }
 
             </div>
-
+         
             ${hayProveedores ? `<div class="paginacion-proveedores-admin">
                 ${renderPaginacionAdministrador(
                     proveedoresFiltrados.length,
@@ -1444,7 +1443,8 @@ function vistaProveedores(){
 
         </div>
     `;
-
+//Un operador ternario evalúa si existen registros (hayProveedores) para mostrar la paginación calculada. Al hacer clic en un filtro de estado, 
+//el sistema activa visualmente el botón seleccionado, resetea la paginación a la página 1 para evitar desfasajes y vuelve a invocar vistaProveedores() para refrescar la pantalla.
     document
         .querySelectorAll(".filtro-estado-btn")
         .forEach(boton => {
@@ -1470,6 +1470,8 @@ function vistaProveedores(){
             vistaProveedores();
         }
     );
+    //Utiliza document.querySelector para capturar todos los campos del formulario (inputs de texto) y sus botones de control.
+    //Mediante un addEventListener y el método .toggle("oculto"), el sistema funciona como un interruptor que muestra u oculta el formulario de alta según la interacción del usuario.
     const btnAgregar =
         document.querySelector(".btn-agregar-proveedor");
 
@@ -1527,7 +1529,8 @@ function vistaProveedores(){
     });
 
 
-
+//guardar recolecta los datos de los inputs, bloquea temporalmente el botón (disabled) para evitar doble envíos, empaqueta la información en formato JSON hacia el backend y, según la respuesta del servidor, dispara una notificación de éxito 
+//(ocultando el formulario y actualizando la grilla) o una alerta de error si algo falló.
     btnGuardar.addEventListener("click", async () => {
 
         const nombre =
@@ -1678,7 +1681,8 @@ function vistaProveedores(){
 
 }
 
-
+//El botón de detalle utiliza el identificador único (id) del proveedor para invocar vistaDetalleProveedor y abrir su ficha completa. Por su parte, 
+//el botón de alternar estado permite cambiar de forma segura la situación del proveedor (activo/inactivo) sin perder el historial en el sistema.
 function renderCardProveedor(p){
 
     const usuariosDelProveedor =
