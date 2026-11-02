@@ -21,7 +21,7 @@ export const obtenerAreas = edificioId => obtenerListado(
     edificioId ? `/api/areas?edificio_id=${encodeURIComponent(edificioId)}` : "/api/areas"
 );
 export const obtenerUsuarios = () => obtenerListado("/api/usuarios");
-export const obtenerProveedores = () => obtenerListado("/api/proveedores");
+export const obtenerProveedores = () => obtenerListado("/api/admin/proveedores");
 export const obtenerClasificaciones = () =>
     obtenerListado("/api/clasificaciones");
 export const obtenerReclamosAdministrador = () => apiFetch("/api/admin/reclamos", {

@@ -9,6 +9,7 @@ const $form_login = document.querySelector(".login-form");
 const $input_ci = document.querySelector(".ci-input");
 const $input_password = document.querySelector(".pass-input");
 const $btn_login = document.querySelector(".btn-login");
+const $btn_toggle_pass = document.querySelector(".toggle-pass");
 const $link_politicas = document.querySelector(".politicas-link");
 const $modal_politicas = document.querySelector(".politicas-modal");
 const $btn_cerrar_modal = document.querySelector(".politicas-cerrar");
@@ -26,6 +27,19 @@ let cancelando_acceso = false;
 $input_ci.addEventListener("input", () => $input_ci.classList.remove("error"));
 $input_password.addEventListener("input", () => $input_password.classList.remove("error"));
 $form_login.addEventListener("submit", manejarLogin);
+
+if ($btn_toggle_pass && $input_password) {
+    $btn_toggle_pass.addEventListener("click", () => {
+        const esPassword = $input_password.type === "password";
+        $input_password.type = esPassword ? "text" : "password";
+        $btn_toggle_pass.classList.toggle("activo", esPassword);
+        $btn_toggle_pass.setAttribute(
+            "aria-label",
+            esPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+        );
+    });
+}
+
 $link_politicas.addEventListener("click", () => abrirModalPoliticas("lectura"));
 $checkbox_politicas.addEventListener("change", () => {
     $btn_aceptar.disabled = !$checkbox_politicas.checked;

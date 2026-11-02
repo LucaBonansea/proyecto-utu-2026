@@ -8,6 +8,11 @@ class ProveedorService
 {
     public function obtenerTodos()
     {
+        return Proveedor::all();
+    }
+
+    public function obtenerActivos()
+    {
         return Proveedor::where('estado', 'Activo')->get();
     }
 
