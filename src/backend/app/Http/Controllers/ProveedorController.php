@@ -14,6 +14,13 @@ class ProveedorController extends Controller
 {
     public function index(ProveedorService $proveedorService)
     {
+        $proveedores = $proveedorService->obtenerActivos();
+
+        return response()->json($proveedores);
+    }
+
+    public function indexAdmin(ProveedorService $proveedorService)
+    {
         $proveedores = $proveedorService->obtenerTodos();
 
         return response()->json($proveedores);

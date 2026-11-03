@@ -2152,7 +2152,7 @@ main{
 
 .contenedor-usuarios {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     align-items: start;
     gap: 15px;
 }
@@ -4469,6 +4469,9 @@ main{
     border-radius: 20px;
     background: var(--bg-surface);
     box-sizing: border-box;
+}
+.filtro-rol-usuarios{
+    border-radius: 100px!important;
 }
 
 .admin-page .selector-estado-reclamos select,
