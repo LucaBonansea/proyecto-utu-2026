@@ -1182,6 +1182,10 @@ async function vistaClasificaciones() {
     const formulario = section.querySelector(".form-clasificacion-admin");
     const input = formulario.querySelector("input");
     const boton = formulario.querySelector("button");
+    
+    input.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
+    });
 
     const cargarClasificaciones = async () => {
         const contenedor = section.querySelector(".contenedor-clasificaciones-admin");
@@ -1338,6 +1342,7 @@ function vistaProveedores(){
                         <input
                             class="telefono-proveedor"
                             type="text"
+                            maxlength="8"
                             placeholder="Ej. 4342 5678"
                         >
                     </div>
@@ -1375,6 +1380,7 @@ function vistaProveedores(){
                         <input
                             class="telefono-contacto-proveedor"
                             type="text"
+                            maxlength="9"
                             placeholder="Teléfono del responsable"
                         >
                     </div>
@@ -1497,6 +1503,10 @@ function vistaProveedores(){
     const telefonoInput =
         document.querySelector(".telefono-proveedor");
 
+      telefonoInput.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
+
     const direccionInput =
         document.querySelector(".direccion-proveedor");
 
@@ -1508,6 +1518,10 @@ function vistaProveedores(){
 
     const telefonoContactoInput =
         document.querySelector(".telefono-contacto-proveedor");
+
+        telefonoContactoInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
 
     const emailContactoInput =
         document.querySelector(".email-contacto-proveedor");

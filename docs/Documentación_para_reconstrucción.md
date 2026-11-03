@@ -307,7 +307,7 @@ frontend-beta   Up (healthy)
 Puertos actuales:
 
 ```text
-frontend-beta   0.0.0.0:80->80/tcp
+frontend-beta   0.0.0.0:5501->80/tcp
 backend         8000/tcp
 database        3306/tcp
 ```
