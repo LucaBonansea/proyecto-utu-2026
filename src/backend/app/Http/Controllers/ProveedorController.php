@@ -89,15 +89,20 @@ class ProveedorController extends Controller
     }
 
     $reclamos = Reclamo::where('proveedor_id', $usuario->proveedor_id)
+        ->whereIn('estado', [
+            'aceptado',
+            'en_proceso',
+            'completado',
+            'rechazada',
+        ])
         ->with([
-            'usuario',
             'edificio',
             'clasificacion',
             'evidencia',
-            'proveedor',
             'area'
         ])
-        ->latest()
+        ->orderByDesc('created_at')
+        ->orderByDesc('id')
         ->get();
 
     return response()->json([

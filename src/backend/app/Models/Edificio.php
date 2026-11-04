@@ -27,4 +27,9 @@ class Edificio extends Model
     {
         return $this->hasMany(Area::class);
     }
+
+    public function reclamos()
+    {
+        return $this->hasMany(Reclamo::class);
+    }
 }

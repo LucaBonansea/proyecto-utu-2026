@@ -61,18 +61,25 @@ class Notificaciones {
         this.lista = lista;
         this.alSeleccionarReclamo = alSeleccionarReclamo;
         this.notificaciones = [];
+        this.totalNoLeidas = 0;
         this.idsConocidos = new Set();
         this.cargaInicial = true;
+        this.cargando = false;
         this.timer = null;
         this.estadoPermisoError = "";
     }
 
     async inicializar() {
         await this.cargar();
-        this.timer = window.setInterval(() => this.cargar(), 60000);
+        this.timer = window.setInterval(() => {
+            if (!document.hidden) this.cargar();
+        }, 60000);
     }
 
     async cargar() {
+        if (this.cargando) return;
+        this.cargando = true;
+
         try {
             const respuesta = await obtenerNotificaciones();
             if (!respuesta.ok) {
@@ -85,6 +92,9 @@ class Notificaciones {
                 ...notificacion,
                 leida: Boolean(notificacion.leida)
             }));
+            this.totalNoLeidas = Number.isInteger(Number(datos.total_no_leidas))
+                ? Number(datos.total_no_leidas)
+                : notificaciones.filter((notificacion) => !notificacion.leida).length;
 
             this.mostrarNuevasNotificaciones(notificaciones);
             const huboCambios = JSON.stringify(notificaciones) !== JSON.stringify(this.notificaciones);
@@ -97,6 +107,8 @@ class Notificaciones {
             this.cargaInicial = false;
         } catch (error) {
             console.error("Error cargando notificaciones:", error);
+        } finally {
+            this.cargando = false;
         }
     }
 
@@ -120,7 +132,7 @@ class Notificaciones {
     }
 
     actualizarBadge() {
-        const noLeidas = this.notificaciones.filter((notificacion) => !notificacion.leida).length;
+        const noLeidas = this.totalNoLeidas;
         let badge = this.boton.querySelector(".notificacion-badge");
 
         if (noLeidas === 0) {
@@ -166,7 +178,7 @@ class Notificaciones {
     }
 
     renderizarLista() {
-        const cantidadNoLeidas = this.notificaciones.filter((notificacion) => !notificacion.leida).length;
+        const cantidadNoLeidas = this.totalNoLeidas;
         const acciones = cantidadNoLeidas > 0
             ? '<button class="notificaciones-marcar-todas" type="button">Marcar todas como leídas</button>'
             : "";
@@ -235,6 +247,9 @@ class Notificaciones {
 
     async marcarLeida(id) {
         try {
+            const eraNoLeida = this.notificaciones.some((notificacion) =>
+                Number(notificacion.id) === id && !notificacion.leida
+            );
             const respuesta = await marcarNotificacionLeida(id);
             if (!respuesta.ok) {
                 throw new Error(`No se pudo marcar la notificación como leída (HTTP ${respuesta.status}).`);
@@ -245,6 +260,7 @@ class Notificaciones {
                     ? { ...notificacion, leida: true }
                     : notificacion
             );
+            if (eraNoLeida && this.totalNoLeidas > 0) this.totalNoLeidas -= 1;
             this.actualizarBadge();
             this.renderizarLista();
         } catch (error) {
@@ -263,6 +279,7 @@ class Notificaciones {
                 ...notificacion,
                 leida: true
             }));
+            this.totalNoLeidas = 0;
             this.actualizarBadge();
             this.renderizarLista();
         } catch (error) {

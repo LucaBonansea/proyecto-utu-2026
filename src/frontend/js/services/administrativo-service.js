@@ -8,8 +8,8 @@ const obtenerListado = ruta => apiFetch(ruta, {
     }
 });
 
-export const obtenerReclamosAdministrativo = () =>
-    obtenerListado("/api/admin/reclamos");
+export const obtenerReclamosAdministrativo = (pagina = 1) =>
+    obtenerListado(`/api/admin/reclamos?page=${encodeURIComponent(pagina)}`);
 
 export const obtenerProveedoresAdministrativo = () =>
     obtenerListado("/api/proveedores");

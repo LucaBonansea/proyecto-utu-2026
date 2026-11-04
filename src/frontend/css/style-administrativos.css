@@ -1177,6 +1177,28 @@ main{
     min-width: 0;
 }
 
+.paginacion-administrativo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin: 28px 0;
+}
+
+.paginacion-administrativo button {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 9px 16px;
+    background: white;
+    color: #17324d;
+    cursor: pointer;
+}
+
+.paginacion-administrativo button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
 .btn-prioridad {
     border: none;
     border-radius: 10px;

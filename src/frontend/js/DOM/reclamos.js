@@ -2,6 +2,7 @@ import {
     cancelarReclamo,
     confirmarFinalizacion,
     rechazarFinalizacion,
+    obtenerReclamo,
     obtenerReclamos,
     obtenerUrlEvidencia
 } from "../services/reclamos-service.js";
@@ -141,27 +142,30 @@ export class Reclamos {
         this.renderCargando();
 
         try {
-            await this.cargarReclamos("todos", 1);
-            let encontrado = this.reclamos.some((reclamo) => (
-                Number(reclamo.id) === Number(reclamoId)
-            ));
+            const response = await obtenerReclamo(reclamoId);
 
-            for (
-                let pagina = 2;
-                pagina <= this.paginacion.ultima_pagina && !encontrado;
-                pagina += 1
-            ) {
-                await this.cargarReclamos("todos", pagina);
-                encontrado = this.reclamos.some((reclamo) => (
-                    Number(reclamo.id) === Number(reclamoId)
-                ));
-            }
-
-            if (!encontrado) {
+            if (response.status === 404) {
                 await this.second_view("todos", 1);
                 notify.warning("El reclamo asociado ya no está disponible.");
                 return;
             }
+
+            if (!response.ok) {
+                throw new Error(`La API respondió con estado ${response.status}`);
+            }
+
+            const data = await response.json();
+            this.reclamos = data.reclamo ? [data.reclamo] : [];
+            this.estadisticas = validarEstadisticas(data.estadisticas);
+            this.filtroActual = "todos";
+            this.paginacion = {
+                pagina_actual: 1,
+                ultima_pagina: 1,
+                por_pagina: 1,
+                total: this.reclamos.length,
+                desde: this.reclamos.length ? 1 : null,
+                hasta: this.reclamos.length ? 1 : null
+            };
 
             this.renderVista("todos");
             window.requestAnimationFrame(() => {

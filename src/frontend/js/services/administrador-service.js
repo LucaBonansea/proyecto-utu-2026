@@ -24,12 +24,23 @@ export const obtenerUsuarios = () => obtenerListado("/api/usuarios");
 export const obtenerProveedores = () => obtenerListado("/api/admin/proveedores");
 export const obtenerClasificaciones = () =>
     obtenerListado("/api/clasificaciones");
-export const obtenerReclamosAdministrador = () => apiFetch("/api/admin/reclamos", {
-    method: "GET",
-    credentials: "include",
-    cache: "no-store",
-    headers: { "Accept": "application/json" }
-});
+export const obtenerReclamosAdministrador = ({ pagina, busqueda, estado } = {}) => {
+    const parametros = new URLSearchParams();
+
+    if (pagina !== undefined) parametros.set("page", pagina);
+    if (busqueda) parametros.set("busqueda", busqueda);
+    if (estado && estado !== "todos") parametros.set("estado", estado);
+
+    const consulta = parametros.toString();
+    const ruta = `/api/admin/reclamos${consulta ? `?${consulta}` : ""}`;
+
+    return apiFetch(ruta, {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+        headers: { "Accept": "application/json" }
+    });
+};
 
 export const crearProveedor = datos =>
     enviarJsonConCsrf("/api/proveedores", "POST", datos);
