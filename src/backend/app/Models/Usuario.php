@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Edificio;
-use App\Models\Proveedor;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
 {
     use HasApiTokens, SoftDeletes;
+
     protected $table = 'usuarios';
 
     protected $primaryKey = 'cedula';
@@ -35,7 +33,7 @@ class Usuario extends Authenticatable
     ];
 
     protected $hidden = [
-        'password'
+        'password',
     ];
 
     protected $casts = [
@@ -58,5 +56,10 @@ class Usuario extends Authenticatable
     public function proveedor()
     {
         return $this->belongsTo(Proveedor::class, 'proveedor_id');
+    }
+
+    public function reclamos()
+    {
+        return $this->hasMany(Reclamo::class, 'usuario_cedula', 'cedula');
     }
 }

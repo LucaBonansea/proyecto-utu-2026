@@ -45,6 +45,12 @@ const cuentaEstado = document.getElementById("cuenta-administrativo-estado");
 // Reclamos pendientes en memoria.
 let reclamosAValidar = [];
 let usuarioActual = null;
+let proveedoresActivos = null;
+let paginacionReclamos = {
+    pagina_actual: 1,
+    ultima_pagina: 1,
+    total: 0
+};
 
 function completarCuenta(usuario) {
     cuentaNombre.textContent = usuario.nombre || "No registrado";
@@ -142,9 +148,9 @@ async function verificar_sesion() {
 // CARGA DE RECLAMOS
 // ============================================================================
 
-async function iniciarAplicacion() {
+async function iniciarAplicacion(pagina = 1) {
     try {
-        const request = await obtenerReclamosAdministrativo();
+        const request = await obtenerReclamosAdministrativo(pagina);
 
         if (!request.ok) {
             throw new Error(
@@ -157,6 +163,18 @@ async function iniciarAplicacion() {
         reclamosAValidar = Array.isArray(response.reclamos)
             ? response.reclamos
             : [];
+        paginacionReclamos = {
+            ...paginacionReclamos,
+            ...(response.paginacion || {})
+        };
+
+        if (
+            paginacionReclamos.total > 0
+            && pagina > paginacionReclamos.ultima_pagina
+        ) {
+            await iniciarAplicacion(paginacionReclamos.ultima_pagina);
+            return;
+        }
 
         vistaLista();
     } catch (error) {
@@ -321,6 +339,15 @@ function vistaLista() {
             `).join("")}
 
         </div>
+        ${paginacionReclamos.ultima_pagina > 1 ? `
+            <nav class="paginacion-administrativo" aria-label="Paginación de reclamos pendientes">
+                <button type="button" data-pagina="${paginacionReclamos.pagina_actual - 1}"
+                    ${paginacionReclamos.pagina_actual === 1 ? "disabled" : ""}>Anterior</button>
+                <span>Página ${paginacionReclamos.pagina_actual} de ${paginacionReclamos.ultima_pagina}</span>
+                <button type="button" data-pagina="${paginacionReclamos.pagina_actual + 1}"
+                    ${paginacionReclamos.pagina_actual === paginacionReclamos.ultima_pagina ? "disabled" : ""}>Siguiente</button>
+            </nav>
+        ` : ""}
     `;
 
     document.querySelectorAll(".reclamo-card-basica").forEach(card => {
@@ -330,6 +357,11 @@ function vistaLista() {
             .addEventListener("click", () => {
                 vistaDetalle(id);
             });
+    });
+    section.querySelectorAll(".paginacion-administrativo button").forEach(boton => {
+        boton.addEventListener("click", () => {
+            iniciarAplicacion(Number(boton.dataset.pagina));
+        });
     });
 }
 
@@ -446,22 +478,25 @@ async function vistaDetalle(id) {
     // CARGA DE PROVEEDORES
     // ========================================================================
 
-    let proveedores;
+    let proveedores = proveedoresActivos;
 
     try {
-        const requestProveedores =
-            await obtenerProveedoresAdministrativo();
+        if (!proveedores) {
+            const requestProveedores = await obtenerProveedoresAdministrativo();
 
-        if (!requestProveedores.ok) {
-            throw new Error(
-                `No se pudieron obtener los proveedores (HTTP ${requestProveedores.status}).`
-            );
-        }
+            if (!requestProveedores.ok) {
+                throw new Error(
+                    `No se pudieron obtener los proveedores (HTTP ${requestProveedores.status}).`
+                );
+            }
 
-        proveedores = await requestProveedores.json();
+            proveedores = await requestProveedores.json();
 
-        if (!Array.isArray(proveedores)) {
-            throw new Error("Formato de proveedores inesperado.");
+            if (!Array.isArray(proveedores)) {
+                throw new Error("Formato de proveedores inesperado.");
+            }
+
+            proveedoresActivos = proveedores;
         }
     } catch (error) {
         console.error("Error obteniendo proveedores:", error);
@@ -589,14 +624,10 @@ async function vistaDetalle(id) {
                 return;
             }
 
-            reclamosAValidar = reclamosAValidar.filter(
-                r => r.id != reclamo.id
-            );
-
             notify.success("Reclamo validado correctamente.");
 
             cerrarDetalle();
-            vistaLista();
+            await iniciarAplicacion(paginacionReclamos.pagina_actual);
 
         } catch (error) {
             console.error("Error actualizando reclamo:", error);

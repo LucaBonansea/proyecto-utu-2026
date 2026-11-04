@@ -33,6 +33,13 @@ export function obtenerReclamos({ pagina = 1, filtro = "todos" } = {}) {
     });
 }
 
+export function obtenerReclamo(id) {
+    return apiFetch(`/api/reclamos/${encodeURIComponent(id)}`, {
+        credentials: "include",
+        headers: { "Accept": "application/json" }
+    });
+}
+
 export function obtenerUrlEvidencia(rutaArchivo) {
     if (!rutaArchivo) {
         return "";

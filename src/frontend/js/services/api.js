@@ -1,4 +1,5 @@
 const USA_PROXY_DEL_CONTENEDOR = window.location.port === "5501";
+let preparacionCsrf = null;
 
 export const API_URL = USA_PROXY_DEL_CONTENEDOR
     ? window.location.origin
@@ -43,9 +44,17 @@ export async function prepararCsrf() {
 }
 
 export async function obtenerTokenCsrf() {
-    await prepararCsrf();
+    let token = obtenerCookie("XSRF-TOKEN");
 
-    const token = obtenerCookie("XSRF-TOKEN");
+    if (token) return token;
+
+    preparacionCsrf ??= prepararCsrf().finally(() => {
+        preparacionCsrf = null;
+    });
+
+    await preparacionCsrf;
+
+    token = obtenerCookie("XSRF-TOKEN");
 
     if (!token) {
         throw new Error("No se encontró el token CSRF");
