@@ -90,24 +90,6 @@ class UsuarioService
         return $usuario;
     }
 
-    public function actualizarRol(
-        string $cedula,
-        array $datos
-    ) {
-        $usuario = Usuario::findOrFail($cedula);
-
-        $usuario->update([
-            'rol' => $datos['rol'],
-        ]);
-
-        $this->sincronizarAsignaciones($usuario, $datos);
-
-        return $usuario->load([
-            'edificios',
-            'proveedor'
-        ]);
-    }
-
     public function desactivar(string $cedula): Usuario
     {
         $usuario = Usuario::findOrFail($cedula);
@@ -128,27 +110,10 @@ class UsuarioService
             }
 
             $usuario->edificios()->detach();
-            $usuario->delete();
+            $usuario->forceDelete();
 
             return $nuevoSuperAdmin?->fresh();
         });
     }
 
-    private function sincronizarAsignaciones(
-        Usuario $usuario,
-        array $datos
-    ): void {
-        $usuario->edificios()->sync(
-            $datos['rol'] === 'usuario_edificio'
-                ? ($datos['edificios'] ?? [])
-                : []
-        );
-
-        $usuario->proveedor_id =
-            $datos['rol'] === 'usuario_proveedor'
-                ? ($datos['proveedor'] ?? null)
-                : null;
-
-        $usuario->save();
-    }
 }
