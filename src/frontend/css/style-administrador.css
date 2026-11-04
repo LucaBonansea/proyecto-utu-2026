@@ -2158,8 +2158,8 @@ main{
 }
 
 .contenedor-usuarios-gestion {
-    grid-auto-rows: var(--altura-tarjeta-usuario, auto);
-    align-items: stretch;
+    grid-auto-rows: auto;
+    align-items: start;
 }
 
 .usuario-card {
@@ -2180,8 +2180,6 @@ main{
 
 .contenedor-usuarios-gestion .usuario-card {
     box-sizing: border-box;
-    height: 100%;
-    min-height: 0;
     justify-content: flex-start;
     overflow: hidden;
 }
@@ -5381,6 +5379,38 @@ body.editor-usuario-modal-abierto {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
+}
+
+.modal-editor-usuario .edificios-editor-usuario {
+    display: grid;
+    grid-column: 1 / -1;
+    gap: 7px;
+    min-width: 0;
+}
+
+.modal-editor-usuario .edificios-editor-titulo {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.modal-editor-usuario .edificios-editor-usuario .checkboxes-edificios-cambio {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 160px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.modal-editor-usuario .edificios-editor-usuario .checkbox-edificio {
+    margin: 0;
+    font-size: 12px;
+}
+
+@media (max-width: 520px) {
+    .modal-editor-usuario .edificios-editor-usuario .checkboxes-edificios-cambio {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 .modal-editor-usuario .usuario-tipo-editor .asociacion-rol-editor {
