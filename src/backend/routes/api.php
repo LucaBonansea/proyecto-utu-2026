@@ -47,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/edificios', [EdificioController::class, 'store']);
             // Crear proveedor
             Route::post('/proveedores', [ProveedorController::class, 'store']);
+            // Listar proveedores de ambos estados para el administrador
+            Route::get('/admin/proveedores', [ProveedorController::class, 'indexAdmin']);
             // Activar o desactivar un proveedor
             Route::put('/proveedores/{id}/estado', [ProveedorController::class, 'cambiarEstado']);
             // Crear clasificación de reclamos
