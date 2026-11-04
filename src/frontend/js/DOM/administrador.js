@@ -1760,7 +1760,8 @@ function renderCardProveedor(p){
     `;
 
 }
-// Envía el cambio de estado al backend y sincroniza la vista local.
+//La función envía el id del proveedor al backend, espera la respuesta y valida que sea exitosa (response.ok). Si hay un error, lo notifica; si es correcto, ejecuta una sincronización llamando a cargarProveedores() y redibujando la grilla con vistaProveedores(),
+//asegurando que la interfaz refleje el cambio de inmediato.
 async function cambiarEstadoProveedor(id) {
 
     try {
@@ -1797,7 +1798,8 @@ async function cambiarEstadoProveedor(id) {
 
 }
 
-
+//La función vistaDetalleProveedor busca el registro específico y sus usuarios relacionados, genera dinámicamente el HTML de la ventana emergente con toda la ficha técnica y gestiona los eventos de cierre (mediante botones, 
+//clic en el fondo o la tecla Escape) para mantener una interfaz limpia y accesible.
 function vistaDetalleProveedor(id, disparador){
 
     const proveedor =
@@ -1893,7 +1895,7 @@ function vistaDetalleProveedor(id, disparador){
 
 /**
  * ============================================================================
- * CONCEPTO CLAVE: SECCIÓN EDIFICIOS (Listado y Detalle con Usuarios)
+}   SECCIÓN EDIFICIOS 
  * ============================================================================
  * Explicación: Permite registrar nuevos edificios y consultar su información detallada, 
  * filtrando qué usuarios de tipo edificio están vinculados a cada sede.
@@ -2841,7 +2843,7 @@ function vistaUsuarios(filtro = "") {
                             </option>
 
                             ${
-                                proveedores.filter(p => p.estado === "Activo").map(p => `
+                                proveedores.map(p => `
                                     <option value="${p.id}">
                                         ${p.nombre}
                                     </option>
