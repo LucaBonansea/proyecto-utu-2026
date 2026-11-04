@@ -176,40 +176,7 @@ class UsuarioController extends Controller
         ]);
     }
 
-    public function updateRol(
-        Request $request,
-        string $cedula,
-        UsuarioService $usuarioService
-    ) {
-        $usuario = Usuario::findOrFail($cedula);
-
-        $datos = $request->validate([
-            'password_actual' => ['required', 'string'],
-            ...$this->reglasAsignacion(),
-        ]);
-
-        if (!$this->puedeCambiarRol(
-            $request->user(),
-            $usuario,
-            $datos['rol']
-        )) {
-            return response()->json([
-                'message' => 'Solo el administrador superior puede asignar o modificar administradores.',
-            ], 403);
-        }
-
-        $this->validarPasswordActual($request->user(), $datos['password_actual']);
-
-        $usuario = $usuarioService->actualizarRol(
-            $cedula,
-            $datos
-        );
-
-        return response()->json([
-            'message' => 'Usuario actualizado correctamente',
-            'usuario' => $usuario,
-        ]);
-    }
+    
 
     public function desactivar(
         Request $request,
@@ -226,7 +193,7 @@ class UsuarioController extends Controller
 
         if ($usuarioObjetivo->es_super_admin) {
             return response()->json([
-                'message' => 'El administrador superior debe transferir su permiso antes de eliminarse.',
+                'message' => 'El administrador superior debe transferir su permiso antes de desactivarse.',
             ], 422);
         }
 
@@ -266,7 +233,7 @@ class UsuarioController extends Controller
             $administradorActual->cedula !== $usuario->cedula
         ) {
             return response()->json([
-                'message' => 'El administrador superior solo puede eliminar su propia cuenta.',
+                'message' => 'No puedes eliminar la cuenta de otro administrador superior.',
             ], 403);
         }
 
@@ -368,26 +335,4 @@ class UsuarioController extends Controller
         return true;
     }
 
-    private function puedeCambiarRol(
-        Usuario $administradorActual,
-        Usuario $usuarioObjetivo,
-        string $nuevoRol
-    ): bool {
-        if ($usuarioObjetivo->es_super_admin) {
-            return $administradorActual->cedula === $usuarioObjetivo->cedula &&
-                $nuevoRol === 'administrador';
-        }
-
-        if (
-            $usuarioObjetivo->rol === 'administrador' ||
-            $nuevoRol === 'administrador'
-        ) {
-            return $administradorActual->es_super_admin || (
-                $administradorActual->cedula === $usuarioObjetivo->cedula &&
-                $nuevoRol === $usuarioObjetivo->rol
-            );
-        }
-
-        return true;
-    }
 }
