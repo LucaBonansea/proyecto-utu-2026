@@ -37,6 +37,7 @@ import { inicializarTema } from '../theme.js';
 import { inicializarNotificaciones } from './notifications.js';
 import {
     actualizarUsuario,
+    cambiarRolUsuario,
     cambiarEstadoProveedor as actualizarEstadoProveedor,
     cambiarPasswordUsuario,
     crearArea,
@@ -97,7 +98,6 @@ const LIMITE_PAGINACION_ADMIN = 6;
 let paginaReclamos = 1;
 let paginaProveedores = 1;
 let paginaEdificios = 1;
-let observadorAlturaUsuarios = null;
 let intervaloEstadisticas = null;
 let generacionEstadisticas = 0;
 let observadorWidgetsEstadisticas = null;
@@ -3020,48 +3020,6 @@ function vistaUsuarios(filtro = "") {
     const contenedor =
         document.querySelector(".contenedor-usuarios");
 
-    const igualarAlturaTarjetas = () => {
-        const tarjetas = Array.from(
-            contenedor.querySelectorAll(".usuario-card")
-        );
-
-        if (!tarjetas.length || contenedor.querySelector(".usuario-card-editando")) {
-            return;
-        }
-
-        contenedor.style.removeProperty("--altura-tarjeta-usuario");
-        tarjetas.forEach(tarjeta => {
-            tarjeta.style.height = "auto";
-        });
-
-        const alturaMaxima = Math.max(
-            ...tarjetas.map(tarjeta => Math.ceil(tarjeta.getBoundingClientRect().height))
-        );
-
-        tarjetas.forEach(tarjeta => {
-            tarjeta.style.removeProperty("height");
-        });
-        contenedor.style.setProperty(
-            "--altura-tarjeta-usuario",
-            `${alturaMaxima}px`
-        );
-    };
-
-    observadorAlturaUsuarios?.disconnect();
-    let anchoContenedorUsuarios = Math.round(contenedor.getBoundingClientRect().width);
-    observadorAlturaUsuarios = new ResizeObserver(() => {
-        const nuevoAncho = Math.round(contenedor.getBoundingClientRect().width);
-
-        if (nuevoAncho === anchoContenedorUsuarios) {
-            return;
-        }
-
-        anchoContenedorUsuarios = nuevoAncho;
-        requestAnimationFrame(igualarAlturaTarjetas);
-    });
-    observadorAlturaUsuarios.observe(contenedor);
-
-
     // ==========================================
     // MOSTRAR FORMULARIO
     // ==========================================
@@ -3475,6 +3433,9 @@ function vistaUsuarios(filtro = "") {
                     usuario.rol === "usuario_edificio"
                         ? (usuario.edificios || [])
                         : [];
+                const idsEdificiosUsuario = new Set(
+                    edificiosDelUsuario.map(edificio => Number(edificio.id))
+                );
 
                 const edificioPrincipal = edificiosDelUsuario[0] || null;
                 const edificiosAdicionales = edificiosDelUsuario.slice(1);
@@ -3685,6 +3646,22 @@ function vistaUsuarios(filtro = "") {
 
                             ${resumenEdificios}
 
+                            ${usuario.rol === "usuario_edificio" ? `
+                                <div class="edificios-editor-usuario oculto" role="group" aria-label="Edificios asignados al usuario">
+                                    <span class="edificios-editor-titulo">Edificios asignados</span>
+                                    <div class="checkboxes-edificios-cambio">
+                                        ${edificios.length ? edificios.map(edificio => `
+                                            <label class="checkbox-edificio">
+                                                <input type="checkbox" class="chk-edificio-cambio"
+                                                    value="${escaparHtml(edificio.id)}"
+                                                    ${idsEdificiosUsuario.has(Number(edificio.id)) ? "checked" : ""}>
+                                                <span>${escaparHtml(edificio.nombre)}</span>
+                                            </label>
+                                        `).join("") : '<p class="sin-asociacion-rol">No se pudieron cargar los edificios.</p>'}
+                                    </div>
+                                </div>
+                            ` : ""}
+
                         </div>
 
                         ${estaProtegido ? `
@@ -3847,6 +3824,8 @@ function vistaUsuarios(filtro = "") {
                 const inputEditarTelefono = card.querySelector(".editar-telefono");
                 const inputEditarEmail = card.querySelector(".editar-email");
                 const selectEditarActivo = card.querySelector(".editar-activo");
+                const editorEdificios = card.querySelector(".edificios-editor-usuario");
+                const checkboxesEdificios = card.querySelectorAll(".chk-edificio-cambio");
                 const nuevaPasswordInput = card.querySelector(".nueva-password");
                 const confirmarPasswordInput = card.querySelector(".confirmar-password");
                 const campoConfirmarPassword = card.querySelector(".campo-confirmar-password");
@@ -4077,6 +4056,11 @@ function vistaUsuarios(filtro = "") {
                         inputEditarTelefono.value = usuario.telefono || "";
                         inputEditarEmail.value = usuario.email || "";
                         selectEditarActivo.value = usuario.activo ? "1" : "0";
+                        checkboxesEdificios.forEach(checkbox => {
+                            checkbox.checked = (usuario.edificios || []).some(
+                                edificio => Number(edificio.id) === Number(checkbox.value)
+                            );
+                        });
                     }
 
                     modoEditorActivo = activo ? modo : null;
@@ -4105,6 +4089,7 @@ function vistaUsuarios(filtro = "") {
                         panelPasswordEditor.classList.toggle("oculto", modo !== "password");
                         datosVisuales.forEach(dato => dato.classList.toggle("oculto", modo === "datos"));
                         camposEdicion.forEach(campo => campo.classList.toggle("oculto", modo !== "datos"));
+                        editorEdificios?.classList.toggle("oculto", modo !== "datos");
 
                         if (modo === "datos") {
                             inputEditarNombre.focus();
@@ -4119,6 +4104,7 @@ function vistaUsuarios(filtro = "") {
                         );
                         datosVisuales.forEach(dato => dato.classList.remove("oculto"));
                         camposEdicion.forEach(campo => campo.classList.add("oculto"));
+                        editorEdificios?.classList.add("oculto");
                         nuevaPasswordInput.value = "";
                         confirmarPasswordInput.value = "";
                         campoConfirmarPassword.classList.remove("oculto");
@@ -4132,7 +4118,6 @@ function vistaUsuarios(filtro = "") {
                         });
                         limpiarMensajeEditor();
                         cerrarModalEditor();
-                        requestAnimationFrame(igualarAlturaTarjetas);
                     }
                 };
 
@@ -4219,6 +4204,20 @@ function vistaUsuarios(filtro = "") {
                     const telefono = inputEditarTelefono.value.trim();
                     const email = inputEditarEmail.value.trim();
                     const activo = selectEditarActivo.value === "1";
+                    const edificiosSeleccionados = Array.from(checkboxesEdificios)
+                        .filter(checkbox => checkbox.checked)
+                        .map(checkbox => Number(checkbox.value));
+                    const edificiosAnteriores = (usuario.edificios || [])
+                        .map(edificio => Number(edificio.id));
+                    const cambiaronEdificios = usuario.rol === "usuario_edificio" && checkboxesEdificios.length > 0 && (
+                        edificiosSeleccionados.length !== edificiosAnteriores.length ||
+                        edificiosSeleccionados.some(id => !edificiosAnteriores.includes(id))
+                    );
+
+                    if (usuario.rol === "usuario_edificio" && checkboxesEdificios.length > 0 && edificiosSeleccionados.length === 0) {
+                        mostrarMensajeEditor("advertencia", "Selecciona al menos un edificio para el usuario.");
+                        return;
+                    }
 
                     if (!nombre) {
                         mostrarMensajeEditor("advertencia", "El nombre es obligatorio.");
@@ -4250,6 +4249,7 @@ function vistaUsuarios(filtro = "") {
                         password_actual: passwordActual
                     };
 
+                    let usuarioGuardado = null;
                     try {
                         btnConfirmarEdicionUsuario.disabled = true;
                         iconoConfirmarEdicion.textContent = "hourglass_top";
@@ -4261,7 +4261,23 @@ function vistaUsuarios(filtro = "") {
                             throw new Error(dataDatos.errors?.password_actual?.[0] || dataDatos.message || "No se pudo actualizar el usuario.");
                         }
 
-                        const usuarioActualizado = dataDatos.usuario;
+                        usuarioGuardado = dataDatos.usuario;
+                        let usuarioActualizado = dataDatos.usuario;
+
+                        if (cambiaronEdificios) {
+                            const responseRol = await cambiarRolUsuario(usuario.cedula, {
+                                rol: "usuario_edificio",
+                                edificios: edificiosSeleccionados,
+                                password_actual: passwordActual
+                            });
+                            const dataRol = await responseRol.json().catch(() => ({}));
+
+                            if (!responseRol.ok) {
+                                throw new Error(dataRol.errors?.edificios?.[0] || dataRol.errors?.password_actual?.[0] || dataRol.message || "No se pudieron actualizar los edificios.");
+                            }
+
+                            usuarioActualizado = dataRol.usuario;
+                        }
 
                         const indice = usuarios.findIndex(item =>
                             String(item.cedula) === String(usuario.cedula)
@@ -4281,7 +4297,25 @@ function vistaUsuarios(filtro = "") {
                         renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
                     } catch (error) {
                         console.error("Error al actualizar usuario:", error);
-                        restaurarFormularioEditor(error.message || "No se pudo actualizar el usuario.");
+                        if (usuarioGuardado) {
+                            const indice = usuarios.findIndex(item =>
+                                String(item.cedula) === String(usuario.cedula)
+                            );
+                            if (indice !== -1) usuarios[indice] = usuarioGuardado;
+
+                            try {
+                                const respuestaUsuarios = await obtenerUsuarios();
+                                if (respuestaUsuarios.ok) usuarios = await respuestaUsuarios.json();
+                            } catch (errorCarga) {
+                                console.error("Error al recargar usuarios:", errorCarga);
+                            }
+
+                            cambiarModoEdicion(false);
+                            renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
+                            notify.error(`Se guardaron los datos personales, pero no los edificios: ${error.message || "Error de conexión."}`);
+                        } else {
+                            restaurarFormularioEditor(error.message || "No se pudo actualizar el usuario.");
+                        }
                     } finally {
                         btnConfirmarEdicionUsuario.disabled = false;
                         iconoConfirmarEdicion.textContent = "check";
@@ -4527,13 +4561,6 @@ function vistaUsuarios(filtro = "") {
                 });
 
             });
-
-        requestAnimationFrame(igualarAlturaTarjetas);
-        document.fonts?.ready.then(() => {
-            if (contenedor.isConnected) {
-                igualarAlturaTarjetas();
-            }
-        });
 
     }
 
