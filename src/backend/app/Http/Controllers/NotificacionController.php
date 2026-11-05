@@ -10,8 +10,7 @@ class NotificacionController extends Controller
 {
     public function __construct(
         private readonly NotificacionService $notificacionService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
@@ -21,6 +20,9 @@ class NotificacionController extends Controller
 
         return response()->json([
             'notificaciones' => $notificaciones,
+            'total_no_leidas' => $this->notificacionService->contarNoLeidas(
+                $request->user()->cedula
+            ),
         ], 200);
     }
 
@@ -55,5 +57,4 @@ class NotificacionController extends Controller
             'actualizadas' => $cantidad,
         ], 200);
     }
-
 }

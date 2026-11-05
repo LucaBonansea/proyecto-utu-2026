@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Reclamo;
 use App\Models\Evidencia;
+use App\Models\Reclamo;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
@@ -63,7 +63,7 @@ class ReclamoService
             'area',
             'edificio',
             'clasificacion',
-            'evidencia'
+            'evidencia',
         ]);
     }
 
@@ -78,7 +78,7 @@ class ReclamoService
             'clasificacion',
             'edificio',
             'area',
-            'proveedor'
+            'proveedor',
         ])
             ->where('usuario_cedula', $cedula);
 
@@ -110,6 +110,70 @@ class ReclamoService
         ];
     }
 
+    public function obtenerUnoPorUsuario(int $id, string $cedula): Reclamo
+    {
+        return Reclamo::with([
+            'evidencia',
+            'evidenciaOriginal',
+            'clasificacion',
+            'edificio',
+            'area',
+            'proveedor',
+        ])
+            ->where('usuario_cedula', $cedula)
+            ->findOrFail($id);
+    }
+
+    public function obtenerParaAdministracion(
+        ?string $busqueda,
+        string $estado,
+        int $porPagina = 6
+    ): LengthAwarePaginator {
+        $consulta = Reclamo::with([
+            'usuario' => fn ($usuario) => $usuario->withCount('reclamos'),
+            'edificio' => fn ($edificio) => $edificio->withCount([
+                'usuarios',
+                'reclamos',
+            ]),
+            'clasificacion',
+            'evidencia',
+            'proveedor',
+            'area',
+        ]);
+
+        if ($estado !== 'todos') {
+            $consulta->where('estado', $estado);
+        }
+
+        if ($busqueda !== null && $busqueda !== '') {
+            $termino = "%{$busqueda}%";
+
+            $consulta->where(function ($filtro) use ($termino) {
+                $filtro
+                    ->where('id', 'like', $termino)
+                    ->orWhere('description', 'like', $termino)
+                    ->orWhereHas('usuario', function ($usuario) use ($termino) {
+                        $usuario
+                            ->where('nombre', 'like', $termino)
+                            ->orWhere('cedula', 'like', $termino);
+                    })
+                    ->orWhereHas('edificio', function ($edificio) use ($termino) {
+                        $edificio
+                            ->where('nombre', 'like', $termino)
+                            ->orWhere('direccion', 'like', $termino);
+                    })
+                    ->orWhereHas('clasificacion', function ($clasificacion) use ($termino) {
+                        $clasificacion->where('clasificacion', 'like', $termino);
+                    });
+            });
+        }
+
+        return $consulta
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate($porPagina);
+    }
+
     public function obtenerTodos()
     {
         return Reclamo::with([
@@ -118,13 +182,13 @@ class ReclamoService
             'clasificacion',
             'evidencia',
             'proveedor',
-            'area'
+            'area',
         ])
-        ->latest()
-        ->get();
+            ->latest()
+            ->get();
     }
 
-    public function obtenerPendientes()
+    public function obtenerPendientes(int $porPagina = 12): LengthAwarePaginator
     {
         return Reclamo::where('estado', 'pendiente')
             ->with([
@@ -133,9 +197,10 @@ class ReclamoService
                 'clasificacion',
                 'evidencia',
                 'proveedor',
-                'area'
+                'area',
             ])
-            ->latest()
-            ->get();
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate($porPagina);
     }
 }

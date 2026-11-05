@@ -14,9 +14,10 @@ use App\Http\Middleware\UsuarioActivo;
 use Illuminate\Support\Facades\Route;
 
 // Única ruta pública: inicia la sesión (el usuario todavía no está autenticado)
-Route::post('/auth/login', [AuthController::class,'login']);
+Route::post('/auth/login', [AuthController::class, 'login'])
+    ->middleware('throttle:5,1');
 // Todo lo de abajo exige sesión iniciada (Sanctum)
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:usuario-autenticado'])->group(function () {
 
     // Aceptar políticas: va fuera del grupo siguiente para que un usuario
     // que aún no las aceptó pueda hacerlo
@@ -39,8 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/usuarios/{cedula}', [UsuarioController::class, 'update']);
             // Cambiar la contraseña de un usuario
             Route::put('/usuarios/{cedula}/password', [UsuarioController::class, 'updatePassword']);
-            // Cambiar el rol de un usuario
-            Route::put('/usuarios/{cedula}/rol', [UsuarioController::class, 'updateRol']);
             // Desactivar un usuario (no podrá volver a iniciar sesión)
             Route::put('/usuarios/{cedula}/desactivar', [UsuarioController::class, 'desactivar']);
             Route::delete('/usuarios/{cedula}', [UsuarioController::class, 'destroy']);
@@ -86,6 +85,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Listar los reclamos propios (con paginación y filtro)
         Route::get('/reclamos', [ReclamoController::class,'index']);
+        // Consultar un reclamo propio sin recorrer todas las páginas
+        Route::get('/reclamos/{id}', [ReclamoController::class,'show']);
         // Crear un reclamo (con foto de evidencia)
         Route::post('/reclamos', [ReclamoController::class,'store']);
         // Cancelar un reclamo propio (solo si sigue pendiente)

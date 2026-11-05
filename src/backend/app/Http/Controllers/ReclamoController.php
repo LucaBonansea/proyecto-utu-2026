@@ -53,6 +53,24 @@ class ReclamoController extends Controller
         ], 200);
     }
 
+    public function show(
+        Request $request,
+        int $id,
+        ReclamoService $reclamoService
+    ) {
+        $reclamo = $reclamoService->obtenerUnoPorUsuario(
+            $id,
+            $request->user()->cedula
+        );
+
+        return response()->json([
+            'reclamo' => $reclamo,
+            'estadisticas' => $reclamoService->obtenerEstadisticasPorUsuario(
+                $request->user()->cedula
+            ),
+        ]);
+    }
+
     public function store(
         Request $request,
         ReclamoService $reclamoService,
@@ -190,30 +208,78 @@ class ReclamoController extends Controller
     }
 
     public function indexAdmin(
-    Request $request,
-    ReclamoService $reclamoService
-) {
-    $usuario = $request->user();
-
-    if (
-        $usuario->rol !== 'administrador' &&
-        $usuario->rol !== 'administrativo'
+        Request $request,
+        ReclamoService $reclamoService
     ) {
-        return response()->json([
-            'message' => 'No autorizado'
-        ], 403);
-    }
+        $usuario = $request->user();
 
-    if ($usuario->rol === 'administrador') {
+        if (
+            $usuario->rol !== 'administrador' &&
+            $usuario->rol !== 'administrativo'
+        ) {
+            return response()->json([
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        if ($usuario->rol === 'administrador' && $request->has('page')) {
+            $datos = $request->validate([
+                'page' => ['required', 'integer', 'min:1'],
+                'busqueda' => ['sometimes', 'nullable', 'string', 'max:100'],
+                'estado' => ['sometimes', 'string', Rule::in([
+                    'todos',
+                    'pendiente',
+                    'aceptado',
+                    'en_proceso',
+                    'completado',
+                    'finalizacion_confirmada',
+                    'rechazada',
+                ])],
+            ]);
+
+            $reclamos = $reclamoService->obtenerParaAdministracion(
+                isset($datos['busqueda']) ? trim($datos['busqueda']) : null,
+                $datos['estado'] ?? 'todos'
+            );
+
+            return response()->json([
+                'reclamos' => $reclamos->items(),
+                'paginacion' => [
+                    'pagina_actual' => $reclamos->currentPage(),
+                    'ultima_pagina' => $reclamos->lastPage(),
+                    'por_pagina' => $reclamos->perPage(),
+                    'total' => $reclamos->total(),
+                    'desde' => $reclamos->firstItem(),
+                    'hasta' => $reclamos->lastItem(),
+                ],
+            ], 200);
+        }
+
+        if ($usuario->rol === 'administrativo') {
+            $request->validate([
+                'page' => ['sometimes', 'integer', 'min:1'],
+            ]);
+            $reclamos = $reclamoService->obtenerPendientes();
+
+            return response()->json([
+                'reclamos' => $reclamos->items(),
+                'paginacion' => [
+                    'pagina_actual' => $reclamos->currentPage(),
+                    'ultima_pagina' => $reclamos->lastPage(),
+                    'por_pagina' => $reclamos->perPage(),
+                    'total' => $reclamos->total(),
+                    'desde' => $reclamos->firstItem(),
+                    'hasta' => $reclamos->lastItem(),
+                ],
+            ], 200);
+        }
+
         $reclamos = $reclamoService->obtenerTodos();
-    } else {
-        $reclamos = $reclamoService->obtenerPendientes();
-    }
 
-    return response()->json([
-        'reclamos' => $reclamos
-    ], 200);
-}
+        return response()->json([
+            'reclamos' => $reclamos
+        ], 200);
+    }
     
 
 public function actualizar(Request $request,int $id,NotificacionService $notificacionService) 

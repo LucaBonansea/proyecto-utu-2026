@@ -37,6 +37,7 @@ import { inicializarTema } from '../theme.js';
 import { inicializarNotificaciones } from './notifications.js';
 import {
     actualizarUsuario,
+    cambiarRolUsuario,
     cambiarEstadoProveedor as actualizarEstadoProveedor,
     cambiarPasswordUsuario,
     crearArea,
@@ -89,6 +90,9 @@ function quitarTildes(texto) {
 let edificios = [];
 let usuarios = [];
 let proveedores = [];
+let edificiosCargados = false;
+let usuariosCargados = false;
+let proveedoresCargados = false;
 let reclamos = [];
 let clasificaciones = [];
 let usuarioActual = null;
@@ -97,7 +101,6 @@ const LIMITE_PAGINACION_ADMIN = 6;
 let paginaReclamos = 1;
 let paginaProveedores = 1;
 let paginaEdificios = 1;
-let observadorAlturaUsuarios = null;
 let intervaloEstadisticas = null;
 let generacionEstadisticas = 0;
 let observadorWidgetsEstadisticas = null;
@@ -126,8 +129,27 @@ const NOMBRES_ESTADO_RECLAMO = {
     proceso: "En proceso",
     completado: "Completado",
     terminado: "Completado",
+    finalizacion_confirmada: "Finalización confirmada",
+    rechazada: "Rechazado",
     rechazado: "Rechazado"
 };
+const ESTADOS_FILTRO_RECLAMO = [
+    "pendiente",
+    "aceptado",
+    "en_proceso",
+    "completado",
+    "finalizacion_confirmada",
+    "rechazada"
+];
+let paginacionReclamos = {
+    pagina_actual: 1,
+    ultima_pagina: 1,
+    por_pagina: LIMITE_PAGINACION_ADMIN,
+    total: 0,
+    desde: null,
+    hasta: null
+};
+let solicitudReclamos = 0;
 
 // Convierte texto en texto seguro antes de insertarlo en plantillas HTML.
 function escaparHtml(valor = "") {
@@ -256,6 +278,7 @@ async function cargarEdificios() {
         console.log("Edificios cargados desde la BD:", data);
 
         edificios = data;
+        edificiosCargados = true;
 
     } catch (error) {
 
@@ -284,6 +307,7 @@ async function cargarUsuarios() {
         console.log("Usuarios cargados desde la BD:", data);
 
         usuarios = data;
+        usuariosCargados = true;
 
     } catch (error) {
 
@@ -316,6 +340,7 @@ async function cargarProveedores() {
         );
 
         proveedores = data;
+        proveedoresCargados = true;
 
     } catch (error) {
 
@@ -392,23 +417,32 @@ async function iniciarAplicacion() {
 
     proveedoresbtn.addEventListener(
         "click",
-        () => {
+        async () => {
             paginaProveedores = 1;
-            vistaProveedores();
+            if (!proveedoresCargados) await cargarProveedores();
+            if (proveedoresbtn.classList.contains("active")) vistaProveedores();
         }
     );
 
     edificiosbtn.addEventListener(
         "click",
-        () => {
+        async () => {
             paginaEdificios = 1;
-            vistaEdificios();
+            if (!edificiosCargados) await cargarEdificios();
+            if (edificiosbtn.classList.contains("active")) vistaEdificios();
         }
     );
 
     usuariosbtn.addEventListener(
         "click",
-        () => vistaUsuarios()
+        async () => {
+            await Promise.all([
+                edificiosCargados ? null : cargarEdificios(),
+                usuariosCargados ? null : cargarUsuarios(),
+                proveedoresCargados ? null : cargarProveedores()
+            ]);
+            if (usuariosbtn.classList.contains("active")) vistaUsuarios();
+        }
     );
 
     reclamosbtn.addEventListener(
@@ -439,20 +473,9 @@ async function iniciarAplicacion() {
 
     logoutbtn.addEventListener("click", cerrar_sesion);
 
-    await Promise.all([
-        cargarEdificios(),
-        cargarUsuarios(),
-        cargarProveedores()
-    ]);
-
-    // Si el usuario cambió de sección mientras cargaban los catálogos,
-    // actualizar esa vista sin reemplazar Reclamos u otra sección abierta.
     if (proveedoresbtn.classList.contains("active")) {
-        vistaProveedores();
-    } else if (edificiosbtn.classList.contains("active")) {
-        vistaEdificios();
-    } else if (usuariosbtn.classList.contains("active")) {
-        vistaUsuarios();
+        await cargarProveedores();
+        if (proveedoresbtn.classList.contains("active")) vistaProveedores();
     }
 
 }
@@ -498,6 +521,11 @@ function cerrarMenuCuentaConEscape(event) {
 }
 
 async function cargarCuentaMenu() {
+    if (usuarioActual) {
+        renderCuentaMenu(usuarioActual);
+        return;
+    }
+
     accountMenuContent.innerHTML = `
         <div class="account-loading">
             Cargando cuenta...
@@ -638,80 +666,13 @@ document.addEventListener("DOMContentLoaded", iniciar);
  * ============================================================================
  * CONCEPTO CLAVE: SECCIÓN RECLAMOS (Vista global del Administrador)
  * ============================================================================
- * Explicación: Obtiene todos los reclamos registrados en el sistema, incorporando 
- * herramientas de filtrado en tiempo real por texto y selector de estados.
+ * Explicación: Obtiene una página de reclamos desde el backend y aplica allí
+ * la búsqueda por texto y el filtro de estado.
  */
 async function vistaReclamos() {
     filtro_container.innerHTML = "";
     section.style.display = "grid";
     section.style.gridTemplateColumns = "repeat(1, 1fr)";
-    section.innerHTML = `
-        <div class="lista-reclamos-admin">
-            <div class="titulo-reclamos-admin">
-                <div>
-                    <h2>Reclamos</h2>
-                    <p>Todos los reclamos registrados en el sistema</p>
-                </div>
-            </div>
-            <div class="estado-carga-reclamos">
-                Cargando reclamos...
-            </div>
-        </div>
-    `;
-
-    try {
-        const response = await obtenerReclamosAdministrador();
-
-        if (response.status === 401) {
-            window.location.replace("./index.html");
-            return;
-        }
-
-        const data = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-            throw new Error(data.message || "No se pudieron obtener los reclamos.");
-        }
-
-        if (!reclamosbtn.classList.contains("active")) return;
-
-        reclamos = Array.isArray(data.reclamos) ? data.reclamos : [];
-        renderVistaReclamos();
-    } catch (error) {
-        if (!reclamosbtn.classList.contains("active")) return;
-
-        console.error("Error al cargar los reclamos:", error);
-        notify.error(error.message || "No se pudieron cargar los reclamos.");
-
-        const contenedor = section.querySelector(".lista-reclamos-admin");
-
-        if (contenedor) {
-            contenedor.innerHTML = `
-                <div class="titulo-reclamos-admin">
-                    <div>
-                        <h2>Reclamos</h2>
-                        <p>Todos los reclamos registrados en el sistema</p>
-                    </div>
-                </div>
-                <div class="estado-carga-reclamos estado-error-reclamos">
-                    <span class="material-symbols-outlined" aria-hidden="true">error</span>
-                    <p>${escaparHtml(error.message || "No se pudieron cargar los reclamos.")}</p>
-                    <button class="btn-reintentar-reclamos" type="button">Reintentar</button>
-                </div>
-            `;
-
-            contenedor
-                .querySelector(".btn-reintentar-reclamos")
-                .addEventListener("click", vistaReclamos);
-        }
-    }
-}
-
-function renderVistaReclamos() {
-    const estados = [...new Set(
-        reclamos.map(reclamo => normalizarEstadoReclamo(reclamo.estado))
-    )];
-
     section.innerHTML = `
         <div class="lista-reclamos-admin">
             <div class="titulo-reclamos-admin">
@@ -734,74 +695,127 @@ function renderVistaReclamos() {
                     <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
                     <select>
                         <option value="todos">Todos los estados</option>
-                        ${estados.map(estado => `
+                        ${ESTADOS_FILTRO_RECLAMO.map(estado => `
                             <option value="${escaparHtml(estado)}">
-                                ${escaparHtml(NOMBRES_ESTADO_RECLAMO[estado] || estado)}
+                                ${escaparHtml(NOMBRES_ESTADO_RECLAMO[estado])}
                             </option>
                         `).join("")}
                     </select>
                 </label>
             </div>
 
-            <div class="contenedor-reclamos-admin"></div>
+            <div class="contenedor-reclamos-admin">
+                <div class="estado-carga-reclamos">Cargando reclamos...</div>
+            </div>
+            <div class="paginacion-reclamos-admin"></div>
         </div>
     `;
 
     const inputBuscar = section.querySelector(".buscador-reclamos-admin input");
     const botonBuscar = section.querySelector(".buscador-reclamos-admin .btn-buscar-usuario");
     const selectEstado = section.querySelector(".selector-estado-reclamos select");
+    let esperaBusqueda = null;
 
     const aplicarFiltros = () => {
+        window.clearTimeout(esperaBusqueda);
         paginaReclamos = 1;
-        renderListaReclamos(inputBuscar.value, selectEstado.value);
+        cargarPaginaReclamos(1);
     };
 
-    inputBuscar.addEventListener("input", aplicarFiltros);
+    inputBuscar.addEventListener("input", () => {
+        window.clearTimeout(esperaBusqueda);
+        esperaBusqueda = window.setTimeout(aplicarFiltros, 300);
+    });
     botonBuscar.addEventListener("click", aplicarFiltros);
     selectEstado.addEventListener("change", aplicarFiltros);
-    renderListaReclamos("", "todos");
+    await cargarPaginaReclamos(1);
 }
 
-// Filtra los reclamos por texto y estado y vuelve a dibujar sus tarjetas.
-function renderListaReclamos(busqueda, estadoSeleccionado) {
+async function cargarPaginaReclamos(pagina) {
+    const contenedor = section.querySelector(".contenedor-reclamos-admin");
+    const inputBuscar = section.querySelector(".buscador-reclamos-admin input");
+    const selectEstado = section.querySelector(".selector-estado-reclamos select");
+
+    if (!contenedor || !inputBuscar || !selectEstado) return;
+
+    const idSolicitud = ++solicitudReclamos;
+    contenedor.setAttribute("aria-busy", "true");
+
+    try {
+        const response = await obtenerReclamosAdministrador({
+            pagina,
+            busqueda: inputBuscar.value.trim(),
+            estado: selectEstado.value
+        });
+        const data = await response.json().catch(() => ({}));
+
+        if (response.status === 401) {
+            window.location.replace("./index.html");
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || "No se pudieron obtener los reclamos.");
+        }
+
+        if (
+            idSolicitud !== solicitudReclamos
+            || !reclamosbtn.classList.contains("active")
+            || section.querySelector(".contenedor-reclamos-admin") !== contenedor
+        ) return;
+
+        reclamos = Array.isArray(data.reclamos) ? data.reclamos : [];
+        paginacionReclamos = {
+            ...paginacionReclamos,
+            ...(data.paginacion || {})
+        };
+        paginaReclamos = paginacionReclamos.pagina_actual;
+
+        if (
+            paginacionReclamos.total > 0
+            && paginaReclamos > paginacionReclamos.ultima_pagina
+        ) {
+            await cargarPaginaReclamos(paginacionReclamos.ultima_pagina);
+            return;
+        }
+
+        renderListaReclamos();
+    } catch (error) {
+        if (idSolicitud !== solicitudReclamos || !contenedor.isConnected) return;
+
+        console.error("Error al cargar los reclamos:", error);
+        notify.error(error.message || "No se pudieron cargar los reclamos.");
+        contenedor.innerHTML = `
+            <div class="estado-carga-reclamos estado-error-reclamos">
+                <span class="material-symbols-outlined" aria-hidden="true">error</span>
+                <p>${escaparHtml(error.message || "No se pudieron cargar los reclamos.")}</p>
+                <button class="btn-reintentar-reclamos" type="button">Reintentar</button>
+            </div>
+        `;
+        contenedor.querySelector(".btn-reintentar-reclamos")
+            .addEventListener("click", () => cargarPaginaReclamos(paginaReclamos));
+    } finally {
+        if (idSolicitud === solicitudReclamos && contenedor.isConnected) {
+            contenedor.removeAttribute("aria-busy");
+        }
+    }
+}
+
+function renderListaReclamos() {
     const contenedor = section.querySelector(".contenedor-reclamos-admin");
 
     if (!contenedor) return;
 
-    const termino = quitarTildes(String(busqueda || "").toLowerCase());
-    const filtrados = reclamos.filter(reclamo => {
-        const estado = normalizarEstadoReclamo(reclamo.estado);
-        const coincideEstado = estadoSeleccionado === "todos"
-            || estado === estadoSeleccionado;
-        const texto = quitarTildes([
-            reclamo.id,
-            reclamo.description,
-            reclamo.usuario?.nombre,
-            reclamo.usuario?.cedula,
-            reclamo.edificio?.nombre,
-            reclamo.edificio?.direccion,
-            reclamo.clasificacion?.clasificacion,
-            NOMBRES_ESTADO_RECLAMO[estado] || estado
-        ].filter(Boolean).join(" ").toLowerCase());
-
-        return coincideEstado && texto.includes(termino);
-    });
-
-    const paginacion = paginarElementos(filtrados, paginaReclamos);
-    paginaReclamos = paginacion.paginaActual;
     const resumen = section.querySelector(".resumen-reclamos-admin");
 
     if (resumen) {
-        const nombre = filtrados.length === 1 ? "reclamo" : "reclamos";
-        const desde = filtrados.length === 0 ? 0 : paginacion.inicio + 1;
-        const hasta = Math.min(
-            paginacion.inicio + LIMITE_PAGINACION_ADMIN,
-            filtrados.length
-        );
-        resumen.textContent = `Mostrando ${desde}–${hasta} de ${filtrados.length} ${nombre}`;
+        const nombre = paginacionReclamos.total === 1 ? "reclamo" : "reclamos";
+        const desde = paginacionReclamos.desde ?? 0;
+        const hasta = paginacionReclamos.hasta ?? 0;
+        resumen.textContent = `Mostrando ${desde}–${hasta} de ${paginacionReclamos.total} ${nombre}`;
     }
 
-    if (filtrados.length === 0) {
+    if (reclamos.length === 0) {
         const piePaginacion = section.querySelector(
             ".paginacion-reclamos-admin"
         );
@@ -817,7 +831,7 @@ function renderListaReclamos(busqueda, estadoSeleccionado) {
         return;
     }
 
-    contenedor.innerHTML = paginacion.elementosPagina
+    contenedor.innerHTML = reclamos
         .map(renderCardReclamo)
         .join("");
 
@@ -830,16 +844,16 @@ function renderListaReclamos(busqueda, estadoSeleccionado) {
     }
 
     piePaginacion.innerHTML = renderPaginacionAdministrador(
-        filtrados.length,
-        paginacion.paginaActual,
-        paginacion.totalPaginas,
+        paginacionReclamos.total,
+        paginacionReclamos.pagina_actual,
+        paginacionReclamos.ultima_pagina,
         "reclamo",
         "reclamos"
     );
 
     conectarPaginacionAdministrador(piePaginacion, nuevaPagina => {
         paginaReclamos = nuevaPagina;
-        renderListaReclamos(busqueda, estadoSeleccionado);
+        cargarPaginaReclamos(nuevaPagina);
     });
 
     contenedor.querySelectorAll(".reclamo-admin-imagen img").forEach(imagen => {
@@ -970,16 +984,19 @@ function abrirInformacionReclamo(entidad, reclamo, disparador) {
         usuario_proveedor: "Usuario de proveedor"
     };
     const edificiosUsuario = Array.isArray(usuario.edificios) ? usuario.edificios : [];
-    const cantidadReclamosUsuario = reclamos.filter(item =>
-        String(item.usuario?.cedula || item.usuario_cedula) === String(cedula)
-    ).length;
-    const cantidadUsuariosEdificio = usuarios.filter(item =>
-        Array.isArray(item.edificios)
-        && item.edificios.some(itemEdificio => Number(itemEdificio.id) === Number(edificioId))
-    ).length;
-    const cantidadReclamosEdificio = reclamos.filter(item =>
-        Number(item.edificio?.id || item.edificio_id) === Number(edificioId)
-    ).length;
+    const cantidadReclamosUsuario = reclamo.usuario?.reclamos_count
+        ?? reclamos.filter(item =>
+            String(item.usuario?.cedula || item.usuario_cedula) === String(cedula)
+        ).length;
+    const cantidadUsuariosEdificio = reclamo.edificio?.usuarios_count
+        ?? usuarios.filter(item =>
+            Array.isArray(item.edificios)
+            && item.edificios.some(itemEdificio => Number(itemEdificio.id) === Number(edificioId))
+        ).length;
+    const cantidadReclamosEdificio = reclamo.edificio?.reclamos_count
+        ?? reclamos.filter(item =>
+            Number(item.edificio?.id || item.edificio_id) === Number(edificioId)
+        ).length;
     const estadoUsuario = usuario.activo === undefined
         ? "No disponible"
         : usuario.activo ? "Activa" : "Inactiva";
@@ -1182,6 +1199,10 @@ async function vistaClasificaciones() {
     const formulario = section.querySelector(".form-clasificacion-admin");
     const input = formulario.querySelector("input");
     const boton = formulario.querySelector("button");
+    
+    input.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
+    });
 
     const cargarClasificaciones = async () => {
         const contenedor = section.querySelector(".contenedor-clasificaciones-admin");
@@ -1264,7 +1285,7 @@ function vistaProveedores(){
 
     const proveedoresFiltrados = proveedores.filter(p =>
         filtroEstadoProveedor === "todos" ||
-        p.estado === filtroEstadoProveedor
+        String(p.estado || "").toLowerCase() === filtroEstadoProveedor
     );
     const paginacion = paginarElementos(
         proveedoresFiltrados,
@@ -1338,6 +1359,7 @@ function vistaProveedores(){
                         <input
                             class="telefono-proveedor"
                             type="text"
+                            maxlength="8"
                             placeholder="Ej. 4342 5678"
                         >
                     </div>
@@ -1375,6 +1397,7 @@ function vistaProveedores(){
                         <input
                             class="telefono-contacto-proveedor"
                             type="text"
+                            maxlength="9"
                             placeholder="Teléfono del responsable"
                         >
                     </div>
@@ -1497,6 +1520,10 @@ function vistaProveedores(){
     const telefonoInput =
         document.querySelector(".telefono-proveedor");
 
+      telefonoInput.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
+
     const direccionInput =
         document.querySelector(".direccion-proveedor");
 
@@ -1508,6 +1535,10 @@ function vistaProveedores(){
 
     const telefonoContactoInput =
         document.querySelector(".telefono-contacto-proveedor");
+
+        telefonoContactoInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
 
     const emailContactoInput =
         document.querySelector(".email-contacto-proveedor");
@@ -2120,10 +2151,11 @@ function vistaEdificios(){
     .querySelectorAll(".btn-detalle-edificio")
     .forEach(boton => {
 
-        boton.addEventListener("click", () => {
+        boton.addEventListener("click", async () => {
 
             const id = Number(boton.dataset.id);
 
+            if (!usuariosCargados) await cargarUsuarios();
             vistaDetalleEdificio(id);
 
         });
@@ -3008,48 +3040,6 @@ function vistaUsuarios(filtro = "") {
     const contenedor =
         document.querySelector(".contenedor-usuarios");
 
-    const igualarAlturaTarjetas = () => {
-        const tarjetas = Array.from(
-            contenedor.querySelectorAll(".usuario-card")
-        );
-
-        if (!tarjetas.length || contenedor.querySelector(".usuario-card-editando")) {
-            return;
-        }
-
-        contenedor.style.removeProperty("--altura-tarjeta-usuario");
-        tarjetas.forEach(tarjeta => {
-            tarjeta.style.height = "auto";
-        });
-
-        const alturaMaxima = Math.max(
-            ...tarjetas.map(tarjeta => Math.ceil(tarjeta.getBoundingClientRect().height))
-        );
-
-        tarjetas.forEach(tarjeta => {
-            tarjeta.style.removeProperty("height");
-        });
-        contenedor.style.setProperty(
-            "--altura-tarjeta-usuario",
-            `${alturaMaxima}px`
-        );
-    };
-
-    observadorAlturaUsuarios?.disconnect();
-    let anchoContenedorUsuarios = Math.round(contenedor.getBoundingClientRect().width);
-    observadorAlturaUsuarios = new ResizeObserver(() => {
-        const nuevoAncho = Math.round(contenedor.getBoundingClientRect().width);
-
-        if (nuevoAncho === anchoContenedorUsuarios) {
-            return;
-        }
-
-        anchoContenedorUsuarios = nuevoAncho;
-        requestAnimationFrame(igualarAlturaTarjetas);
-    });
-    observadorAlturaUsuarios.observe(contenedor);
-
-
     // ==========================================
     // MOSTRAR FORMULARIO
     // ==========================================
@@ -3463,6 +3453,9 @@ function vistaUsuarios(filtro = "") {
                     usuario.rol === "usuario_edificio"
                         ? (usuario.edificios || [])
                         : [];
+                const idsEdificiosUsuario = new Set(
+                    edificiosDelUsuario.map(edificio => Number(edificio.id))
+                );
 
                 const edificioPrincipal = edificiosDelUsuario[0] || null;
                 const edificiosAdicionales = edificiosDelUsuario.slice(1);
@@ -3673,6 +3666,22 @@ function vistaUsuarios(filtro = "") {
 
                             ${resumenEdificios}
 
+                            ${usuario.rol === "usuario_edificio" ? `
+                                <div class="edificios-editor-usuario oculto" role="group" aria-label="Edificios asignados al usuario">
+                                    <span class="edificios-editor-titulo">Edificios asignados</span>
+                                    <div class="checkboxes-edificios-cambio">
+                                        ${edificios.length ? edificios.map(edificio => `
+                                            <label class="checkbox-edificio">
+                                                <input type="checkbox" class="chk-edificio-cambio"
+                                                    value="${escaparHtml(edificio.id)}"
+                                                    ${idsEdificiosUsuario.has(Number(edificio.id)) ? "checked" : ""}>
+                                                <span>${escaparHtml(edificio.nombre)}</span>
+                                            </label>
+                                        `).join("") : '<p class="sin-asociacion-rol">No se pudieron cargar los edificios.</p>'}
+                                    </div>
+                                </div>
+                            ` : ""}
+
                         </div>
 
                         ${estaProtegido ? `
@@ -3835,6 +3844,8 @@ function vistaUsuarios(filtro = "") {
                 const inputEditarTelefono = card.querySelector(".editar-telefono");
                 const inputEditarEmail = card.querySelector(".editar-email");
                 const selectEditarActivo = card.querySelector(".editar-activo");
+                const editorEdificios = card.querySelector(".edificios-editor-usuario");
+                const checkboxesEdificios = card.querySelectorAll(".chk-edificio-cambio");
                 const nuevaPasswordInput = card.querySelector(".nueva-password");
                 const confirmarPasswordInput = card.querySelector(".confirmar-password");
                 const campoConfirmarPassword = card.querySelector(".campo-confirmar-password");
@@ -4065,6 +4076,11 @@ function vistaUsuarios(filtro = "") {
                         inputEditarTelefono.value = usuario.telefono || "";
                         inputEditarEmail.value = usuario.email || "";
                         selectEditarActivo.value = usuario.activo ? "1" : "0";
+                        checkboxesEdificios.forEach(checkbox => {
+                            checkbox.checked = (usuario.edificios || []).some(
+                                edificio => Number(edificio.id) === Number(checkbox.value)
+                            );
+                        });
                     }
 
                     modoEditorActivo = activo ? modo : null;
@@ -4093,6 +4109,7 @@ function vistaUsuarios(filtro = "") {
                         panelPasswordEditor.classList.toggle("oculto", modo !== "password");
                         datosVisuales.forEach(dato => dato.classList.toggle("oculto", modo === "datos"));
                         camposEdicion.forEach(campo => campo.classList.toggle("oculto", modo !== "datos"));
+                        editorEdificios?.classList.toggle("oculto", modo !== "datos");
 
                         if (modo === "datos") {
                             inputEditarNombre.focus();
@@ -4107,6 +4124,7 @@ function vistaUsuarios(filtro = "") {
                         );
                         datosVisuales.forEach(dato => dato.classList.remove("oculto"));
                         camposEdicion.forEach(campo => campo.classList.add("oculto"));
+                        editorEdificios?.classList.add("oculto");
                         nuevaPasswordInput.value = "";
                         confirmarPasswordInput.value = "";
                         campoConfirmarPassword.classList.remove("oculto");
@@ -4120,7 +4138,6 @@ function vistaUsuarios(filtro = "") {
                         });
                         limpiarMensajeEditor();
                         cerrarModalEditor();
-                        requestAnimationFrame(igualarAlturaTarjetas);
                     }
                 };
 
@@ -4207,6 +4224,20 @@ function vistaUsuarios(filtro = "") {
                     const telefono = inputEditarTelefono.value.trim();
                     const email = inputEditarEmail.value.trim();
                     const activo = selectEditarActivo.value === "1";
+                    const edificiosSeleccionados = Array.from(checkboxesEdificios)
+                        .filter(checkbox => checkbox.checked)
+                        .map(checkbox => Number(checkbox.value));
+                    const edificiosAnteriores = (usuario.edificios || [])
+                        .map(edificio => Number(edificio.id));
+                    const cambiaronEdificios = usuario.rol === "usuario_edificio" && checkboxesEdificios.length > 0 && (
+                        edificiosSeleccionados.length !== edificiosAnteriores.length ||
+                        edificiosSeleccionados.some(id => !edificiosAnteriores.includes(id))
+                    );
+
+                    if (usuario.rol === "usuario_edificio" && checkboxesEdificios.length > 0 && edificiosSeleccionados.length === 0) {
+                        mostrarMensajeEditor("advertencia", "Selecciona al menos un edificio para el usuario.");
+                        return;
+                    }
 
                     if (!nombre) {
                         mostrarMensajeEditor("advertencia", "El nombre es obligatorio.");
@@ -4238,6 +4269,7 @@ function vistaUsuarios(filtro = "") {
                         password_actual: passwordActual
                     };
 
+                    let usuarioGuardado = null;
                     try {
                         btnConfirmarEdicionUsuario.disabled = true;
                         iconoConfirmarEdicion.textContent = "hourglass_top";
@@ -4249,7 +4281,23 @@ function vistaUsuarios(filtro = "") {
                             throw new Error(dataDatos.errors?.password_actual?.[0] || dataDatos.message || "No se pudo actualizar el usuario.");
                         }
 
-                        const usuarioActualizado = dataDatos.usuario;
+                        usuarioGuardado = dataDatos.usuario;
+                        let usuarioActualizado = dataDatos.usuario;
+
+                        if (cambiaronEdificios) {
+                            const responseRol = await cambiarRolUsuario(usuario.cedula, {
+                                rol: "usuario_edificio",
+                                edificios: edificiosSeleccionados,
+                                password_actual: passwordActual
+                            });
+                            const dataRol = await responseRol.json().catch(() => ({}));
+
+                            if (!responseRol.ok) {
+                                throw new Error(dataRol.errors?.edificios?.[0] || dataRol.errors?.password_actual?.[0] || dataRol.message || "No se pudieron actualizar los edificios.");
+                            }
+
+                            usuarioActualizado = dataRol.usuario;
+                        }
 
                         const indice = usuarios.findIndex(item =>
                             String(item.cedula) === String(usuario.cedula)
@@ -4269,7 +4317,25 @@ function vistaUsuarios(filtro = "") {
                         renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
                     } catch (error) {
                         console.error("Error al actualizar usuario:", error);
-                        restaurarFormularioEditor(error.message || "No se pudo actualizar el usuario.");
+                        if (usuarioGuardado) {
+                            const indice = usuarios.findIndex(item =>
+                                String(item.cedula) === String(usuario.cedula)
+                            );
+                            if (indice !== -1) usuarios[indice] = usuarioGuardado;
+
+                            try {
+                                const respuestaUsuarios = await obtenerUsuarios();
+                                if (respuestaUsuarios.ok) usuarios = await respuestaUsuarios.json();
+                            } catch (errorCarga) {
+                                console.error("Error al recargar usuarios:", errorCarga);
+                            }
+
+                            cambiarModoEdicion(false);
+                            renderLista(inputBuscar.value.trim(), filtroRolSelect.value);
+                            notify.error(`Se guardaron los datos personales, pero no los edificios: ${error.message || "Error de conexión."}`);
+                        } else {
+                            restaurarFormularioEditor(error.message || "No se pudo actualizar el usuario.");
+                        }
                     } finally {
                         btnConfirmarEdicionUsuario.disabled = false;
                         iconoConfirmarEdicion.textContent = "check";
@@ -4515,13 +4581,6 @@ function vistaUsuarios(filtro = "") {
                 });
 
             });
-
-        requestAnimationFrame(igualarAlturaTarjetas);
-        document.fonts?.ready.then(() => {
-            if (contenedor.isConnected) {
-                igualarAlturaTarjetas();
-            }
-        });
 
     }
 
@@ -4837,11 +4896,6 @@ async function vistaEstadisticas() {
     contenedor.addEventListener("focusout", desactivarGrafico);
 
     await cargar();
-    if (vistaActiva()) {
-        intervaloEstadisticas = window.setInterval(() => {
-            if (!document.hidden) cargar();
-        }, 60000);
-    }
 }
 
 // Convierte un valor a número sin considerar null como un costo real.

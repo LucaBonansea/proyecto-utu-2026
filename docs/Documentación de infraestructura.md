@@ -5,11 +5,11 @@
 > El documento está separado entre localhost, aplicación y el apéndice específico de máquina virtual.
 
   - [Objetivo](#objetivo)
-- **[Parte 0 — Ejecución local / localhost](#parte-0-—-ejecucion-local-localhost)**
+- **[Parte 0 — Ejecución local / localhost](#parte-0--ejecución-local--localhost)**
   - [1. Esquema local](#1-esquema-local)
   - [2. `.env` orientativo para localhost](#2-env-orientativo-para-localhost)
   - [3. Acceso local](#3-acceso-local)
-- **[Parte A — Proyecto y Docker](#parte-a-—-proyecto-y-docker)**
+- **[Parte A — Proyecto y Docker](#parte-a--proyecto-y-docker)**
   - [7. Clonar el repositorio](#7-clonar-el-repositorio)
   - [8. Archivo `.env` del backend](#8-archivo-env-del-backend)
   - [9. Construir y levantar Docker](#9-construir-y-levantar-docker)
@@ -17,40 +17,40 @@
   - [11. Comprobar contenedores](#11-comprobar-contenedores)
   - [12. Comprobar Nginx](#12-comprobar-nginx)
   - [13. Proxy Nginx hacia Laravel](#13-proxy-nginx-hacia-laravel)
-- **[Parte B — Laravel](#parte-b-—-laravel)**
-  - [14. Generar `APP_KEY`](#14-generar-appkey)
+- **[Parte B — Laravel](#parte-b--laravel)**
+  - [14. Generar `APP_KEY`](#14-generar-app_key)
   - [15. Migraciones](#15-migraciones)
   - [16. Seeders](#16-seeders)
   - [17. Verificar rutas Laravel](#17-verificar-rutas-laravel)
-  - [18. Publicar imágenes y archivos de `storage`](#18-publicar-imagenes-y-archivos-de-storage)
-- **[Parte C — Sanctum, sesión y CSRF](#parte-c-—-sanctum-sesion-y-csrf)**
-  - [19. Flujo correcto de autenticación](#19-flujo-correcto-de-autenticacion)
+  - [18. Publicar imágenes y archivos de `storage`](#18-publicar-imágenes-y-archivos-de-storage)
+- **[Parte C — Sanctum, sesión y CSRF](#parte-c--sanctum-sesión-y-csrf)**
+  - [19. Flujo correcto de autenticación](#19-flujo-correcto-de-autenticación)
   - [20. Comprobar CSRF](#20-comprobar-csrf)
   - [21. Frontend y credenciales](#21-frontend-y-credenciales)
-  - [22. Verificar sesión](#22-verificar-sesion)
-  - [23. Aceptar políticas](#23-aceptar-politicas)
-- **[Parte D — Actualizar el proyecto](#parte-d-—-actualizar-el-proyecto)**
-  - [24. Actualizar código](#24-actualizar-codigo)
-  - [25. Después de modificar configuración Laravel](#25-despues-de-modificar-configuracion-laravel)
-  - [26. Después de modificar migraciones](#26-despues-de-modificar-migraciones)
-  - [27. Comprobar salud después de actualizar](#27-comprobar-salud-despues-de-actualizar)
-- **[Parte E — Opcional: backups, monitoreo y protección en producción](#parte-e-—-opcional-backups-monitoreo-y-proteccion-en-produccion)**
-  - [28. Backups automáticos con `cron`](#28-backups-automaticos-con-cron)
-  - [29. Monitoreo y detección temprana](#29-monitoreo-y-deteccion-temprana)
-  - [30. Trampas defensivas y detección de comportamiento sospechoso](#30-trampas-defensivas-y-deteccion-de-comportamiento-sospechoso)
-  - [31. Cloudflare, WAF y protección contra DDoS](#31-cloudflare-waf-y-proteccion-contra-ddos)
+  - [22. Verificar sesión](#22-verificar-sesión)
+  - [23. Aceptar políticas](#23-aceptar-políticas)
+- **[Parte D — Actualizar el proyecto](#parte-d--actualizar-el-proyecto)**
+  - [24. Actualizar código](#24-actualizar-código)
+  - [25. Después de modificar configuración Laravel](#25-después-de-modificar-configuración-laravel)
+  - [26. Después de modificar migraciones](#26-después-de-modificar-migraciones)
+  - [27. Comprobar salud después de actualizar](#27-comprobar-salud-después-de-actualizar)
+- **[Parte E — Opcional: backups, monitoreo y protección en producción](#parte-e--opcional-backups-monitoreo-y-protección-en-producción)**
+  - [28. Backups automáticos con `cron`](#28-backups-automáticos-con-cron--implementado-en-ubuntu-server)
+  - [29. Monitoreo y detección temprana](#29-monitoreo-y-detección-temprana)
+  - [30. Trampas defensivas y detección de comportamiento sospechoso](#30-trampas-defensivas-y-detección-de-comportamiento-sospechoso)
+  - [31. Cloudflare, WAF y protección contra DDoS](#31-cloudflare-waf-y-protección-contra-ddos)
   - [32. Principio de defensa en profundidad](#32-principio-de-defensa-en-profundidad)
-- **[Parte F — Detener y recuperar](#parte-f-—-detener-y-recuperar)**
+- **[Parte F — Detener y recuperar](#parte-f--detener-y-recuperar)**
   - [33. Detener Docker](#33-detener-docker)
-  - [34. Reconstruir imágenes](#34-reconstruir-imagenes)
+  - [34. Reconstruir imágenes](#34-reconstruir-imágenes)
   - [35. Reinicio del servidor](#35-reinicio-del-servidor)
 - **[Resultado esperado](#resultado-esperado)**
-- **[Apéndice A — Máquina virtual con VirtualBox](#apendice-a-—-maquina-virtual-con-virtualbox)**
+- **[Apéndice A — Máquina virtual con VirtualBox](#apéndice-a--máquina-virtual-con-virtualbox)**
   - [A.1. Arquitectura de red de la VM](#a1-arquitectura-de-red-de-la-vm)
   - [A.2. Crear la VM en VirtualBox](#a2-crear-la-vm-en-virtualbox)
   - [A.3. Red Host-Only de Windows](#a3-red-host-only-de-windows)
   - [A.4. Configurar Netplan en Ubuntu](#a4-configurar-netplan-en-ubuntu)
-  - [A.5. Verificar comunicación Windows ↔ VM](#a5-verificar-comunicacion-windows-↔-vm)
+  - [A.5. Verificar comunicación Windows ↔ VM](#a5-verificar-comunicación-windows--vm)
   - [A.6. Conectarse por SSH](#a6-conectarse-por-ssh)
   - [A.7. Accesos principales de la VM](#a7-accesos-principales-de-la-vm)
 
@@ -930,7 +930,7 @@ curl.exe -I http://localhost
 
 # Parte E — Opcional: backups, monitoreo y protección en producción
 
-Esta sección es **opcional**, pero es altamente recomendable si el sistema va a contener información importante o va a quedar expuesto a una red real o a Internet.
+En SIRED, los **backups automáticos ya fueron configurados** (apartado 28). Las medidas restantes de monitoreo y protección son recomendaciones opcionales para un despliegue más completo.
 
 La idea es no depender únicamente de que el servidor "siga funcionando", sino preparar mecanismos para:
 
@@ -943,147 +943,181 @@ reducir el impacto de ataques externos
 
 ---
 
-## 28. Backups automáticos con `cron`
+## 28. Backups automáticos con `cron` — implementado en Ubuntu Server
 
-Una base de datos en producción puede perder información por:
+En el servidor Ubuntu de SIRED se **implementó y probó manualmente** un respaldo de la base de datos MySQL mediante un script Bash ejecutado desde el host. También se **configuró** una tarea `cron` diaria; la ejecución automática y la restauración de un respaldo **todavía deben comprobarse**.
+
+### 28.1. Configuración implementada
+
+| Elemento | Valor |
+| --- | --- |
+| Servidor | Ubuntu Server (VM VirtualBox) |
+| Contenedor de MySQL | `proyecto-utu-2026-database-1` |
+| Base de datos | `laravel` |
+| Script en el host | `/usr/local/bin/backup-sired.sh` |
+| Carpeta de respaldos | `/opt/backups/sired/` |
+| Formato | `sired_YYYY-MM-DD_HH-MM-SS.sql.gz` |
+| Retención | 7 días de respaldos locales, mediante `find -mtime +6` |
+| Programación | Todos los días a las `03:00 UTC` (equivalente a las `00:00` de Uruguay) |
+| Usuario del programador | `root` (con `sudo crontab -e`) |
+| Registro de ejecución | `/var/log/backup-sired.log` |
+
+> **Alcance:** este procedimiento respalda **solo la base de datos MySQL**. No respalda automáticamente las fotografías o archivos subidos al almacenamiento de Laravel (`storage`), el contenido de los volúmenes de Docker ni los archivos de configuración. Es necesario definir respaldos adicionales para esos elementos.
+
+### 28.2. Crear la carpeta y el script
+
+En Ubuntu Server:
+
+```bash
+sudo mkdir -p /opt/backups/sired
+sudo chmod 700 /opt/backups/sired
+sudo nano /usr/local/bin/backup-sired.sh
+```
+
+Contenido del script implementado:
+
+```bash
+#!/bin/bash
+
+# Backup automático de la base de datos MySQL de SIRED.
+# Se ejecuta en el host Ubuntu mediante root/cron.
+
+set -euo pipefail
+umask 077
+
+CONTENEDOR="proyecto-utu-2026-database-1"
+BASE_DATOS="laravel"
+CARPETA="/opt/backups/sired"
+FECHA=$(date +%Y-%m-%d_%H-%M-%S)
+ARCHIVO="$CARPETA/sired_$FECHA.sql.gz"
+TEMPORAL="$ARCHIVO.tmp"
+
+# Quitar el archivo temporal si algo falla.
+trap 'rm -f "$TEMPORAL"' EXIT
+
+echo "=================================="
+echo "Iniciando backup de SIRED"
+echo "Fecha: $(date)"
+echo "=================================="
+
+mkdir -p "$CARPETA"
+
+# Evitar la exportación si la base de datos no está en ejecución.
+if ! docker inspect -f '{{.State.Running}}' "$CONTENEDOR" 2>/dev/null | grep -qx true; then
+    echo "ERROR: El contenedor MySQL no está funcionando."
+    exit 1
+fi
+
+echo "Exportando base de datos..."
+
+# pipefail hace que se detecte un fallo de mysqldump aunque gzip termine bien.
+if docker exec "$CONTENEDOR" sh -c     'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --single-transaction --no-tablespaces "$1"'     sh "$BASE_DATOS" | gzip > "$TEMPORAL"; then
+    echo "Exportación finalizada."
+else
+    echo "ERROR: Falló la exportación de MySQL."
+    exit 1
+fi
+
+# Comprobación mínima de existencia e integridad de la compresión.
+if [ ! -s "$TEMPORAL" ] || ! gzip -t "$TEMPORAL"; then
+    echo "ERROR: El backup está vacío o dañado."
+    exit 1
+fi
+
+mv "$TEMPORAL" "$ARCHIVO"
+echo "Backup creado correctamente:"
+echo "$ARCHIVO"
+
+# Conservar aproximadamente los últimos siete días.
+find "$CARPETA" -maxdepth 1 -type f -name 'sired_*.sql.gz' -mtime +6 -delete
+
+echo "Backups antiguos eliminados."
+echo "=================================="
+echo "Backup finalizado correctamente."
+echo "=================================="
+```
+
+Permisos del archivo:
+
+```bash
+sudo chmod 700 /usr/local/bin/backup-sired.sh
+```
+
+**Seguridad del script:** `set -euo pipefail` permite detectar errores en comandos y tuberías; `umask 077` restringe el acceso a los archivos nuevos. La contraseña de MySQL **no se escribe literalmente en el script**: el comando la lee de la variable `MYSQL_ROOT_PASSWORD` que existe dentro del contenedor. `mysqldump` puede mostrar la advertencia `Using a password on the command line interface can be insecure`; es una advertencia real y conviene mejorar el mecanismo de autenticación más adelante mediante un archivo de opciones de MySQL protegido o una alternativa de secretos apropiada.
+
+> **Importante:** el nombre del contenedor puede variar si cambia el nombre del proyecto Compose. Comprobarlo con `sudo docker ps` y actualizar `CONTENEDOR` si corresponde. El script requiere que el contenedor esté iniciado y disponga de `mysqldump` y `MYSQL_ROOT_PASSWORD`.
+
+### 28.3. Ejecutar y verificar el respaldo manual
+
+```bash
+sudo docker ps
+sudo /usr/local/bin/backup-sired.sh
+sudo ls -lh /opt/backups/sired/
+sudo gzip -t /opt/backups/sired/*.sql.gz
+```
+
+**Evidencia obtenida el 3 de noviembre de 2026:** la ejecución manual finalizó correctamente y generó el archivo:
 
 ```text
-errores humanos
-fallas de disco
-migraciones incorrectas
-eliminaciones accidentales
-corrupción de datos
-problemas del sistema operativo
-errores en Docker o volúmenes
-incidentes de seguridad
+/opt/backups/sired/sired_2026-11-03_21-29-30.sql.gz
 ```
 
-Por eso es recomendable implementar backups automáticos.
+El listado del servidor mostró un tamaño aproximado de **6,2 KB**, con permisos `-rw-------` y propietario `root`. El mensaje final fue `Backup finalizado correctamente.`
 
-### Crear un directorio de backups
+La existencia del archivo y la comprobación `gzip -t` son verificaciones distintas. **No se ha aportado todavía una prueba de restauración** del contenido SQL; por lo tanto, no debe afirmarse que se comprobó la recuperabilidad de los datos.
 
-Ejemplo:
+### 28.4. Programación diaria con `crontab`
+
+Se configuró la tarea en el **crontab de root**:
 
 ```bash
-sudo mkdir -p /opt/backups/proyecto-utu
-sudo chown -R $USER:$USER /opt/backups/proyecto-utu
+sudo crontab -e
 ```
 
-### Backup manual de MySQL
-
-Antes de automatizar el proceso, comprobar que un backup manual funciona.
-
-Ejemplo:
-
-```bash
-docker compose exec -T database \
-  mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" laravel \
-  > /opt/backups/proyecto-utu/laravel_$(date +%F_%H-%M-%S).sql
-```
-
-> No conviene escribir contraseñas directamente en scripts que puedan ser leídos por otros usuarios. En producción se recomienda utilizar variables de entorno, archivos protegidos o un sistema de secretos.
-
-También puede comprimirse:
-
-```bash
-gzip /opt/backups/proyecto-utu/laravel_*.sql
-```
-
-### Script de backup
-
-Se puede crear, por ejemplo:
-
-```text
-/opt/proyecto-utu-2026/backup.sh
-```
-
-El script puede:
-
-```text
-1. generar un dump de MySQL
-2. comprimirlo
-3. guardar fecha y hora en el nombre
-4. eliminar backups locales demasiado antiguos
-5. registrar si el proceso terminó correctamente
-```
-
-Dar permiso de ejecución:
-
-```bash
-chmod +x /opt/proyecto-utu-2026/backup.sh
-```
-
-### Automatizar con `crontab`
-
-Editar:
-
-```bash
-crontab -e
-```
-
-Ejemplo: ejecutar todos los días a las 03:00:
+Línea guardada:
 
 ```cron
-0 3 * * * /opt/proyecto-utu-2026/backup.sh >> /var/log/proyecto-utu-backup.log 2>&1
+0 3 * * * /usr/local/bin/backup-sired.sh >> /var/log/backup-sired.log 2>&1
 ```
 
-La frecuencia debe elegirse según la importancia y cantidad de cambios de los datos.
+En el servidor se observó la hora en **UTC**, por lo que las 03:00 UTC equivalen a las **00:00 en Uruguay**. El horario efectivo de `cron` depende de la zona horaria del servidor.
 
-Ejemplos:
-
-```text
-sistema con pocos cambios → backup diario
-sistema con cambios frecuentes → varias veces por día
-información crítica → estrategia más frecuente y/o replicación adicional
-```
-
-### No guardar todos los backups únicamente en el mismo servidor
-
-Un backup que se encuentra solamente en el mismo disco que la aplicación puede perderse junto con el servidor.
-
-Se recomienda aplicar una estrategia parecida a:
-
-```text
-copia local
-+
-copia en otro equipo o almacenamiento
-+
-copia externa/off-site
-```
-
-Por ejemplo:
-
-```text
-NAS
-otro servidor
-almacenamiento S3 compatible
-servicio cloud de backups
-disco externo administrado
-```
-
-### Rotación de backups
-
-Para evitar llenar el disco, se pueden conservar solo los backups recientes.
-
-Ejemplo: borrar archivos `.sql.gz` con más de 14 días:
+Comprobar la programación y el servicio:
 
 ```bash
-find /opt/backups/proyecto-utu -type f -name "*.sql.gz" -mtime +14 -delete
+sudo crontab -l
+sudo systemctl status cron
 ```
 
-> Antes de automatizar eliminaciones, verificar cuidadosamente la ruta utilizada.
+> **Estado observado:** `sudo crontab -l` mostró la línea programada. Al consultar `sudo tail -n 20 /var/log/backup-sired.log`, el archivo todavía no existía porque no había evidencia de una ejecución mediante cron. Esto **no significa un error del script**; solo indica que falta confirmar la primera ejecución automática.
 
-### Un backup no sirve si nunca se probó la restauración
+### 28.5. Revisar registros y verificar la ejecución automática
 
-Periódicamente se debe comprobar que el archivo puede restaurarse correctamente en una base de prueba.
-
-Ejemplo conceptual:
+Después del primer horario programado:
 
 ```bash
-gunzip -c backup.sql.gz | docker compose exec -T database mysql -u root -p laravel
+sudo ls -lh /opt/backups/sired/
+sudo tail -n 20 /var/log/backup-sired.log
 ```
 
-> Nunca realizar una prueba de restauración directamente sobre una base de producción con datos importantes. Utilizar una base o entorno de prueba.
+Para probar el comando con la misma redirección al log, **sin esperar al horario automático**:
+
+```bash
+sudo bash -c '/usr/local/bin/backup-sired.sh >> /var/log/backup-sired.log 2>&1'
+sudo tail -n 20 /var/log/backup-sired.log
+```
+
+Esta ejecución comprueba el script y el registro, **pero no prueba que `cron` se haya ejecutado por sí mismo**. La confirmación definitiva requiere observar un respaldo nuevo generado al horario programado y su entrada en el log.
+
+### 28.6. Restauración y protección adicional (pendiente)
+
+- Realizar una **restauración de prueba en una base de datos distinta**, nunca directamente sobre la base `laravel` en uso. Verificar tablas y registros restaurados.
+- Respaldar también las imágenes y otros archivos persistentes de Laravel (`storage`) y la configuración necesaria para reconstruir el servicio.
+- Mantener al menos una copia **fuera de la máquina virtual**; si falla el disco o se compromete el host, las copias locales podrían perderse.
+- Proteger y, cuando corresponda, cifrar las copias externas, porque contienen datos personales.
+- Comprobar periódicamente espacio libre y errores de `cron`, y revisar que la rotación no elimine la única copia válida.
+
+**Estado final de esta implementación:** respaldo manual **verificado como generado**, tarea `cron` **configurada**, ejecución automática **pendiente de observación**, integridad del archivo mediante `gzip -t` **pendiente de evidencia registrada** y restauración de datos **pendiente de prueba**.
 
 ---
 

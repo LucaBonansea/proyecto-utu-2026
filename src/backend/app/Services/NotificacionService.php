@@ -27,8 +27,17 @@ class NotificacionService
     public function obtenerPorUsuario(string $usuarioCedula): Collection
     {
         return Notificacion::where('usuario_cedula', $usuarioCedula)
-            ->latest()
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->limit(50)
             ->get();
+    }
+
+    public function contarNoLeidas(string $usuarioCedula): int
+    {
+        return Notificacion::where('usuario_cedula', $usuarioCedula)
+            ->where('leida', false)
+            ->count();
     }
 
     public function marcarLeida(int $id, string $usuarioCedula): bool
