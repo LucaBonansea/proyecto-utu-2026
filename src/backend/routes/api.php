@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 // Única ruta pública: inicia la sesión (el usuario todavía no está autenticado)
 Route::post('/auth/login', [AuthController::class, 'login'])
-    ->middleware('throttle:5,1');
+    ->middleware('throttle:5,1,login');
 // Todo lo de abajo exige sesión iniciada (Sanctum)
 Route::middleware(['auth:sanctum', 'throttle:usuario-autenticado'])->group(function () {
 

@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     $middleware->statefulApi();
 
     $middleware->api(
-        append: ['throttle:60,1']
+        append: ['throttle:60,1,global']
     );
 
     $middleware->redirectGuestsTo(function (Request $request) {
