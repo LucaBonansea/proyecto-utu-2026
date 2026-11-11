@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+    <!--
+        ENTRADA DEL FLUJO DE EMANUEL
+        Esta página define la estructura visible del login. La lógica vive en
+        js/DOM/login.js, que lee los campos, llama al servicio de autenticación y
+        redirige al HTML correspondiente según el rol devuelto por Laravel.
+    -->
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -21,6 +27,7 @@
                         <p class="subtitulo">Ingresa tu cédula y contraseña.</p>
                     </div>
 
+                    <!-- login.js escucha el evento "submit" de este formulario. -->
                     <form class="login-form" autocomplete="off">
                         <div class="campo">
                             <label for="ci-input">Cédula</label>
@@ -63,6 +70,10 @@
             </aside>
         </main>
 
+        <!--
+            Este modal tiene dos usos: lectura voluntaria y aceptación obligatoria
+            cuando el backend la exige después del login. login.js controla hidden.
+        -->
         <div class="politicas-modal" hidden>
             <div class="politicas-overlay" aria-hidden="true"></div>
             <section
@@ -163,6 +174,7 @@
             </section>
         </div>
 
+        <!-- login.js inicia la cadena HTML -> DOM -> servicio -> API Laravel. -->
         <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
         <script src="/proyecto-utu-2026/src/frontend/js/DOM/login.js?v=20261027-1" type="module"></script>
         <script>

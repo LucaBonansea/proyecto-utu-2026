@@ -6,6 +6,14 @@
 } from "../services/reclamos-service.js";
 import { notify } from "../utils/toast.js?v=20261016-1";
 
+/**
+ * VISTA DE CREACIÓN DE RECLAMOS (parte de Emanuel)
+ * third_view() dibuja el formulario dentro de #main. Luego carga:
+ * - GET /api/clasificaciones
+ * - GET /api/mis-edificios
+ * - GET /api/edificios/{id}/areas
+ * Al enviar: valida -> crea FormData -> POST /api/reclamos -> muestra resultado.
+ */
 export class Nuevo_reclamos {
     constructor($btn_home_top, $btn_home, Main, volverAInicio) {
         this.$btn_home_top = $btn_home_top;
@@ -16,6 +24,7 @@ export class Nuevo_reclamos {
     }
 
     third_view() {
+        // SPA simple: reemplaza #main sin navegar hacia otro archivo HTML.
         this.$btn_home.classList.remove("active");
         this.$btn_home_top.classList.remove("active");
         this.Main.innerHTML =  `
@@ -88,6 +97,7 @@ export class Nuevo_reclamos {
             <button class="enviarReclamo">Enviar Reclamo</button>
         </section>`;
 
+        // Los nodos deben existir antes de consultarlos y conectar sus eventos.
         this.cargar_clasificaciones();
         this.cargar_edificios();
         this.preparar_selector_areas();
@@ -186,6 +196,7 @@ export class Nuevo_reclamos {
                 </option>
             `;
 
+            // El segundo selector depende del edificio elegido.
             this.cargar_areas(edificioId);
         });
     }
@@ -203,6 +214,7 @@ export class Nuevo_reclamos {
 
             const areas = await response.json();
 
+            // Descarta una respuesta vieja si el usuario cambió mientras cargaba.
             if (selectEdificio.value !== String(edificioId)) {
                 return;
             }
@@ -280,6 +292,7 @@ export class Nuevo_reclamos {
         const nombreArchivo = etiqueta.querySelector(".nombre-archivo-evidencia");
         const eliminarArchivo = etiqueta.querySelector(".eliminar-evidencia");
         const vista = document.querySelector(".vista-evidencia");
+        // URL local temporal para previsualizar; aún no llegó al backend.
         let urlImagen = null;
 
         const cerrarVista = () => {
@@ -372,6 +385,7 @@ enviar_reclamo() {
         const area_id =
             document.getElementById("area").value;
 
+        // Validaciones de experiencia de usuario; Laravel vuelve a validar.
         if (!archivo) {
             this.mostrarToast(
                 "error",
@@ -432,6 +446,7 @@ enviar_reclamo() {
             boton.disabled = true;
             boton.textContent = "Enviando...";
 
+            // FormData transporta los campos y la foto como multipart/form-data.
             const formData = new FormData();
 
             formData.append(
@@ -459,6 +474,7 @@ enviar_reclamo() {
                 archivo
             );
 
+            // Servicio -> CSRF -> POST /api/reclamos -> ReclamoController::store().
             const response = await crearReclamo(formData);
 
             const data = await response.json();

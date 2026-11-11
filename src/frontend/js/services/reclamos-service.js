@@ -1,5 +1,13 @@
 import { API_URL, apiFetch, apiFetchConCsrf } from "./api.js";
 
+/**
+ * SERVICIO DE RECLAMOS
+ * La creación usa obtenerClasificaciones, obtenerEdificios,
+ * obtenerAreasPorEdificio y crearReclamo. Las demás funciones se comparten con
+ * reclamos.js para el seguimiento posterior.
+ */
+
+// Opciones del tipo de reclamo.
 export function obtenerClasificaciones() {
     return apiFetch("/api/clasificaciones", {
         credentials: "include",
@@ -7,6 +15,7 @@ export function obtenerClasificaciones() {
     });
 }
 
+// Devuelve únicamente los edificios asociados al ciudadano autenticado.
 export function obtenerEdificios() {
     return apiFetch("/api/mis-edificios", {
         credentials: "include",
@@ -14,6 +23,7 @@ export function obtenerEdificios() {
     });
 }
 
+// El edificio elegido determina las áreas disponibles.
 export function obtenerAreasPorEdificio(edificioId) {
     return apiFetch(`/api/edificios/${edificioId}/areas`, {
         credentials: "include",
@@ -21,6 +31,7 @@ export function obtenerAreasPorEdificio(edificioId) {
     });
 }
 
+// Desde aquí comienzan principalmente las operaciones de seguimiento.
 export function obtenerReclamos({ pagina = 1, filtro = "todos" } = {}) {
     const parametros = new URLSearchParams({
         page: pagina,
@@ -51,6 +62,7 @@ export function obtenerUrlEvidencia(rutaArchivo) {
 }
 
 export function crearReclamo(formData) {
+    // No se fija Content-Type: el navegador agrega el boundary de FormData.
     return apiFetchConCsrf("/api/reclamos", {
         method: "POST",
         body: formData
