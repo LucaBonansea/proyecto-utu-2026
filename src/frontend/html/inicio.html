@@ -1,5 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+<!--
+    CONTENEDOR DE LA PANTALLA CIUDADANA (parte de Emanuel)
+    Este HTML aporta navegación y un <main> vacío. inicio.js verifica la sesión y
+    las clases de cada vista generan dentro de #main el contenido correspondiente.
+-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
@@ -18,6 +23,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/proyecto-utu-2026/src/frontend/icons/icon-32x32.png">
 </head>
 <body class="inicio-page" data-carga-interfaz>
+    <!-- Navegación de escritorio; inicio.js conecta los botones con las vistas. -->
     <header>
         <a href="inicio.html">
         <div class="logos">
@@ -62,11 +68,13 @@
            
             </section>
     </section>
+    <!-- Punto de montaje: las vistas reemplazan su innerHTML dinámicamente. -->
     <main id="main">
         
         
     </main>
 
+    <!-- Navegación móvil: ejecuta las mismas acciones que la superior. -->
     <footer class="bottom-nav">
 
         <button class="inicio">
@@ -83,6 +91,7 @@
 
     </footer>
 
+    <!-- inicio.js coordina el arranque de la aplicación ciudadana. -->
     <script src="https://unpkg.com/nextjs-toast-notify@1.62.0/dist/nextjs-toast-notify.min.js"></script>
     <script src="/proyecto-utu-2026/src/frontend/js/global-loading.js?v=20261022-2"></script>
     <script src="/proyecto-utu-2026/src/frontend/js/DOM/inicio.js?v=20261027-4" type="module"></script>

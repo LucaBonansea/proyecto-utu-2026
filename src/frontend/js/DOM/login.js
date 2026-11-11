@@ -5,6 +5,15 @@ import {
 } from "../services/auth-service.js";
 import { notify } from "../utils/toast.js?v=20261016-1";
 
+/**
+ * CAPA DOM DEL LOGIN (parte de Emanuel)
+ *
+ * index.html -> manejarLogin() -> auth-service.iniciarSesion() ->
+ * api.apiFetchConCsrf() -> POST /api/auth/login -> respuesta JSON.
+ * Este archivo conoce la pantalla; los servicios construyen las peticiones HTTP.
+ */
+
+// Referencias a elementos declarados en index.html.
 const $form_login = document.querySelector(".login-form");
 const $input_ci = document.querySelector(".ci-input");
 const $input_password = document.querySelector(".pass-input");
@@ -19,11 +28,13 @@ const $checkbox_politicas = document.querySelector(".politicas-checkbox");
 const $btn_secundario = document.querySelector(".btn-politicas-secundario");
 const $btn_aceptar = document.querySelector(".btn-politicas-aceptar");
 
+// Estado temporal del modal; no es información guardada en la base de datos.
 let modo_modal = "lectura";
 let usuario_pendiente = null;
 let elemento_foco_anterior = null;
 let cancelando_acceso = false;
 
+// Conexión entre las acciones del usuario y las funciones de esta capa DOM.
 $input_ci.addEventListener("input", () => $input_ci.classList.remove("error"));
 $input_password.addEventListener("input", () => $input_password.classList.remove("error"));
 $form_login.addEventListener("submit", manejarLogin);
@@ -50,6 +61,7 @@ $btn_cerrar_modal.addEventListener("click", manejarCierreModal);
 document.addEventListener("keydown", manejarTeclaModal);
 
 async function manejarLogin(event) {
+    // Evita que el navegador recargue la página al enviar el formulario.
     event.preventDefault();
 
     const datos = {
@@ -60,6 +72,7 @@ async function manejarLogin(event) {
     cambiarEstadoLogin(true, "Iniciando sesión...");
 
     try {
+        // iniciarSesion devuelve Response; esta capa interpreta su JSON.
         const request = await iniciarSesion(datos);
         const response = await leerRespuestaJson(request);
 
@@ -131,6 +144,7 @@ async function cancelarPoliticasObligatorias() {
     cancelando_acceso = true;
 
     try {
+        // Si no acepta las políticas, elimina la sesión recién creada.
         await cerrarSesion();
     } catch (error) {
         console.error("No se pudo cerrar la sesión pendiente.", error);
@@ -153,6 +167,7 @@ async function aceptarPoliticasPendientes() {
     $btn_aceptar.textContent = "Guardando...";
 
     try {
+        // Persiste la aceptación mediante POST /api/auth/aceptar-politicas.
         const request = await aceptarPoliticas();
         const response = await leerRespuestaJson(request);
 
@@ -184,6 +199,7 @@ function manejarTeclaModal(event) {
 }
 
 function mostrarErrorLogin(status, response) {
+    // 401: credenciales; 422: validación; 419: sesión/CSRF vencido.
     cambiarEstadoLogin(false, "Intentar nuevamente");
 
     if (status === 401) {
@@ -221,6 +237,7 @@ function continuarAcceso(usuario) {
 }
 
 function redirigirSegunRol(rol) {
+    // El backend autentica y devuelve el rol; el frontend elige la pantalla.
     const destinos = {
         administrador: "./administrador.html",
         administrativo: "./Administrativos.html",
